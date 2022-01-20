@@ -1,0 +1,10 @@
+{
+  "version": "0.0.0-development",
+  "name": "@packages/chart-parser",
+  "private": true,
+  "main": "index.ts",
+  "devDependencies": {
+    "typescript": "4.5.4",
+    "vitest": "0.1.24"
+  }
+}
