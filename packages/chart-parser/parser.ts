@@ -98,7 +98,12 @@ export function parseChart(
           ...measure.map<Note>((x, idx) => {
             return {
               id: acc.noteCount + idx + 1,
-              columns: [],
+              columns: x
+                .split("")
+                .reduce<number[]>(
+                  (acc, col, idx) => (col === "1" ? [...acc, idx] : acc),
+                  []
+                ),
               ms: acc.measureCount * measureMs + q * idx,
             };
           }),

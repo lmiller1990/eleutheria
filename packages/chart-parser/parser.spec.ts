@@ -1,5 +1,5 @@
 import fs from "fs";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import path from "path";
 import { ChartMetadata, parseChart } from "./parser";
 
@@ -26,16 +26,6 @@ describe("parseChart", () => {
   it("works", () => {
     const data = loadData();
     const actual = parseChart(data.metadata, data.chart);
-
-    console.log(actual)
-
-    for (let i = 0; i < actual.notes.length; ++i) {
-      let c = actual.notes[i]
-      let n = actual.notes[i + 1]
-
-      if (c && n) {
-        console.log(n.ms - c.ms)
-      }
-    }
+    expect(actual).toMatchSnapshot();
   });
 });

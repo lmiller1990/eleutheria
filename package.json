@@ -10,6 +10,7 @@
     "gulp": "^4.0.2",
     "lerna": "^4.0.0",
     "p-defer": "^3.0.0",
+    "prettier": "2.5.1",
     "serve": "^13.0.2",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
@@ -17,7 +18,8 @@
   },
   "scripts": {
     "dev": "yarn gulp dev",
-    "install": "lerna exec yarn install"
+    "install": "lerna exec yarn install",
+    "lint": "prettier --write packages"
   },
   "workspaces": {
     "packages": [

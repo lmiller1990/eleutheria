@@ -41,7 +41,7 @@ async function fetchAudio() {
 }
 
 interface GameWorld {
-  audioContext: AudioContext
+  audioContext: AudioContext;
 }
 
 function gameLoop(world: GameWorld) {
