@@ -1,0 +1,22 @@
+#app {
+  display: flex;
+  justify-content: center;
+}
+
+:root {
+  --height: 50px;
+}
+
+#targets {
+  position: relative;
+  height: var(--height);
+  width: 200px;
+  border: 1px solid black;
+}
+
+.note {
+  position: absolute;
+  height: 25px;
+  width: 50px;
+  border: 1px solid black;
+}

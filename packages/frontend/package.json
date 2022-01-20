@@ -1,0 +1,12 @@
+{
+  "name": "@packages/frontend",
+  "version": "0.0.0-development",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4",
+    "vite": "^2.7.2"
+  }
+}

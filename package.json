@@ -1,0 +1,27 @@
+{
+  "name": "rhythm",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/gulp": "^4.0.9",
+    "@types/node": "^16.11.10",
+    "chokidar": "^3.5.2",
+    "gulp": "^4.0.2",
+    "lerna": "^4.0.0",
+    "p-defer": "^3.0.0",
+    "serve": "^13.0.2",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.2"
+  },
+  "scripts": {
+    "dev": "yarn gulp dev",
+    "install": "lerna exec yarn install"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
+}

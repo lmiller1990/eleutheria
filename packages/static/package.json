@@ -1,0 +1,10 @@
+{
+  "name": "@packages/static",
+  "version": "0.0.0-development",
+  "scripts": {
+    "server": "serve public -l 4000 --cors"
+  },
+  "devDependencies": {
+    "serve": "^13.0.2"
+  }
+}
