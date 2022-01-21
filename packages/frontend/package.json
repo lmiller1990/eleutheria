@@ -5,6 +5,9 @@
     "dev": "vite --port 3000",
     "build": "tsc && vite build"
   },
+  "dependencies": {
+    "@packages/chart-parser": "0.0.0-development"
+  },
   "devDependencies": {
     "typescript": "^4.4.4",
     "vite": "^2.7.2"

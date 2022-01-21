@@ -12,7 +12,7 @@ interface Note {
   ms: number;
 }
 
-interface ParsedChart {
+export interface ParsedChart {
   metadata: ChartMetadata;
   notes: Note[];
 }
