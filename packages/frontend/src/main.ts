@@ -1,6 +1,6 @@
 import type { ParsedChart } from "@packages/chart-parser";
 import { padStart } from "@packages/audio-utils";
-import { createChart, GameChart, initGameState, EngineNote, Input } from "@packages/engine";
+import { createChart, initGameState, EngineNote, Input } from "@packages/engine";
 import "./style.css";
 
 const SONG_ID = "175-bpm-test";
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const data = await fetchData(SONG_ID);
 
   const chart = createChart({
-    notes: data.notes.map((x) => ({ ...x, $el: undefined })),
+    notes: data.notes,
     offset: PADDING_MS + data.metadata.offset,
   });
   console.log(chart)

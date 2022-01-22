@@ -38,7 +38,7 @@ export interface EngineNote {
    * either because they've already been hit, or
    * as part of some weird gameplay mechanic.
    */
-  canHit: boolean;
+  canHit?: boolean;
 
   /**
    * Difference in ms between the time the note was supposed
@@ -54,7 +54,7 @@ export interface EngineNote {
   /**
    * If the note was hit, the name of the relevant timing window.
    */
-  timingWindowName: string | undefined;
+  timingWindowName?: string;
 }
 
 
@@ -79,7 +79,7 @@ export interface Chart {
 
 export interface EngineConfiguration {
   maxHitWindow: number;
-  timingWindows: TimingWindow[] | undefined;
+  timingWindows?: TimingWindow[];
 }
 
 interface CreateChart {

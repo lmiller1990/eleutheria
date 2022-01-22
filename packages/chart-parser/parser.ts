@@ -1,4 +1,8 @@
-import { BaseNote } from "@packages/types";
+interface BaseNote {
+  id: string;
+  columns: number[];
+  ms: number;
+}
 
 export interface ChartMetadata {
   title: string;
@@ -106,7 +110,6 @@ export function parseChart(
     },
     { notes: [], measureCount: 0, noteCount: 0 }
   ).notes;
-
 
   return {
     metadata: {
