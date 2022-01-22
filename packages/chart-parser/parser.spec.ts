@@ -1,7 +1,7 @@
 import fs from "fs";
 import { describe, expect, it } from "vitest";
 import path from "path";
-import { ChartMetadata, parseChart } from "./parser";
+import { parseChart } from "./parser";
 
 function loadData() {
   const exampleDir = path.resolve(

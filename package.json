@@ -19,7 +19,8 @@
   "scripts": {
     "dev": "yarn gulp dev",
     "install": "lerna exec yarn install",
-    "lint": "prettier --write packages"
+    "lint": "prettier --write packages",
+    "test": "lerna run test"
   },
   "workspaces": {
     "packages": [

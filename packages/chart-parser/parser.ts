@@ -105,7 +105,7 @@ export function parseChart(
                   (acc, col, idx) => (col === "1" ? [...acc, idx] : acc),
                   []
                 ),
-              ms: acc.measureCount * measureMs + q * idx,
+              ms: (acc.measureCount * measureMs + q * idx) * 1000,
             };
           }),
         ],

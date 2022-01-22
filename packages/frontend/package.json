@@ -3,7 +3,8 @@
   "version": "0.0.0-development",
   "scripts": {
     "dev": "vite --port 3000",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "test": "echo 'ok'"
   },
   "dependencies": {
     "@packages/audio-utils": "0.0.0-development",

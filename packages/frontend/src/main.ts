@@ -40,11 +40,7 @@ interface GameWorld {
 }
 
 function gameLoop(world: GameWorld) {
-  const dt = world.audioContext.getOutputTimestamp().performanceTime;
-
-  if (!dt) {
-    throw Error("wtf");
-  }
+  const dt = world.audioContext.getOutputTimestamp().performanceTime!;
 
   for (const n of world.notes) {
     const ypos = n.t - dt;
