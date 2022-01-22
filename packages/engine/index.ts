@@ -45,7 +45,7 @@ export interface EngineNote {
    * to be hit and the actual time it was hit.
    */
   hitTiming?: number;
-  
+
   /**
    * Time the note was hit, in ms, since the start of the song.
    */
@@ -56,7 +56,6 @@ export interface EngineNote {
    */
   timingWindowName?: string;
 }
-
 
 /**
  * Definition of a timing window.
@@ -90,7 +89,7 @@ interface CreateChart {
 /**
  * Creates a new chart.
  * Handles things like offsetting the notes.
- * 
+ *
  * It takes a Note generic parameter so developers may
  * add additional properties to their notes, for example
  * to keep track of UI state, etc.
@@ -109,7 +108,10 @@ export function createChart(args: CreateChart): Chart {
 /**
  * Finds the "nearest" note given an input and a chart for scoring.
  */
-export function nearestNote(input: Input, chart: Chart): EngineNote | undefined {
+export function nearestNote(
+  input: Input,
+  chart: Chart
+): EngineNote | undefined {
   const nearest = chart.notes.reduce((best, note) => {
     if (
       input.column === note.columns[0] &&

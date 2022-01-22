@@ -33,4 +33,3 @@ export interface BaseNote {
    */
   dependsOn?: string;
 }
-

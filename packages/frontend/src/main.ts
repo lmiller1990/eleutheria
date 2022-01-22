@@ -1,6 +1,11 @@
 import type { ParsedChart } from "@packages/chart-parser";
 import { padStart } from "@packages/audio-utils";
-import { createChart, initGameState, EngineNote, Input } from "@packages/engine";
+import {
+  createChart,
+  initGameState,
+  EngineNote,
+  Input,
+} from "@packages/engine";
 import "./style.css";
 
 const SONG_ID = "175-bpm-test";
@@ -30,11 +35,11 @@ async function fetchAudio() {
 interface GameState {
   audioContext: AudioContext;
   source: AudioBufferSourceNode;
-  notes: Map<string, EngineNote>
+  notes: Map<string, EngineNote>;
   inputManager: InputManager;
 }
 
-const noteMap = new Map<string, HTMLDivElement>()
+const noteMap = new Map<string, HTMLDivElement>();
 
 interface InputManagerConfig {
   maxWindowMs: number;
@@ -124,7 +129,7 @@ function gameLoop(gameState: GameState) {
     const xpos = n.columns[0] * 50;
     // assume it exists - this is the game loop, we need to go FAST
     // no time for null checks
-    const $el = noteMap.get(id)!
+    const $el = noteMap.get(id)!;
     $el.style.top = `${ypos * MULTIPLIER}px`;
     $el.style.left = `${xpos}px`;
   }
@@ -160,7 +165,7 @@ async function fetchData(id: string): Promise<ParsedChart> {
 
 document.addEventListener("DOMContentLoaded", async () => {
   // ensure clear even during HMR
-  noteMap.clear()
+  noteMap.clear();
 
   const data = await fetchData(SONG_ID);
 
@@ -168,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     notes: data.notes,
     offset: PADDING_MS + data.metadata.offset,
   });
-  console.log(chart)
+  console.log(chart);
 
   // const notes = data.notes.map<GameNote>((x) => ({
   //   idx: x.id,
@@ -177,13 +182,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   //   $el: undefined,
   // }));
 
-  const gs = initGameState(chart)
+  const gs = initGameState(chart);
 
   for (const [id, note] of gs.notes) {
     const $n = $note();
     $targets.appendChild($n);
     $n.style.top = `${note.ms * MULTIPLIER}px`;
-    noteMap.set(id, $n)
+    noteMap.set(id, $n);
   }
 
   const play = await fetchAudio();
