@@ -1,21 +1,14 @@
+import { BaseNote } from "@packages/types";
+
 export interface ChartMetadata {
   title: string;
   bpm: number;
   offset: number;
 }
 
-interface Note {
-  id: number;
-  // 0, 1, 2, 3...
-  columns: number[];
-
-  // ms from start of song given a constant bpm
-  ms: number;
-}
-
 export interface ParsedChart {
   metadata: ChartMetadata;
-  notes: Note[];
+  notes: BaseNote[];
 }
 
 type Measure = string[];
@@ -84,7 +77,7 @@ export function parseChart(
   };
 
   const notes = measures.reduce<{
-    notes: Note[];
+    notes: BaseNote[];
     measureCount: number;
     noteCount: number;
   }>(
@@ -96,9 +89,9 @@ export function parseChart(
         noteCount: acc.noteCount + measure.length,
         notes: [
           ...acc.notes,
-          ...measure.map<Note>((x, idx) => {
+          ...measure.map<BaseNote>((x, idx) => {
             return {
-              id: acc.noteCount + idx + 1,
+              id: (acc.noteCount + idx + 1).toString(),
               columns: x
                 .split("")
                 .reduce<number[]>(
@@ -113,6 +106,7 @@ export function parseChart(
     },
     { notes: [], measureCount: 0, noteCount: 0 }
   ).notes;
+
 
   return {
     metadata: {

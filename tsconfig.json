@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "allowJs": true,
     "module": "CommonJS",
+    "noImplicitAny": true,
     "target": "esnext",
     "moduleResolution": "node"
   },

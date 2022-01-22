@@ -1,5 +1,6 @@
 import type { ParsedChart } from "@packages/chart-parser";
 import { padStart } from "@packages/audio-utils";
+import { createChart, GameChart, initGameState, EngineNote, Input } from "@packages/engine";
 import "./style.css";
 
 const SONG_ID = "175-bpm-test";
@@ -8,13 +9,6 @@ const url = (id: string) => `http://localhost:4000/${id}.ogg`;
 
 const MULTIPLIER = 1.5;
 const PADDING_MS = 2000;
-
-interface GameNote {
-  idx: number;
-  t: number;
-  cols: number[];
-  $el: HTMLDivElement | undefined;
-}
 
 async function fetchAudio() {
   const audioContext = new AudioContext();
@@ -33,21 +27,23 @@ async function fetchAudio() {
   };
 }
 
-interface GameWorld {
+interface GameState {
   audioContext: AudioContext;
-  notes: GameNote[];
   source: AudioBufferSourceNode;
+  notes: Map<string, EngineNote>
   inputManager: InputManager;
-}
-
-interface Input {
-  code: string;
-  ms: number;
 }
 
 interface InputManagerConfig {
   maxWindowMs: number;
 }
+
+const codeColumnMap = new Map<string, number>([
+  ["KeyD", 0],
+  ["KeyF", 1],
+  ["KeyJ", 2],
+  ["KeyK", 3],
+]);
 
 class InputManager {
   historicalInputs: Input[] = [];
@@ -55,7 +51,11 @@ class InputManager {
   config: InputManagerConfig;
   lastUpdateHash: string = "";
 
-  constructor(private t0: number, config: Partial<InputManagerConfig>) {
+  constructor(
+    private t0: number,
+    private codeColumnMap: Map<string, number>,
+    config: Partial<InputManagerConfig>
+  ) {
     this.config = {
       ...config,
       maxWindowMs: 500,
@@ -64,8 +64,13 @@ class InputManager {
 
   // arrow function for lexical this
   onKeyDown = (e: KeyboardEvent) => {
+    const column = this.codeColumnMap.get(e.code);
+    if (!column) {
+      return;
+    }
+
     this.activeInputs.push({
-      code: e.code,
+      column,
       ms: e.timeStamp,
     });
   };
@@ -109,23 +114,23 @@ document.addEventListener("keydown", (e) => {
   console.log(e.code, e.timeStamp);
 });
 
-function gameLoop(world: GameWorld) {
-  const dt = world.audioContext.getOutputTimestamp().performanceTime!;
+function gameLoop(gameState: GameState) {
+  const dt = gameState.audioContext.getOutputTimestamp().performanceTime!;
 
-  for (const n of world.notes) {
-    const ypos = n.t - dt;
-    const xpos = n.cols[0] * 50;
+  for (const [, n] of gameState.notes) {
+    const ypos = n.ms - dt;
+    const xpos = n.columns[0] * 50;
     n.$el!.style.top = `${ypos * MULTIPLIER}px`;
     n.$el!.style.left = `${xpos}px`;
   }
 
   if (dt > 16000) {
-    world.source.stop();
+    gameState.source.stop();
     return;
   }
 
-  world.inputManager.update(dt);
-  window.requestAnimationFrame(() => gameLoop(world));
+  gameState.inputManager.update(dt);
+  window.requestAnimationFrame(() => gameLoop(gameState));
 }
 
 const $app = document.querySelector("#app")!;
@@ -144,21 +149,33 @@ async function fetchData(id: string): Promise<ParsedChart> {
   return res.json();
 }
 
+// interface UINote extends BaseNote {
+//   $el: HTMLDivElement | undefined;
+// }
+
 document.addEventListener("DOMContentLoaded", async () => {
   const data = await fetchData(SONG_ID);
 
-  const notes = data.notes.map<GameNote>((x) => ({
-    idx: x.id,
-    cols: x.columns,
-    t: x.ms * 1000 + PADDING_MS + data.metadata.offset,
-    $el: undefined,
-  }));
+  const chart = createChart({
+    notes: data.notes.map((x) => ({ ...x, $el: undefined })),
+    offset: PADDING_MS + data.metadata.offset,
+  });
+  console.log(chart)
 
-  for (const note of notes) {
+  // const notes = data.notes.map<GameNote>((x) => ({
+  //   idx: x.id,
+  //   cols: x.columns,
+  //   t: x.ms * 1000 + PADDING_MS + data.metadata.offset,
+  //   $el: undefined,
+  // }));
+
+  const gs = initGameState(chart)
+
+  for (const [, note] of gs.notes) {
     const $n = $note();
     $targets.appendChild($n);
     note.$el = $n;
-    note.$el.style.top = `${note.t * MULTIPLIER}px`;
+    note.$el.style.top = `${note.ms * MULTIPLIER}px`;
   }
 
   const play = await fetchAudio();
@@ -166,6 +183,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const inputManager = new InputManager(
     audioContext.getOutputTimestamp().performanceTime!,
+    codeColumnMap,
     { maxWindowMs: 100 }
   );
 
@@ -176,5 +194,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   inputManager.listen();
 
-  gameLoop({ audioContext, notes, source, inputManager });
+  gameLoop({ audioContext, source, inputManager, notes: gs.notes });
 });
