@@ -1,4 +1,5 @@
 {
   "title": "175 BPM Example Song",
-  "bpm": 175
+  "bpm": 175,
+  "offset": 1125
 }

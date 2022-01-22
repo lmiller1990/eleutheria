@@ -1,0 +1,6 @@
+{
+  "version": "0.0.0-development",
+  "name": "@packages/audio-utils",
+  "private": true,
+  "main": "index.ts"
+}

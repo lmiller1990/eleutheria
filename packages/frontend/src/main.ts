@@ -1,38 +1,42 @@
 import type { ParsedChart } from "@packages/chart-parser";
+import { padStart } from "@packages/audio-utils";
 import "./style.css";
 
 const SONG_ID = "175-bpm-test";
 
 const url = (id: string) => `http://localhost:4000/${id}.ogg`;
 
-const MULTIPLIER = 1.5
+const MULTIPLIER = 1.5;
+const PADDING_MS = 2000;
 
 interface GameNote {
   idx: number;
   t: number;
-  cols: number[]
+  cols: number[];
   $el: HTMLDivElement | undefined;
 }
 
 async function fetchAudio() {
-  const context = new AudioContext();
+  const audioContext = new AudioContext();
 
   const res = await window.fetch(url(SONG_ID));
   const buf = await res.arrayBuffer();
-  const buffer = await context.decodeAudioData(buf);
+  let buffer = await audioContext.decodeAudioData(buf);
+  buffer = padStart(audioContext, buffer, PADDING_MS);
 
   return () => {
-    const source = context.createBufferSource();
+    const source = audioContext.createBufferSource();
     source.buffer = buffer;
-    source.connect(context.destination);
+    source.connect(audioContext.destination);
     source.start();
-    return context;
+    return { audioContext, source };
   };
 }
 
 interface GameWorld {
   audioContext: AudioContext;
-  notes: GameNote[]
+  notes: GameNote[];
+  source: AudioBufferSourceNode;
 }
 
 function gameLoop(world: GameWorld) {
@@ -44,12 +48,13 @@ function gameLoop(world: GameWorld) {
 
   for (const n of world.notes) {
     const ypos = n.t - dt;
-    const xpos = n.cols[0] * 50
+    const xpos = n.cols[0] * 50;
     n.$el!.style.top = `${ypos * MULTIPLIER}px`;
     n.$el!.style.left = `${xpos}px`;
   }
 
-  if (dt > 8000) {
+  if (dt > 16000) {
+    world.source.stop();
     return;
   }
 
@@ -73,24 +78,23 @@ async function fetchData(id: string): Promise<ParsedChart> {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const data = await fetchData(SONG_ID)
+  const data = await fetchData(SONG_ID);
 
-  const gameNotes = data.notes.map<GameNote>(x => ({
+  const notes = data.notes.map<GameNote>((x) => ({
     idx: x.id,
     cols: x.columns,
-    t: x.ms * 1000,
-    $el: undefined
-  }))
+    t: x.ms * 1000 + PADDING_MS + data.metadata.offset,
+    $el: undefined,
+  }));
 
-  for (const note of gameNotes) {
+  for (const note of notes) {
     const $n = $note();
     $targets.appendChild($n);
     note.$el = $n;
     note.$el.style.top = `${note.t * MULTIPLIER}px`;
   }
-  console.log(gameNotes)
 
   const play = await fetchAudio();
-  const audioContext = play();
-  gameLoop({ audioContext, notes: gameNotes });
+  const { audioContext, source } = play();
+  gameLoop({ audioContext, notes, source });
 });
