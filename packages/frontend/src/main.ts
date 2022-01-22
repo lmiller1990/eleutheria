@@ -173,14 +173,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     notes: data.notes,
     offset: PADDING_MS + data.metadata.offset,
   });
-  console.log(chart);
-
-  // const notes = data.notes.map<GameNote>((x) => ({
-  //   idx: x.id,
-  //   cols: x.columns,
-  //   t: x.ms * 1000 + PADDING_MS + data.metadata.offset,
-  //   $el: undefined,
-  // }));
 
   const gs = initGameState(chart);
 
