@@ -5,8 +5,6 @@ const SONG_ID = "175-bpm-test";
 
 const url = (id: string) => `http://localhost:4000/${id}.ogg`;
 
-const audio = new Audio(url(SONG_ID));
-
 const MULTIPLIER = 1.5
 
 interface GameNote {
@@ -74,7 +72,7 @@ async function fetchData(id: string): Promise<ParsedChart> {
   return res.json();
 }
 
-audio.addEventListener("canplaythrough", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const data = await fetchData(SONG_ID)
 
   const gameNotes = data.notes.map<GameNote>(x => ({
