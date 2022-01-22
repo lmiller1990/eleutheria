@@ -5,7 +5,7 @@
  * Code represents the key - this can be a virtual key, too.
  */
 export interface Input {
-  id: string
+  id: string;
   column: number;
   ms: number;
 }
@@ -179,7 +179,7 @@ export interface JudgementResult {
   timingWindowName: string | undefined;
 
   // id of the input(s) used for this judgement
-  inputs: string[]
+  inputs: string[];
 }
 
 /**
@@ -247,7 +247,7 @@ export function judgeInput({
       timing,
       noteId: note.id,
       time: input.ms,
-      inputs: [input.id],
+      inputs: input ? [input.id] : [],
       timingWindowName: timingWindows
         ? getTimingWindow(timing, timingWindows)?.name
         : undefined,

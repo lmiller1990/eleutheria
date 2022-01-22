@@ -19,6 +19,18 @@ const engineConfiguration: EngineConfiguration = {
   timingWindows: undefined,
 };
 
+const createInput = ({
+  ms,
+  column,
+}: {
+  ms: number;
+  column: number;
+}): Input => ({
+  id: ms.toString(),
+  ms,
+  column,
+});
+
 describe("nearestNode", () => {
   it("captures nearest note based on time and input", () => {
     const chart: Chart = {
@@ -28,7 +40,7 @@ describe("nearestNode", () => {
         { id: "3", ms: 1000, columns: [1] },
       ],
     };
-    const actual = nearestNote({ ms: 600, column: 1 }, chart);
+    const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
     expect(actual).toBe(chart.notes[2]);
   });
@@ -37,7 +49,7 @@ describe("nearestNode", () => {
     const chart: Chart = {
       notes: [],
     };
-    const actual = nearestNote({ ms: 600, column: 1 }, chart);
+    const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
     expect(actual).toBe(undefined);
   });
@@ -46,7 +58,7 @@ describe("nearestNode", () => {
     const chart: Chart = {
       notes: [{ id: "1", ms: 100, columns: [0] }],
     };
-    const actual = nearestNote({ ms: 600, column: 1 }, chart);
+    const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
     expect(actual).toBe(undefined);
   });
@@ -54,10 +66,10 @@ describe("nearestNode", () => {
 
 describe("judgeInput", () => {
   it("judges input within max window", () => {
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 100,
-    };
+    });
     // inside max input window of 100
     const note: EngineNote = { id: "1", columns: [1], ms: 200 };
     const actual = judgeInput({
@@ -69,6 +81,7 @@ describe("judgeInput", () => {
 
     expect(actual).toEqual<JudgementResult>({
       noteId: "1",
+      inputs: ["100"],
       time: 100,
       timing: -100,
       timingWindowName: undefined,
@@ -76,10 +89,10 @@ describe("judgeInput", () => {
   });
 
   it("does not judge input outside max window", () => {
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 100,
-    };
+    });
     // outside max input window of 100 by 1
     const note: EngineNote = { id: "1", columns: [1], ms: 201 };
     const actual = judgeInput({
@@ -94,10 +107,10 @@ describe("judgeInput", () => {
 
   it("considers timing windows when note is inside smallest window", () => {
     const note: EngineNote = { id: "1", columns: [1], ms: 100 };
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 111,
-    };
+    });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -115,6 +128,7 @@ describe("judgeInput", () => {
     });
 
     expect(actual).toEqual<JudgementResult>({
+      inputs: ["111"],
       timing: 11,
       noteId: note.id,
       time: 111,
@@ -124,10 +138,10 @@ describe("judgeInput", () => {
 
   it("considers timing windows when note is early inside largest window", () => {
     const note: EngineNote = { id: "1", columns: [1], ms: 100 };
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 111,
-    };
+    });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -146,6 +160,7 @@ describe("judgeInput", () => {
 
     expect(actual).toEqual<JudgementResult>({
       timing: 11,
+      inputs: ["111"],
       noteId: note.id,
       time: 111,
       timingWindowName: "great",
@@ -154,10 +169,10 @@ describe("judgeInput", () => {
 
   it("considers timing windows when note is late inside largest window", () => {
     const note: EngineNote = { id: "1", columns: [1], ms: 100 };
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 89,
-    };
+    });
 
     const actual = judgeInput({
       input,
@@ -177,6 +192,7 @@ describe("judgeInput", () => {
 
     expect(actual).toEqual<JudgementResult>({
       timing: -11,
+      inputs: ["89"],
       noteId: note.id,
       time: 89,
       timingWindowName: "great",
@@ -185,10 +201,10 @@ describe("judgeInput", () => {
 
   it("considers timing windows when note outside all windows", () => {
     const note: EngineNote = { id: "1", columns: [1], ms: 100 };
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 150,
-    };
+    });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -210,16 +226,17 @@ describe("judgeInput", () => {
       noteId: note.id,
       time: 150,
       timingWindowName: undefined,
+      inputs: ["150"],
     });
   });
 });
 
 describe("judge", () => {
   it("returns timing", () => {
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 510,
-    };
+    });
     const note: EngineNote = { id: "1", columns: [1], ms: 500 };
     const actual = judge(input, note);
 
@@ -227,10 +244,10 @@ describe("judge", () => {
   });
 
   it("awards perfect timing for hold notes", () => {
-    const input: Input = {
+    const input: Input = createInput({
       column: 1,
       ms: 510,
-    };
+    });
     const note: EngineNote = { id: "1", columns: [1], ms: 500, dependsOn: "1" };
     const actual = judge(input, note);
 
@@ -291,6 +308,7 @@ describe("updateGameState", () => {
             // no timing windows are specified, so we are just using default maxHit
             // this means the timing window is undefined.
             timingWindowName: undefined,
+            inputs: ["940"],
           },
         ],
       },
@@ -316,10 +334,10 @@ describe("updateGameState", () => {
         chart: current,
         time: 950,
         inputs: [
-          {
+          createInput({
             column: baseNote.columns[0],
             ms: 940,
-          },
+          }),
         ],
       },
       engineConfiguration
@@ -384,6 +402,7 @@ describe("updateGameState", () => {
             timing: -50,
             // no timing windows passed in config.
             timingWindowName: undefined,
+            inputs: ["950"],
           },
         ],
       },
@@ -395,10 +414,10 @@ describe("updateGameState", () => {
         chart: current,
         time: 950,
         inputs: [
-          {
+          createInput({
             column: baseNote.columns[0],
             ms: 950,
-          },
+          }),
         ],
       },
       engineConfiguration
@@ -428,6 +447,7 @@ describe("updateGameState", () => {
             timing: -10,
             // no timing windows passed in config.
             timingWindowName: undefined,
+            inputs: ["90"],
           },
         ],
       },
@@ -442,10 +462,10 @@ describe("updateGameState", () => {
         chart: current,
         time: 90,
         inputs: [
-          {
+          createInput({
             column: note.columns[0],
             ms: 90,
-          },
+          }),
         ],
       },
       engineConfiguration
@@ -500,12 +520,14 @@ describe("updateGameState", () => {
             time: 100,
             timing: 0,
             timingWindowName: undefined,
+            inputs: ["100"],
           },
           {
             noteId: "2",
             time: 100,
             timing: 0,
             timingWindowName: undefined,
+            inputs: ["100"],
           },
         ],
       },
@@ -517,14 +539,14 @@ describe("updateGameState", () => {
         chart: current,
         time: 100,
         inputs: [
-          {
+          createInput({
             column: 0,
             ms: 100,
-          },
-          {
+          }),
+          createInput({
             column: 1,
             ms: 100,
-          },
+          }),
         ],
       },
       engineConfiguration

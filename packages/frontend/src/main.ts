@@ -15,21 +15,21 @@ const SONG_ID = "175-bpm-test";
 
 const url = (id: string) => `http://localhost:4000/${id}.ogg`;
 
-const windows = ['perfect', 'great'] as const
+const windows = ["perfect", "great"] as const;
 
 const config: EngineConfiguration = {
   maxHitWindow: 100,
   timingWindows: [
     {
       name: windows[0],
-      windowMs: 50
+      windowMs: 50,
     },
     {
       name: windows[1],
-      windowMs: 100
-    }
-  ]
-}
+      windowMs: 100,
+    },
+  ],
+};
 
 const MULTIPLIER = 0.75;
 const PADDING_MS = 2000;
@@ -108,11 +108,11 @@ class InputManager {
       .toString();
   }
 
-  consume (ids: string[]) {
-    const inactive = this.activeInputs.filter(x => ids.includes(x.id))
-    this.historicalInputs.push(...inactive)
-    this.activeInputs = this.activeInputs.filter(x => !ids.includes(x.id))
-    this.updateLastUpdateHash()
+  consume(ids: string[]) {
+    const inactive = this.activeInputs.filter((x) => ids.includes(x.id));
+    this.historicalInputs.push(...inactive);
+    this.activeInputs = this.activeInputs.filter((x) => !ids.includes(x.id));
+    this.updateLastUpdateHash();
   }
 
   update(now: number) {
@@ -132,10 +132,10 @@ class InputManager {
     }
 
     this.activeInputs = activeInputs;
-    this.updateLastUpdateHash()
+    this.updateLastUpdateHash();
   }
 
-  updateLastUpdateHash () {
+  updateLastUpdateHash() {
     this.lastUpdateHash = this.activeInputHash;
   }
 
@@ -156,23 +156,25 @@ function gameLoop(gameState: GameState) {
     inputs: gameState.inputManager.activeInputs,
     time: dt,
     chart: {
-      notes: gameState.notes
-    }
-  }
+      notes: gameState.notes,
+    },
+  };
 
-  const newGameState = updateGameState(world, config)
+  const newGameState = updateGameState(world, config);
 
   if (newGameState.previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of newGameState.previousFrameMeta.judgementResults) {
-      const note = newGameState.chart.notes.get(judgement.noteId)
+      const note = newGameState.chart.notes.get(judgement.noteId);
       if (!note) {
         throw Error(
           `Could not judged note with id ${judgement.noteId}. This should never happen.`
-        )
+        );
       }
-      console.info(`Got ${note.id} at ${note.hitTiming} for ${note.timingWindowName}`)
-      gameState.inputManager.consume(judgement.inputs)
+      console.info(
+        `Got ${note.id} at ${note.hitTiming} for ${note.timingWindowName}`
+      );
+      gameState.inputManager.consume(judgement.inputs);
       // window.timingFlash({
       //   column: note.code as Column,
       //   timingWindowName: note.timingWindowName
@@ -208,7 +210,7 @@ $app.appendChild($targets);
 const $note = (id: string) => {
   const d = document.createElement("div");
   d.className = "note";
-  d.innerText = id
+  d.innerText = id;
   return d;
 };
 
