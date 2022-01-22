@@ -5,6 +5,7 @@
  * Code represents the key - this can be a virtual key, too.
  */
 export interface Input {
+  id: string
   column: number;
   ms: number;
 }
@@ -64,7 +65,7 @@ export interface EngineNote {
  * windowMs: size of window in ms. If a window is 22ms,
  * that means a note can be hit +- 11ms either side.
  * For example, if the windowMs is 22ms, and the note should be
- * hit at 300ms, an input at 289ms or 311m are within the window,
+ * hit at 300ms, an nput at 289ms or 311m are within the window,
  * but 288ms and 312ms are not.
  */
 export interface TimingWindow {
@@ -176,6 +177,9 @@ export interface JudgementResult {
 
   // scored timing window, if available
   timingWindowName: string | undefined;
+
+  // id of the input(s) used for this judgement
+  inputs: string[]
 }
 
 /**
@@ -243,6 +247,7 @@ export function judgeInput({
       timing,
       noteId: note.id,
       time: input.ms,
+      inputs: [input.id],
       timingWindowName: timingWindows
         ? getTimingWindow(timing, timingWindows)?.name
         : undefined,
@@ -253,7 +258,7 @@ export function judgeInput({
 /**
  *  Create a new "world", which represents the play-through of one chart.
  */
-export function initGameState<T extends EngineNote>(chart: Chart): GameChart {
+export function initGameState(chart: Chart): GameChart {
   const notes = new Map<string, EngineNote>();
   chart.notes.forEach((note) => {
     notes.set(note.id, {

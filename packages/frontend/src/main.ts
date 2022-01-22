@@ -5,6 +5,9 @@ import {
   initGameState,
   EngineNote,
   Input,
+  updateGameState,
+  World,
+  EngineConfiguration,
 } from "@packages/engine";
 import "./style.css";
 
@@ -12,7 +15,23 @@ const SONG_ID = "175-bpm-test";
 
 const url = (id: string) => `http://localhost:4000/${id}.ogg`;
 
-const MULTIPLIER = 1.5;
+const windows = ['perfect', 'great'] as const
+
+const config: EngineConfiguration = {
+  maxHitWindow: 100,
+  timingWindows: [
+    {
+      name: windows[0],
+      windowMs: 50
+    },
+    {
+      name: windows[1],
+      windowMs: 100
+    }
+  ]
+}
+
+const MULTIPLIER = 0.75;
 const PADDING_MS = 2000;
 
 async function fetchAudio() {
@@ -77,6 +96,7 @@ class InputManager {
     }
 
     this.activeInputs.push({
+      id: e.timeStamp.toString(),
       column,
       ms: e.timeStamp,
     });
@@ -86,6 +106,13 @@ class InputManager {
     return this.activeInputs
       .reduce((acc, curr) => `${acc}-${curr.ms}`, "")
       .toString();
+  }
+
+  consume (ids: string[]) {
+    const inactive = this.activeInputs.filter(x => ids.includes(x.id))
+    this.historicalInputs.push(...inactive)
+    this.activeInputs = this.activeInputs.filter(x => !ids.includes(x.id))
+    this.updateLastUpdateHash()
   }
 
   update(now: number) {
@@ -105,6 +132,10 @@ class InputManager {
     }
 
     this.activeInputs = activeInputs;
+    this.updateLastUpdateHash()
+  }
+
+  updateLastUpdateHash () {
     this.lastUpdateHash = this.activeInputHash;
   }
 
@@ -117,12 +148,37 @@ class InputManager {
   }
 }
 
-document.addEventListener("keydown", (e) => {
-  console.log(e.code, e.timeStamp);
-});
-
 function gameLoop(gameState: GameState) {
   const dt = gameState.audioContext.getOutputTimestamp().performanceTime!;
+
+  const world: World = {
+    startTime: 0,
+    inputs: gameState.inputManager.activeInputs,
+    time: dt,
+    chart: {
+      notes: gameState.notes
+    }
+  }
+
+  const newGameState = updateGameState(world, config)
+
+  if (newGameState.previousFrameMeta.judgementResults.length) {
+    // some notes were judged on the previous window
+    for (const judgement of newGameState.previousFrameMeta.judgementResults) {
+      const note = newGameState.chart.notes.get(judgement.noteId)
+      if (!note) {
+        throw Error(
+          `Could not judged note with id ${judgement.noteId}. This should never happen.`
+        )
+      }
+      console.info(`Got ${note.id} at ${note.hitTiming} for ${note.timingWindowName}`)
+      gameState.inputManager.consume(judgement.inputs)
+      // window.timingFlash({
+      //   column: note.code as Column,
+      //   timingWindowName: note.timingWindowName
+      // })
+    }
+  }
 
   for (const [id, n] of gameState.notes) {
     const ypos = n.ms - dt;
@@ -135,6 +191,7 @@ function gameLoop(gameState: GameState) {
   }
 
   if (dt > 16000) {
+    gameState.inputManager.teardown();
     gameState.source.stop();
     return;
   }
@@ -148,9 +205,10 @@ const $targets = document.createElement("div");
 $targets.id = "targets";
 $app.appendChild($targets);
 
-const $note = () => {
+const $note = (id: string) => {
   const d = document.createElement("div");
   d.className = "note";
+  d.innerText = id
   return d;
 };
 
@@ -177,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const gs = initGameState(chart);
 
   for (const [id, note] of gs.notes) {
-    const $n = $note();
+    const $n = $note(id);
     $targets.appendChild($n);
     $n.style.top = `${note.ms * MULTIPLIER}px`;
     noteMap.set(id, $n);
@@ -193,8 +251,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   setTimeout(() => {
-    inputManager.teardown();
-    console.log(inputManager.activeInputs, inputManager.historicalInputs);
+    // console.log(inputManager.activeInputs, inputManager.historicalInputs);
   }, 5000);
 
   inputManager.listen();
