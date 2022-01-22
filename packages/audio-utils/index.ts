@@ -23,10 +23,7 @@ export function padStart(
     const channelData = buffer.getChannelData(channelNumber);
     updatedBuffer
       .getChannelData(channelNumber)
-      .set(
-        channelData.subarray(0, Math.ceil(0 * buffer.sampleRate) + 1),
-        0
-      );
+      .set(channelData.subarray(0, Math.ceil(0 * buffer.sampleRate) + 1), 0);
 
     updatedBuffer
       .getChannelData(channelNumber)

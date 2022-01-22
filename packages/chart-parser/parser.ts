@@ -1,7 +1,7 @@
 export interface ChartMetadata {
   title: string;
   bpm: number;
-  offset: number
+  offset: number;
 }
 
 interface Note {
@@ -118,7 +118,7 @@ export function parseChart(
     metadata: {
       title: dataJson.title,
       bpm,
-      offset: parseInt(dataJson.offset, 10)
+      offset: parseInt(dataJson.offset, 10),
     },
     notes,
   };

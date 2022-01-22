@@ -1,11 +1,11 @@
 import express from "express";
-import cors from 'cors'
+import cors from "cors";
 import path from "path";
 import fs from "fs";
 import { parseChart } from "@packages/chart-parser";
 
 const app = express();
-app.use(cors())
+app.use(cors());
 
 app.get("/songs/:id", (req, res) => {
   const chartPath = path.join(__dirname, req.params.id);
@@ -21,7 +21,7 @@ app.get("/songs/:id", (req, res) => {
 
   const data = parseChart(meta, chart);
 
-  res.json(data)
+  res.json(data);
 });
 
 app.listen(8000, () => console.log("Started data server on port 8000"));
