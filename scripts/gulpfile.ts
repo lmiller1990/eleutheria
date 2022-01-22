@@ -15,4 +15,11 @@ async function assetsServer() {
   });
 }
 
-gulp.task("dev", gulp.series(serverDev, assetsServer));
+async function gameDataServer() {
+  spawn("yarn", ["start"], {
+    stdio: "inherit",
+    cwd: "packages/game-data",
+  });
+}
+
+gulp.task("dev", gulp.series(serverDev, assetsServer, gameDataServer));
