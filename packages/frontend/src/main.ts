@@ -37,7 +37,77 @@ interface GameWorld {
   audioContext: AudioContext;
   notes: GameNote[];
   source: AudioBufferSourceNode;
+  inputManager: InputManager;
 }
+
+interface Input {
+  code: string;
+  ms: number;
+}
+
+interface InputManagerConfig {
+  maxWindowMs: number;
+}
+
+class InputManager {
+  historicalInputs: Input[] = [];
+  activeInputs: Input[] = [];
+  config: InputManagerConfig;
+  lastUpdateHash: string = "";
+
+  constructor(private t0: number, config: Partial<InputManagerConfig>) {
+    this.config = {
+      ...config,
+      maxWindowMs: 500,
+    };
+  }
+
+  // arrow function for lexical this
+  onKeyDown = (e: KeyboardEvent) => {
+    this.activeInputs.push({
+      code: e.code,
+      ms: e.timeStamp,
+    });
+  };
+
+  get activeInputHash() {
+    return this.activeInputs
+      .reduce((acc, curr) => `${acc}-${curr.ms}`, "")
+      .toString();
+  }
+
+  update(now: number) {
+    // no need to update - nothing has changed!
+    if (this.activeInputHash === this.lastUpdateHash) {
+      return;
+    }
+
+    const activeInputs: Input[] = [];
+
+    for (const input of this.activeInputs) {
+      if (now - input.ms > this.config.maxWindowMs) {
+        this.historicalInputs.push(input);
+      } else {
+        activeInputs.push(input);
+      }
+    }
+
+    this.activeInputs = activeInputs;
+    this.lastUpdateHash = this.activeInputHash;
+  }
+
+  listen() {
+    document.addEventListener("keydown", this.onKeyDown);
+  }
+
+  teardown() {
+    document.removeEventListener("keydown", this.onKeyDown);
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  console.log(e.code, e.timeStamp);
+});
 
 function gameLoop(world: GameWorld) {
   const dt = world.audioContext.getOutputTimestamp().performanceTime!;
@@ -54,6 +124,7 @@ function gameLoop(world: GameWorld) {
     return;
   }
 
+  world.inputManager.update(dt);
   window.requestAnimationFrame(() => gameLoop(world));
 }
 
@@ -92,5 +163,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const play = await fetchAudio();
   const { audioContext, source } = play();
-  gameLoop({ audioContext, notes, source });
+
+  const inputManager = new InputManager(
+    audioContext.getOutputTimestamp().performanceTime!,
+    { maxWindowMs: 100 }
+  );
+
+  setTimeout(() => {
+    inputManager.teardown();
+    console.log(inputManager.activeInputs, inputManager.historicalInputs);
+  }, 5000);
+
+  inputManager.listen();
+
+  gameLoop({ audioContext, notes, source, inputManager });
 });
