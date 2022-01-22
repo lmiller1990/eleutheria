@@ -34,6 +34,8 @@ interface GameState {
   inputManager: InputManager;
 }
 
+const noteMap = new Map<string, HTMLDivElement>()
+
 interface InputManagerConfig {
   maxWindowMs: number;
 }
@@ -117,11 +119,14 @@ document.addEventListener("keydown", (e) => {
 function gameLoop(gameState: GameState) {
   const dt = gameState.audioContext.getOutputTimestamp().performanceTime!;
 
-  for (const [, n] of gameState.notes) {
+  for (const [id, n] of gameState.notes) {
     const ypos = n.ms - dt;
     const xpos = n.columns[0] * 50;
-    n.$el!.style.top = `${ypos * MULTIPLIER}px`;
-    n.$el!.style.left = `${xpos}px`;
+    // assume it exists - this is the game loop, we need to go FAST
+    // no time for null checks
+    const $el = noteMap.get(id)!
+    $el.style.top = `${ypos * MULTIPLIER}px`;
+    $el.style.left = `${xpos}px`;
   }
 
   if (dt > 16000) {
@@ -154,6 +159,9 @@ async function fetchData(id: string): Promise<ParsedChart> {
 // }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // ensure clear even during HMR
+  noteMap.clear()
+
   const data = await fetchData(SONG_ID);
 
   const chart = createChart({
@@ -171,11 +179,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const gs = initGameState(chart)
 
-  for (const [, note] of gs.notes) {
+  for (const [id, note] of gs.notes) {
     const $n = $note();
     $targets.appendChild($n);
-    note.$el = $n;
-    note.$el.style.top = `${note.ms * MULTIPLIER}px`;
+    $n.style.top = `${note.ms * MULTIPLIER}px`;
+    noteMap.set(id, $n)
   }
 
   const play = await fetchAudio();
