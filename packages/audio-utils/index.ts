@@ -1,3 +1,7 @@
+/**
+ * pad the start of an audio buffer with N milliseconds
+ * of silence.
+ */
 export function padStart(
   context: AudioContext,
   buffer: AudioBuffer,
@@ -37,4 +41,28 @@ export function padStart(
   }
 
   return updatedBuffer;
+}
+
+const a = new AudioContext();
+
+// from stack overflow
+function k(w: number, x: number, y: number) {
+  console.log("Gain:" + w, "Hz:" + x, "ms:" + y);
+  let v = a.createOscillator();
+  let u = a.createGain();
+  v.connect(u);
+  v.frequency.value = x;
+  v.type = "square";
+  u.connect(a.destination);
+  u.gain.value = w * 0.01;
+  v.start(a.currentTime);
+  v.stop(a.currentTime + y * 0.001);
+}
+
+/**
+ * Play a short beep.
+ */
+export function playBeep() {
+  const ms = 50
+  return k(10, 233, ms);
 }

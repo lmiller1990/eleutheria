@@ -1,4 +1,4 @@
-interface BaseNote {
+export interface BaseNote {
   id: string;
   columns: number[];
   ms: number;
@@ -63,7 +63,7 @@ export function parseChart(
 
   const _4th = 60 / bpm;
   const _8th = _4th / 2;
-  const _16th = _4th / 4;
+  const _16th = _8th / 2;
   const measureMs = _4th * 4;
 
   const qMap = new Map<ValidQuantization, number>([
@@ -93,8 +93,12 @@ export function parseChart(
         noteCount: acc.noteCount + measure.length,
         notes: [
           ...acc.notes,
-          ...measure.map<BaseNote>((x, idx) => {
-            return {
+          ...measure.reduce<BaseNote[]>((_notes, x, idx) => {
+            if (!x.includes('1')) {
+              return _notes
+            }
+
+            return _notes.concat({
               id: (acc.noteCount + idx + 1).toString(),
               columns: x
                 .split("")
@@ -103,8 +107,8 @@ export function parseChart(
                   []
                 ),
               ms: (acc.measureCount * measureMs + q * idx) * 1000,
-            };
-          }),
+            });
+          }, []),
         ],
       };
     },

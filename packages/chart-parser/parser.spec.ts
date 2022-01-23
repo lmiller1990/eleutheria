@@ -3,16 +3,16 @@ import { describe, expect, it } from "vitest";
 import path from "path";
 import { parseChart } from "./parser";
 
-function loadData() {
+function loadData(id: string) {
   const exampleDir = path.resolve(
     __dirname,
     "test",
     "resources",
-    "example-song"
+    id
   );
   const metadata = fs.readFileSync(path.join(exampleDir, "data.json"), "utf-8");
   const chart = fs.readFileSync(
-    path.join(exampleDir, "example-song.chart"),
+    path.join(exampleDir, `${id}.chart`),
     "utf-8"
   );
 
@@ -24,7 +24,7 @@ function loadData() {
 
 describe("parseChart", () => {
   it("works", () => {
-    const data = loadData();
+    const data = loadData("example-song");
     const actual = parseChart(data.metadata, data.chart);
     expect(actual).toMatchSnapshot();
   });
