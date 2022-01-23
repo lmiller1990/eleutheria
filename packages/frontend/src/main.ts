@@ -77,11 +77,11 @@ const beeped = new Set<number>();
 
 let t0: number;
 let timeoutId: number;
-let cancel: boolean = false
+let cancel: boolean = false;
 
 function gameLoop(gameState: GameState) {
   if (cancel) {
-    return
+    return;
   }
 
   const dt = gameState.audioContext.getOutputTimestamp().performanceTime! - t0;
@@ -172,7 +172,6 @@ const $stop = document.createElement("button");
 $stop.innerText = "Stop";
 document.body.insertAdjacentElement("beforebegin", $stop);
 
-
 $start.addEventListener("click", async () => {
   t0 = performance.now();
   // ensure clear even during HMR
@@ -214,7 +213,7 @@ $start.addEventListener("click", async () => {
   const stop = () => {
     gameState.inputManager.teardown();
     gameState.source.stop();
-    cancel = true
+    cancel = true;
   };
 
   $stop.addEventListener("click", stop);

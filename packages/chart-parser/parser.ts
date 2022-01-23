@@ -94,8 +94,8 @@ export function parseChart(
         notes: [
           ...acc.notes,
           ...measure.reduce<BaseNote[]>((_notes, x, idx) => {
-            if (!x.includes('1')) {
-              return _notes
+            if (!x.includes("1")) {
+              return _notes;
             }
 
             return _notes.concat({
