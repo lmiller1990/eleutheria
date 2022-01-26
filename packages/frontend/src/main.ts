@@ -11,9 +11,9 @@ import {
 import { InputManager } from "./inputManager";
 import "./style.css";
 
-const SONG_ID = "165-bpm-test";
+const SONG_ID = "rave";
 
-const url = (id: string) => `http://localhost:4000/${id}.ogg`;
+const url = (id: string) => `http://localhost:4000/${id}.mp3`;
 
 const windows = ["perfect", "great"] as const;
 
@@ -113,7 +113,8 @@ function gameLoop(gameState: GameState) {
       $timing.classList.remove(
         ...windows.filter((x) => x !== note.timingWindowName)
       );
-      $timing.innerText = note.timingWindowName ?? "";
+      $timing.innerText =
+        `${judgement.timing.toFixed()} ${note.timingWindowName}` ?? "";
 
       if (timeoutId) {
         window.clearTimeout(timeoutId);
@@ -125,18 +126,25 @@ function gameLoop(gameState: GameState) {
     }
   }
 
-  for (const [id, n] of gameState.notes) {
-    const ypos = n.ms - dt;
-    const xpos = n.columns[0] * 50;
-    if (ypos < 0 && !beeped.has(n.ms)) {
-      playBeep();
-      beeped.add(n.ms);
+  for (const [id, n] of newGameState.chart.notes) {
+    if (n.hitTiming) {
+      noteMap.get(id)?.remove();
+    } else {
+      const ypos = (n.ms - dt) * MULTIPLIER;
+      const xpos = n.columns[0] * 100;
+      if (ypos < 0 && !beeped.has(n.ms)) {
+        playBeep();
+        beeped.add(n.ms);
+      }
+      // assume it exists - this is the game loop, we need to go FAST
+      // no time for null checks
+      if (ypos < 2500) {
+        const $el = noteMap.get(id)!;
+        $el.style.display = "block";
+        $el.style.top = `${ypos}px`;
+        $el.style.left = `${xpos}px`;
+      }
     }
-    // assume it exists - this is the game loop, we need to go FAST
-    // no time for null checks
-    const $el = noteMap.get(id)!;
-    $el.style.top = `${ypos * MULTIPLIER}px`;
-    $el.style.left = `${xpos}px`;
   }
 
   gameState.inputManager.update(dt);
@@ -188,6 +196,7 @@ $start.addEventListener("click", async () => {
 
   for (const [id, note] of gs.notes) {
     const $n = $note(id);
+    $n.style.display = "none";
     $targets.appendChild($n);
     $n.style.top = `${note.ms * MULTIPLIER}px`;
     noteMap.set(id, $n);

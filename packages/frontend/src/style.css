@@ -14,7 +14,7 @@ body,
 }
 
 :root {
-  --height: 50px;
+  --height: 100px;
 }
 
 #targets {
@@ -22,15 +22,15 @@ body,
   display: flex;
   justify-content: center;
   height: var(--height);
-  width: 200px;
+  width: calc(var(--height) * 4);
   border: 2px solid white;
 }
 
 .note {
   background: lightgrey;
   position: absolute;
-  height: 50px;
-  width: 50px;
+  height: var(--height);
+  width: var(--height);
   border: 1px solid black;
   font-size: 3rem;
 }

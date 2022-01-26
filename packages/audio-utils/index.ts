@@ -63,6 +63,6 @@ function k(w: number, x: number, y: number) {
  * Play a short beep.
  */
 export function playBeep() {
-  const ms = 50;
-  return k(10, 233, ms);
+  const ms = 30;
+  return k(10, 200, ms);
 }

@@ -24,7 +24,7 @@ export class InputManager {
   // arrow function for lexical this
   onKeyDown = (e: KeyboardEvent) => {
     const column = this.codeColumnMap.get(e.code);
-    if (!column) {
+    if (column === undefined) {
       return;
     }
 
