@@ -43,7 +43,7 @@ async function fetchAudio() {
   buffer = padStart(audioContext, buffer, PADDING_MS);
 
   var gainNode = audioContext.createGain();
-  gainNode.gain.value = 0.1; // 10 %
+  gainNode.gain.value = 1.0
   gainNode.connect(audioContext.destination);
 
   return () => {
@@ -62,6 +62,7 @@ interface GameState {
   source: AudioBufferSourceNode;
   notes: Map<string, EngineNote>;
   inputManager: InputManager;
+  t0?: number
 }
 
 const noteMap = new Map<string, HTMLDivElement>();
@@ -75,19 +76,23 @@ const codeColumnMap = new Map<string, number>([
 
 const beeped = new Set<number>();
 
-let t0: number;
 let timeoutId: number;
 let cancel: boolean = false;
 
 function gameLoop(gameState: GameState) {
+  if (!gameState.t0) { 
+    gameState.t0 = performance.now()
+    gameState.inputManager.setOrigin(gameState.t0)
+  }
+
   if (cancel) {
     return;
   }
 
-  const dt = gameState.audioContext.getOutputTimestamp().performanceTime! - t0;
+  const dt = gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
 
   const world: World = {
-    startTime: t0,
+    startTime: gameState.t0,
     inputs: gameState.inputManager.activeInputs,
     time: dt,
     chart: {
@@ -133,7 +138,6 @@ function gameLoop(gameState: GameState) {
       const ypos = (n.ms - dt) * MULTIPLIER;
       const xpos = n.columns[0] * 100;
       if (ypos < 0 && !beeped.has(n.ms)) {
-        playBeep();
         beeped.add(n.ms);
       }
       // assume it exists - this is the game loop, we need to go FAST
@@ -181,7 +185,6 @@ $stop.innerText = "Stop";
 document.body.insertAdjacentElement("beforebegin", $stop);
 
 $start.addEventListener("click", async () => {
-  t0 = performance.now();
   // ensure clear even during HMR
   noteMap.clear();
 
@@ -202,7 +205,7 @@ $start.addEventListener("click", async () => {
     noteMap.set(id, $n);
   }
 
-  const inputManager = new InputManager(t0, codeColumnMap, {
+  const inputManager = new InputManager(codeColumnMap, {
     maxWindowMs: 100,
   });
 
