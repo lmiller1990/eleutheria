@@ -10,6 +10,7 @@ import {
 } from "@packages/engine";
 import { InputManager } from "./inputManager";
 import "./style.css";
+import { $createTargets } from "./elements/targets";
 
 const SONG_ID = "rave";
 
@@ -156,8 +157,7 @@ function gameLoop(gameState: GameState) {
 }
 
 const $app = document.querySelector("#app")!;
-const $targets = document.createElement("div");
-$targets.id = "targets";
+const $targets = $createTargets();
 $app.appendChild($targets);
 
 const $timing = document.createElement("div");

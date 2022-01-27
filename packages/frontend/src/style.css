@@ -17,15 +17,6 @@ body,
   --height: 100px;
 }
 
-#targets {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  height: var(--height);
-  width: calc(var(--height) * 4);
-  border: 2px solid white;
-}
-
 .note {
   background: lightgrey;
   position: absolute;
