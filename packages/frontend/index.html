@@ -8,6 +8,15 @@
   </head>
   <body>
     <div id="app">
+      <button id="start">Start</button>
+      <button id="stop">Stop</button>
+      <table id="debug">
+        <tr>
+          <th>Live notes</th>
+          <td id="debug-live-notes"></td>
+        </tr>
+      </table>
+
       <div id="targets">
         <div id="target-line"></div>
         <div class="col" id="col-0"></div>
@@ -15,7 +24,7 @@
         <div class="col" id="col-2"></div>
         <div class="col" id="col-3"></div>
         <div id="timing"></div>
-      </div> 
+      </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

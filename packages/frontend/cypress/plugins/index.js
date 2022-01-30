@@ -1,10 +1,10 @@
-const { startDevServer } = require('@cypress/vite-dev-server')
+const { startDevServer } = require("@cypress/vite-dev-server");
 
 module.exports = (on, config) => {
-  on('dev-server:start', options => {
+  on("dev-server:start", (options) => {
     return startDevServer({
-      options
-    })
-  })
-  return config
-}
+      options,
+    });
+  });
+  return config;
+};

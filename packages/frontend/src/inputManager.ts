@@ -9,7 +9,7 @@ export class InputManager {
   activeInputs: Input[] = [];
   config: InputManagerConfig;
   lastUpdateHash: string = "";
-  t0?: number
+  t0?: number;
 
   constructor(
     private codeColumnMap: Map<string, number>,
@@ -21,14 +21,14 @@ export class InputManager {
     };
   }
 
-  setOrigin (t0: number) {
-    this.t0 = t0
+  setOrigin(t0: number) {
+    this.t0 = t0;
   }
 
   // arrow function for lexical this
   onKeyDown = (e: KeyboardEvent) => {
     if (!this.t0) {
-      throw Error()
+      throw Error();
     }
 
     const column = this.codeColumnMap.get(e.code);

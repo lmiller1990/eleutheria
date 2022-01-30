@@ -1,5 +1,3 @@
-import type { ParsedChart } from "@packages/chart-parser";
-import { padStart, playBeep } from "@packages/audio-utils";
 import {
   createChart,
   initGameState,
@@ -8,19 +6,29 @@ import {
   World,
   EngineConfiguration,
 } from "@packages/engine";
+import { fetchAudio, fetchData } from "./fetchData";
 import { InputManager } from "./inputManager";
+import {
+  $note,
+  $targetLine,
+  $timing,
+  $start,
+  $stop,
+  $debugLiveNoteCount,
+} from "./elements";
 import "./style.css";
 
-const SONG = {
-  // SONG_ID: "rave",
-  // FORMAT: "mp3"
-  SONG_ID: "165-bpm-test",
-  FORMAT: "ogg"
-} as const
-
-const url = (song: typeof SONG) => `http://localhost:4000/${song.SONG_ID}.${song.FORMAT}`;
-
 const windows = ["perfect", "great"] as const;
+
+const NOTE_WIDTH = parseInt(
+  window
+    .getComputedStyle(document.documentElement)
+    .getPropertyValue("--note-width"),
+  10
+);
+
+const MULTIPLIER = 1.0;
+export const PADDING_MS = 2000;
 
 const config: EngineConfiguration = {
   maxHitWindow: 100,
@@ -36,38 +44,12 @@ const config: EngineConfiguration = {
   ],
 };
 
-const MULTIPLIER = 1.5;
-const PADDING_MS = 2000;
-
-async function fetchAudio() {
-  const audioContext = new AudioContext();
-
-  const res = await window.fetch(url(SONG));
-  const buf = await res.arrayBuffer();
-  let buffer = await audioContext.decodeAudioData(buf);
-  buffer = padStart(audioContext, buffer, PADDING_MS);
-
-  var gainNode = audioContext.createGain();
-  gainNode.gain.value = 1.0
-  gainNode.connect(audioContext.destination);
-
-  return () => {
-    const source = audioContext.createBufferSource();
-    source.buffer = buffer;
-    // use this for no assist tick
-    // source.connect(audioContext.destination);
-    source.connect(gainNode);
-    source.start();
-    return { audioContext, source };
-  };
-}
-
 interface GameState {
   audioContext: AudioContext;
   source: AudioBufferSourceNode;
   notes: Map<string, EngineNote>;
   inputManager: InputManager;
-  t0?: number
+  t0?: number;
 }
 
 const noteMap = new Map<string, HTMLDivElement>();
@@ -79,29 +61,24 @@ const codeColumnMap = new Map<string, number>([
   ["KeyK", 3],
 ]);
 
-const colElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
-  [0, document.querySelector<HTMLDivElement>('#col-0')!],
-  [1, document.querySelector<HTMLDivElement>('#col-1')!],
-  [2, document.querySelector<HTMLDivElement>('#col-2')!],
-  [3, document.querySelector<HTMLDivElement>('#col-3')!],
-])
-
 const beeped = new Set<number>();
 
 let timeoutId: number;
 let cancel: boolean = false;
+let lastDebugUpdate = 0;
 
 function gameLoop(gameState: GameState) {
-  if (!gameState.t0) { 
-    gameState.t0 = performance.now()
-    gameState.inputManager.setOrigin(gameState.t0)
+  if (!gameState.t0) {
+    gameState.t0 = performance.now();
+    gameState.inputManager.setOrigin(gameState.t0);
   }
 
   if (cancel) {
     return;
   }
 
-  const dt = gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
+  const dt =
+    gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
 
   const world: World = {
     startTime: gameState.t0,
@@ -148,7 +125,7 @@ function gameLoop(gameState: GameState) {
       noteMap.get(id)?.remove();
     } else {
       const ypos = (n.ms - dt) * MULTIPLIER;
-      const xpos = n.columns[0] * 100;
+      const xpos = n.columns[0] * NOTE_WIDTH;
       if (ypos < 0 && !beeped.has(n.ms)) {
         beeped.add(n.ms);
       }
@@ -165,43 +142,24 @@ function gameLoop(gameState: GameState) {
 
   if (dt > 4000) {
     // gameState.
-    // return
+    return;
+  }
+
+  if (dt - lastDebugUpdate > 1000) {
+    const noteCount = document.querySelectorAll(".note");
+    $debugLiveNoteCount.textContent = noteCount.length.toString();
+    lastDebugUpdate = dt;
   }
 
   gameState.inputManager.update(dt);
   window.requestAnimationFrame(() => gameLoop(gameState));
 }
 
-const $targets = document.querySelector<HTMLDivElement>("#targets")!
-const $targetLine = document.querySelector<HTMLDivElement>("#target-line")!
-const $timing = document.querySelector<HTMLDivElement>("#timing")!
-$targets.appendChild($timing);
-
-const $note = (id: string) => {
-  const d = document.createElement("div");
-  d.className = "note";
-  d.innerText = id;
-  return d;
-};
-
-async function fetchData(id: string): Promise<ParsedChart> {
-  const res = await window.fetch(`http://localhost:8000/songs/${id}`);
-  return res.json();
-}
-
-const $start = document.createElement("button");
-$start.innerText = "Start";
-document.body.insertAdjacentElement("beforebegin", $start);
-
-const $stop = document.createElement("button");
-$stop.innerText = "Stop";
-document.body.insertAdjacentElement("beforebegin", $stop);
-
 $start.addEventListener("click", async () => {
   // ensure clear even during HMR
   noteMap.clear();
 
-  const data = await fetchData(SONG.SONG_ID);
+  const data = await fetchData();
 
   const chart = createChart({
     notes: data.notes,
@@ -211,7 +169,7 @@ $start.addEventListener("click", async () => {
   const gs = initGameState(chart);
 
   for (const [id, note] of gs.notes) {
-    const $n = $note(id);
+    const $n = $note();
     $n.style.display = "none";
     $targetLine.appendChild($n);
     $n.style.top = `${note.ms * MULTIPLIER}px`;

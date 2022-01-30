@@ -5,38 +5,63 @@ body,
   padding: 0;
 }
 
-
 :root {
-  --height: 100px;
+  --note-width: 50px;
+  --note-height: 25px;
+
   --track-bg: #150d10;
   --root-bg: #4d4c4a;
   --target-height: 20px;
-  --note-height: 25px;
 }
 
-
 #app {
+  background: var(--root-bg);
   display: flex;
   justify-content: center;
-  background: var(--root-bg);
+  overflow: hidden;
   height: 100vh;
   width: 100vw;
 }
 
-.note {
-  background: lightgrey;
+#start,
+#stop,
+#debug {
   position: absolute;
+}
+
+#start,
+#stop {
+  top: 5px;
+}
+#debug {
+  top: 30px;
+}
+
+#start,
+#debug {
+  left: 5px;
+}
+#stop {
+  left: 55px;
+}
+
+.note {
   height: var(--note-height);
-  width: var(--height);
-  border: 1px solid black;
+  width: var(--note-width);
+
+  background: var(--root-bg);
+  border-radius: 5px;
+  border: 2px solid white;
+  box-sizing: border-box;
+  position: absolute;
   font-size: 3rem;
 }
 
 .col {
   background: var(--track-bg);
-  height: 100vh;;
+  height: 100vh;
   width: 100%;
-  margin: 0 1px;
+  margin: 0 2px;
 }
 
 #targets {
@@ -44,7 +69,7 @@ body,
   display: flex;
   justify-content: center;
   height: var(--target-height);
-  width: calc(var(--height) * 4);
+  width: calc(var(--note-width) * 4);
   z-index: 10;
 }
 
@@ -53,7 +78,8 @@ body,
   top: 50px;
   position: absolute;
   box-shadow: 0px 0px 5px 5px yellow;
-  width: 100%;  
+  background: var(--track-bg);
+  width: 100%;
 }
 
 #timing {
