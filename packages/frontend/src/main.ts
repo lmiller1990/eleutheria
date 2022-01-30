@@ -4,7 +4,7 @@ import {
   EngineNote,
   updateGameState,
   World,
-  EngineConfiguration,
+  UpdatedGameState,
 } from "@packages/engine";
 import { fetchAudio, fetchData } from "./fetchData";
 import { InputManager } from "./inputManager";
@@ -16,40 +16,20 @@ import {
   $stop,
   $debugLiveNoteCount,
 } from "./elements";
-import "./style.css";
-
-const windows = ["perfect", "great"] as const;
-
-const NOTE_WIDTH = parseInt(
-  window
-    .getComputedStyle(document.documentElement)
-    .getPropertyValue("--note-width"),
-  10
-);
-
-const MULTIPLIER = 1.0;
-export const PADDING_MS = 2000;
-
-const config: EngineConfiguration = {
-  maxHitWindow: 100,
-  timingWindows: [
-    {
-      name: windows[0],
-      windowMs: 50,
-    },
-    {
-      name: windows[1],
-      windowMs: 100,
-    },
-  ],
-};
+import {
+  engineConfiguration,
+  windows,
+  NOTE_WIDTH,
+  MULTIPLIER,
+  PADDING_MS
+} from "./config";
 
 interface GameState {
   audioContext: AudioContext;
   source: AudioBufferSourceNode;
   notes: Map<string, EngineNote>;
   inputManager: InputManager;
-  t0?: number;
+  t0: number;
 }
 
 const noteMap = new Map<string, HTMLDivElement>();
@@ -61,36 +41,29 @@ const codeColumnMap = new Map<string, number>([
   ["KeyK", 3],
 ]);
 
-const beeped = new Set<number>();
-
 let timeoutId: number;
 let cancel: boolean = false;
 let lastDebugUpdate = 0;
 
-function gameLoop(gameState: GameState) {
-  if (!gameState.t0) {
-    gameState.t0 = performance.now();
-    gameState.inputManager.setOrigin(gameState.t0);
-  }
+function appendNote (id: string, xpos: number, ypos: number) {
+  const $n = $note()
+  noteMap.set(id, $n)
 
-  if (cancel) {
-    return;
-  }
+  // $n.style.display = "block";
+  // $n.style.top = `${ypos}px`;
+  // $n.style.left = `${xpos}px`;
 
-  const dt =
-    gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
+  updateNote($n, xpos, ypos)
 
-  const world: World = {
-    startTime: gameState.t0,
-    inputs: gameState.inputManager.activeInputs,
-    time: dt,
-    chart: {
-      notes: gameState.notes,
-    },
-  };
+  $targetLine.appendChild($n);
+}
 
-  const newGameState = updateGameState(world, config);
+function updateNote ($n: HTMLDivElement, xpos: number, ypos: number) {
+  $n.style.top = `${ypos}px`;
+  $n.style.left = `${xpos}px`;
+}
 
+function handleJudgement (currentGameState: GameState, newGameState: UpdatedGameState) {
   if (newGameState.previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of newGameState.previousFrameMeta.judgementResults) {
@@ -101,7 +74,7 @@ function gameLoop(gameState: GameState) {
         );
       }
 
-      gameState.inputManager.consume(judgement.inputs);
+      currentGameState.inputManager.consume(judgement.inputs);
 
       $timing.classList.add(note.timingWindowName || "");
       $timing.classList.remove(
@@ -119,30 +92,51 @@ function gameLoop(gameState: GameState) {
       }, 2000);
     }
   }
+}
+
+function gameLoop(gameState: GameState) {
+  if (cancel) {
+    return;
+  }
+
+  const dt =
+    gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
+
+  const world: World = {
+    startTime: gameState.t0,
+    inputs: gameState.inputManager.activeInputs,
+    time: dt,
+    chart: {
+      notes: gameState.notes,
+    },
+  };
+
+  const newGameState = updateGameState(world, engineConfiguration);
+
+  handleJudgement(gameState, newGameState)
 
   for (const [id, n] of newGameState.chart.notes) {
+    const ypos = (n.ms - dt) * MULTIPLIER;
+    const xpos = n.columns[0] * NOTE_WIDTH;
+
     if (n.hitTiming) {
+      console.log(`Delete ${id}`)
       noteMap.get(id)?.remove();
     } else {
-      const ypos = (n.ms - dt) * MULTIPLIER;
-      const xpos = n.columns[0] * NOTE_WIDTH;
-      if (ypos < 0 && !beeped.has(n.ms)) {
-        beeped.add(n.ms);
-      }
-      // assume it exists - this is the game loop, we need to go FAST
-      // no time for null checks
-      if (ypos < 2500) {
-        const $el = noteMap.get(id)!;
-        $el.style.display = "block";
-        $el.style.top = `${ypos}px`;
-        $el.style.left = `${xpos}px`;
+      const $note = noteMap.get(id)
+      if ($note) {
+        updateNote($note, xpos, ypos)
+        if ($note.getBoundingClientRect().y < 0) {
+          noteMap.get(id)?.remove()
+        }
+      } else if (ypos < window.innerHeight) {
+        appendNote(id, xpos, ypos)
       }
     }
   }
 
   if (dt > 4000) {
-    // gameState.
-    return;
+    // return;
   }
 
   if (dt - lastDebugUpdate > 1000) {
@@ -168,30 +162,12 @@ $start.addEventListener("click", async () => {
 
   const gs = initGameState(chart);
 
-  for (const [id, note] of gs.notes) {
-    const $n = $note();
-    $n.style.display = "none";
-    $targetLine.appendChild($n);
-    $n.style.top = `${note.ms * MULTIPLIER}px`;
-    noteMap.set(id, $n);
-  }
-
   const inputManager = new InputManager(codeColumnMap, {
     maxWindowMs: 100,
+    offset: 35
   });
 
   inputManager.listen();
-
-  const play = await fetchAudio();
-
-  const { audioContext, source } = play();
-
-  const gameState: GameState = {
-    audioContext,
-    source,
-    inputManager,
-    notes: gs.notes,
-  };
 
   const stop = () => {
     gameState.inputManager.teardown();
@@ -199,7 +175,20 @@ $start.addEventListener("click", async () => {
     cancel = true;
   };
 
-  $stop.addEventListener("click", stop);
+  const play = await fetchAudio();
 
-  gameLoop({ audioContext, source, inputManager, notes: gs.notes });
-});
+  const { audioContext, source, startTime } = play();
+
+  const gameState: GameState = {
+    audioContext,
+    source,
+    t0: startTime,
+    inputManager,
+    notes: gs.notes,
+  };
+
+  $stop.addEventListener("click", stop);
+  gameState.inputManager.setOrigin(gameState.t0);
+
+  gameLoop(gameState);
+})

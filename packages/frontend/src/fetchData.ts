@@ -1,6 +1,6 @@
 import { padStart } from "@packages/audio-utils";
 import type { ParsedChart } from "@packages/chart-parser";
-import { PADDING_MS } from "./main";
+import { PADDING_MS } from "./config";
 
 export async function fetchData(): Promise<ParsedChart> {
   const res = await window.fetch(`http://localhost:8000/songs/${SONG.SONG_ID}`);
@@ -36,6 +36,8 @@ export async function fetchAudio() {
     // source.connect(audioContext.destination);
     source.connect(gainNode);
     source.start();
-    return { audioContext, source };
+    const startTime = audioContext.getOutputTimestamp().performanceTime!
+
+    return { audioContext, source, startTime };
   };
 }
