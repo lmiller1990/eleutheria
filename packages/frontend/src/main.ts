@@ -10,11 +10,15 @@ import {
 } from "@packages/engine";
 import { InputManager } from "./inputManager";
 import "./style.css";
-import { $createTargets } from "./elements/targets";
 
-const SONG_ID = "rave";
+const SONG = {
+  // SONG_ID: "rave",
+  // FORMAT: "mp3"
+  SONG_ID: "165-bpm-test",
+  FORMAT: "ogg"
+} as const
 
-const url = (id: string) => `http://localhost:4000/${id}.mp3`;
+const url = (song: typeof SONG) => `http://localhost:4000/${song.SONG_ID}.${song.FORMAT}`;
 
 const windows = ["perfect", "great"] as const;
 
@@ -38,7 +42,7 @@ const PADDING_MS = 2000;
 async function fetchAudio() {
   const audioContext = new AudioContext();
 
-  const res = await window.fetch(url(SONG_ID));
+  const res = await window.fetch(url(SONG));
   const buf = await res.arrayBuffer();
   let buffer = await audioContext.decodeAudioData(buf);
   buffer = padStart(audioContext, buffer, PADDING_MS);
@@ -74,6 +78,13 @@ const codeColumnMap = new Map<string, number>([
   ["KeyJ", 2],
   ["KeyK", 3],
 ]);
+
+const colElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
+  [0, document.querySelector<HTMLDivElement>('#col-0')!],
+  [1, document.querySelector<HTMLDivElement>('#col-1')!],
+  [2, document.querySelector<HTMLDivElement>('#col-2')!],
+  [3, document.querySelector<HTMLDivElement>('#col-3')!],
+])
 
 const beeped = new Set<number>();
 
@@ -152,16 +163,18 @@ function gameLoop(gameState: GameState) {
     }
   }
 
+  if (dt > 4000) {
+    // gameState.
+    // return
+  }
+
   gameState.inputManager.update(dt);
   window.requestAnimationFrame(() => gameLoop(gameState));
 }
 
-const $app = document.querySelector("#app")!;
-const $targets = $createTargets();
-$app.appendChild($targets);
-
-const $timing = document.createElement("div");
-$timing.id = "timing";
+const $targets = document.querySelector<HTMLDivElement>("#targets")!
+const $targetLine = document.querySelector<HTMLDivElement>("#target-line")!
+const $timing = document.querySelector<HTMLDivElement>("#timing")!
 $targets.appendChild($timing);
 
 const $note = (id: string) => {
@@ -188,7 +201,7 @@ $start.addEventListener("click", async () => {
   // ensure clear even during HMR
   noteMap.clear();
 
-  const data = await fetchData(SONG_ID);
+  const data = await fetchData(SONG.SONG_ID);
 
   const chart = createChart({
     notes: data.notes,
@@ -200,7 +213,7 @@ $start.addEventListener("click", async () => {
   for (const [id, note] of gs.notes) {
     const $n = $note(id);
     $n.style.display = "none";
-    $targets.appendChild($n);
+    $targetLine.appendChild($n);
     $n.style.top = `${note.ms * MULTIPLIER}px`;
     noteMap.set(id, $n);
   }

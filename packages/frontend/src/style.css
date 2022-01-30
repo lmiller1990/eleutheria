@@ -5,31 +5,61 @@ body,
   padding: 0;
 }
 
-#app {
-  display: flex;
-  justify-content: center;
-  background: black;
-  height: 100vh;
-  width: 100vw;
-}
 
 :root {
   --height: 100px;
+  --track-bg: #150d10;
+  --root-bg: #4d4c4a;
+  --target-height: 20px;
+  --note-height: 25px;
+}
+
+
+#app {
+  display: flex;
+  justify-content: center;
+  background: var(--root-bg);
+  height: 100vh;
+  width: 100vw;
 }
 
 .note {
   background: lightgrey;
   position: absolute;
-  height: var(--height);
+  height: var(--note-height);
   width: var(--height);
   border: 1px solid black;
   font-size: 3rem;
 }
 
+.col {
+  background: var(--track-bg);
+  height: 100vh;;
+  width: 100%;
+  margin: 0 1px;
+}
+
+#targets {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: var(--target-height);
+  width: calc(var(--height) * 4);
+  z-index: 10;
+}
+
+#target-line {
+  height: var(--target-height);
+  top: 50px;
+  position: absolute;
+  box-shadow: 0px 0px 5px 5px yellow;
+  width: 100%;  
+}
+
 #timing {
   position: absolute;
-  top: 100px;
-  font-size: 3rem;
+  top: 101px;
+  font-size: 4rem;
 }
 
 .perfect {
