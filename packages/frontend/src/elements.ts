@@ -1,10 +1,20 @@
-export const $targets = document.querySelector<HTMLDivElement>("#targets")!;
-export const $targetLine =
-  document.querySelector<HTMLDivElement>("#target-line")!;
-export const $timing = document.querySelector<HTMLDivElement>("#timing")!;
-export const $debug = document.querySelector<HTMLDivElement>("#debug")!;
-export const $debugLiveNoteCount =
-  document.querySelector<HTMLDivElement>("#debug-live-notes")!;
+const $ = <T extends Element = HTMLDivElement>(sel: string) => {
+  const el = document.querySelector<T>(sel);
+  if (el) {
+    return el;
+  }
+
+  throw new Error(
+    `Expected element with selector ${sel} to exist, but it didn't.`
+  );
+};
+
+export const $targets = $("#targets");
+export const $targetLine = $("#target-line");
+export const $timing = $("#timing");
+export const $debug = $("#debug");
+export const $debugLiveNoteCount = $("#debug-live-notes");
+export const $debugFps = $("#debug-fps");
 
 $targets.appendChild($timing);
 
@@ -14,12 +24,19 @@ export function $note() {
   return d;
 }
 
-export const $start = document.querySelector<HTMLButtonElement>("#start")!;
-export const $stop = document.querySelector<HTMLButtonElement>("#stop")!;
+export const $start = $<HTMLButtonElement>("#start");
+export const $stop = $<HTMLButtonElement>("#stop");
 
 export const colElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
-  [0, document.querySelector<HTMLDivElement>("#col-0")!],
-  [1, document.querySelector<HTMLDivElement>("#col-1")!],
-  [2, document.querySelector<HTMLDivElement>("#col-2")!],
-  [3, document.querySelector<HTMLDivElement>("#col-3")!],
+  [0, $("#col-0")],
+  [1, $("#col-1")],
+  [2, $("#col-2")],
+  [3, $("#col-3")],
+]);
+
+export const $targetColElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
+  [0, $("#target-col-0")],
+  [1, $("#target-col-1")],
+  [2, $("#target-col-2")],
+  [3, $("#target-col-3")],
 ]);

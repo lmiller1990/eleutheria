@@ -18,7 +18,7 @@ export const url = (song: typeof SONG) =>
   `http://localhost:4000/${song.SONG_ID}.${song.FORMAT}`;
 
 export async function fetchAudio() {
-  const audioContext = new AudioContext();
+  const audioContext =  new AudioContext();
 
   const res = await window.fetch(url(SONG));
   const buf = await res.arrayBuffer();

@@ -6,12 +6,12 @@ body,
 }
 
 :root {
-  --note-width: 50px;
-  --note-height: 25px;
+  --note-width: 100px;
+  --note-height: 50px;
 
   --track-bg: #150d10;
   --root-bg: #4d4c4a;
-  --target-height: 20px;
+  --target-height: calc(var(--note-height) - 5px);
 }
 
 #app {
@@ -57,6 +57,24 @@ body,
   font-size: 3rem;
 }
 
+
+@keyframes target-flash {
+  0%   { 
+    box-shadow: 0px 0px 5px 5px white;
+  }
+  100% { 
+    box-shadow: none;
+  }
+}
+
+.target-col {
+  width: 100%;
+}
+
+.target-col-flash {
+  animation: target-flash 0.5s;
+}
+
 .col {
   background: var(--track-bg);
   height: 100vh;
@@ -78,6 +96,7 @@ body,
   top: 50px;
   position: absolute;
   box-shadow: 0px 0px 5px 5px yellow;
+  display: flex;
   background: var(--track-bg);
   width: 100%;
 }

@@ -15,13 +15,16 @@ import {
   $start,
   $stop,
   $debugLiveNoteCount,
+  $debugFps,
+  colElements,
+  $targetColElements,
 } from "./elements";
 import {
   engineConfiguration,
   windows,
   NOTE_WIDTH,
   MULTIPLIER,
-  PADDING_MS
+  PADDING_MS,
 } from "./config";
 
 interface GameState {
@@ -44,26 +47,30 @@ const codeColumnMap = new Map<string, number>([
 let timeoutId: number;
 let cancel: boolean = false;
 let lastDebugUpdate = 0;
+let ticks = 0;
 
-function appendNote (id: string, xpos: number, ypos: number) {
-  const $n = $note()
-  noteMap.set(id, $n)
+function appendNote(id: string, xpos: number, ypos: number) {
+  const $n = $note();
+  noteMap.set(id, $n);
 
   // $n.style.display = "block";
   // $n.style.top = `${ypos}px`;
   // $n.style.left = `${xpos}px`;
 
-  updateNote($n, xpos, ypos)
+  updateNote($n, xpos, ypos);
 
   $targetLine.appendChild($n);
 }
 
-function updateNote ($n: HTMLDivElement, xpos: number, ypos: number) {
+function updateNote($n: HTMLDivElement, xpos: number, ypos: number) {
   $n.style.top = `${ypos}px`;
   $n.style.left = `${xpos}px`;
 }
 
-function handleJudgement (currentGameState: GameState, newGameState: UpdatedGameState) {
+function handleJudgement(
+  currentGameState: GameState,
+  newGameState: UpdatedGameState
+) {
   if (newGameState.previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of newGameState.previousFrameMeta.judgementResults) {
@@ -94,7 +101,20 @@ function handleJudgement (currentGameState: GameState, newGameState: UpdatedGame
   }
 }
 
+function targetFlash(column: 0 | 1 | 2 | 3) {
+  const $el = $targetColElements.get(column)
+  console.log({ $el })
+  if (!$el) {
+    return
+  }
+  const klass = "target-col-flash"
+  $el.classList.remove(klass);
+  void $el.offsetWidth;
+  $el.classList.add(klass);
+}
+
 function gameLoop(gameState: GameState) {
+  ticks += 1;
   if (cancel) {
     return;
   }
@@ -113,7 +133,7 @@ function gameLoop(gameState: GameState) {
 
   const newGameState = updateGameState(world, engineConfiguration);
 
-  handleJudgement(gameState, newGameState)
+  handleJudgement(gameState, newGameState);
 
   for (const [id, n] of newGameState.chart.notes) {
     const ypos = (n.ms - dt) * MULTIPLIER;
@@ -122,14 +142,14 @@ function gameLoop(gameState: GameState) {
     if (n.hitTiming) {
       noteMap.get(id)?.remove();
     } else {
-      const $note = noteMap.get(id)
+      const $note = noteMap.get(id);
       if ($note) {
-        updateNote($note, xpos, ypos)
-        if ($note.getBoundingClientRect().y < 0) {
-          noteMap.get(id)?.remove()
-        }
+        updateNote($note, xpos, ypos);
+        // if ($note.getBoundingClientRect().y < 0) {
+        //   noteMap.get(id)?.remove();
+        // }
       } else if (ypos < window.innerHeight) {
-        appendNote(id, xpos, ypos)
+        appendNote(id, xpos, ypos);
       }
     }
   }
@@ -142,6 +162,10 @@ function gameLoop(gameState: GameState) {
     const noteCount = document.querySelectorAll(".note");
     $debugLiveNoteCount.textContent = noteCount.length.toString();
     lastDebugUpdate = dt;
+
+    console.log(ticks);
+    $debugFps.textContent = ticks.toFixed();
+    ticks = 0;
   }
 
   gameState.inputManager.update(dt);
@@ -163,6 +187,9 @@ $start.addEventListener("click", async () => {
 
   const inputManager = new InputManager(codeColumnMap, {
     maxWindowMs: 100,
+    onKeyCallback: new Map([
+      ['KeyK', () => targetFlash(0)]
+    ])
   });
 
   inputManager.listen();
@@ -189,4 +216,4 @@ $start.addEventListener("click", async () => {
   gameState.inputManager.setOrigin(gameState.t0);
 
   gameLoop(gameState);
-})
+});
