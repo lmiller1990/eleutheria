@@ -2,7 +2,6 @@ import { Input } from "@packages/engine";
 
 export interface InputManagerConfig {
   maxWindowMs: number;
-  offset?: number
 }
 
 export class InputManager {
@@ -23,7 +22,7 @@ export class InputManager {
   }
 
   setOrigin(t0: number) {
-    this.t0 = t0 + (this.config.offset ?? 0);
+    this.t0 = t0
   }
 
   // arrow function for lexical this

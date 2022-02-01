@@ -120,7 +120,6 @@ function gameLoop(gameState: GameState) {
     const xpos = n.columns[0] * NOTE_WIDTH;
 
     if (n.hitTiming) {
-      console.log(`Delete ${id}`)
       noteMap.get(id)?.remove();
     } else {
       const $note = noteMap.get(id)
@@ -164,7 +163,6 @@ $start.addEventListener("click", async () => {
 
   const inputManager = new InputManager(codeColumnMap, {
     maxWindowMs: 100,
-    offset: 35
   });
 
   inputManager.listen();
