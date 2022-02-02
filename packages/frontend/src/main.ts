@@ -103,7 +103,6 @@ function handleJudgement(
 
 function targetFlash(column: 0 | 1 | 2 | 3) {
   const $el = $targetColElements.get(column)
-  console.log({ $el })
   if (!$el) {
     return
   }
@@ -188,7 +187,10 @@ $start.addEventListener("click", async () => {
   const inputManager = new InputManager(codeColumnMap, {
     maxWindowMs: 100,
     onKeyCallback: new Map([
-      ['KeyK', () => targetFlash(0)]
+      ['KeyD', () => targetFlash(0)],
+      ['KeyF', () => targetFlash(1)],
+      ['KeyJ', () => targetFlash(2)],
+      ['KeyK', () => targetFlash(3)]
     ])
   });
 

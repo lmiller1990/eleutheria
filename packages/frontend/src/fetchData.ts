@@ -8,10 +8,10 @@ export async function fetchData(): Promise<ParsedChart> {
 }
 
 const SONG = {
-  // SONG_ID: "rave",
-  // FORMAT: "mp3"
-  SONG_ID: "165-bpm-test",
-  FORMAT: "ogg",
+  SONG_ID: "rave",
+  FORMAT: "mp3"
+  // SONG_ID: "165-bpm-test",
+  // FORMAT: "ogg",
 } as const;
 
 export const url = (song: typeof SONG) =>
