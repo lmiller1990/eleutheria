@@ -14,10 +14,7 @@ import {
   $timing,
   $start,
   $stop,
-  $debugLiveNoteCount,
-  $debugFps,
-  colElements,
-  $targetColElements,
+  targetFlash,
 } from "./elements";
 import {
   engineConfiguration,
@@ -25,7 +22,9 @@ import {
   NOTE_WIDTH,
   MULTIPLIER,
   PADDING_MS,
+  codeColumnMap,
 } from "./config";
+import { writeDebugToHtml } from "./debug";
 
 interface GameState {
   audioContext: AudioContext;
@@ -37,13 +36,6 @@ interface GameState {
 
 const noteMap = new Map<string, HTMLDivElement>();
 
-const codeColumnMap = new Map<string, number>([
-  ["KeyD", 0],
-  ["KeyF", 1],
-  ["KeyJ", 2],
-  ["KeyK", 3],
-]);
-
 let timeoutId: number;
 let cancel: boolean = false;
 let lastDebugUpdate = 0;
@@ -53,10 +45,6 @@ function appendNote(id: string, xpos: number, ypos: number) {
   const $n = $note();
   noteMap.set(id, $n);
 
-  // $n.style.display = "block";
-  // $n.style.top = `${ypos}px`;
-  // $n.style.left = `${xpos}px`;
-
   updateNote($n, xpos, ypos);
 
   $targetLine.appendChild($n);
@@ -65,6 +53,9 @@ function appendNote(id: string, xpos: number, ypos: number) {
 function updateNote($n: HTMLDivElement, xpos: number, ypos: number) {
   $n.style.top = `${ypos}px`;
   $n.style.left = `${xpos}px`;
+  if ($n.getBoundingClientRect().y < 0) {
+    $n.remove();
+  }
 }
 
 function handleJudgement(
@@ -101,17 +92,6 @@ function handleJudgement(
   }
 }
 
-function targetFlash(column: 0 | 1 | 2 | 3) {
-  const $el = $targetColElements.get(column)
-  if (!$el) {
-    return
-  }
-  const klass = "target-col-flash"
-  $el.classList.remove(klass);
-  void $el.offsetWidth;
-  $el.classList.add(klass);
-}
-
 function gameLoop(gameState: GameState) {
   ticks += 1;
   if (cancel) {
@@ -137,34 +117,30 @@ function gameLoop(gameState: GameState) {
   for (const [id, n] of newGameState.chart.notes) {
     const ypos = (n.ms - dt) * MULTIPLIER;
     const xpos = n.columns[0] * NOTE_WIDTH;
+    const $note = noteMap.get(id);
 
     if (n.hitTiming) {
-      noteMap.get(id)?.remove();
+      if (!$note) {
+        throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
+      }
+      $note.remove();
     } else {
-      const $note = noteMap.get(id);
       if ($note) {
         updateNote($note, xpos, ypos);
-        // if ($note.getBoundingClientRect().y < 0) {
-        //   noteMap.get(id)?.remove();
-        // }
       } else if (ypos < window.innerHeight) {
         appendNote(id, xpos, ypos);
       }
     }
   }
 
-  if (dt > 4000) {
-    // return;
-  }
-
   if (dt - lastDebugUpdate > 1000) {
-    const noteCount = document.querySelectorAll(".note");
-    $debugLiveNoteCount.textContent = noteCount.length.toString();
-    lastDebugUpdate = dt;
-
-    console.log(ticks);
-    $debugFps.textContent = ticks.toFixed();
-    ticks = 0;
+    writeDebugToHtml({
+      ticks,
+      afterUpdate: () => {
+        lastDebugUpdate = dt;
+        ticks = 0;
+      },
+    });
   }
 
   gameState.inputManager.update(dt);
@@ -185,13 +161,13 @@ $start.addEventListener("click", async () => {
   const gs = initGameState(chart);
 
   const inputManager = new InputManager(codeColumnMap, {
-    maxWindowMs: 100,
+    ...engineConfiguration,
     onKeyCallback: new Map([
-      ['KeyD', () => targetFlash(0)],
-      ['KeyF', () => targetFlash(1)],
-      ['KeyJ', () => targetFlash(2)],
-      ['KeyK', () => targetFlash(3)]
-    ])
+      ["KeyD", () => targetFlash(0)],
+      ["KeyF", () => targetFlash(1)],
+      ["KeyJ", () => targetFlash(2)],
+      ["KeyK", () => targetFlash(3)],
+    ]),
   });
 
   inputManager.listen();

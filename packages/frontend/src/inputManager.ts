@@ -2,7 +2,7 @@ import { Input } from "@packages/engine";
 
 export interface InputManagerConfig {
   maxWindowMs: number;
-  onKeyCallback?: Map<string, () => void>
+  onKeyCallback?: Map<string, () => void>;
 }
 
 export class InputManager {
@@ -23,21 +23,23 @@ export class InputManager {
   }
 
   setOrigin(t0: number) {
-    this.t0 = t0
+    this.t0 = t0;
   }
 
   // arrow function for lexical this
   onKeyDown = (e: KeyboardEvent) => {
     if (!this.t0) {
-      throw Error();
+      throw Error(
+        `t0 must be set before listening for keyboard events! Set it with InputManager#setOrigin`
+      );
     }
 
     const column = this.codeColumnMap.get(e.code);
 
-    const cb = this.config?.onKeyCallback?.get(e.code)
+    const cb = this.config?.onKeyCallback?.get(e.code);
 
     if (cb) {
-      cb()
+      cb();
     }
 
     if (column === undefined) {

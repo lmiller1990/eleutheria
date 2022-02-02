@@ -8,17 +8,17 @@ export async function fetchData(): Promise<ParsedChart> {
 }
 
 const SONG = {
-  SONG_ID: "rave",
-  FORMAT: "mp3"
-  // SONG_ID: "165-bpm-test",
-  // FORMAT: "ogg",
+  // SONG_ID: "rave",
+  // FORMAT: "mp3"
+  SONG_ID: "165-bpm-test",
+  FORMAT: "ogg",
 } as const;
 
 export const url = (song: typeof SONG) =>
   `http://localhost:4000/${song.SONG_ID}.${song.FORMAT}`;
 
 export async function fetchAudio() {
-  const audioContext =  new AudioContext();
+  const audioContext = new AudioContext();
 
   const res = await window.fetch(url(SONG));
   const buf = await res.arrayBuffer();
@@ -36,7 +36,7 @@ export async function fetchAudio() {
     // source.connect(audioContext.destination);
     source.connect(gainNode);
     source.start();
-    const startTime = audioContext.getOutputTimestamp().performanceTime!
+    const startTime = audioContext.getOutputTimestamp().performanceTime!;
 
     return { audioContext, source, startTime };
   };

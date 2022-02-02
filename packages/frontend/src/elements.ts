@@ -40,3 +40,14 @@ export const $targetColElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
   [2, $("#target-col-2")],
   [3, $("#target-col-3")],
 ]);
+
+export function targetFlash(column: 0 | 1 | 2 | 3) {
+  const $el = $targetColElements.get(column);
+  if (!$el) {
+    throw Error(`Could not find element for column ${column}`);
+  }
+  const klass = "target-col-flash";
+  $el.classList.remove(klass);
+  void $el.offsetWidth;
+  $el.classList.add(klass);
+}

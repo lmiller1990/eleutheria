@@ -1,5 +1,4 @@
-import { EngineConfiguration,
-} from "@packages/engine";
+import { EngineConfiguration } from "@packages/engine";
 
 export const windows = ["perfect", "great"] as const;
 
@@ -10,7 +9,7 @@ export const NOTE_WIDTH = parseInt(
   10
 );
 
-export const MULTIPLIER = 1.0;
+export const MULTIPLIER = 1.5;
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {
@@ -26,3 +25,10 @@ export const engineConfiguration: EngineConfiguration = {
     },
   ],
 };
+
+export const codeColumnMap = new Map<string, number>([
+  ["KeyD", 0],
+  ["KeyF", 1],
+  ["KeyJ", 2],
+  ["KeyK", 3],
+]);
