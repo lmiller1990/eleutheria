@@ -15,6 +15,7 @@ import {
   $start,
   $stop,
   targetFlash,
+  targetNoteHitFlash
 } from "./elements";
 import {
   engineConfiguration,
@@ -124,6 +125,7 @@ function gameLoop(gameState: GameState) {
         throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
       }
       $note.remove();
+      targetNoteHitFlash(n.columns[0] as 0 | 1 | 2  | 3)
     } else {
       if ($note) {
         updateNote($note, xpos, ypos);

@@ -66,12 +66,25 @@ body,
   }
 }
 
+@keyframes note-hit-flash {
+  0% {
+    box-shadow: 0px 0px 20px 15px white;
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
 .target-col {
   width: 100%;
 }
 
 .target-col-flash {
   animation: target-flash 0.5s;
+}
+
+.target-col-flash-note-hit {
+  animation: note-hit-flash 0.5s;
 }
 
 .col {

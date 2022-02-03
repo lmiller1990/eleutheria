@@ -41,13 +41,25 @@ export const $targetColElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
   [3, $("#target-col-3")],
 ]);
 
-export function targetFlash(column: 0 | 1 | 2 | 3) {
+const TARGET_FLASH_CLASS =  "target-col-flash"
+const NOTE_HIT_FLASH_CLASS =  "target-col-flash-note-hit"
+
+const CLASSES = [TARGET_FLASH_CLASS, NOTE_HIT_FLASH_CLASS] as const
+
+function flip (column: 0 | 1 | 2 | 3, klass: typeof CLASSES[number]) {
   const $el = $targetColElements.get(column);
   if (!$el) {
     throw Error(`Could not find element for column ${column}`);
   }
-  const klass = "target-col-flash";
-  $el.classList.remove(klass);
+  $el.classList.remove(...CLASSES);
   void $el.offsetWidth;
   $el.classList.add(klass);
+}
+
+export function targetFlash(column: 0 | 1 | 2 | 3) {
+  flip(column, TARGET_FLASH_CLASS)
+}
+
+export function targetNoteHitFlash(column: 0 | 1 | 2 | 3) {
+  flip(column, NOTE_HIT_FLASH_CLASS)
 }
