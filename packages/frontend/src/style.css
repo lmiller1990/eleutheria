@@ -12,6 +12,8 @@ body,
   --track-bg: #150d10;
   --root-bg: #4d4c4a;
   --target-height: calc(var(--note-height) - 5px);
+
+  --judgment-bounce: 1.15;
 }
 
 #app {
@@ -113,10 +115,25 @@ body,
   width: 100%;
 }
 
+@keyframes judgement {
+  0% {
+    transform: scaleX(var(--judgment-bounce)) scaleY(var(--judgment-bounce));
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
 #timing {
   position: absolute;
   top: 101px;
-  font-size: 4rem;
+  font-size: 3rem;
+}
+
+.perfect,
+.great {
+  animation: judgement 0.05s;
 }
 
 .perfect {

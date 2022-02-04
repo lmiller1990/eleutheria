@@ -13,15 +13,15 @@ export const MULTIPLIER = 1.5;
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {
-  maxHitWindow: 100,
+  maxHitWindow: 75,
   timingWindows: [
     {
       name: windows[0],
-      windowMs: 50,
+      windowMs: 25,
     },
     {
       name: windows[1],
-      windowMs: 100,
+      windowMs: 75,
     },
   ],
 };

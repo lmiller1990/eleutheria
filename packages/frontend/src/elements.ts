@@ -1,3 +1,5 @@
+import { windows } from "./config";
+
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
   const el = document.querySelector<T>(sel);
   if (el) {
@@ -41,25 +43,38 @@ export const $targetColElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([
   [3, $("#target-col-3")],
 ]);
 
-const TARGET_FLASH_CLASS =  "target-col-flash"
-const NOTE_HIT_FLASH_CLASS =  "target-col-flash-note-hit"
+const TARGET_FLASH_CLASS = "target-col-flash";
+const NOTE_HIT_FLASH_CLASS = "target-col-flash-note-hit";
 
-const CLASSES = [TARGET_FLASH_CLASS, NOTE_HIT_FLASH_CLASS] as const
+const CLASSES = [TARGET_FLASH_CLASS, NOTE_HIT_FLASH_CLASS] as const;
 
-function flip (column: 0 | 1 | 2 | 3, klass: typeof CLASSES[number]) {
-  const $el = $targetColElements.get(column);
-  if (!$el) {
-    throw Error(`Could not find element for column ${column}`);
-  }
-  $el.classList.remove(...CLASSES);
-  void $el.offsetWidth;
-  $el.classList.add(klass);
+const TIMING_CLASSES = windows;
+
+export function judgementFlash(timingWindow: string, text: string) {
+  const flip = createFlip(TIMING_CLASSES);
+  $timing.innerText = text;
+  flip($timing, timingWindow);
 }
 
+const createFlip =
+  (classes: readonly string[]) =>
+  ($el: HTMLElement | undefined, klass: typeof classes[number]) => {
+    if (!$el) {
+      throw Error(`Could not find element to flip!`);
+    }
+    $el.classList.remove(...classes);
+    void $el.offsetWidth;
+    $el.classList.add(klass);
+  };
+
 export function targetFlash(column: 0 | 1 | 2 | 3) {
-  flip(column, TARGET_FLASH_CLASS)
+  const flip = createFlip(CLASSES);
+  const $el = $targetColElements.get(column);
+  flip($el, TARGET_FLASH_CLASS);
 }
 
 export function targetNoteHitFlash(column: 0 | 1 | 2 | 3) {
-  flip(column, NOTE_HIT_FLASH_CLASS)
+  const flip = createFlip(CLASSES);
+  const $el = $targetColElements.get(column);
+  flip($el, NOTE_HIT_FLASH_CLASS);
 }

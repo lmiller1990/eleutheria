@@ -15,11 +15,11 @@ import {
   $start,
   $stop,
   targetFlash,
-  targetNoteHitFlash
+  targetNoteHitFlash,
+  judgementFlash,
 } from "./elements";
 import {
   engineConfiguration,
-  windows,
   NOTE_WIDTH,
   MULTIPLIER,
   PADDING_MS,
@@ -67,7 +67,7 @@ function handleJudgement(
     // some notes were judged on the previous window
     for (const judgement of newGameState.previousFrameMeta.judgementResults) {
       const note = newGameState.chart.notes.get(judgement.noteId);
-      if (!note) {
+      if (!note || !note.timingWindowName) {
         throw Error(
           `Could not judged note with id ${judgement.noteId}. This should never happen.`
         );
@@ -75,12 +75,14 @@ function handleJudgement(
 
       currentGameState.inputManager.consume(judgement.inputs);
 
-      $timing.classList.add(note.timingWindowName || "");
-      $timing.classList.remove(
-        ...windows.filter((x) => x !== note.timingWindowName)
-      );
-      $timing.innerText =
-        `${judgement.timing.toFixed()} ${note.timingWindowName}` ?? "";
+      const text =
+        note.timingWindowName === "perfect"
+          ? note.timingWindowName
+          : judgement.timing > 0
+          ? `${note.timingWindowName}-`
+          : `-${note.timingWindowName}`;
+
+      judgementFlash(note.timingWindowName, text);
 
       if (timeoutId) {
         window.clearTimeout(timeoutId);
@@ -125,7 +127,7 @@ function gameLoop(gameState: GameState) {
         throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
       }
       $note.remove();
-      targetNoteHitFlash(n.columns[0] as 0 | 1 | 2  | 3)
+      targetNoteHitFlash(n.columns[0] as 0 | 1 | 2 | 3);
     } else {
       if ($note) {
         updateNote($note, xpos, ypos);
