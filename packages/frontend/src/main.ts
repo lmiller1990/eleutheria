@@ -17,6 +17,7 @@ import {
   targetFlash,
   targetNoteHitFlash,
   judgementFlash,
+  $combo,
 } from "./elements";
 import {
   engineConfiguration,
@@ -29,6 +30,7 @@ import { writeDebugToHtml } from "./debug";
 
 interface GameState {
   audioContext: AudioContext;
+  combo: number;
   source: AudioBufferSourceNode;
   notes: Map<string, EngineNote>;
   inputManager: InputManager;
@@ -59,10 +61,7 @@ function updateNote($n: HTMLDivElement, xpos: number, ypos: number) {
   }
 }
 
-function handleJudgement(
-  currentGameState: GameState,
-  newGameState: UpdatedGameState
-) {
+function updateUI(currentGameState: GameState, newGameState: UpdatedGameState) {
   if (newGameState.previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of newGameState.previousFrameMeta.judgementResults) {
@@ -83,6 +82,7 @@ function handleJudgement(
           : `-${note.timingWindowName}`;
 
       judgementFlash(note.timingWindowName, text);
+      targetNoteHitFlash(note.columns[0] as 0 | 1 | 2 | 3);
 
       if (timeoutId) {
         window.clearTimeout(timeoutId);
@@ -93,6 +93,9 @@ function handleJudgement(
       }, 2000);
     }
   }
+
+  $combo.innerText =
+    newGameState.combo > 0 ? `${newGameState.combo} combo` : ``;
 }
 
 function gameLoop(gameState: GameState) {
@@ -106,6 +109,7 @@ function gameLoop(gameState: GameState) {
 
   const world: World = {
     startTime: gameState.t0,
+    combo: gameState.combo,
     inputs: gameState.inputManager.activeInputs,
     time: dt,
     chart: {
@@ -115,7 +119,7 @@ function gameLoop(gameState: GameState) {
 
   const newGameState = updateGameState(world, engineConfiguration);
 
-  handleJudgement(gameState, newGameState);
+  updateUI(gameState, newGameState);
 
   for (const [id, n] of newGameState.chart.notes) {
     const ypos = (n.ms - dt) * MULTIPLIER;
@@ -127,7 +131,6 @@ function gameLoop(gameState: GameState) {
         throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
       }
       $note.remove();
-      targetNoteHitFlash(n.columns[0] as 0 | 1 | 2 | 3);
     } else {
       if ($note) {
         updateNote($note, xpos, ypos);
@@ -148,7 +151,14 @@ function gameLoop(gameState: GameState) {
   }
 
   gameState.inputManager.update(dt);
-  window.requestAnimationFrame(() => gameLoop(gameState));
+
+  window.requestAnimationFrame(() =>
+    gameLoop({
+      ...gameState,
+      notes: newGameState.chart.notes,
+      combo: newGameState.combo,
+    })
+  );
 }
 
 $start.addEventListener("click", async () => {
@@ -158,7 +168,7 @@ $start.addEventListener("click", async () => {
   const data = await fetchData();
 
   const chart = createChart({
-    notes: data.notes,
+    notes: data.notes.map((x) => ({ ...x, missed: false, canHit: true })),
     offset: PADDING_MS + data.metadata.offset,
   });
 
@@ -189,6 +199,7 @@ $start.addEventListener("click", async () => {
   const gameState: GameState = {
     audioContext,
     source,
+    combo: 0,
     t0: startTime,
     inputManager,
     notes: gs.notes,

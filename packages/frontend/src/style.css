@@ -127,8 +127,15 @@ body,
 
 #timing {
   position: absolute;
-  top: 101px;
+  top: 125px;
   font-size: 3rem;
+}
+
+#combo {
+  position: absolute;
+  top: 200px;
+  font-size: 2rem;
+  color: white;
 }
 
 .perfect,

@@ -31,13 +31,24 @@ const createInput = ({
   column,
 });
 
+function makeNote(note: Partial<EngineNote>): EngineNote {
+  return {
+    id: "???",
+    columns: [],
+    ms: 0,
+    missed: false,
+    canHit: true,
+    ...note,
+  };
+}
+
 describe("nearestNode", () => {
   it("captures nearest note based on time and input", () => {
     const chart: Chart = {
       notes: [
-        { id: "1", ms: 0, columns: [1] },
-        { id: "2", ms: 500, columns: [0] },
-        { id: "3", ms: 1000, columns: [1] },
+        makeNote({ id: "1", ms: 0, columns: [1] }),
+        makeNote({ id: "2", ms: 500, columns: [0] }),
+        makeNote({ id: "3", ms: 1000, columns: [1] }),
       ],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
@@ -56,7 +67,7 @@ describe("nearestNode", () => {
 
   it("handles chart with no valid notes", () => {
     const chart: Chart = {
-      notes: [{ id: "1", ms: 100, columns: [0] }],
+      notes: [makeNote({ id: "1", ms: 100, columns: [0] })],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
@@ -71,7 +82,7 @@ describe("judgeInput", () => {
       ms: 100,
     });
     // inside max input window of 100
-    const note: EngineNote = { id: "1", columns: [1], ms: 200 };
+    const note: EngineNote = makeNote({ id: "1", columns: [1], ms: 200 });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -94,7 +105,7 @@ describe("judgeInput", () => {
       ms: 100,
     });
     // outside max input window of 100 by 1
-    const note: EngineNote = { id: "1", columns: [1], ms: 201 };
+    const note = makeNote({ id: "1", columns: [1], ms: 201 });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -106,7 +117,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is inside smallest window", () => {
-    const note: EngineNote = { id: "1", columns: [1], ms: 100 };
+    const note = makeNote({ id: "1", columns: [1], ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 111,
@@ -137,7 +148,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is early inside largest window", () => {
-    const note: EngineNote = { id: "1", columns: [1], ms: 100 };
+    const note = makeNote({ id: "1", columns: [1], ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 111,
@@ -168,7 +179,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is late inside largest window", () => {
-    const note: EngineNote = { id: "1", columns: [1], ms: 100 };
+    const note = makeNote({ id: "1", columns: [1], ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 89,
@@ -200,7 +211,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note outside all windows", () => {
-    const note: EngineNote = { id: "1", columns: [1], ms: 100 };
+    const note = makeNote({ id: "1", columns: [1], ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 150,
@@ -237,7 +248,7 @@ describe("judge", () => {
       column: 1,
       ms: 510,
     });
-    const note: EngineNote = { id: "1", columns: [1], ms: 500 };
+    const note = makeNote({ id: "1", columns: [1], ms: 500 });
     const actual = judge(input, note);
 
     expect(actual).toBe(10);
@@ -248,7 +259,7 @@ describe("judge", () => {
       column: 1,
       ms: 510,
     });
-    const note: EngineNote = { id: "1", columns: [1], ms: 500, dependsOn: "1" };
+    const note = makeNote({ id: "1", columns: [1], ms: 500, dependsOn: "1" });
     const actual = judge(input, note);
 
     expect(actual).toBe(0);
@@ -256,13 +267,13 @@ describe("judge", () => {
 });
 
 describe("updateGameState", () => {
-  const baseNote: EngineNote = {
+  const baseNote = makeNote({
     id: "1",
     ms: 0,
     columns: [0],
     canHit: true,
     timingWindowName: undefined,
-  };
+  });
 
   it("updates the world given relative to given millseconds", () => {
     const notes = new Map<string, EngineNote>();
@@ -274,6 +285,7 @@ describe("updateGameState", () => {
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
+      combo: 0,
       chart: {
         notes,
       },
@@ -283,7 +295,33 @@ describe("updateGameState", () => {
     };
 
     const actual = updateGameState(
-      { startTime: 0, chart: current, time: 950, inputs: [] },
+      { startTime: 0, chart: current, time: 950, inputs: [], combo: 0 },
+      engineConfiguration
+    );
+    expect(actual).toEqual(expected);
+  });
+
+  it("judges notes as missed if outside max timing window", () => {
+    const notes = new Map<string, EngineNote>();
+    notes.set(baseNote.id, { ...baseNote, ms: 1000 });
+    // 900 ms has passed since game started
+    const current: GameChart = {
+      notes,
+    };
+
+    // 50 ms has passed since last update
+    const expected: UpdatedGameState = {
+      combo: 0,
+      chart: {
+        notes,
+      },
+      previousFrameMeta: {
+        judgementResults: [],
+      },
+    };
+
+    const actual = updateGameState(
+      { startTime: 0, chart: current, time: 950, inputs: [], combo: 0 },
       engineConfiguration
     );
     expect(actual).toEqual(expected);
@@ -299,6 +337,7 @@ describe("updateGameState", () => {
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
+      combo: 1,
       previousFrameMeta: {
         judgementResults: [
           {
@@ -330,6 +369,7 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(
       {
+        combo: 0,
         startTime: 0,
         chart: current,
         time: 950,
@@ -372,6 +412,7 @@ describe("updateGameState", () => {
 
     // t = 950
     const expected: UpdatedGameState = {
+      combo: 1,
       chart: {
         notes: new Map<string, EngineNote>([
           [
@@ -410,6 +451,7 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(
       {
+        combo: 0,
         startTime: 0,
         chart: current,
         time: 950,
@@ -439,6 +481,7 @@ describe("updateGameState", () => {
     };
 
     const expected: UpdatedGameState = {
+      combo: 1,
       previousFrameMeta: {
         judgementResults: [
           {
@@ -458,6 +501,7 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(
       {
+        combo: 0,
         startTime: 0,
         chart: current,
         time: 90,
@@ -487,6 +531,7 @@ describe("updateGameState", () => {
     };
 
     const expected: UpdatedGameState = {
+      combo: 2,
       chart: {
         notes: new Map<string, EngineNote>([
           [
@@ -535,6 +580,7 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(
       {
+        combo: 0,
         startTime: 0,
         chart: current,
         time: 100,
@@ -559,10 +605,10 @@ describe("updateGameState", () => {
 describe("createChart", () => {
   it("returns a new chart considering offset", () => {
     const expected: Chart = {
-      notes: [{ id: "1", ms: 1100, columns: [0] }],
+      notes: [makeNote({ id: "1", ms: 1100, columns: [0] })],
     };
     const actual = createChart({
-      notes: [{ id: "1", ms: 1000, columns: [0] }],
+      notes: [makeNote({ id: "1", ms: 1000, columns: [0] })],
       offset: 100,
     });
 

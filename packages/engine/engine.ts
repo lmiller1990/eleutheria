@@ -27,6 +27,9 @@ export interface EngineNote {
   // 0, 1, 2, 3...
   columns: number[];
 
+  // the note has been missed; never to be hit
+  missed: boolean;
+
   /**
    * This note can only be hit if the note it dependsOn
    * has been hit, too. Useful for holds.
@@ -39,7 +42,7 @@ export interface EngineNote {
    * either because they've already been hit, or
    * as part of some weird gameplay mechanic.
    */
-  canHit?: boolean;
+  canHit: boolean;
 
   /**
    * Difference in ms between the time the note was supposed
@@ -161,6 +164,8 @@ export interface World {
   // How fast we have progressed since the song started.
   time: number;
 
+  readonly combo: number;
+
   // Array of inputs made by the user.
   inputs: Input[];
 }
@@ -276,21 +281,25 @@ export function initGameState(chart: Chart): GameChart {
 interface PreviousFrameMeta {
   judgementResults: JudgementResult[];
 }
-
 export interface UpdatedGameState {
   chart: GameChart;
+  readonly combo: number;
   previousFrameMeta: PreviousFrameMeta;
 }
 
 function processNoteJudgement(
   note: EngineNote,
-  judgementResults: JudgementResult[]
+  judgementResults: JudgementResult[],
+  time: number,
+  maxWindowMs: number
 ): EngineNote {
   if (!note.canHit || !judgementResults) {
     return note;
   }
 
   const noteJudgement = judgementResults.find((x) => x.noteId === note.id);
+
+  // the note was hit! update to reflect this.
   if (noteJudgement && noteJudgement.noteId === note.id) {
     return {
       ...note,
@@ -298,6 +307,15 @@ function processNoteJudgement(
       canHit: false,
       hitTiming: noteJudgement.timing,
       timingWindowName: noteJudgement.timingWindowName,
+    };
+  }
+
+  // the note is past the max timing window and can no longer be hit
+  // it is considered "missed"
+  if (note.hitAt === undefined && note.ms < time - maxWindowMs) {
+    return {
+      ...note,
+      missed: true,
     };
   }
 
@@ -317,11 +335,13 @@ export function updateGameState(
   world: World,
   config: EngineConfiguration
 ): UpdatedGameState {
+  const prevFrameNotes = Array.from(world.chart.notes.values());
+
   const judgementResults = world.inputs.reduce<JudgementResult[]>(
     (acc, input) => {
       const result = judgeInput({
         input,
-        chart: { notes: Array.from(world.chart.notes.values()) },
+        chart: { notes: prevFrameNotes },
         maxWindow: config.maxHitWindow,
         timingWindows: config.timingWindows,
       });
@@ -333,18 +353,37 @@ export function updateGameState(
     []
   );
 
+  const prevFrameMissedNotes = prevFrameNotes.filter((x) => x.missed).length;
+  let nextFrameMissedCount: number = 0;
+
   const newNotes = new Map<string, EngineNote>();
   for (const key of world.chart.notes.keys()) {
-    newNotes.set(
-      key,
-      processNoteJudgement(world.chart.notes.get(key)!, judgementResults)
+    const newNote = processNoteJudgement(
+      world.chart.notes.get(key)!,
+      judgementResults,
+      world.time,
+      config.maxHitWindow
     );
+
+    if (newNote.missed) {
+      nextFrameMissedCount++;
+    }
+
+    newNotes.set(key, newNote);
   }
+
+  // if the number of missed notes changed, they must have
+  // broke their combo.
+  const combo =
+    nextFrameMissedCount > prevFrameMissedNotes
+      ? 0
+      : world.combo + judgementResults.length;
 
   return {
     previousFrameMeta: {
       judgementResults,
     },
+    combo,
     chart: {
       notes: newNotes,
     },

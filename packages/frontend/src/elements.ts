@@ -14,6 +14,7 @@ const $ = <T extends Element = HTMLDivElement>(sel: string) => {
 export const $targets = $("#targets");
 export const $targetLine = $("#target-line");
 export const $timing = $("#timing");
+export const $combo = $("#combo");
 export const $debug = $("#debug");
 export const $debugLiveNoteCount = $("#debug-live-notes");
 export const $debugFps = $("#debug-fps");
