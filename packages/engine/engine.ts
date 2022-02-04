@@ -1,3 +1,5 @@
+import { InputManager } from "./inputManager";
+
 /**
  * Represents an input from the user.
  * ms is the time of the input in millseconds since
@@ -168,6 +170,17 @@ export interface World {
 
   // Array of inputs made by the user.
   inputs: Input[];
+
+  // audio context that plays the song
+  audioContext: AudioContext;
+
+  // actual souce that is hooked up to the audio context
+  source: AudioBufferSourceNode;
+
+  inputManager: InputManager;
+
+  // time (from performance.now()) when the song started playing
+  t0: number;
 }
 
 export interface JudgementResult {
@@ -278,13 +291,13 @@ export function initGameState(chart: Chart): GameChart {
   };
 }
 
-interface PreviousFrameMeta {
+export interface PreviousFrameMeta {
   judgementResults: JudgementResult[];
 }
+
 export interface UpdatedGameState {
-  chart: GameChart;
-  readonly combo: number;
-  previousFrameMeta: PreviousFrameMeta;
+  readonly world: World;
+  readonly previousFrameMeta: PreviousFrameMeta;
 }
 
 function processNoteJudgement(
@@ -380,12 +393,15 @@ export function updateGameState(
       : world.combo + judgementResults.length;
 
   return {
+    world: {
+      ...world,
+      combo,
+      chart: {
+        notes: newNotes,
+      },
+    },
     previousFrameMeta: {
       judgementResults,
-    },
-    combo,
-    chart: {
-      notes: newNotes,
     },
   };
 }

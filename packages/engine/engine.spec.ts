@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { EngineNote } from ".";
+import type { EngineNote, World } from ".";
 import {
   Chart,
   updateGameState,
@@ -13,6 +13,22 @@ import {
   GameChart,
   createChart,
 } from "./engine";
+
+function createWorld(chart: GameChart, overrides: Partial<World> = {}): World {
+  return {
+    startTime: 0,
+    t0: 0,
+    time: 0,
+    combo: 0,
+    inputs: [],
+    // @ts-ignore - TODO: figure this out.
+    audioContext: undefined,
+    // @ts-ignore - TODO: figure this out.
+    source: undefined,
+    ...overrides,
+    chart,
+  };
+}
 
 const engineConfiguration: EngineConfiguration = {
   maxHitWindow: 100,
@@ -283,21 +299,32 @@ describe("updateGameState", () => {
       notes,
     };
 
+    const world = createWorld(current, {
+      t0: 0,
+      startTime: 0,
+      time: 950,
+      inputs: [],
+      combo: 0,
+      audioContext: undefined,
+      source: undefined,
+    });
+
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
-      combo: 0,
-      chart: {
-        notes,
+      world: {
+        ...world,
+        combo: 0,
+        chart: {
+          notes,
+        },
       },
       previousFrameMeta: {
         judgementResults: [],
       },
     };
 
-    const actual = updateGameState(
-      { startTime: 0, chart: current, time: 950, inputs: [], combo: 0 },
-      engineConfiguration
-    );
+    const actual = updateGameState(world, engineConfiguration);
+
     expect(actual).toEqual(expected);
   });
 
@@ -305,25 +332,33 @@ describe("updateGameState", () => {
     const notes = new Map<string, EngineNote>();
     notes.set(baseNote.id, { ...baseNote, ms: 1000 });
     // 900 ms has passed since game started
-    const current: GameChart = {
+    const chart: GameChart = {
       notes,
     };
+    const world = createWorld(chart, {
+      startTime: 0,
+      time: 950,
+      inputs: [],
+      combo: 0,
+      audioContext: undefined,
+      source: undefined,
+    });
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
-      combo: 0,
-      chart: {
-        notes,
+      world: {
+        ...world,
+        combo: 0,
+        chart: {
+          notes,
+        },
       },
       previousFrameMeta: {
         judgementResults: [],
       },
     };
 
-    const actual = updateGameState(
-      { startTime: 0, chart: current, time: 950, inputs: [], combo: 0 },
-      engineConfiguration
-    );
+    const actual = updateGameState(world, engineConfiguration);
     expect(actual).toEqual(expected);
   });
 
@@ -334,10 +369,38 @@ describe("updateGameState", () => {
     const current: GameChart = {
       notes,
     };
+    const world = createWorld(current, {
+      combo: 0,
+      startTime: 0,
+      time: 950,
+      inputs: [
+        createInput({
+          column: baseNote.columns[0],
+          ms: 940,
+        }),
+      ],
+    });
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
-      combo: 1,
+      world: {
+        ...world,
+        combo: 1,
+        chart: {
+          notes: new Map([
+            [
+              baseNote.id,
+              {
+                ...baseNote,
+                ms: 1000,
+                canHit: false,
+                hitTiming: -60,
+                hitAt: 940,
+              },
+            ],
+          ]),
+        },
+      },
       previousFrameMeta: {
         judgementResults: [
           {
@@ -351,37 +414,9 @@ describe("updateGameState", () => {
           },
         ],
       },
-      chart: {
-        notes: new Map([
-          [
-            baseNote.id,
-            {
-              ...baseNote,
-              ms: 1000,
-              canHit: false,
-              hitTiming: -60,
-              hitAt: 940,
-            },
-          ],
-        ]),
-      },
     };
 
-    const actual = updateGameState(
-      {
-        combo: 0,
-        startTime: 0,
-        chart: current,
-        time: 950,
-        inputs: [
-          createInput({
-            column: baseNote.columns[0],
-            ms: 940,
-          }),
-        ],
-      },
-      engineConfiguration
-    );
+    const actual = updateGameState(world, engineConfiguration);
 
     expect(actual).toEqual(expected);
   });
@@ -410,30 +445,47 @@ describe("updateGameState", () => {
       ]),
     };
 
+    const world = createWorld(current, {
+      audioContext: undefined,
+      source: undefined,
+      combo: 0,
+      startTime: 0,
+      time: 950,
+      inputs: [
+        createInput({
+          column: baseNote.columns[0],
+          ms: 950,
+        }),
+      ],
+    });
+
     // t = 950
     const expected: UpdatedGameState = {
-      combo: 1,
-      chart: {
-        notes: new Map<string, EngineNote>([
-          [
-            "1",
-            {
-              ...alreadyHitNote,
-              id: "1",
-            },
-          ],
-          [
-            "2",
-            {
-              ...upcomingNote,
-              id: "2",
-              ms: 1000,
-              canHit: false,
-              hitTiming: -50,
-              hitAt: 950,
-            },
-          ],
-        ]),
+      world: {
+        ...world,
+        combo: 1,
+        chart: {
+          notes: new Map<string, EngineNote>([
+            [
+              "1",
+              {
+                ...alreadyHitNote,
+                id: "1",
+              },
+            ],
+            [
+              "2",
+              {
+                ...upcomingNote,
+                id: "2",
+                ms: 1000,
+                canHit: false,
+                hitTiming: -50,
+                hitAt: 950,
+              },
+            ],
+          ]),
+        },
       },
       previousFrameMeta: {
         judgementResults: [
@@ -450,18 +502,8 @@ describe("updateGameState", () => {
     };
 
     const actual = updateGameState(
-      {
-        combo: 0,
-        startTime: 0,
-        chart: current,
-        time: 950,
-        inputs: [
-          createInput({
-            column: baseNote.columns[0],
-            ms: 950,
-          }),
-        ],
-      },
+      world,
+
       engineConfiguration
     );
 
@@ -479,9 +521,26 @@ describe("updateGameState", () => {
     const current: GameChart = {
       notes: new Map<string, EngineNote>([[note.id, note]]),
     };
+    const world = createWorld(current, {
+      combo: 0,
+      startTime: 0,
+      time: 90,
+      inputs: [
+        createInput({
+          column: note.columns[0],
+          ms: 90,
+        }),
+      ],
+    });
 
     const expected: UpdatedGameState = {
-      combo: 1,
+      world: {
+        ...world,
+        combo: 1,
+        chart: {
+          notes: new Map<string, EngineNote>([[note.id, { ...note }]]),
+        },
+      },
       previousFrameMeta: {
         judgementResults: [
           {
@@ -494,26 +553,9 @@ describe("updateGameState", () => {
           },
         ],
       },
-      chart: {
-        notes: new Map<string, EngineNote>([[note.id, { ...note }]]),
-      },
     };
 
-    const actual = updateGameState(
-      {
-        combo: 0,
-        startTime: 0,
-        chart: current,
-        time: 90,
-        inputs: [
-          createInput({
-            column: note.columns[0],
-            ms: 90,
-          }),
-        ],
-      },
-      engineConfiguration
-    );
+    const actual = updateGameState(world, engineConfiguration);
 
     expect(actual).toEqual(expected);
   });
@@ -530,33 +572,55 @@ describe("updateGameState", () => {
       ]),
     };
 
+    const world = createWorld(current, {
+      audioContext: undefined,
+      source: undefined,
+      combo: 0,
+      startTime: 0,
+      chart: current,
+      time: 100,
+      inputs: [
+        createInput({
+          column: 0,
+          ms: 100,
+        }),
+        createInput({
+          column: 1,
+          ms: 100,
+        }),
+      ],
+    });
+
     const expected: UpdatedGameState = {
-      combo: 2,
-      chart: {
-        notes: new Map<string, EngineNote>([
-          [
-            "1",
-            {
-              ...aNote,
-              id: "1",
-              columns: [0],
-              hitAt: 100,
-              canHit: false,
-              hitTiming: 0,
-            },
-          ],
-          [
-            "2",
-            {
-              ...aNote,
-              id: "2",
-              columns: [1],
-              hitAt: 100,
-              canHit: false,
-              hitTiming: 0,
-            },
-          ],
-        ]),
+      world: {
+        ...world,
+        combo: 2,
+        chart: {
+          notes: new Map<string, EngineNote>([
+            [
+              "1",
+              {
+                ...aNote,
+                id: "1",
+                columns: [0],
+                hitAt: 100,
+                canHit: false,
+                hitTiming: 0,
+              },
+            ],
+            [
+              "2",
+              {
+                ...aNote,
+                id: "2",
+                columns: [1],
+                hitAt: 100,
+                canHit: false,
+                hitTiming: 0,
+              },
+            ],
+          ]),
+        },
       },
       previousFrameMeta: {
         judgementResults: [
@@ -578,25 +642,7 @@ describe("updateGameState", () => {
       },
     };
 
-    const actual = updateGameState(
-      {
-        combo: 0,
-        startTime: 0,
-        chart: current,
-        time: 100,
-        inputs: [
-          createInput({
-            column: 0,
-            ms: 100,
-          }),
-          createInput({
-            column: 1,
-            ms: 100,
-          }),
-        ],
-      },
-      engineConfiguration
-    );
+    const actual = updateGameState(world, engineConfiguration);
 
     expect(actual).toEqual(expected);
   });

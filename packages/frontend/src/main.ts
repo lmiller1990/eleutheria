@@ -1,13 +1,12 @@
 import {
   createChart,
   initGameState,
-  EngineNote,
   updateGameState,
   World,
-  UpdatedGameState,
+  InputManager,
+  PreviousFrameMeta,
 } from "@packages/engine";
 import { fetchAudio, fetchData } from "./fetchData";
-import { InputManager } from "./inputManager";
 import {
   $note,
   $targetLine,
@@ -27,15 +26,6 @@ import {
   codeColumnMap,
 } from "./config";
 import { writeDebugToHtml } from "./debug";
-
-interface GameState {
-  audioContext: AudioContext;
-  combo: number;
-  source: AudioBufferSourceNode;
-  notes: Map<string, EngineNote>;
-  inputManager: InputManager;
-  t0: number;
-}
 
 const noteMap = new Map<string, HTMLDivElement>();
 
@@ -61,18 +51,18 @@ function updateNote($n: HTMLDivElement, xpos: number, ypos: number) {
   }
 }
 
-function updateUI(currentGameState: GameState, newGameState: UpdatedGameState) {
-  if (newGameState.previousFrameMeta.judgementResults.length) {
+function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
+  if (previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
-    for (const judgement of newGameState.previousFrameMeta.judgementResults) {
-      const note = newGameState.chart.notes.get(judgement.noteId);
+    for (const judgement of previousFrameMeta.judgementResults) {
+      const note = state.chart.notes.get(judgement.noteId);
       if (!note || !note.timingWindowName) {
         throw Error(
           `Could not judged note with id ${judgement.noteId}. This should never happen.`
         );
       }
 
-      currentGameState.inputManager.consume(judgement.inputs);
+      state.inputManager.consume(judgement.inputs);
 
       const text =
         note.timingWindowName === "perfect"
@@ -94,11 +84,10 @@ function updateUI(currentGameState: GameState, newGameState: UpdatedGameState) {
     }
   }
 
-  $combo.innerText =
-    newGameState.combo > 0 ? `${newGameState.combo} combo` : ``;
+  $combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
 
-function gameLoop(gameState: GameState) {
+function gameLoop(gameState: World) {
   ticks += 1;
   if (cancel) {
     return;
@@ -108,20 +97,27 @@ function gameLoop(gameState: GameState) {
     gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
 
   const world: World = {
+    t0: gameState.t0,
+    source: gameState.source,
+    inputManager: gameState.inputManager,
+    audioContext: gameState.audioContext,
     startTime: gameState.t0,
     combo: gameState.combo,
     inputs: gameState.inputManager.activeInputs,
     time: dt,
     chart: {
-      notes: gameState.notes,
+      notes: gameState.chart.notes,
     },
   };
 
-  const newGameState = updateGameState(world, engineConfiguration);
+  const { world: updatedWorld, previousFrameMeta } = updateGameState(
+    world,
+    engineConfiguration
+  );
 
-  updateUI(gameState, newGameState);
+  updateUI(updatedWorld, previousFrameMeta);
 
-  for (const [id, n] of newGameState.chart.notes) {
+  for (const [id, n] of updatedWorld.chart.notes) {
     const ypos = (n.ms - dt) * MULTIPLIER;
     const xpos = n.columns[0] * NOTE_WIDTH;
     const $note = noteMap.get(id);
@@ -155,8 +151,10 @@ function gameLoop(gameState: GameState) {
   window.requestAnimationFrame(() =>
     gameLoop({
       ...gameState,
-      notes: newGameState.chart.notes,
-      combo: newGameState.combo,
+      chart: {
+        notes: updatedWorld.chart.notes,
+      },
+      combo: updatedWorld.combo,
     })
   );
 }
@@ -196,13 +194,18 @@ $start.addEventListener("click", async () => {
 
   const { audioContext, source, startTime } = play();
 
-  const gameState: GameState = {
+  const gameState: World = {
     audioContext,
     source,
     combo: 0,
     t0: startTime,
     inputManager,
-    notes: gs.notes,
+    chart: {
+      notes: gs.notes,
+    },
+    startTime,
+    inputs: [],
+    time: 0,
   };
 
   $stop.addEventListener("click", stop);
