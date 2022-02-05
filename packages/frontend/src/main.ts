@@ -67,14 +67,15 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
 
       state.inputManager.consume(judgement.inputs);
 
+      const timing = `(${(judgement.timing * -1).toFixed()})`
       const text =
         note.timingWindowName === "perfect"
           ? note.timingWindowName
           : judgement.timing > 0
-          ? `${note.timingWindowName}-`
-          : `-${note.timingWindowName}`;
+          ? `${note.timingWindowName}`
+          : `${note.timingWindowName}`;
 
-      judgementFlash(note.timingWindowName, text);
+      judgementFlash(note.timingWindowName, `${text} ${timing}`);
       targetNoteHitFlash(note.columns[0] as 0 | 1 | 2 | 3);
 
       if (timeoutId) {
