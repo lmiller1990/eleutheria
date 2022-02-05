@@ -90,6 +90,7 @@ $start.addEventListener("click", async () => {
   const gameConfig: GameConfig = {
     chart,
     preSongPadding: PADDING_MS,
+    postSongPadding: PADDING_MS,
     engineConfiguration,
     codeColumns: codeColumnMap,
     inputManagerConfig: {
@@ -128,10 +129,16 @@ $start.addEventListener("click", async () => {
 
     onDebug: (_world: World, fps: number) => {
       writeDebugToHtml(fps);
+    },
+
+    onSongCompleted: (_world: World) => {
+      console.log('Done!')
     }
   };
 
   const game = new Game(gameConfig, lifecycle);
 
-  game.start()
+  const stop = await game.start()
+
+  $stop.addEventListener("click", stop);
 });

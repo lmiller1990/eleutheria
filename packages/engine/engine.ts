@@ -1,3 +1,4 @@
+import { time } from "console";
 import { InputManager } from "./inputManager";
 
 /**
@@ -181,6 +182,10 @@ export interface World {
 
   // time (from performance.now()) when the song started playing
   t0: number;
+
+  // is the song over? This is defined as no more remaining notes
+  // does not consider if the actual music is finished playback or not.
+  readonly songCompleted: boolean
 }
 
 export interface JudgementResult {
@@ -278,6 +283,7 @@ export function judgeInput({
  */
 export function initGameState(chart: Chart): GameChart {
   const notes = new Map<string, EngineNote>();
+
   chart.notes.forEach((note) => {
     notes.set(note.id, {
       ...note,
@@ -293,6 +299,7 @@ export function initGameState(chart: Chart): GameChart {
 
 export interface PreviousFrameMeta {
   judgementResults: JudgementResult[];
+  comboBroken: boolean;
 }
 
 export interface UpdatedGameState {
@@ -387,21 +394,21 @@ export function updateGameState(
 
   // if the number of missed notes changed, they must have
   // broke their combo.
-  const combo =
-    nextFrameMissedCount > prevFrameMissedNotes
-      ? 0
-      : world.combo + judgementResults.length;
+  const comboBroken = nextFrameMissedCount > prevFrameMissedNotes;
+  const combo = comboBroken ? 0 : world.combo + judgementResults.length;
 
   return {
     world: {
       ...world,
       combo,
       chart: {
+        ...world.chart,
         notes: newNotes,
       },
     },
     previousFrameMeta: {
       judgementResults,
+      comboBroken
     },
   };
 }

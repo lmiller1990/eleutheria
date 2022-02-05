@@ -39,7 +39,8 @@ export async function fetchAudio(paddingMs: number) {
 
 export interface GameConfig {
   chart: ParsedChart
-  preSongPadding: number
+  preSongPadding?: number
+  postSongPadding?: number
   engineConfiguration: EngineConfiguration
   codeColumns: Map<string, number>
   inputManagerConfig: Partial<InputManagerConfig>
@@ -48,18 +49,25 @@ export interface GameConfig {
 export interface GameLifecycle {
   onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void
   onDebug?: (world: World, fps: number) => void
+  onSongCompleted?: (world: World, previousFrameMeta: PreviousFrameMeta) => void
 }
 
 export class Game {
   #fps = 0
   #lastDebugUpdate = 0
+  #timeOfLastNote: number
 
-  constructor(private config: GameConfig, private lifecycle: GameLifecycle) {}
+  constructor(private config: GameConfig, private lifecycle: GameLifecycle) {
+    this.#timeOfLastNote = config.chart.notes.reduce(
+      (acc, curr) => (curr.ms > acc ? curr.ms : acc),
+      0
+    ) + (this.config.preSongPadding || 0) + this.config.chart.metadata.offset + (this.config.postSongPadding || 0);
+  }
 
   async start () {
     const chart = createChart({
       notes: this.config.chart.notes.map((x) => ({ ...x, missed: false, canHit: true })),
-      offset: this.config.preSongPadding + this.config.chart.metadata.offset,
+      offset: (this.config.preSongPadding || 0) + this.config.chart.metadata.offset,
     });
 
     const gs = initGameState(chart);
@@ -71,18 +79,13 @@ export class Game {
 
     inputManager.listen();
 
-    // const stop = () => {
-    //   gameState.inputManager.teardown();
-    //   gameState.source.stop();
-    //   cancel = true;
-    // };
-
-    const play = await fetchAudio(this.config.preSongPadding);
+    const play = await fetchAudio(this.config.preSongPadding || 0);
 
     const { audioContext, source, startTime } = play();
 
     const gameState: World = {
       audioContext,
+      songCompleted: false,
       source,
       combo: 0,
       t0: startTime,
@@ -95,10 +98,14 @@ export class Game {
       time: 0,
     };
 
-    // $stop.addEventListener("click", stop);
     gameState.inputManager.setOrigin(gameState.t0);
 
     this.gameLoop(gameState);
+
+    return () => {
+      gameState.inputManager.teardown();
+      gameState.source.stop();
+    }
   }
 
   gameLoop (gameState: World) {
@@ -124,9 +131,15 @@ export class Game {
     if (dt - this.#lastDebugUpdate > 1000) {
       this.lifecycle.onDebug?.(updatedWorld, this.#fps);
       this.#fps = 0
+      this.#lastDebugUpdate = dt
     }
 
     gameState.inputManager.update(dt);
+
+    if (dt > this.#timeOfLastNote) {
+      this.lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta)
+      return
+    }
 
     window.requestAnimationFrame(() =>
       this.gameLoop(updatedWorld)

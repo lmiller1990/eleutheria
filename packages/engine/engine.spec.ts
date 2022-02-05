@@ -14,7 +14,12 @@ import {
   createChart,
 } from "./engine";
 
-function createWorld(chart: GameChart, overrides: Partial<World> = {}): World {
+function createWorld(
+  chart: Partial<GameChart> = { notes: new Map(), },
+  overrides: Partial<World> = {}
+): World {
+  const notes = Array.from(chart.notes?.entries() ?? []).map((x) => x[1]);
+
   return {
     startTime: 0,
     t0: 0,
@@ -26,7 +31,9 @@ function createWorld(chart: GameChart, overrides: Partial<World> = {}): World {
     // @ts-ignore - TODO: figure this out.
     source: undefined,
     ...overrides,
-    chart,
+    chart: {
+      notes: chart.notes || new Map(),
+    },
   };
 }
 
@@ -295,31 +302,32 @@ describe("updateGameState", () => {
     const notes = new Map<string, EngineNote>();
     notes.set(baseNote.id, { ...baseNote, ms: 1000 });
     // 900 ms has passed since game started
-    const current: GameChart = {
-      notes,
-    };
 
-    const world = createWorld(current, {
-      t0: 0,
-      startTime: 0,
-      time: 950,
-      inputs: [],
-      combo: 0,
-      audioContext: undefined,
-      source: undefined,
-    });
+    const world = createWorld(
+      { notes },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 950,
+        inputs: [],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
-      world: {
-        ...world,
-        combo: 0,
-        chart: {
-          notes,
-        },
-      },
+      world: createWorld(
+        { notes },
+        {
+          ...world,
+          combo: 0,
+        }
+      ),
       previousFrameMeta: {
         judgementResults: [],
+        comboBroken: false,
       },
     };
 
@@ -332,29 +340,31 @@ describe("updateGameState", () => {
     const notes = new Map<string, EngineNote>();
     notes.set(baseNote.id, { ...baseNote, ms: 1000 });
     // 900 ms has passed since game started
-    const chart: GameChart = {
-      notes,
-    };
-    const world = createWorld(chart, {
-      startTime: 0,
-      time: 950,
-      inputs: [],
-      combo: 0,
-      audioContext: undefined,
-      source: undefined,
-    });
+
+    const world = createWorld(
+      { notes },
+      {
+        startTime: 0,
+        time: 950,
+        inputs: [],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
-      world: {
-        ...world,
-        combo: 0,
-        chart: {
-          notes,
-        },
-      },
+      world: createWorld(
+        { notes },
+        {
+          ...world,
+          combo: 0,
+        }
+      ),
       previousFrameMeta: {
         judgementResults: [],
+        comboBroken: false,
       },
     };
 
@@ -366,20 +376,21 @@ describe("updateGameState", () => {
     // 900 ms has passed since game started
     const notes = new Map<string, EngineNote>();
     notes.set(baseNote.id, { ...baseNote, ms: 1000, canHit: true });
-    const current: GameChart = {
-      notes,
-    };
-    const world = createWorld(current, {
-      combo: 0,
-      startTime: 0,
-      time: 950,
-      inputs: [
-        createInput({
-          column: baseNote.columns[0],
-          ms: 940,
-        }),
-      ],
-    });
+
+    const world = createWorld(
+      { notes },
+      {
+        combo: 0,
+        startTime: 0,
+        time: 950,
+        inputs: [
+          createInput({
+            column: baseNote.columns[0],
+            ms: 940,
+          }),
+        ],
+      }
+    );
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
@@ -402,6 +413,7 @@ describe("updateGameState", () => {
         },
       },
       previousFrameMeta: {
+        comboBroken: false,
         judgementResults: [
           {
             noteId: "1",
@@ -488,6 +500,7 @@ describe("updateGameState", () => {
         },
       },
       previousFrameMeta: {
+        comboBroken: false,
         judgementResults: [
           {
             noteId: "2",
@@ -518,9 +531,11 @@ describe("updateGameState", () => {
       hitAt: 100,
       hitTiming: 0,
     };
+
     const current: GameChart = {
       notes: new Map<string, EngineNote>([[note.id, note]]),
     };
+
     const world = createWorld(current, {
       combo: 0,
       startTime: 0,
@@ -542,6 +557,7 @@ describe("updateGameState", () => {
         },
       },
       previousFrameMeta: {
+        comboBroken: false,
         judgementResults: [
           {
             noteId: "1",
@@ -623,6 +639,7 @@ describe("updateGameState", () => {
         },
       },
       previousFrameMeta: {
+        comboBroken: false,
         judgementResults: [
           {
             noteId: "1",

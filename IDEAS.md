@@ -14,7 +14,26 @@ const game = new Game(config: Config, song: Song, {
   onDebug: () => {
 
   },
+
+  onInput: () => {
+
+  },
+
+  onNoteHit: () => {
+
+  },
+
+  onNoteMissed: () => {
+
+  },
+
+  onSongCompleted: () => {
+
+  }
 })
+
+g.start()
+g.teardown()
 
 game.start()
 game.end()
