@@ -14,7 +14,7 @@ export class InputManager {
 
   constructor(
     private codeColumnMap: Map<string, number>,
-    config: Partial<InputManagerConfig>
+    config: Partial<InputManagerConfig> = {}
   ) {
     this.config = {
       ...config,

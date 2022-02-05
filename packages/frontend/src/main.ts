@@ -5,6 +5,9 @@ import {
   World,
   InputManager,
   PreviousFrameMeta,
+  Game,
+  GameConfig,
+  GameLifecycle,
 } from "@packages/engine";
 import { fetchAudio, fetchData } from "./fetchData";
 import {
@@ -58,7 +61,7 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
       const note = state.chart.notes.get(judgement.noteId);
       if (!note || !note.timingWindowName) {
         throw Error(
-          `Could not judged note with id ${judgement.noteId}. This should never happen.`
+          `Could not find judged note with id ${judgement.noteId} and timing window ${note?.timingWindowName}. This should never happen.`
         );
       }
 
@@ -87,129 +90,122 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
   $combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
 
-function gameLoop(gameState: World) {
-  ticks += 1;
-  if (cancel) {
-    return;
-  }
+// function gameLoop(gameState: World) {
+//   ticks += 1;
+//   if (cancel) {
+//     return;
+//   }
 
-  const dt =
-    gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
+//   const dt =
+//     gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
 
-  const world: World = {
-    t0: gameState.t0,
-    source: gameState.source,
-    inputManager: gameState.inputManager,
-    audioContext: gameState.audioContext,
-    startTime: gameState.t0,
-    combo: gameState.combo,
-    inputs: gameState.inputManager.activeInputs,
-    time: dt,
-    chart: {
-      notes: gameState.chart.notes,
-    },
-  };
+//   const world: World = {
+//     t0: gameState.t0,
+//     source: gameState.source,
+//     inputManager: gameState.inputManager,
+//     audioContext: gameState.audioContext,
+//     startTime: gameState.t0,
+//     combo: gameState.combo,
+//     inputs: gameState.inputManager.activeInputs,
+//     time: dt,
+//     chart: {
+//       notes: gameState.chart.notes,
+//     },
+//   };
 
-  const { world: updatedWorld, previousFrameMeta } = updateGameState(
-    world,
-    engineConfiguration
-  );
+//   const { world: updatedWorld, previousFrameMeta } = updateGameState(
+//     world,
+//     engineConfiguration
+//   );
 
-  updateUI(updatedWorld, previousFrameMeta);
+//   updateUI(updatedWorld, previousFrameMeta);
 
-  for (const [id, n] of updatedWorld.chart.notes) {
-    const ypos = (n.ms - dt) * MULTIPLIER;
-    const xpos = n.columns[0] * NOTE_WIDTH;
-    const $note = noteMap.get(id);
+//   for (const [id, n] of updatedWorld.chart.notes) {
+//     const ypos = (n.ms - dt) * MULTIPLIER;
+//     const xpos = n.columns[0] * NOTE_WIDTH;
+//     const $note = noteMap.get(id);
 
-    if (n.hitTiming) {
-      if (!$note) {
-        throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
-      }
-      $note.remove();
-    } else {
-      if ($note) {
-        updateNote($note, xpos, ypos);
-      } else if (ypos < window.innerHeight) {
-        appendNote(id, xpos, ypos);
-      }
-    }
-  }
+//     if (n.hitTiming) {
+//       if (!$note) {
+//         throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
+//       }
+//       $note.remove();
+//     } else {
+//       if ($note) {
+//         updateNote($note, xpos, ypos);
+//       } else if (ypos < window.innerHeight) {
+//         appendNote(id, xpos, ypos);
+//       }
+//     }
+//   }
 
-  if (dt - lastDebugUpdate > 1000) {
-    writeDebugToHtml({
-      ticks,
-      afterUpdate: () => {
-        lastDebugUpdate = dt;
-        ticks = 0;
-      },
-    });
-  }
+//   if (dt - lastDebugUpdate > 1000) {
+//     writeDebugToHtml({
+//       ticks,
+//       afterUpdate: () => {
+//         lastDebugUpdate = dt;
+//         ticks = 0;
+//       },
+//     });
+//   }
 
-  gameState.inputManager.update(dt);
+//   gameState.inputManager.update(dt);
 
-  window.requestAnimationFrame(() =>
-    gameLoop({
-      ...gameState,
-      chart: {
-        notes: updatedWorld.chart.notes,
-      },
-      combo: updatedWorld.combo,
-    })
-  );
-}
+//   window.requestAnimationFrame(() =>
+//     gameLoop({
+//       ...gameState,
+//       chart: {
+//         notes: updatedWorld.chart.notes,
+//       },
+//       combo: updatedWorld.combo,
+//     })
+//   );
+// }
 
 $start.addEventListener("click", async () => {
-  // ensure clear even during HMR
-  noteMap.clear();
-
-  const data = await fetchData();
-
-  const chart = createChart({
-    notes: data.notes.map((x) => ({ ...x, missed: false, canHit: true })),
-    offset: PADDING_MS + data.metadata.offset,
-  });
-
-  const gs = initGameState(chart);
-
-  const inputManager = new InputManager(codeColumnMap, {
-    ...engineConfiguration,
-    onKeyCallback: new Map([
-      ["KeyD", () => targetFlash(0)],
-      ["KeyF", () => targetFlash(1)],
-      ["KeyJ", () => targetFlash(2)],
-      ["KeyK", () => targetFlash(3)],
-    ]),
-  });
-
-  inputManager.listen();
-
-  const stop = () => {
-    gameState.inputManager.teardown();
-    gameState.source.stop();
-    cancel = true;
-  };
-
-  const play = await fetchAudio();
-
-  const { audioContext, source, startTime } = play();
-
-  const gameState: World = {
-    audioContext,
-    source,
-    combo: 0,
-    t0: startTime,
-    inputManager,
-    chart: {
-      notes: gs.notes,
+  const chart = await fetchData();
+  const gameConfig: GameConfig = {
+    chart,
+    preSongPadding: PADDING_MS,
+    engineConfiguration,
+    codeColumns: codeColumnMap,
+    inputManagerConfig: {
+      onKeyCallback: new Map([
+        ["KeyD", () => targetFlash(0)],
+        ["KeyF", () => targetFlash(1)],
+        ["KeyJ", () => targetFlash(2)],
+        ["KeyK", () => targetFlash(3)],
+      ]),
     },
-    startTime,
-    inputs: [],
-    time: 0,
   };
 
-  $stop.addEventListener("click", stop);
-  gameState.inputManager.setOrigin(gameState.t0);
+  const lifecycle: GameLifecycle = {
+    onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
+      for (const [id, n] of world.chart.notes) {
+        const ypos = (n.ms - world.time) * MULTIPLIER;
+        const xpos = n.columns[0] * NOTE_WIDTH;
+        const $note = noteMap.get(id);
 
-  gameLoop(gameState);
+        if (n.hitTiming) {
+          if (!$note) {
+            throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
+          }
+          $note.remove();
+        } else {
+          if ($note) {
+            updateNote($note, xpos, ypos);
+          } else if (ypos < window.innerHeight) {
+            appendNote(id, xpos, ypos);
+          }
+        }
+      }
+
+      updateUI(world, previousFrameMeta);
+    },
+  };
+
+  const game = new Game(gameConfig, lifecycle);
+
+  game.start()
+  // ensure clear even during HMR
 });
