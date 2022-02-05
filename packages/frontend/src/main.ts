@@ -1,15 +1,11 @@
 import {
-  createChart,
-  initGameState,
-  updateGameState,
   World,
-  InputManager,
   PreviousFrameMeta,
   Game,
   GameConfig,
   GameLifecycle,
 } from "@packages/engine";
-import { fetchAudio, fetchData } from "./fetchData";
+import { fetchData } from "./fetchData";
 import {
   $note,
   $targetLine,
@@ -33,9 +29,6 @@ import { writeDebugToHtml } from "./debug";
 const noteMap = new Map<string, HTMLDivElement>();
 
 let timeoutId: number;
-let cancel: boolean = false;
-let lastDebugUpdate = 0;
-let ticks = 0;
 
 function appendNote(id: string, xpos: number, ypos: number) {
   const $n = $note();
@@ -91,80 +84,9 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
   $combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
 
-// function gameLoop(gameState: World) {
-//   ticks += 1;
-//   if (cancel) {
-//     return;
-//   }
-
-//   const dt =
-//     gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
-
-//   const world: World = {
-//     t0: gameState.t0,
-//     source: gameState.source,
-//     inputManager: gameState.inputManager,
-//     audioContext: gameState.audioContext,
-//     startTime: gameState.t0,
-//     combo: gameState.combo,
-//     inputs: gameState.inputManager.activeInputs,
-//     time: dt,
-//     chart: {
-//       notes: gameState.chart.notes,
-//     },
-//   };
-
-//   const { world: updatedWorld, previousFrameMeta } = updateGameState(
-//     world,
-//     engineConfiguration
-//   );
-
-//   updateUI(updatedWorld, previousFrameMeta);
-
-//   for (const [id, n] of updatedWorld.chart.notes) {
-//     const ypos = (n.ms - dt) * MULTIPLIER;
-//     const xpos = n.columns[0] * NOTE_WIDTH;
-//     const $note = noteMap.get(id);
-
-//     if (n.hitTiming) {
-//       if (!$note) {
-//         throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
-//       }
-//       $note.remove();
-//     } else {
-//       if ($note) {
-//         updateNote($note, xpos, ypos);
-//       } else if (ypos < window.innerHeight) {
-//         appendNote(id, xpos, ypos);
-//       }
-//     }
-//   }
-
-//   if (dt - lastDebugUpdate > 1000) {
-//     writeDebugToHtml({
-//       ticks,
-//       afterUpdate: () => {
-//         lastDebugUpdate = dt;
-//         ticks = 0;
-//       },
-//     });
-//   }
-
-//   gameState.inputManager.update(dt);
-
-//   window.requestAnimationFrame(() =>
-//     gameLoop({
-//       ...gameState,
-//       chart: {
-//         notes: updatedWorld.chart.notes,
-//       },
-//       combo: updatedWorld.combo,
-//     })
-//   );
-// }
-
 $start.addEventListener("click", async () => {
   const chart = await fetchData();
+
   const gameConfig: GameConfig = {
     chart,
     preSongPadding: PADDING_MS,
@@ -203,10 +125,13 @@ $start.addEventListener("click", async () => {
 
       updateUI(world, previousFrameMeta);
     },
+
+    onDebug: (_world: World, fps: number) => {
+      writeDebugToHtml(fps);
+    }
   };
 
   const game = new Game(gameConfig, lifecycle);
 
   game.start()
-  // ensure clear even during HMR
 });

@@ -46,11 +46,13 @@ export interface GameConfig {
 }
 
 export interface GameLifecycle {
-  onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => void
+  onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void
+  onDebug?: (world: World, fps: number) => void
 }
 
 export class Game {
-  #ticks = 0
+  #fps = 0
+  #lastDebugUpdate = 0
 
   constructor(private config: GameConfig, private lifecycle: GameLifecycle) {}
 
@@ -100,7 +102,7 @@ export class Game {
   }
 
   gameLoop (gameState: World) {
-    this.#ticks += 1;
+    this.#fps += 1;
 
     const dt =
       gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
@@ -117,7 +119,12 @@ export class Game {
       this.config.engineConfiguration
     );
 
-    this.lifecycle.onUpdate(updatedWorld, previousFrameMeta)
+    this.lifecycle.onUpdate?.(updatedWorld, previousFrameMeta)
+
+    if (dt - this.#lastDebugUpdate > 1000) {
+      this.lifecycle.onDebug?.(updatedWorld, this.#fps);
+      this.#fps = 0
+    }
 
     gameState.inputManager.update(dt);
 
