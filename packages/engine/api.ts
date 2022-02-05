@@ -1,6 +1,15 @@
 import { padStart } from "@packages/audio-utils";
 import type { ParsedChart } from "@packages/chart-parser";
-import { createChart, EngineConfiguration, initGameState, InputManager, InputManagerConfig, PreviousFrameMeta, updateGameState, World } from ".";
+import {
+  createChart,
+  EngineConfiguration,
+  initGameState,
+  InputManager,
+  InputManagerConfig,
+  PreviousFrameMeta,
+  updateGameState,
+  World,
+} from ".";
 
 const SONG = {
   // SONG_ID: "rave",
@@ -38,36 +47,48 @@ export async function fetchAudio(paddingMs: number) {
 }
 
 export interface GameConfig {
-  chart: ParsedChart
-  preSongPadding?: number
-  postSongPadding?: number
-  engineConfiguration: EngineConfiguration
-  codeColumns: Map<string, number>
-  inputManagerConfig: Partial<InputManagerConfig>
+  chart: ParsedChart;
+  preSongPadding?: number;
+  postSongPadding?: number;
+  engineConfiguration: EngineConfiguration;
+  codeColumns: Map<string, number>;
+  inputManagerConfig: Partial<InputManagerConfig>;
 }
 
 export interface GameLifecycle {
-  onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void
-  onDebug?: (world: World, fps: number) => void
-  onSongCompleted?: (world: World, previousFrameMeta: PreviousFrameMeta) => void
+  onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void;
+  onDebug?: (world: World, fps: number) => void;
+  onSongCompleted?: (
+    world: World,
+    previousFrameMeta: PreviousFrameMeta
+  ) => void;
 }
 
 export class Game {
-  #fps = 0
-  #lastDebugUpdate = 0
-  #timeOfLastNote: number
+  #fps = 0;
+  #lastDebugUpdate = 0;
+  #timeOfLastNote: number;
 
   constructor(private config: GameConfig, private lifecycle: GameLifecycle) {
-    this.#timeOfLastNote = config.chart.notes.reduce(
-      (acc, curr) => (curr.ms > acc ? curr.ms : acc),
-      0
-    ) + (this.config.preSongPadding || 0) + this.config.chart.metadata.offset + (this.config.postSongPadding || 0);
+    this.#timeOfLastNote =
+      config.chart.notes.reduce(
+        (acc, curr) => (curr.ms > acc ? curr.ms : acc),
+        0
+      ) +
+      (this.config.preSongPadding || 0) +
+      this.config.chart.metadata.offset +
+      (this.config.postSongPadding || 0);
   }
 
-  async start () {
+  async start() {
     const chart = createChart({
-      notes: this.config.chart.notes.map((x) => ({ ...x, missed: false, canHit: true })),
-      offset: (this.config.preSongPadding || 0) + this.config.chart.metadata.offset,
+      notes: this.config.chart.notes.map((x) => ({
+        ...x,
+        missed: false,
+        canHit: true,
+      })),
+      offset:
+        (this.config.preSongPadding || 0) + this.config.chart.metadata.offset,
     });
 
     const gs = initGameState(chart);
@@ -105,14 +126,15 @@ export class Game {
     return () => {
       gameState.inputManager.teardown();
       gameState.source.stop();
-    }
+    };
   }
 
-  gameLoop (gameState: World) {
+  gameLoop(gameState: World) {
     this.#fps += 1;
 
     const dt =
-      gameState.audioContext.getOutputTimestamp().performanceTime! - gameState.t0;
+      gameState.audioContext.getOutputTimestamp().performanceTime! -
+      gameState.t0;
 
     const world: World = {
       ...gameState,
@@ -126,23 +148,21 @@ export class Game {
       this.config.engineConfiguration
     );
 
-    this.lifecycle.onUpdate?.(updatedWorld, previousFrameMeta)
+    this.lifecycle.onUpdate?.(updatedWorld, previousFrameMeta);
 
     if (dt - this.#lastDebugUpdate > 1000) {
       this.lifecycle.onDebug?.(updatedWorld, this.#fps);
-      this.#fps = 0
-      this.#lastDebugUpdate = dt
+      this.#fps = 0;
+      this.#lastDebugUpdate = dt;
     }
 
     gameState.inputManager.update(dt);
 
     if (dt > this.#timeOfLastNote) {
-      this.lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta)
-      return
+      this.lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta);
+      return;
     }
 
-    window.requestAnimationFrame(() =>
-      this.gameLoop(updatedWorld)
-    );
+    window.requestAnimationFrame(() => this.gameLoop(updatedWorld));
   }
 }

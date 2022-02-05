@@ -185,7 +185,7 @@ export interface World {
 
   // is the song over? This is defined as no more remaining notes
   // does not consider if the actual music is finished playback or not.
-  readonly songCompleted: boolean
+  readonly songCompleted: boolean;
 }
 
 export interface JudgementResult {
@@ -408,7 +408,7 @@ export function updateGameState(
     },
     previousFrameMeta: {
       judgementResults,
-      comboBroken
+      comboBroken,
     },
   };
 }

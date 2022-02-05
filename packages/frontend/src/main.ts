@@ -60,7 +60,7 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
 
       state.inputManager.consume(judgement.inputs);
 
-      const timing = `(${(judgement.timing * -1).toFixed()})`
+      const timing = `(${(judgement.timing * -1).toFixed()})`;
       const text =
         note.timingWindowName === "perfect"
           ? note.timingWindowName
@@ -132,13 +132,13 @@ $start.addEventListener("click", async () => {
     },
 
     onSongCompleted: (_world: World) => {
-      console.log('Done!')
-    }
+      console.log("Done!");
+    },
   };
 
   const game = new Game(gameConfig, lifecycle);
 
-  const stop = await game.start()
+  const stop = await game.start();
 
   $stop.addEventListener("click", stop);
 });

@@ -15,7 +15,7 @@ import {
 } from "./engine";
 
 function createWorld(
-  chart: Partial<GameChart> = { notes: new Map(), },
+  chart: Partial<GameChart> = { notes: new Map() },
   overrides: Partial<World> = {}
 ): World {
   const notes = Array.from(chart.notes?.entries() ?? []).map((x) => x[1]);
