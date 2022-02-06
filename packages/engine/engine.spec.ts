@@ -13,29 +13,7 @@ import {
   GameChart,
   createChart,
 } from "./engine";
-
-function createWorld(
-  chart: Partial<GameChart> = { notes: new Map() },
-  overrides: Partial<World> = {}
-): World {
-  const notes = Array.from(chart.notes?.entries() ?? []).map((x) => x[1]);
-
-  return {
-    startTime: 0,
-    t0: 0,
-    time: 0,
-    combo: 0,
-    inputs: [],
-    // @ts-ignore - TODO: figure this out.
-    audioContext: undefined,
-    // @ts-ignore - TODO: figure this out.
-    source: undefined,
-    ...overrides,
-    chart: {
-      notes: chart.notes || new Map(),
-    },
-  };
-}
+import { createWorld } from "./test/utils";
 
 const engineConfiguration: EngineConfiguration = {
   maxHitWindow: 100,
