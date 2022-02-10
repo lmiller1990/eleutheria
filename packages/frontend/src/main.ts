@@ -1,10 +1,10 @@
-import {
+import type {
   World,
   PreviousFrameMeta,
-  Game,
   GameConfig,
   GameLifecycle,
 } from "@packages/engine";
+import { summarizeResults, Game } from "@packages/engine";
 import { fetchData } from "./fetchData";
 import {
   $note,
@@ -132,7 +132,11 @@ $start.addEventListener("click", async () => {
     },
 
     onSongCompleted: (_world: World) => {
-      console.log("Done!");
+      const summary = summarizeResults(
+        _world,
+        engineConfiguration.timingWindows?.map((x) => x.name) || []
+      );
+      console.log("Done!", summary);
     },
   };
 
