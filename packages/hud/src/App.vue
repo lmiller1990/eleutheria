@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import type { BaseSong, Difficulty } from "@packages/types";
-import type { Song } from "./types"
+import type { Song } from "./types";
 import SongItem from "./components/SongItem.vue";
 import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
 
@@ -54,14 +54,13 @@ onBeforeUnmount(() => {
   window.removeEventListener("keydown", changeSong);
 });
 
+const songs = ref<Song[]>([]);
 
-const songs = ref<Song[]>([])
-
-async function fetchSongs () {
-  const res = await window.fetch("http://localhost:8000/songs")
-  const data = await res.json() as BaseSong[]
-  songs.value = data.map((song, order) => ({ ...song, order }))
+async function fetchSongs() {
+  const res = await window.fetch("http://localhost:8000/songs");
+  const data = (await res.json()) as BaseSong[];
+  songs.value = data.map((song, order) => ({ ...song, order }));
 }
 
-fetchSongs()
+fetchSongs();
 </script>

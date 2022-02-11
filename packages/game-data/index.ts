@@ -32,8 +32,8 @@ app.get("/songs", async (req, res) => {
 
   const songs: BaseSong[] = await Promise.all(
     assets.map(async (p) => {
-      const t = path.join(songsDir, p, "data.json")
-      const json = await fs.readJson(t) as ChartMetadata;
+      const t = path.join(songsDir, p, "data.json");
+      const json = (await fs.readJson(t)) as ChartMetadata;
 
       return {
         id: p,
