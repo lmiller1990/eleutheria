@@ -8091,11 +8091,6 @@ vinyl@^2.0.0:
     remove-trailing-separator "^1.0.1"
     replace-ext "^1.0.0"
 
-vite-plugin-vue@^0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/vite-plugin-vue/-/vite-plugin-vue-0.0.0.tgz#5651efdf33cd4c9ddabfeef5645152b60f0691d9"
-  integrity sha512-mPaQRCq1WOSqQx0xTpV1hv/Cnlqf9MTy5v2cD+EmZxk1VhcYHhcygi2WeQBD5+LwdyP7n9f7zsEUTUwyczeiug==
-
 vite@>=2.7.13, vite@^2.7.2:
   version "2.7.13"
   resolved "https://registry.yarnpkg.com/vite/-/vite-2.7.13.tgz#99b56e27dfb1e4399e407cf94648f5c7fb9d77f5"
