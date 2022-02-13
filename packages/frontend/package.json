@@ -11,12 +11,16 @@
     "@packages/chart-parser": "0.0.0-development",
     "@packages/engine": "0.0.0-development",
     "@packages/types": "0.0.0-development",
-    "crunker": "^1.3.0"
+    "vue": "^3.2.30",
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@cypress/mount-utils": "^1.0.2",
     "@cypress/vite-dev-server": "^2.2.2",
+    "autoprefixer": "^10.4.2",
     "cypress": "^9.3.1",
+    "postcss": "^8.4.6",
+    "tailwindcss": "^3.0.19",
     "typescript": "^4.4.4",
     "vite": "^2.7.2"
   }

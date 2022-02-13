@@ -20,7 +20,8 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { Difficulty, Song } from "../types";
+import type { Difficulty } from "@packages/types";
+import type { Song } from "../types";
 
 const props = defineProps<{
   song: Song;

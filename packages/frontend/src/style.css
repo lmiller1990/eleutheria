@@ -16,7 +16,7 @@ body,
   --judgment-bounce: 1.15;
 }
 
-#app {
+#game-app {
   background: var(--root-bg);
   display: flex;
   justify-content: center;
