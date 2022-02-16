@@ -27,7 +27,6 @@ export function $note() {
   return d;
 }
 
-export const $start = $<HTMLButtonElement>("#start");
 export const $stop = $<HTMLButtonElement>("#stop");
 
 export const colElements = new Map<0 | 1 | 2 | 3, HTMLDivElement>([

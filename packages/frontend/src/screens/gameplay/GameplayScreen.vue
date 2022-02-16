@@ -30,10 +30,23 @@
 </template>
 
 <script lang="ts" setup>
+import type { Summary } from "@packages/engine";
 import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useSummaryStore } from "../../stores/summary";
 import "../../style.css";
 
-onMounted(() => {
-  import("./gameplay");
+const router = useRouter();
+
+function songCompleted(summary: Summary) {
+  const summaryStore = useSummaryStore();
+  summaryStore.setSummary(summary);
+  router.push("/summary");
+}
+
+onMounted(async () => {
+  const { start } = await import("./gameplay");
+
+  start(songCompleted);
 });
 </script>

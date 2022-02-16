@@ -3,6 +3,7 @@ import type {
   PreviousFrameMeta,
   GameConfig,
   GameLifecycle,
+  Summary,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import { fetchData } from "./fetchData";
@@ -10,7 +11,6 @@ import {
   $note,
   $targetLine,
   $timing,
-  $start,
   $stop,
   targetFlash,
   targetNoteHitFlash,
@@ -83,8 +83,9 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
 
   $combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
+type SongCompleted = (summary: Summary) => void;
 
-$start.addEventListener("click", async () => {
+export async function start(songCompleted: SongCompleted) {
   const chart = await fetchData();
 
   const gameConfig: GameConfig = {
@@ -136,7 +137,8 @@ $start.addEventListener("click", async () => {
         _world,
         engineConfiguration.timingWindows?.map((x) => x.name) || []
       );
-      console.log("Done!", summary);
+
+      songCompleted(summary);
     },
   };
 
@@ -145,4 +147,4 @@ $start.addEventListener("click", async () => {
   const stop = await game.start();
 
   $stop.addEventListener("click", stop);
-});
+}

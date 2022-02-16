@@ -11,6 +11,7 @@
     "@packages/chart-parser": "0.0.0-development",
     "@packages/engine": "0.0.0-development",
     "@packages/types": "0.0.0-development",
+    "pinia": "^2.0.11",
     "vue": "^3.2.30",
     "vue-router": "^4.0.12"
   },

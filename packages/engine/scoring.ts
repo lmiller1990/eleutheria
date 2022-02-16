@@ -1,6 +1,6 @@
 import type { World } from "./engine";
 
-interface TimingTypeSummary {
+export interface TimingTypeSummary {
   count: number;
   early: number;
   late: number;
