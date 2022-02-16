@@ -68,6 +68,8 @@ export class Game {
   #fps = 0;
   #lastDebugUpdate = 0;
   #timeOfLastNote: number;
+  #source?: AudioBufferSourceNode;
+  #inputManager?: InputManager;
 
   constructor(private config: GameConfig, private lifecycle: GameLifecycle) {
     this.#timeOfLastNote =
@@ -123,10 +125,13 @@ export class Game {
 
     this.gameLoop(gameState);
 
-    return () => {
-      gameState.inputManager.teardown();
-      gameState.source.stop();
-    };
+    this.#inputManager = inputManager;
+    this.#source = source;
+  }
+
+  stop() {
+    this.#inputManager?.teardown();
+    this.#source?.stop();
   }
 
   gameLoop(gameState: World) {
@@ -159,6 +164,7 @@ export class Game {
     gameState.inputManager.update(dt);
 
     if (dt > this.#timeOfLastNote) {
+      this.stop();
       this.lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta);
       return;
     }

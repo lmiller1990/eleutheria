@@ -9,13 +9,11 @@ import { summarizeResults, Game } from "@packages/engine";
 import { fetchData } from "./fetchData";
 import {
   $note,
-  $targetLine,
-  $timing,
-  $stop,
+  createElements,
   targetFlash,
   targetNoteHitFlash,
   judgementFlash,
-  $combo,
+  Elements,
 } from "./elements";
 import {
   engineConfiguration,
@@ -28,9 +26,14 @@ import { writeDebugToHtml } from "./debug";
 
 const noteMap = new Map<string, HTMLDivElement>();
 
-let timeoutId: number;
+let timeoutId: number | undefined;
 
-function appendNote(id: string, xpos: number, ypos: number) {
+function appendNote(
+  id: string,
+  xpos: number,
+  ypos: number,
+  $targetLine: HTMLDivElement
+) {
   const $n = $note();
   noteMap.set(id, $n);
 
@@ -47,7 +50,11 @@ function updateNote($n: HTMLDivElement, xpos: number, ypos: number) {
   }
 }
 
-function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
+function updateUI(
+  state: World,
+  previousFrameMeta: PreviousFrameMeta,
+  elements: Elements
+) {
   if (previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of previousFrameMeta.judgementResults) {
@@ -68,24 +75,36 @@ function updateUI(state: World, previousFrameMeta: PreviousFrameMeta) {
           ? `${note.timingWindowName}`
           : `${note.timingWindowName}`;
 
-      judgementFlash(note.timingWindowName, `${text} ${timing}`);
-      targetNoteHitFlash(note.columns[0] as 0 | 1 | 2 | 3);
+      judgementFlash(
+        elements.timing,
+        note.timingWindowName,
+        `${text} ${timing}`
+      );
+      targetNoteHitFlash(
+        elements.targetColElements,
+        note.columns[0] as 0 | 1 | 2 | 3
+      );
 
       if (timeoutId) {
         window.clearTimeout(timeoutId);
       }
 
       timeoutId = window.setTimeout(() => {
-        $timing.innerText = "";
+        elements.timing.innerText = "";
       }, 2000);
     }
   }
 
-  $combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
+  elements.combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
+
 type SongCompleted = (summary: Summary) => void;
 
-export async function start(songCompleted: SongCompleted) {
+export async function start(
+  $root: HTMLDivElement,
+  songCompleted: SongCompleted
+) {
+  const elements = createElements($root);
   const chart = await fetchData();
 
   const gameConfig: GameConfig = {
@@ -96,10 +115,10 @@ export async function start(songCompleted: SongCompleted) {
     codeColumns: codeColumnMap,
     inputManagerConfig: {
       onKeyCallback: new Map([
-        ["KeyD", () => targetFlash(0)],
-        ["KeyF", () => targetFlash(1)],
-        ["KeyJ", () => targetFlash(2)],
-        ["KeyK", () => targetFlash(3)],
+        ["KeyD", () => targetFlash(elements.targetColElements, 0)],
+        ["KeyF", () => targetFlash(elements.targetColElements, 1)],
+        ["KeyJ", () => targetFlash(elements.targetColElements, 2)],
+        ["KeyK", () => targetFlash(elements.targetColElements, 3)],
       ]),
     },
   };
@@ -120,31 +139,33 @@ export async function start(songCompleted: SongCompleted) {
           if ($note) {
             updateNote($note, xpos, ypos);
           } else if (ypos < window.innerHeight) {
-            appendNote(id, xpos, ypos);
+            appendNote(id, xpos, ypos, elements.targetLine);
           }
         }
       }
 
-      updateUI(world, previousFrameMeta);
+      updateUI(world, previousFrameMeta, elements);
     },
 
     onDebug: (_world: World, fps: number) => {
-      writeDebugToHtml(fps);
+      writeDebugToHtml(fps, elements);
     },
 
     onSongCompleted: (_world: World) => {
+      noteMap.clear();
+      timeoutId = undefined;
+
       const summary = summarizeResults(
         _world,
         engineConfiguration.timingWindows?.map((x) => x.name) || []
       );
 
+      window.clearTimeout(timeoutId);
       songCompleted(summary);
     },
   };
 
   const game = new Game(gameConfig, lifecycle);
 
-  const stop = await game.start();
-
-  $stop.addEventListener("click", stop);
+  await game.start();
 }

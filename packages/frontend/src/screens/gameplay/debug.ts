@@ -1,7 +1,7 @@
-import { $debugLiveNoteCount, $debugFps } from "./elements";
+import type { Elements } from "./elements";
 
-export function writeDebugToHtml(fps: number) {
+export function writeDebugToHtml(fps: number, elements: Elements) {
   const noteCount = document.querySelectorAll(".note");
-  $debugLiveNoteCount.textContent = noteCount.length.toString();
-  $debugFps.textContent = fps.toFixed();
+  elements.debugLiveNoteCount.textContent = noteCount.length.toString();
+  elements.debugFps.textContent = fps.toFixed();
 }
