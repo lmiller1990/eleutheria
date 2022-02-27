@@ -5,17 +5,6 @@ export interface BaseNote {
   ms: number;
 }
 
-export interface LaserNote {
-  order: number
-  column: number
-  ms: number
-}
-
-export interface Laser {
-  id: string;
-  notes: LaserNote[]
-}
-
 export interface ChartMetadata {
   title: string;
   bpm: number;
@@ -144,34 +133,4 @@ export function parseChart(
     },
     notes,
   };
-}
-
-export function deriveLasers(notes: BaseNote[]) {
-  return notes.reduce<Laser[]>((acc, note) => {
-    if (note.char === "1") {
-      const laser: Laser = {
-        id: (acc.length + 1).toString(),
-        notes: [{
-          order: 1,
-          column: note.column,
-          ms: note.ms
-        }],
-      }
-      return [...acc, laser]
-    }
-
-    const [currentLaser, ...rest] = [...acc].reverse()
-
-    if (!currentLaser) {
-      throw Error('Expected currentLaser to be defined!')
-    }
-
-    currentLaser.notes.push({
-      order: parseInt(note.char, 10),
-      column: note.column,
-      ms: note.ms
-    })
-
-    return [...rest, currentLaser]
-  }, [])
 }

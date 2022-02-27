@@ -1,5 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import type { BaseNote, ChartMetadata, Laser, } from "@packages/chart-parser";
+import type { BaseNote, ChartMetadata } from "@packages/chart-parser";
 import {
   createChart,
   EngineConfiguration,
@@ -49,8 +49,7 @@ export async function fetchAudio(paddingMs: number) {
 export interface GameConfig {
   song: {
     metadata: ChartMetadata
-    chartNotes: BaseNote[]
-    lasers: Laser[]
+    notes: BaseNote[]
   };
   preSongPadding?: number;
   postSongPadding?: number;
@@ -77,7 +76,7 @@ export class Game {
 
   constructor(private config: GameConfig, private lifecycle: GameLifecycle) {
     this.#timeOfLastNote =
-      config.song.chartNotes.reduce(
+      config.song.notes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
         0
       ) +
@@ -88,7 +87,7 @@ export class Game {
 
   async start() {
     const chart = createChart({
-      notes: this.config.song.chartNotes.map((x) => ({
+      notes: this.config.song.notes.map((x) => ({
         ...x,
         missed: false,
         canHit: true,

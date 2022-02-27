@@ -109,9 +109,8 @@ export async function start(
 
   const gameConfig: GameConfig = {
     song: {
-      chartNotes: data.notes,
+      notes: data.notes,
       metadata: data.metadata,
-      lasers: []
     },
     preSongPadding: PADDING_MS,
     postSongPadding: PADDING_MS,
