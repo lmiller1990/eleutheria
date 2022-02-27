@@ -82,7 +82,7 @@ function updateUI(
       );
       targetNoteHitFlash(
         elements.targetColElements,
-        note.columns[0] as 0 | 1 | 2 | 3
+        note.column as 0 | 1 | 2 | 3
       );
 
       if (timeoutId) {
@@ -105,11 +105,14 @@ export async function start(
   songCompleted: SongCompleted
 ) {
   const elements = createElements($root);
-  const { chart, leftLaser } = await fetchData();
-  console.log(leftLaser)
+  const data = await fetchData();
 
   const gameConfig: GameConfig = {
-    chart,
+    song: {
+      chartNotes: data.notes,
+      metadata: data.metadata,
+      lasers: []
+    },
     preSongPadding: PADDING_MS,
     postSongPadding: PADDING_MS,
     engineConfiguration,
@@ -128,7 +131,7 @@ export async function start(
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
       for (const [id, n] of world.chart.notes) {
         const ypos = (n.ms - world.time) * MULTIPLIER;
-        const xpos = n.columns[0] * NOTE_WIDTH;
+        const xpos = n.column * NOTE_WIDTH;
         const $note = noteMap.get(id);
 
         if (n.hitTiming) {

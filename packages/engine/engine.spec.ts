@@ -35,7 +35,7 @@ const createInput = ({
 function makeNote(note: Partial<EngineNote>): EngineNote {
   return {
     id: "???",
-    columns: [],
+    column: 0,
     ms: 0,
     missed: false,
     canHit: true,
@@ -47,9 +47,9 @@ describe("nearestNode", () => {
   it("captures nearest note based on time and input", () => {
     const chart: Chart = {
       notes: [
-        makeNote({ id: "1", ms: 0, columns: [1] }),
-        makeNote({ id: "2", ms: 500, columns: [0] }),
-        makeNote({ id: "3", ms: 1000, columns: [1] }),
+        makeNote({ id: "1", ms: 0, column: 1 }),
+        makeNote({ id: "2", ms: 500, column: 0 }),
+        makeNote({ id: "3", ms: 1000, column: 1 }),
       ],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
@@ -68,7 +68,7 @@ describe("nearestNode", () => {
 
   it("handles chart with no valid notes", () => {
     const chart: Chart = {
-      notes: [makeNote({ id: "1", ms: 100, columns: [0] })],
+      notes: [makeNote({ id: "1", ms: 100, column: 0 })],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
@@ -83,7 +83,7 @@ describe("judgeInput", () => {
       ms: 100,
     });
     // inside max input window of 100
-    const note: EngineNote = makeNote({ id: "1", columns: [1], ms: 200 });
+    const note: EngineNote = makeNote({ id: "1", column: 1, ms: 200 });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -106,7 +106,7 @@ describe("judgeInput", () => {
       ms: 100,
     });
     // outside max input window of 100 by 1
-    const note = makeNote({ id: "1", columns: [1], ms: 201 });
+    const note = makeNote({ id: "1", column: 1, ms: 201 });
     const actual = judgeInput({
       input,
       chart: { notes: [note] },
@@ -118,7 +118,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is inside smallest window", () => {
-    const note = makeNote({ id: "1", columns: [1], ms: 100 });
+    const note = makeNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 111,
@@ -149,7 +149,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is early inside largest window", () => {
-    const note = makeNote({ id: "1", columns: [1], ms: 100 });
+    const note = makeNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 111,
@@ -180,7 +180,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is late inside largest window", () => {
-    const note = makeNote({ id: "1", columns: [1], ms: 100 });
+    const note = makeNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 89,
@@ -212,7 +212,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note outside all windows", () => {
-    const note = makeNote({ id: "1", columns: [1], ms: 100 });
+    const note = makeNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 150,
@@ -249,7 +249,7 @@ describe("judge", () => {
       column: 1,
       ms: 510,
     });
-    const note = makeNote({ id: "1", columns: [1], ms: 500 });
+    const note = makeNote({ id: "1", column: 1, ms: 500 });
     const actual = judge(input, note);
 
     expect(actual).toBe(10);
@@ -260,7 +260,7 @@ describe("judge", () => {
       column: 1,
       ms: 510,
     });
-    const note = makeNote({ id: "1", columns: [1], ms: 500, dependsOn: "1" });
+    const note = makeNote({ id: "1", column: 1, ms: 500, dependsOn: "1" });
     const actual = judge(input, note);
 
     expect(actual).toBe(0);
@@ -271,7 +271,7 @@ describe("updateGameState", () => {
   const baseNote = makeNote({
     id: "1",
     ms: 0,
-    columns: [0],
+    column: 0,
     canHit: true,
     timingWindowName: undefined,
   });
@@ -363,7 +363,7 @@ describe("updateGameState", () => {
         time: 950,
         inputs: [
           createInput({
-            column: baseNote.columns[0],
+            column: baseNote.column,
             ms: 940,
           }),
         ],
@@ -443,7 +443,7 @@ describe("updateGameState", () => {
       time: 950,
       inputs: [
         createInput({
-          column: baseNote.columns[0],
+          column: baseNote.column,
           ms: 950,
         }),
       ],
@@ -520,7 +520,7 @@ describe("updateGameState", () => {
       time: 90,
       inputs: [
         createInput({
-          column: note.columns[0],
+          column: note.column,
           ms: 90,
         }),
       ],
@@ -561,8 +561,8 @@ describe("updateGameState", () => {
     };
     const current: GameChart = {
       notes: new Map<string, EngineNote>([
-        ["1", { ...aNote, id: "1", columns: [0] }],
-        ["2", { ...aNote, id: "2", columns: [1] }],
+        ["1", { ...aNote, id: "1", column: 0 }],
+        ["2", { ...aNote, id: "2", column: 1 }],
       ]),
     };
 
@@ -596,7 +596,7 @@ describe("updateGameState", () => {
               {
                 ...aNote,
                 id: "1",
-                columns: [0],
+                column: 0,
                 hitAt: 100,
                 canHit: false,
                 hitTiming: 0,
@@ -607,7 +607,7 @@ describe("updateGameState", () => {
               {
                 ...aNote,
                 id: "2",
-                columns: [1],
+                column: 1,
                 hitAt: 100,
                 canHit: false,
                 hitTiming: 0,
@@ -646,10 +646,10 @@ describe("updateGameState", () => {
 describe("createChart", () => {
   it("returns a new chart considering offset", () => {
     const expected: Chart = {
-      notes: [makeNote({ id: "1", ms: 1100, columns: [0] })],
+      notes: [makeNote({ id: "1", ms: 1100, column: 0 })],
     };
     const actual = createChart({
-      notes: [makeNote({ id: "1", ms: 1000, columns: [0] })],
+      notes: [makeNote({ id: "1", ms: 1000, column: 0 })],
       offset: 100,
     });
 

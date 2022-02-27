@@ -1,9 +1,21 @@
 export interface BaseNote {
   id: string;
-  columns: number[];
+  column: number;
+  char: string
   ms: number;
   laserStart?: boolean
   laserEnd?: boolean
+}
+
+export interface LaserNote {
+  order: number
+  column: number
+  ms: number
+}
+
+export interface Laser {
+  id: string;
+  notes: LaserNote[]
 }
 
 export interface ChartMetadata {
@@ -102,23 +114,30 @@ export function parseChart(
         noteCount: acc.noteCount + measure.length,
         notes: [
           ...acc.notes,
-          ...measure.reduce<BaseNote[]>((_notes, x, idx) => {
-            if (!tokens.some(y => x.includes(y))) {
+          ...measure.reduce<BaseNote[]>((_notes, row, idx) => {
+            if (row.split("").every(col => col === "0")) {
               return _notes;
             }
 
-            return _notes.concat({
-              id: (acc.noteCount + idx + 1).toString(),
-              columns: x
-                .split("")
-                .reduce<number[]>(
-                  (acc, col, idx) => (tokens.includes(col) ? [...acc, idx] : acc),
-                  []
-                ),
-              ms: (acc.measureCount * measureMs + q * idx) * 1000,
-              laserStart: x.includes("S"),
-              laserEnd: x.includes("E"),
-            });
+            const _newNotes: BaseNote[] = []
+
+            const columns = row.split("")
+
+            for (let i = 0; i < columns.length; ++i) {
+              const col = columns[i]
+              if (col === "0") {
+                continue
+              }
+
+              _newNotes.push({
+                id: (acc.noteCount + idx + 1).toString(),
+                char: col,
+                column: i,
+                ms: (acc.measureCount * measureMs + q * idx) * 1000,
+              });
+            }
+
+            return _notes.concat(..._newNotes.sort((x, y) => x.char.localeCompare(y.char)))
           }, []),
         ],
       };
@@ -134,4 +153,34 @@ export function parseChart(
     },
     notes,
   };
+}
+
+export function deriveLasers(notes: BaseNote[]) {
+  return notes.reduce<Laser[]>((acc, note) => {
+    if (note.char === "1") {
+      const laser: Laser = {
+        id: (acc.length + 1).toString(),
+        notes: [{
+          order: 1,
+          column: note.column,
+          ms: note.ms
+        }],
+      }
+      return [...acc, laser]
+    }
+
+    const [currentLaser, ...rest] = [...acc].reverse()
+
+    if (!currentLaser) {
+      throw Error('Expected currentLaser to be defined!')
+    }
+
+    currentLaser.notes.push({
+      order: parseInt(note.char, 10),
+      column: note.column,
+      ms: note.ms
+    })
+
+    return [...rest, currentLaser]
+  }, [])
 }

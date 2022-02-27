@@ -27,7 +27,7 @@ export interface EngineNote {
   ms: number;
 
   // 0, 1, 2, 3...
-  columns: number[];
+  column: number;
 
   // the note has been missed; never to be hit
   missed: boolean;
@@ -120,7 +120,7 @@ export function nearestNote(
 ): EngineNote | undefined {
   const nearest = chart.notes.reduce((best, note) => {
     if (
-      input.column === note.columns[0] &&
+      input.column === note.column &&
       Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms)
     ) {
       return note;
@@ -128,7 +128,7 @@ export function nearestNote(
     return best;
   }, chart.notes[0]);
 
-  return nearest && nearest.columns[0] === input.column ? nearest : undefined;
+  return nearest && nearest.column === input.column ? nearest : undefined;
 }
 
 /**
