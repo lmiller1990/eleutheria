@@ -48,8 +48,8 @@ export async function fetchAudio(paddingMs: number) {
 
 export interface GameConfig {
   song: {
-    metadata: ChartMetadata
-    notes: BaseNote[]
+    metadata: ChartMetadata;
+    notes: BaseNote[];
   };
   preSongPadding?: number;
   postSongPadding?: number;

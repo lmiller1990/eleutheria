@@ -1,7 +1,7 @@
 export interface BaseNote {
   id: string;
   column: number;
-  char: string
+  char: string;
   ms: number;
 }
 
@@ -95,18 +95,18 @@ export function parseChart(
         notes: [
           ...acc.notes,
           ...measure.reduce<BaseNote[]>((_notes, row, idx) => {
-            if (row.split("").every(col => col === "0")) {
+            if (row.split("").every((col) => col === "0")) {
               return _notes;
             }
 
-            const _newNotes: BaseNote[] = []
+            const _newNotes: BaseNote[] = [];
 
-            const columns = row.split("")
+            const columns = row.split("");
 
             for (let i = 0; i < columns.length; ++i) {
-              const col = columns[i]
+              const col = columns[i];
               if (col === "0") {
-                continue
+                continue;
               }
 
               _newNotes.push({
@@ -117,7 +117,9 @@ export function parseChart(
               });
             }
 
-            return _notes.concat(..._newNotes.sort((x, y) => x.char.localeCompare(y.char)))
+            return _notes.concat(
+              ..._newNotes.sort((x, y) => x.char.localeCompare(y.char))
+            );
           }, []),
         ],
       };
