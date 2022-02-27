@@ -1,21 +1,21 @@
 export interface BaseNote {
   id: string;
   column: number;
-  char: string
+  char: string;
   ms: number;
-  laserStart?: boolean
-  laserEnd?: boolean
+  laserStart?: boolean;
+  laserEnd?: boolean;
 }
 
 export interface LaserNote {
-  order: number
-  column: number
-  ms: number
+  order: number;
+  column: number;
+  ms: number;
 }
 
 export interface Laser {
   id: string;
-  notes: LaserNote[]
+  notes: LaserNote[];
 }
 
 export interface ChartMetadata {
@@ -42,12 +42,12 @@ function measureQuantizationValid(measure: Measure) {
   throw Error(`${measure.length} is not a valid quanization`);
 }
 
-const tokens = ["S", "E", "1"]
+const tokens = ["S", "E", "1"];
 
 interface DataJsonSchema {
-  title: string
-  bpm: number
-  offset: number
+  title: string;
+  bpm: number;
+  offset: number;
 }
 export function parseChart(
   dataJson: DataJsonSchema,
@@ -115,18 +115,18 @@ export function parseChart(
         notes: [
           ...acc.notes,
           ...measure.reduce<BaseNote[]>((_notes, row, idx) => {
-            if (row.split("").every(col => col === "0")) {
+            if (row.split("").every((col) => col === "0")) {
               return _notes;
             }
 
-            const _newNotes: BaseNote[] = []
+            const _newNotes: BaseNote[] = [];
 
-            const columns = row.split("")
+            const columns = row.split("");
 
             for (let i = 0; i < columns.length; ++i) {
-              const col = columns[i]
+              const col = columns[i];
               if (col === "0") {
-                continue
+                continue;
               }
 
               _newNotes.push({
@@ -137,7 +137,9 @@ export function parseChart(
               });
             }
 
-            return _notes.concat(..._newNotes.sort((x, y) => x.char.localeCompare(y.char)))
+            return _notes.concat(
+              ..._newNotes.sort((x, y) => x.char.localeCompare(y.char))
+            );
           }, []),
         ],
       };
@@ -160,27 +162,29 @@ export function deriveLasers(notes: BaseNote[]) {
     if (note.char === "1") {
       const laser: Laser = {
         id: (acc.length + 1).toString(),
-        notes: [{
-          order: 1,
-          column: note.column,
-          ms: note.ms
-        }],
-      }
-      return [...acc, laser]
+        notes: [
+          {
+            order: 1,
+            column: note.column,
+            ms: note.ms,
+          },
+        ],
+      };
+      return [...acc, laser];
     }
 
-    const [currentLaser, ...rest] = [...acc].reverse()
+    const [currentLaser, ...rest] = [...acc].reverse();
 
     if (!currentLaser) {
-      throw Error('Expected currentLaser to be defined!')
+      throw Error("Expected currentLaser to be defined!");
     }
 
     currentLaser.notes.push({
       order: parseInt(note.char, 10),
       column: note.column,
-      ms: note.ms
-    })
+      ms: note.ms,
+    });
 
-    return [...rest, currentLaser]
-  }, [])
+    return [...rest, currentLaser];
+  }, []);
 }

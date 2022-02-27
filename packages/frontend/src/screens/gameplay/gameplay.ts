@@ -111,7 +111,7 @@ export async function start(
     song: {
       chartNotes: data.notes,
       metadata: data.metadata,
-      lasers: []
+      lasers: [],
     },
     preSongPadding: PADDING_MS,
     postSongPadding: PADDING_MS,

@@ -32,7 +32,7 @@ app.get("/songs/:id", (req, res) => {
 
   res.json({
     chart,
-    leftLaser
+    leftLaser,
   });
 });
 

@@ -1,5 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import type { BaseNote, ChartMetadata, Laser, } from "@packages/chart-parser";
+import type { BaseNote, ChartMetadata, Laser } from "@packages/chart-parser";
 import {
   createChart,
   EngineConfiguration,
@@ -48,9 +48,9 @@ export async function fetchAudio(paddingMs: number) {
 
 export interface GameConfig {
   song: {
-    metadata: ChartMetadata
-    chartNotes: BaseNote[]
-    lasers: Laser[]
+    metadata: ChartMetadata;
+    chartNotes: BaseNote[];
+    lasers: Laser[];
   };
   preSongPadding?: number;
   postSongPadding?: number;
