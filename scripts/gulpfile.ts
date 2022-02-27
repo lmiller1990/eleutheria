@@ -11,6 +11,13 @@ async function serverDev() {
   });
 }
 
+async function svgDevServer() {
+  spawn("yarn", ["dev"], {
+    stdio: "inherit",
+    cwd: "packages/svg",
+  });
+}
+
 async function assetsServer() {
   spawn("yarn", ["server"], {
     stdio: "inherit",
@@ -67,4 +74,4 @@ async function createPkg() {
 
 gulp.task("createPkg", createPkg);
 
-gulp.task("dev", gulp.series(serverDev, assetsServer, gameDataServer));
+gulp.task("dev", gulp.series(serverDev, svgDevServer, assetsServer, gameDataServer));

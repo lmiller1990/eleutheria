@@ -2,6 +2,8 @@ export interface BaseNote {
   id: string;
   columns: number[];
   ms: number;
+  laserStart?: boolean
+  laserEnd?: boolean
 }
 
 export interface ChartMetadata {
@@ -28,8 +30,15 @@ function measureQuantizationValid(measure: Measure) {
   throw Error(`${measure.length} is not a valid quanization`);
 }
 
+const tokens = ["S", "E", "1"]
+
+interface DataJsonSchema {
+  title: string
+  bpm: number
+  offset: number
+}
 export function parseChart(
-  dataJson: Record<string, string>,
+  dataJson: DataJsonSchema,
   chartRaw: string
 ): ParsedChart {
   const lines = chartRaw.split("\n").filter((x) => x.trim().length > 0);
@@ -59,7 +68,7 @@ export function parseChart(
     { measures: [], currMeasure: [] }
   ).measures;
 
-  const bpm = parseFloat(dataJson.bpm);
+  const bpm = dataJson.bpm;
 
   const _4th = 60 / bpm;
   const _8th = _4th / 2;
@@ -94,7 +103,7 @@ export function parseChart(
         notes: [
           ...acc.notes,
           ...measure.reduce<BaseNote[]>((_notes, x, idx) => {
-            if (!x.includes("1")) {
+            if (!tokens.some(y => x.includes(y))) {
               return _notes;
             }
 
@@ -103,10 +112,12 @@ export function parseChart(
               columns: x
                 .split("")
                 .reduce<number[]>(
-                  (acc, col, idx) => (col === "1" ? [...acc, idx] : acc),
+                  (acc, col, idx) => (tokens.includes(col) ? [...acc, idx] : acc),
                   []
                 ),
               ms: (acc.measureCount * measureMs + q * idx) * 1000,
+              laserStart: x.includes("S"),
+              laserEnd: x.includes("E"),
             });
           }, []),
         ],
@@ -119,7 +130,7 @@ export function parseChart(
     metadata: {
       title: dataJson.title,
       bpm,
-      offset: parseInt(dataJson.offset, 10),
+      offset: dataJson.offset,
     },
     notes,
   };

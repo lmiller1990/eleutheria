@@ -105,7 +105,8 @@ export async function start(
   songCompleted: SongCompleted
 ) {
   const elements = createElements($root);
-  const chart = await fetchData();
+  const { chart, leftLaser } = await fetchData();
+  console.log(leftLaser)
 
   const gameConfig: GameConfig = {
     chart,

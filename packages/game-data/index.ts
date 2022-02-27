@@ -13,8 +13,13 @@ const songsDir = path.join(__dirname, "songs");
 app.get("/songs/:id", (req, res) => {
   const chartPath = path.join(songsDir, req.params.id);
 
-  const chart = fs.readFileSync(
+  const noteChart = fs.readFileSync(
     path.join(chartPath, `${req.params.id}.chart`),
+    "utf-8"
+  );
+
+  const leftChart = fs.readFileSync(
+    path.join(chartPath, `${req.params.id}-left-lasers.chart`),
     "utf-8"
   );
 
@@ -22,9 +27,13 @@ app.get("/songs/:id", (req, res) => {
     fs.readFileSync(path.join(chartPath, "data.json"), "utf-8")
   );
 
-  const data = parseChart(meta, chart);
+  const chart = parseChart(meta, noteChart);
+  const leftLaser = parseChart(meta, leftChart);
 
-  res.json(data);
+  res.json({
+    chart,
+    leftLaser
+  });
 });
 
 app.get("/songs", async (req, res) => {
