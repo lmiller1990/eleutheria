@@ -18,14 +18,18 @@ function createElement(tagName: string, id?: string, className?: string) {
     <${tagName} 
      class="${className || ""}" 
      id="${id || ""}"
-    ></${tagName}>`
+    ></${tagName}>`;
 }
 
 export function createElements($root: HTMLDivElement, columnCount: number) {
-  const targetCols =
-    Array(columnCount).fill(0).map((_, idx) => createElement('div', `target-col-${idx}`, 'target-col')).join('')
-  const cols =
-    Array(columnCount).fill(0).map((_, idx) => createElement('div', `col-${idx}`, 'col')).join('')
+  const targetCols = Array(columnCount)
+    .fill(0)
+    .map((_, idx) => createElement("div", `target-col-${idx}`, "target-col"))
+    .join("");
+  const cols = Array(columnCount)
+    .fill(0)
+    .map((_, idx) => createElement("div", `col-${idx}`, "col"))
+    .join("");
 
   const html = `
     <button id="start">Start</button>
@@ -54,11 +58,15 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
   $root.innerHTML = html;
 
   const targetColElements: ColMap = new Map(
-    Array(columnCount).fill(0).map((_, idx) => [idx, $(`#target-col-${idx}`)]),
+    Array(columnCount)
+      .fill(0)
+      .map((_, idx) => [idx, $(`#target-col-${idx}`)])
   );
 
   const colElements: ColMap = new Map(
-    Array(columnCount).fill(0).map((_, idx) => [idx, $(`#col-${idx}`)]),
+    Array(columnCount)
+      .fill(0)
+      .map((_, idx) => [idx, $(`#col-${idx}`)])
   );
 
   return {
@@ -101,14 +109,14 @@ export function judgementFlash(
 
 const createFlip =
   (classes: readonly string[]) =>
-    ($el: HTMLElement | undefined, klass: typeof classes[number]) => {
-      if (!$el) {
-        throw Error(`Could not find element to flip!`);
-      }
-      $el.classList.remove(...classes);
-      void $el.offsetWidth;
-      $el.classList.add(klass);
-    };
+  ($el: HTMLElement | undefined, klass: typeof classes[number]) => {
+    if (!$el) {
+      throw Error(`Could not find element to flip!`);
+    }
+    $el.classList.remove(...classes);
+    void $el.offsetWidth;
+    $el.classList.add(klass);
+  };
 
 export function targetFlash(targetColElements: ColMap, column: number) {
   const flip = createFlip(CLASSES);

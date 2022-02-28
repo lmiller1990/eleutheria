@@ -28,19 +28,15 @@ const noteMap = new Map<string, HTMLDivElement>();
 
 let timeoutId: number | undefined;
 
-function appendNote(
-  engineNote: EngineNote,
-  ypos: number,
-  elements: Elements 
-) {
+function appendNote(engineNote: EngineNote, ypos: number, elements: Elements) {
   const $n = $note();
   noteMap.set(engineNote.id, $n);
 
   updateNote($n, ypos);
 
-  const colTarget = elements.targetColElements.get(engineNote.column)
+  const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {
-    throw Error(`Could not get colTarget for column ${engineNote.column}`)
+    throw Error(`Could not get colTarget for column ${engineNote.column}`);
   }
   colTarget.appendChild($n);
 }
@@ -82,10 +78,7 @@ function updateUI(
         note.timingWindowName,
         `${text} ${timing}`
       );
-      targetNoteHitFlash(
-        elements.targetColElements,
-        note.column
-      );
+      targetNoteHitFlash(elements.targetColElements, note.column);
 
       if (timeoutId) {
         window.clearTimeout(timeoutId);
