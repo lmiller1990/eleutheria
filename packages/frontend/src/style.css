@@ -49,7 +49,7 @@ body,
 
 .note {
   height: var(--note-height);
-  width: var(--note-width);
+  width: 100%;
 
   background: var(--root-bg);
   border-radius: 5px;
@@ -79,6 +79,7 @@ body,
 
 .target-col {
   width: 100%;
+  position: relative;
 }
 
 .target-col-flash {

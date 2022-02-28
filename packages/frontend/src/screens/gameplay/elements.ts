@@ -11,10 +11,22 @@ const $ = <T extends Element = HTMLDivElement>(sel: string) => {
   );
 };
 
-type ColNum = 0 | 1 | 2 | 3;
-type ColMap = Map<ColNum, HTMLDivElement>;
+type ColMap = Map<number, HTMLDivElement>;
 
-export function createElements($root: HTMLDivElement) {
+function createElement(tagName: string, id?: string, className?: string) {
+  return `
+    <${tagName} 
+     class="${className || ""}" 
+     id="${id || ""}"
+    ></${tagName}>`
+}
+
+export function createElements($root: HTMLDivElement, columnCount: number) {
+  const targetCols =
+    Array(columnCount).fill(0).map((_, idx) => createElement('div', `target-col-${idx}`, 'target-col')).join('')
+  const cols =
+    Array(columnCount).fill(0).map((_, idx) => createElement('div', `col-${idx}`, 'col')).join('')
+
   const html = `
     <button id="start">Start</button>
     <button id="stop">Stop</button>
@@ -29,15 +41,11 @@ export function createElements($root: HTMLDivElement) {
 
     <div id="targets">
       <div id="target-line">
-        <div class="target-col" id="target-col-0"></div>
-        <div class="target-col" id="target-col-1"></div>
-        <div class="target-col" id="target-col-2"></div>
-        <div class="target-col" id="target-col-3"></div>
+        ${targetCols}
       </div>
-      <div class="col" id="col-0"></div>
-      <div class="col" id="col-1"></div>
-      <div class="col" id="col-2"></div>
-      <div class="col" id="col-3"></div>
+
+      ${cols}
+
       <div id="timing"></div>
       <div id="combo"></div>
     </div>
@@ -45,19 +53,13 @@ export function createElements($root: HTMLDivElement) {
 
   $root.innerHTML = html;
 
-  const targetColElements: ColMap = new Map([
-    [0, $("#target-col-0")],
-    [1, $("#target-col-1")],
-    [2, $("#target-col-2")],
-    [3, $("#target-col-3")],
-  ]);
+  const targetColElements: ColMap = new Map(
+    Array(columnCount).fill(0).map((_, idx) => [idx, $(`#target-col-${idx}`)]),
+  );
 
-  const colElements: ColMap = new Map([
-    [0, $("#col-0")],
-    [1, $("#col-1")],
-    [2, $("#col-2")],
-    [3, $("#col-3")],
-  ]);
+  const colElements: ColMap = new Map(
+    Array(columnCount).fill(0).map((_, idx) => [idx, $(`#col-${idx}`)]),
+  );
 
   return {
     targetColElements,
@@ -99,22 +101,22 @@ export function judgementFlash(
 
 const createFlip =
   (classes: readonly string[]) =>
-  ($el: HTMLElement | undefined, klass: typeof classes[number]) => {
-    if (!$el) {
-      throw Error(`Could not find element to flip!`);
-    }
-    $el.classList.remove(...classes);
-    void $el.offsetWidth;
-    $el.classList.add(klass);
-  };
+    ($el: HTMLElement | undefined, klass: typeof classes[number]) => {
+      if (!$el) {
+        throw Error(`Could not find element to flip!`);
+      }
+      $el.classList.remove(...classes);
+      void $el.offsetWidth;
+      $el.classList.add(klass);
+    };
 
-export function targetFlash(targetColElements: ColMap, column: ColNum) {
+export function targetFlash(targetColElements: ColMap, column: number) {
   const flip = createFlip(CLASSES);
   const $el = targetColElements.get(column);
   flip($el, TARGET_FLASH_CLASS);
 }
 
-export function targetNoteHitFlash(targetColElements: ColMap, column: ColNum) {
+export function targetNoteHitFlash(targetColElements: ColMap, column: number) {
   const flip = createFlip(CLASSES);
   const $el = targetColElements.get(column);
   flip($el, NOTE_HIT_FLASH_CLASS);

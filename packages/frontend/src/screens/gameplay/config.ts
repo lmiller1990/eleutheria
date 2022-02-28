@@ -27,8 +27,10 @@ export const engineConfiguration: EngineConfiguration = {
 };
 
 export const codeColumnMap = new Map<string, number>([
-  ["KeyD", 0],
-  ["KeyF", 1],
-  ["KeyJ", 2],
-  ["KeyK", 3],
+  ["KeyS", 0],
+  ["KeyD", 1],
+  ["KeyF", 2],
+  ["KeyJ", 3],
+  ["KeyK", 4],
+  ["KeyL", 4],
 ]);

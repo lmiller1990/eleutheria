@@ -4,6 +4,7 @@ import type {
   GameConfig,
   GameLifecycle,
   Summary,
+  EngineNote,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import { fetchData } from "./fetchData";
@@ -17,7 +18,6 @@ import {
 } from "./elements";
 import {
   engineConfiguration,
-  NOTE_WIDTH,
   MULTIPLIER,
   PADDING_MS,
   codeColumnMap,
@@ -29,22 +29,24 @@ const noteMap = new Map<string, HTMLDivElement>();
 let timeoutId: number | undefined;
 
 function appendNote(
-  id: string,
-  xpos: number,
+  engineNote: EngineNote,
   ypos: number,
-  $targetLine: HTMLDivElement
+  elements: Elements 
 ) {
   const $n = $note();
-  noteMap.set(id, $n);
+  noteMap.set(engineNote.id, $n);
 
-  updateNote($n, xpos, ypos);
+  updateNote($n, ypos);
 
-  $targetLine.appendChild($n);
+  const colTarget = elements.targetColElements.get(engineNote.column)
+  if (!colTarget) {
+    throw Error(`Could not get colTarget for column ${engineNote.column}`)
+  }
+  colTarget.appendChild($n);
 }
 
-function updateNote($n: HTMLDivElement, xpos: number, ypos: number) {
+function updateNote($n: HTMLDivElement, ypos: number) {
   $n.style.top = `${ypos}px`;
-  $n.style.left = `${xpos}px`;
   if ($n.getBoundingClientRect().y < 0) {
     $n.remove();
   }
@@ -82,7 +84,7 @@ function updateUI(
       );
       targetNoteHitFlash(
         elements.targetColElements,
-        note.column as 0 | 1 | 2 | 3
+        note.column
       );
 
       if (timeoutId) {
@@ -104,7 +106,7 @@ export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted
 ) {
-  const elements = createElements($root);
+  const elements = createElements($root, 6);
   const data = await fetchData();
 
   const gameConfig: GameConfig = {
@@ -118,19 +120,21 @@ export async function start(
     codeColumns: codeColumnMap,
     inputManagerConfig: {
       onKeyCallback: new Map([
-        ["KeyD", () => targetFlash(elements.targetColElements, 0)],
-        ["KeyF", () => targetFlash(elements.targetColElements, 1)],
-        ["KeyJ", () => targetFlash(elements.targetColElements, 2)],
-        ["KeyK", () => targetFlash(elements.targetColElements, 3)],
+        ["KeyS", () => targetFlash(elements.targetColElements, 0)],
+        ["KeyD", () => targetFlash(elements.targetColElements, 1)],
+        ["KeyF", () => targetFlash(elements.targetColElements, 2)],
+        ["KeyJ", () => targetFlash(elements.targetColElements, 3)],
+        ["KeyK", () => targetFlash(elements.targetColElements, 4)],
+        ["KeyL", () => targetFlash(elements.targetColElements, 5)],
       ]),
     },
   };
 
   const lifecycle: GameLifecycle = {
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
+      // if (world.time > 4000) { return }
       for (const [id, n] of world.chart.notes) {
         const ypos = (n.ms - world.time) * MULTIPLIER;
-        const xpos = n.column * NOTE_WIDTH;
         const $note = noteMap.get(id);
 
         if (n.hitTiming) {
@@ -140,9 +144,9 @@ export async function start(
           $note.remove();
         } else {
           if ($note) {
-            updateNote($note, xpos, ypos);
+            updateNote($note, ypos);
           } else if (ypos < window.innerHeight) {
-            appendNote(id, xpos, ypos, elements.targetLine);
+            appendNote(n, ypos, elements);
           }
         }
       }
