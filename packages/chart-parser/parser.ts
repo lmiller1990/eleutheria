@@ -109,12 +109,14 @@ export function parseChart(
                 continue;
               }
 
-              _newNotes.push({
-                id: (acc.noteCount + idx + 1).toString(),
-                char: col,
-                column: i,
-                ms: (acc.measureCount * measureMs + q * idx) * 1000,
-              });
+              if (col === "N") {
+                _newNotes.push({
+                  id: (acc.noteCount + idx + 1).toString(),
+                  char: col,
+                  column: i,
+                  ms: (acc.measureCount * measureMs + q * idx) * 1000,
+                });
+              }
             }
 
             return _notes.concat(
