@@ -107,3 +107,79 @@ exports[`parseChart > works 1`] = `
   ],
 }
 `;
+
+exports[`parseHoldsChart > works 1`] = `
+{
+  "metadata": {
+    "bpm": 120,
+    "offset": 0,
+    "title": "Example Song",
+  },
+  "notes": [
+    [
+      {
+        "char": "1",
+        "column": 0,
+        "id": "1",
+        "ms": 0,
+      },
+      {
+        "char": "2",
+        "column": 3,
+        "id": "2",
+        "ms": 500,
+      },
+      {
+        "char": "3",
+        "column": 0,
+        "id": "3",
+        "ms": 1000,
+      },
+      {
+        "char": "4",
+        "column": 3,
+        "id": "4",
+        "ms": 1500,
+      },
+      {
+        "char": "5",
+        "column": 0,
+        "id": "4",
+        "ms": 1500,
+      },
+    ],
+    [
+      {
+        "char": "1",
+        "column": 0,
+        "id": "5",
+        "ms": 2000,
+      },
+      {
+        "char": "2",
+        "column": 3,
+        "id": "7",
+        "ms": 2500,
+      },
+      {
+        "char": "3",
+        "column": 0,
+        "id": "9",
+        "ms": 3000,
+      },
+      {
+        "char": "4",
+        "column": 3,
+        "id": "11",
+        "ms": 3500,
+      },
+      {
+        "char": "5",
+        "column": 0,
+        "id": "12",
+        "ms": 3750,
+      },
+    ],
+  ],
+}
+`;

@@ -1,0 +1,321 @@
+// Vitest Snapshot v1
+
+exports[`tokenize > works 1`] = `
+[
+  {
+    "char": "1",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "1000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "0",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": "2",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "0002",
+    "token": "endMeasure",
+  },
+  {
+    "char": "3",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "3000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "5",
+    "line": "5004",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "5004",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "5004",
+    "token": "number",
+  },
+  {
+    "char": "4",
+    "line": "5004",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "5004",
+    "token": "endMeasure",
+  },
+  {
+    "char": ",",
+    "line": ",",
+    "token": "endMeasure",
+  },
+  {
+    "char": ",",
+    "line": ",",
+    "token": "endMeasure",
+  },
+  {
+    "char": "1",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "1000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "1000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "0000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "0",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": "2",
+    "line": "0002",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "0002",
+    "token": "endMeasure",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "0000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "3",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "3000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "3000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "0000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "0",
+    "line": "0004",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0004",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "0004",
+    "token": "number",
+  },
+  {
+    "char": "4",
+    "line": "0004",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "0004",
+    "token": "endMeasure",
+  },
+  {
+    "char": "5",
+    "line": "5000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "5000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "5000",
+    "token": "number",
+  },
+  {
+    "char": "0",
+    "line": "5000",
+    "token": "number",
+  },
+  {
+    "char": ",",
+    "line": "5000",
+    "token": "endMeasure",
+  },
+  {
+    "char": "EOF",
+    "line": "",
+    "token": "eofToken",
+  },
+]
+`;

@@ -11,16 +11,48 @@ export interface ChartMetadata {
   offset: number;
 }
 
-export interface ParsedChart {
+export interface ParsedChart<T> {
   metadata: ChartMetadata;
-  notes: BaseNote[];
+  notes: T;
 }
 
+export type ValidQuantization = typeof validQuantizations[number];
+
+export const validQuantizations = [4, 8, 12, 16] as const;
+
+interface GetQuantization {
+  quantization: ValidQuantization;
+  measureMs: number;
+}
+
+export function getQuantizationMs(
+  measure: string[],
+  bpm: number
+): GetQuantization {
+  const _4th = 60 / bpm;
+  const _8th = _4th / 2;
+  const _16th = _8th / 2;
+  const measureMs = _4th * 4;
+
+  const qMap = new Map<ValidQuantization, number>([
+    [4, _4th],
+    [8, _8th],
+    [16, _16th],
+  ]);
+
+  const q = qMap.get(measure.length as ValidQuantization);
+  if (!q) {
+    throw Error(`${measure.length} is not a valid quanization`);
+  }
+  return {
+    quantization: q as ValidQuantization,
+    measureMs,
+  };
+}
+
+type ParsedNoteChart = ParsedChart<BaseNote[]>;
+
 type Measure = string[];
-
-const validQuantizations = [4, 8, 12, 16] as const;
-
-type ValidQuantization = typeof validQuantizations[number];
 
 function measureQuantizationValid(measure: Measure) {
   if (validQuantizations.includes(measure.length as ValidQuantization)) {
@@ -30,9 +62,9 @@ function measureQuantizationValid(measure: Measure) {
 }
 
 export function parseChart(
-  dataJson: Record<string, string>,
+  dataJson: ChartMetadata,
   chartRaw: string
-): ParsedChart {
+): ParsedNoteChart {
   const lines = chartRaw.split("\n").filter((x) => x.trim().length > 0);
 
   const measures = lines.reduce<{
@@ -60,34 +92,16 @@ export function parseChart(
     { measures: [], currMeasure: [] }
   ).measures;
 
-  const bpm = parseFloat(dataJson.bpm);
-
-  const _4th = 60 / bpm;
-  const _8th = _4th / 2;
-  const _16th = _8th / 2;
-  const measureMs = _4th * 4;
-
-  const qMap = new Map<ValidQuantization, number>([
-    [4, _4th],
-    [8, _8th],
-    [16, _16th],
-  ]);
-
-  const getQuantizationMs = (m: Measure) => {
-    const q = qMap.get(m.length as ValidQuantization);
-    if (!q) {
-      throw Error(`${m.length} is not a valid quanization`);
-    }
-    return q;
-  };
-
   const notes = measures.reduce<{
     notes: BaseNote[];
     measureCount: number;
     noteCount: number;
   }>(
     (acc, measure) => {
-      const q = getQuantizationMs(measure);
+      const { quantization, measureMs } = getQuantizationMs(
+        measure,
+        dataJson.bpm
+      );
 
       return {
         measureCount: acc.measureCount + 1,
@@ -109,14 +123,12 @@ export function parseChart(
                 continue;
               }
 
-              if (col === "N") {
-                _newNotes.push({
-                  id: (acc.noteCount + idx + 1).toString(),
-                  char: col,
-                  column: i,
-                  ms: (acc.measureCount * measureMs + q * idx) * 1000,
-                });
-              }
+              _newNotes.push({
+                id: (acc.noteCount + idx + 1).toString(),
+                char: col,
+                column: i,
+                ms: (acc.measureCount * measureMs + quantization * idx) * 1000,
+              });
             }
 
             return _notes.concat(
@@ -132,9 +144,53 @@ export function parseChart(
   return {
     metadata: {
       title: dataJson.title,
-      bpm,
-      offset: parseInt(dataJson.offset, 10),
+      bpm: dataJson.bpm,
+      offset: dataJson.offset,
     },
     notes,
+  };
+}
+
+type Hold = BaseNote[];
+
+type ParsedHoldChart = ParsedChart<Hold[]>;
+
+// uses parseChart then derives holds.
+export function parseHoldsChart(
+  dataJson: ChartMetadata,
+  chartRaw: string
+): ParsedHoldChart {
+  const result = parseChart(dataJson, chartRaw);
+
+  let holds: Hold[] = [];
+  let hold: Hold = [];
+
+  for (const note of result.notes) {
+    if (note.char === "1") {
+      if (hold.length) {
+        // add existing hold to list, start new one
+        holds.push(hold);
+        hold = [note];
+      } else {
+        // first hold
+        hold = [note];
+      }
+    } else if (note.char.match(/[2-9]/)) {
+      hold.push(note);
+    }
+  }
+
+  // final hold
+  if (hold.length) {
+    holds.push(hold);
+  }
+
+  holds = holds.map((hold) =>
+    hold.sort((x, y) => parseInt(x.char, 10) - parseInt(y.char, 10))
+  );
+
+  return {
+    ...result,
+    notes: holds,
   };
 }
