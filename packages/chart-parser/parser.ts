@@ -151,9 +151,9 @@ export function parseChart(
   };
 }
 
-type Hold = BaseNote[];
+export type Hold = BaseNote[];
 
-type ParsedHoldChart = ParsedChart<Hold[]>;
+export type ParsedHoldChart = ParsedChart<Hold[]>;
 
 // uses parseChart then derives holds.
 export function parseHoldsChart(

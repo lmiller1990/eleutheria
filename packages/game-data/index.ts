@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import fs from "fs-extra";
-import { ChartMetadata, parseChart } from "@packages/chart-parser";
+import { BaseNote, ChartMetadata, parseChart, ParsedChart, ParsedHoldChart, parseHoldsChart } from "@packages/chart-parser";
 import type { BaseSong } from "@packages/types";
 
 const app = express();
@@ -10,21 +10,36 @@ app.use(cors());
 
 const songsDir = path.join(__dirname, "songs");
 
+export interface SongData {
+  noteChart: ParsedChart<BaseNote[]>
+  holdChart: ParsedHoldChart
+  metadata: ChartMetadata
+}
+
 app.get("/songs/:id", (req, res) => {
   const chartPath = path.join(songsDir, req.params.id);
 
-  const chart = fs.readFileSync(
+  const noteChart = fs.readFileSync(
     path.join(chartPath, `${req.params.id}.chart`),
     "utf-8"
   );
 
-  const meta = JSON.parse(
+  const holdsChart = fs.readFileSync(
+    path.join(chartPath, `${req.params.id}-holds.chart`),
+    "utf-8"
+  );
+
+  const metadata = JSON.parse(
     fs.readFileSync(path.join(chartPath, "data.json"), "utf-8")
   );
 
-  const data = parseChart(meta, chart);
+  const response: SongData = {
+    noteChart: parseChart(metadata, noteChart),
+    holdChart: parseHoldsChart(metadata, holdsChart),
+    metadata
+  }
 
-  res.json(data);
+  res.json(response)
 });
 
 app.get("/songs", async (req, res) => {

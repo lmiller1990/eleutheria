@@ -1,5 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import type { BaseNote, ChartMetadata } from "@packages/chart-parser";
+import type { BaseNote, ChartMetadata, Hold } from "@packages/chart-parser";
 import {
   createChart,
   EngineConfiguration,
@@ -50,6 +50,7 @@ export interface GameConfig {
   song: {
     metadata: ChartMetadata;
     notes: BaseNote[];
+    holds: Hold[];
   };
   preSongPadding?: number;
   postSongPadding?: number;
