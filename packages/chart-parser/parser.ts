@@ -21,8 +21,7 @@ type HoldNote = BaseNote[];
 type ParsedHoldNoteChart = {
   metadata: ChartMetadata;
   holdNotes: HoldNote[];
-}
-
+};
 
 export type ValidQuantization = typeof validQuantizations[number];
 
