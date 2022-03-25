@@ -1,8 +1,8 @@
 import { padStart } from "@packages/audio-utils";
-import type { ParsedChart } from "@packages/chart-parser";
+import type { ParsedTapNoteChart } from "@packages/chart-parser";
 import { PADDING_MS } from "./config";
 
-export async function fetchData(): Promise<ParsedChart> {
+export async function fetchData(): Promise<ParsedTapNoteChart> {
   const res = await window.fetch(`http://localhost:8000/songs/${SONG.SONG_ID}`);
   return res.json();
 }

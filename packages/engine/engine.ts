@@ -79,7 +79,7 @@ export interface TimingWindow {
 }
 
 export interface Chart {
-  notes: EngineNote[];
+  tapNotes: EngineNote[];
 }
 
 export interface EngineConfiguration {
@@ -89,7 +89,7 @@ export interface EngineConfiguration {
 
 interface CreateChart {
   offset: number;
-  notes: EngineNote[];
+  tapNotes: EngineNote[];
 }
 
 /**
@@ -102,7 +102,7 @@ interface CreateChart {
  */
 export function createChart(args: CreateChart): Chart {
   return {
-    notes: args.notes.map((note) => {
+    tapNotes: args.tapNotes.map((note) => {
       return {
         ...note,
         ms: note.ms + args.offset,
@@ -118,7 +118,7 @@ export function nearestNote(
   input: Input,
   chart: Chart
 ): EngineNote | undefined {
-  const nearest = chart.notes.reduce((best, note) => {
+  const nearest = chart.tapNotes.reduce((best, note) => {
     if (
       input.column === note.column &&
       Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms)
@@ -126,7 +126,7 @@ export function nearestNote(
       return note;
     }
     return best;
-  }, chart.notes[0]);
+  }, chart.tapNotes[0]);
 
   return nearest && nearest.column === input.column ? nearest : undefined;
 }
@@ -150,7 +150,7 @@ export function judge(input: Input, note: EngineNote): number {
 }
 
 export interface GameChart {
-  notes: Map<string, EngineNote>;
+  tapNotes: Map<string, EngineNote>;
 }
 
 /**
@@ -281,10 +281,10 @@ export function judgeInput({
  *  Create a new "world", which represents the play-through of one chart.
  */
 export function initGameState(chart: Chart): GameChart {
-  const notes = new Map<string, EngineNote>();
+  const tapNotes = new Map<string, EngineNote>();
 
-  chart.notes.forEach((note) => {
-    notes.set(note.id, {
+  chart.tapNotes.forEach((note) => {
+    tapNotes.set(note.id, {
       ...note,
       timingWindowName: undefined,
       canHit: true,
@@ -292,7 +292,7 @@ export function initGameState(chart: Chart): GameChart {
   });
 
   return {
-    notes,
+    tapNotes,
   };
 }
 
@@ -354,13 +354,13 @@ export function updateGameState(
   world: World,
   config: EngineConfiguration
 ): UpdatedGameState {
-  const prevFrameNotes = Array.from(world.chart.notes.values());
+  const prevFrameNotes = Array.from(world.chart.tapNotes.values());
 
   const judgementResults = world.inputs.reduce<JudgementResult[]>(
     (acc, input) => {
       const result = judgeInput({
         input,
-        chart: { notes: prevFrameNotes },
+        chart: { tapNotes: prevFrameNotes },
         maxWindow: config.maxHitWindow,
         timingWindows: config.timingWindows,
       });
@@ -376,9 +376,9 @@ export function updateGameState(
   let nextFrameMissedCount: number = 0;
 
   const newNotes = new Map<string, EngineNote>();
-  for (const key of world.chart.notes.keys()) {
+  for (const key of world.chart.tapNotes.keys()) {
     const newNote = processNoteJudgement(
-      world.chart.notes.get(key)!,
+      world.chart.tapNotes.get(key)!,
       judgementResults,
       world.time,
       config.maxHitWindow
@@ -402,7 +402,7 @@ export function updateGameState(
       combo,
       chart: {
         ...world.chart,
-        notes: newNotes,
+        tapNotes: newNotes,
       },
     },
     previousFrameMeta: {

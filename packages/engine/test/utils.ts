@@ -1,7 +1,7 @@
 import { GameChart, World } from "..";
 
 export function createWorld(
-  chart: Partial<GameChart> = { notes: new Map() },
+  chart: Partial<GameChart> = { tapNotes: new Map() },
   overrides: Partial<World> = {}
 ): World {
   return {
@@ -16,7 +16,7 @@ export function createWorld(
     source: undefined,
     ...overrides,
     chart: {
-      notes: chart.notes || new Map(),
+      tapNotes: chart.tapNotes || new Map(),
     },
   };
 }

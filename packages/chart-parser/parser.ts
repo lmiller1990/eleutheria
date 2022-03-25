@@ -11,10 +11,18 @@ export interface ChartMetadata {
   offset: number;
 }
 
-export interface ParsedChart<T> {
+export interface ParsedTapNoteChart {
   metadata: ChartMetadata;
-  notes: T;
+  tapNotes: BaseNote[];
 }
+
+type HoldNote = BaseNote[];
+
+type ParsedHoldNoteChart = {
+  metadata: ChartMetadata;
+  holdNotes: HoldNote[];
+}
+
 
 export type ValidQuantization = typeof validQuantizations[number];
 
@@ -50,8 +58,6 @@ export function getQuantizationMs(
   };
 }
 
-type ParsedNoteChart = ParsedChart<BaseNote[]>;
-
 type Measure = string[];
 
 function measureQuantizationValid(measure: Measure) {
@@ -64,7 +70,7 @@ function measureQuantizationValid(measure: Measure) {
 export function parseChart(
   dataJson: ChartMetadata,
   chartRaw: string
-): ParsedNoteChart {
+): ParsedTapNoteChart {
   const lines = chartRaw.split("\n").filter((x) => x.trim().length > 0);
 
   const measures = lines.reduce<{
@@ -92,8 +98,8 @@ export function parseChart(
     { measures: [], currMeasure: [] }
   ).measures;
 
-  const notes = measures.reduce<{
-    notes: BaseNote[];
+  const tapNotes = measures.reduce<{
+    tapNotes: BaseNote[];
     measureCount: number;
     noteCount: number;
   }>(
@@ -106,8 +112,8 @@ export function parseChart(
       return {
         measureCount: acc.measureCount + 1,
         noteCount: acc.noteCount + measure.length,
-        notes: [
-          ...acc.notes,
+        tapNotes: [
+          ...acc.tapNotes,
           ...measure.reduce<BaseNote[]>((_notes, row, idx) => {
             if (row.split("").every((col) => col === "0")) {
               return _notes;
@@ -138,8 +144,8 @@ export function parseChart(
         ],
       };
     },
-    { notes: [], measureCount: 0, noteCount: 0 }
-  ).notes;
+    { tapNotes: [], measureCount: 0, noteCount: 0 }
+  ).tapNotes;
 
   return {
     metadata: {
@@ -147,25 +153,21 @@ export function parseChart(
       bpm: dataJson.bpm,
       offset: dataJson.offset,
     },
-    notes,
+    tapNotes,
   };
 }
-
-type Hold = BaseNote[];
-
-type ParsedHoldChart = ParsedChart<Hold[]>;
 
 // uses parseChart then derives holds.
 export function parseHoldsChart(
   dataJson: ChartMetadata,
   chartRaw: string
-): ParsedHoldChart {
+): ParsedHoldNoteChart {
   const result = parseChart(dataJson, chartRaw);
 
-  let holds: Hold[] = [];
-  let hold: Hold = [];
+  let holds: HoldNote[] = [];
+  let hold: HoldNote = [];
 
-  for (const note of result.notes) {
+  for (const note of result.tapNotes) {
     if (note.char === "1") {
       if (hold.length) {
         // add existing hold to list, start new one
@@ -191,6 +193,6 @@ export function parseHoldsChart(
 
   return {
     ...result,
-    notes: holds,
+    holdNotes: holds,
   };
 }

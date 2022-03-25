@@ -15,7 +15,7 @@ const createNote = (
   timingWindowName,
   hitAt,
   canHit: false,
-  columns: [],
+  column: 0,
   missed,
 });
 
@@ -43,7 +43,7 @@ describe("scoring", () => {
 
     const world: World = createWorld(
       {
-        notes: new Map<string, EngineNote>([
+        tapNotes: new Map<string, EngineNote>([
           ["1", createNote("1", 100, 110, "perfect", false)],
           ["2", createNote("2", 200, 200, "perfect", false)],
           ["3", createNote("3", 300, 290, "perfect", false)],
@@ -63,7 +63,7 @@ describe("scoring", () => {
     expect(expected).toEqual(actual);
   });
 
-  it("does not count future notes as missed", () => {
+  it("does not count future tapNotes as missed", () => {
     const expected: Summary = {
       timing: {
         perfect: {
@@ -86,7 +86,7 @@ describe("scoring", () => {
 
     const world: World = createWorld(
       {
-        notes: new Map<string, EngineNote>([
+        tapNotes: new Map<string, EngineNote>([
           ["1", createNote("1", 200, undefined, undefined, false)],
         ]),
       },

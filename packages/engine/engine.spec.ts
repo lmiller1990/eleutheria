@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { EngineNote, World } from ".";
+import type { EngineNote } from ".";
 import {
   Chart,
   updateGameState,
@@ -32,7 +32,7 @@ const createInput = ({
   column,
 });
 
-function makeNote(note: Partial<EngineNote>): EngineNote {
+function makeTapNote(note: Partial<EngineNote>): EngineNote {
   return {
     id: "???",
     column: 0,
@@ -46,29 +46,29 @@ function makeNote(note: Partial<EngineNote>): EngineNote {
 describe("nearestNode", () => {
   it("captures nearest note based on time and input", () => {
     const chart: Chart = {
-      notes: [
-        makeNote({ id: "1", ms: 0, column: 1 }),
-        makeNote({ id: "2", ms: 500, column: 0 }),
-        makeNote({ id: "3", ms: 1000, column: 1 }),
+      tapNotes: [
+        makeTapNote({ id: "1", ms: 0, column: 1 }),
+        makeTapNote({ id: "2", ms: 500, column: 0 }),
+        makeTapNote({ id: "3", ms: 1000, column: 1 }),
       ],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
-    expect(actual).toBe(chart.notes[2]);
+    expect(actual).toBe(chart.tapNotes[2]);
   });
 
-  it("handles chart with no notes", () => {
+  it("handles chart with no tapNotes", () => {
     const chart: Chart = {
-      notes: [],
+      tapNotes: [],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
     expect(actual).toBe(undefined);
   });
 
-  it("handles chart with no valid notes", () => {
+  it("handles chart with no valid tapNotes", () => {
     const chart: Chart = {
-      notes: [makeNote({ id: "1", ms: 100, column: 0 })],
+      tapNotes: [makeTapNote({ id: "1", ms: 100, column: 0 })],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
@@ -83,10 +83,10 @@ describe("judgeInput", () => {
       ms: 100,
     });
     // inside max input window of 100
-    const note: EngineNote = makeNote({ id: "1", column: 1, ms: 200 });
+    const note: EngineNote = makeTapNote({ id: "1", column: 1, ms: 200 });
     const actual = judgeInput({
       input,
-      chart: { notes: [note] },
+      chart: { tapNotes: [note] },
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -106,10 +106,10 @@ describe("judgeInput", () => {
       ms: 100,
     });
     // outside max input window of 100 by 1
-    const note = makeNote({ id: "1", column: 1, ms: 201 });
+    const note = makeTapNote({ id: "1", column: 1, ms: 201 });
     const actual = judgeInput({
       input,
-      chart: { notes: [note] },
+      chart: { tapNotes: [note] },
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -118,14 +118,14 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is inside smallest window", () => {
-    const note = makeNote({ id: "1", column: 1, ms: 100 });
+    const note = makeTapNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 111,
     });
     const actual = judgeInput({
       input,
-      chart: { notes: [note] },
+      chart: { tapNotes: [note] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -149,14 +149,14 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is early inside largest window", () => {
-    const note = makeNote({ id: "1", column: 1, ms: 100 });
+    const note = makeTapNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 111,
     });
     const actual = judgeInput({
       input,
-      chart: { notes: [note] },
+      chart: { tapNotes: [note] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -180,7 +180,7 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note is late inside largest window", () => {
-    const note = makeNote({ id: "1", column: 1, ms: 100 });
+    const note = makeTapNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 89,
@@ -188,7 +188,7 @@ describe("judgeInput", () => {
 
     const actual = judgeInput({
       input,
-      chart: { notes: [note] },
+      chart: { tapNotes: [note] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -212,14 +212,14 @@ describe("judgeInput", () => {
   });
 
   it("considers timing windows when note outside all windows", () => {
-    const note = makeNote({ id: "1", column: 1, ms: 100 });
+    const note = makeTapNote({ id: "1", column: 1, ms: 100 });
     const input: Input = createInput({
       column: 1,
       ms: 150,
     });
     const actual = judgeInput({
       input,
-      chart: { notes: [note] },
+      chart: { tapNotes: [note] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -249,18 +249,18 @@ describe("judge", () => {
       column: 1,
       ms: 510,
     });
-    const note = makeNote({ id: "1", column: 1, ms: 500 });
+    const note = makeTapNote({ id: "1", column: 1, ms: 500 });
     const actual = judge(input, note);
 
     expect(actual).toBe(10);
   });
 
-  it("awards perfect timing for hold notes", () => {
+  it("awards perfect timing for hold tapNotes", () => {
     const input: Input = createInput({
       column: 1,
       ms: 510,
     });
-    const note = makeNote({ id: "1", column: 1, ms: 500, dependsOn: "1" });
+    const note = makeTapNote({ id: "1", column: 1, ms: 500, dependsOn: "1" });
     const actual = judge(input, note);
 
     expect(actual).toBe(0);
@@ -268,7 +268,7 @@ describe("judge", () => {
 });
 
 describe("updateGameState", () => {
-  const baseNote = makeNote({
+  const baseNote = makeTapNote({
     id: "1",
     ms: 0,
     column: 0,
@@ -277,12 +277,12 @@ describe("updateGameState", () => {
   });
 
   it("updates the world given relative to given millseconds", () => {
-    const notes = new Map<string, EngineNote>();
-    notes.set(baseNote.id, { ...baseNote, ms: 1000 });
+    const tapNotes = new Map<string, EngineNote>();
+    tapNotes.set(baseNote.id, { ...baseNote, ms: 1000 });
     // 900 ms has passed since game started
 
     const world = createWorld(
-      { notes },
+      { tapNotes },
       {
         t0: 0,
         startTime: 0,
@@ -297,7 +297,7 @@ describe("updateGameState", () => {
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
       world: createWorld(
-        { notes },
+        { tapNotes },
         {
           ...world,
           combo: 0,
@@ -314,13 +314,13 @@ describe("updateGameState", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("judges notes as missed if outside max timing window", () => {
-    const notes = new Map<string, EngineNote>();
-    notes.set(baseNote.id, { ...baseNote, ms: 1000 });
+  it("judges tapNotes as missed if outside max timing window", () => {
+    const tapNotes = new Map<string, EngineNote>();
+    tapNotes.set(baseNote.id, { ...baseNote, ms: 1000 });
     // 900 ms has passed since game started
 
     const world = createWorld(
-      { notes },
+      { tapNotes },
       {
         startTime: 0,
         time: 950,
@@ -334,7 +334,7 @@ describe("updateGameState", () => {
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
       world: createWorld(
-        { notes },
+        { tapNotes },
         {
           ...world,
           combo: 0,
@@ -352,11 +352,11 @@ describe("updateGameState", () => {
 
   it("update game state considering input", () => {
     // 900 ms has passed since game started
-    const notes = new Map<string, EngineNote>();
-    notes.set(baseNote.id, { ...baseNote, ms: 1000, canHit: true });
+    const tapNotes = new Map<string, EngineNote>();
+    tapNotes.set(baseNote.id, { ...baseNote, ms: 1000, canHit: true });
 
     const world = createWorld(
-      { notes },
+      { tapNotes },
       {
         combo: 0,
         startTime: 0,
@@ -376,7 +376,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
-          notes: new Map([
+          tapNotes: new Map([
             [
               baseNote.id,
               {
@@ -429,7 +429,7 @@ describe("updateGameState", () => {
     };
 
     const current: GameChart = {
-      notes: new Map<string, EngineNote>([
+      tapNotes: new Map<string, EngineNote>([
         ["1", alreadyHitNote],
         ["2", { ...upcomingNote }],
       ]),
@@ -455,7 +455,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
-          notes: new Map<string, EngineNote>([
+          tapNotes: new Map<string, EngineNote>([
             [
               "1",
               {
@@ -511,7 +511,7 @@ describe("updateGameState", () => {
     };
 
     const current: GameChart = {
-      notes: new Map<string, EngineNote>([[note.id, note]]),
+      tapNotes: new Map<string, EngineNote>([[note.id, note]]),
     };
 
     const world = createWorld(current, {
@@ -531,7 +531,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
-          notes: new Map<string, EngineNote>([[note.id, { ...note }]]),
+          tapNotes: new Map<string, EngineNote>([[note.id, { ...note }]]),
         },
       },
       previousFrameMeta: {
@@ -560,7 +560,7 @@ describe("updateGameState", () => {
       ms: 100,
     };
     const current: GameChart = {
-      notes: new Map<string, EngineNote>([
+      tapNotes: new Map<string, EngineNote>([
         ["1", { ...aNote, id: "1", column: 0 }],
         ["2", { ...aNote, id: "2", column: 1 }],
       ]),
@@ -590,7 +590,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 2,
         chart: {
-          notes: new Map<string, EngineNote>([
+          tapNotes: new Map<string, EngineNote>([
             [
               "1",
               {
@@ -646,10 +646,10 @@ describe("updateGameState", () => {
 describe("createChart", () => {
   it("returns a new chart considering offset", () => {
     const expected: Chart = {
-      notes: [makeNote({ id: "1", ms: 1100, column: 0 })],
+      tapNotes: [makeTapNote({ id: "1", ms: 1100, column: 0 })],
     };
     const actual = createChart({
-      notes: [makeNote({ id: "1", ms: 1000, column: 0 })],
+      tapNotes: [makeTapNote({ id: "1", ms: 1000, column: 0 })],
       offset: 100,
     });
 

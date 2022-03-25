@@ -49,7 +49,7 @@ export async function fetchAudio(paddingMs: number) {
 export interface GameConfig {
   song: {
     metadata: ChartMetadata;
-    notes: BaseNote[];
+    tapNotes: BaseNote[];
   };
   preSongPadding?: number;
   postSongPadding?: number;
@@ -76,7 +76,7 @@ export class Game {
 
   constructor(private config: GameConfig, private lifecycle: GameLifecycle) {
     this.#timeOfLastNote =
-      config.song.notes.reduce(
+      config.song.tapNotes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
         0
       ) +
@@ -87,7 +87,7 @@ export class Game {
 
   async start() {
     const chart = createChart({
-      notes: this.config.song.notes.map((x) => ({
+      tapNotes: this.config.song.tapNotes.map((x) => ({
         ...x,
         missed: false,
         canHit: true,
@@ -117,7 +117,7 @@ export class Game {
       t0: startTime,
       inputManager,
       chart: {
-        notes: gs.notes,
+        tapNotes: gs.tapNotes,
       },
       startTime,
       inputs: [],

@@ -1,121 +1,8 @@
 // Vitest Snapshot v1
 
-exports[`parseChart > works 1`] = `
-{
-  "metadata": {
-    "bpm": 120,
-    "offset": 0,
-    "title": "Example Song",
-  },
-  "notes": [
-    {
-      "char": "N",
-      "column": 0,
-      "id": "1",
-      "ms": 0,
-    },
-    {
-      "char": "N",
-      "column": 3,
-      "id": "2",
-      "ms": 500,
-    },
-    {
-      "char": "N",
-      "column": 1,
-      "id": "3",
-      "ms": 1000,
-    },
-    {
-      "char": "N",
-      "column": 2,
-      "id": "4",
-      "ms": 1500,
-    },
-    {
-      "char": "N",
-      "column": 0,
-      "id": "5",
-      "ms": 2000,
-    },
-    {
-      "char": "N",
-      "column": 3,
-      "id": "6",
-      "ms": 2250,
-    },
-    {
-      "char": "N",
-      "column": 0,
-      "id": "7",
-      "ms": 2500,
-    },
-    {
-      "char": "N",
-      "column": 3,
-      "id": "8",
-      "ms": 2750,
-    },
-    {
-      "char": "N",
-      "column": 0,
-      "id": "9",
-      "ms": 3000,
-    },
-    {
-      "char": "N",
-      "column": 1,
-      "id": "9",
-      "ms": 3000,
-    },
-    {
-      "char": "N",
-      "column": 2,
-      "id": "10",
-      "ms": 3250,
-    },
-    {
-      "char": "N",
-      "column": 3,
-      "id": "10",
-      "ms": 3250,
-    },
-    {
-      "char": "N",
-      "column": 0,
-      "id": "11",
-      "ms": 3500,
-    },
-    {
-      "char": "N",
-      "column": 3,
-      "id": "11",
-      "ms": 3500,
-    },
-    {
-      "char": "N",
-      "column": 1,
-      "id": "12",
-      "ms": 3750,
-    },
-    {
-      "char": "N",
-      "column": 2,
-      "id": "12",
-      "ms": 3750,
-    },
-  ],
-}
-`;
-
 exports[`parseHoldsChart > works 1`] = `
 {
-  "metadata": {
-    "bpm": 120,
-    "offset": 0,
-    "title": "Example Song",
-  },
-  "notes": [
+  "holdNotes": [
     [
       {
         "char": "1",
@@ -180,6 +67,73 @@ exports[`parseHoldsChart > works 1`] = `
         "ms": 3750,
       },
     ],
+  ],
+  "metadata": {
+    "bpm": 120,
+    "offset": 0,
+    "title": "Example Song",
+  },
+  "tapNotes": [
+    {
+      "char": "1",
+      "column": 0,
+      "id": "1",
+      "ms": 0,
+    },
+    {
+      "char": "2",
+      "column": 3,
+      "id": "2",
+      "ms": 500,
+    },
+    {
+      "char": "3",
+      "column": 0,
+      "id": "3",
+      "ms": 1000,
+    },
+    {
+      "char": "4",
+      "column": 3,
+      "id": "4",
+      "ms": 1500,
+    },
+    {
+      "char": "5",
+      "column": 0,
+      "id": "4",
+      "ms": 1500,
+    },
+    {
+      "char": "1",
+      "column": 0,
+      "id": "5",
+      "ms": 2000,
+    },
+    {
+      "char": "2",
+      "column": 3,
+      "id": "7",
+      "ms": 2500,
+    },
+    {
+      "char": "3",
+      "column": 0,
+      "id": "9",
+      "ms": 3000,
+    },
+    {
+      "char": "4",
+      "column": 3,
+      "id": "11",
+      "ms": 3500,
+    },
+    {
+      "char": "5",
+      "column": 0,
+      "id": "12",
+      "ms": 3750,
+    },
   ],
 }
 `;

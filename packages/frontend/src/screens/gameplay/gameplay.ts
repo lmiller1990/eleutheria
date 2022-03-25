@@ -56,7 +56,7 @@ function updateUI(
   if (previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of previousFrameMeta.judgementResults) {
-      const note = state.chart.notes.get(judgement.noteId);
+      const note = state.chart.tapNotes.get(judgement.noteId);
       if (!note || !note.timingWindowName) {
         throw Error(
           `Could not find judged note with id ${judgement.noteId} and timing window ${note?.timingWindowName}. This should never happen.`
@@ -104,7 +104,7 @@ export async function start(
 
   const gameConfig: GameConfig = {
     song: {
-      notes: data.notes,
+      tapNotes: data.tapNotes,
       metadata: data.metadata,
     },
     preSongPadding: PADDING_MS,
@@ -126,7 +126,7 @@ export async function start(
   const lifecycle: GameLifecycle = {
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
       // if (world.time > 4000) { return }
-      for (const [id, n] of world.chart.notes) {
+      for (const [id, n] of world.chart.tapNotes) {
         const ypos = (n.ms - world.time) * MULTIPLIER;
         const $note = noteMap.get(id);
 

@@ -40,7 +40,7 @@ export function summarizeResults(
     }
   );
 
-  for (const [id, note] of world.chart.notes) {
+  for (const [id, note] of world.chart.tapNotes) {
     if (note.missed) {
       summary.timing.miss.count += 1;
     }
