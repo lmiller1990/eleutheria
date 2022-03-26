@@ -80,6 +80,7 @@ export interface TimingWindow {
 
 export interface Chart {
   tapNotes: EngineNote[];
+  holdNotes: Array<EngineNote[]>;
 }
 
 export interface EngineConfiguration {
@@ -90,6 +91,7 @@ export interface EngineConfiguration {
 interface CreateChart {
   offset: number;
   tapNotes: EngineNote[];
+  holdNotes: Array<EngineNote[]>;
 }
 
 /**
@@ -107,6 +109,16 @@ export function createChart(args: CreateChart): Chart {
         ...note,
         ms: note.ms + args.offset,
       };
+    }),
+    holdNotes: args.holdNotes.map<EngineNote[]>((notes) => {
+      return notes.map((note, idx) => {
+        return {
+          ...note,
+          missed: false,
+          canHit: true,
+          dependsOn: idx === 0 ? undefined : notes[idx - 1].id,
+        };
+      });
     }),
   };
 }
@@ -360,7 +372,7 @@ export function updateGameState(
     (acc, input) => {
       const result = judgeInput({
         input,
-        chart: { tapNotes: prevFrameNotes },
+        chart: { tapNotes: prevFrameNotes, holdNotes: [] },
         maxWindow: config.maxHitWindow,
         timingWindows: config.timingWindows,
       });

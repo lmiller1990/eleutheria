@@ -51,6 +51,7 @@ describe("nearestNode", () => {
         makeTapNote({ id: "2", ms: 500, column: 0 }),
         makeTapNote({ id: "3", ms: 1000, column: 1 }),
       ],
+      holdNotes: [],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
@@ -60,6 +61,7 @@ describe("nearestNode", () => {
   it("handles chart with no tapNotes", () => {
     const chart: Chart = {
       tapNotes: [],
+      holdNotes: [],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
@@ -69,6 +71,7 @@ describe("nearestNode", () => {
   it("handles chart with no valid tapNotes", () => {
     const chart: Chart = {
       tapNotes: [makeTapNote({ id: "1", ms: 100, column: 0 })],
+      holdNotes: [],
     };
     const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
 
@@ -86,7 +89,7 @@ describe("judgeInput", () => {
     const note: EngineNote = makeTapNote({ id: "1", column: 1, ms: 200 });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -109,7 +112,7 @@ describe("judgeInput", () => {
     const note = makeTapNote({ id: "1", column: 1, ms: 201 });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -125,7 +128,7 @@ describe("judgeInput", () => {
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -156,7 +159,7 @@ describe("judgeInput", () => {
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -188,7 +191,7 @@ describe("judgeInput", () => {
 
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -219,7 +222,7 @@ describe("judgeInput", () => {
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -647,9 +650,31 @@ describe("createChart", () => {
   it("returns a new chart considering offset", () => {
     const expected: Chart = {
       tapNotes: [makeTapNote({ id: "1", ms: 1100, column: 0 })],
+      holdNotes: [
+        [
+          makeTapNote({
+            id: "hold-1",
+            ms: 1100,
+            column: 1,
+            dependsOn: undefined,
+          }),
+          makeTapNote({
+            id: "hold-2",
+            ms: 1150,
+            column: 1,
+            dependsOn: "hold-1",
+          }),
+        ],
+      ],
     };
     const actual = createChart({
       tapNotes: [makeTapNote({ id: "1", ms: 1000, column: 0 })],
+      holdNotes: [
+        [
+          makeTapNote({ id: "hold-1", ms: 1100, column: 1 }),
+          makeTapNote({ id: "hold-2", ms: 1150, column: 1 }),
+        ],
+      ],
       offset: 100,
     });
 

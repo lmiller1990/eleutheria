@@ -10,6 +10,7 @@ import {
   updateGameState,
   World,
 } from ".";
+import { EngineNote } from "./engine";
 
 const SONG = {
   // SONG_ID: "rave",
@@ -93,6 +94,13 @@ export class Game {
         missed: false,
         canHit: true,
       })),
+      holdNotes: this.config.song.holdNotes.map<EngineNote[]>((notes) => {
+        return notes.map((note, idx) => ({
+          ...note,
+          missed: false,
+          canHit: true,
+        }));
+      }),
       offset:
         (this.config.preSongPadding || 0) + this.config.song.metadata.offset,
     });
