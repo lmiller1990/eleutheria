@@ -16,12 +16,12 @@ export interface ParsedTapNoteChart {
   tapNotes: BaseNote[];
 }
 
-type HoldNote = BaseNote[];
+export type HoldNote = BaseNote[];
 
-type ParsedHoldNoteChart = {
+export interface ParsedHoldNoteChart {
   metadata: ChartMetadata;
   holdNotes: HoldNote[];
-};
+}
 
 export type ValidQuantization = typeof validQuantizations[number];
 

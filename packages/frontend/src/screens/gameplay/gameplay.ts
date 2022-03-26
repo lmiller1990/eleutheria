@@ -104,7 +104,8 @@ export async function start(
 
   const gameConfig: GameConfig = {
     song: {
-      tapNotes: data.tapNotes,
+      tapNotes: data.tapNotes.tapNotes,
+      holdNotes: data.holdNotes.holdNotes,
       metadata: data.metadata,
     },
     preSongPadding: PADDING_MS,
