@@ -174,10 +174,10 @@ export function parseHoldsChart(
         hold = [note];
       } else {
         // first hold
-        hold = [note];
+        hold = [{ ...note, id: `h${note.id}` }];
       }
     } else if (note.char.match(/[2-9]/)) {
-      hold.push(note);
+      hold.push({ ...note, id: `h${note.id}` });
     }
   }
 

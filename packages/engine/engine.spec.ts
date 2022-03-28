@@ -317,6 +317,46 @@ describe("updateGameState", () => {
     expect(actual).toEqual(expected);
   });
 
+  it("updates the world consider holds notes", () => {
+    const holdNotes = new Map<string, EngineNote[]>();
+    holdNotes.set("h1", [
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
+    ]);
+
+    const world = createWorld(
+      { holdNotes },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 1000,
+        inputs: [createInput({ ms: 1000, column: 1 })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    // 50 ms has passed since last update
+    const expected: UpdatedGameState = {
+      world: createWorld(
+        { holdNotes },
+        {
+          ...world,
+          combo: 0,
+        }
+      ),
+      previousFrameMeta: {
+        judgementResults: [],
+        comboBroken: false,
+      },
+    };
+
+    const actual = updateGameState(world, engineConfiguration);
+
+    expect(actual).toEqual(expected);
+  });
+
   it("judges tapNotes as missed if outside max timing window", () => {
     const tapNotes = new Map<string, EngineNote>();
     tapNotes.set(baseNote.id, { ...baseNote, ms: 1000 });
@@ -379,6 +419,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map([
             [
               baseNote.id,
@@ -432,6 +473,7 @@ describe("updateGameState", () => {
     };
 
     const current: GameChart = {
+      holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([
         ["1", alreadyHitNote],
         ["2", { ...upcomingNote }],
@@ -458,6 +500,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([
             [
               "1",
@@ -514,6 +557,7 @@ describe("updateGameState", () => {
     };
 
     const current: GameChart = {
+      holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([[note.id, note]]),
     };
 
@@ -534,6 +578,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([[note.id, { ...note }]]),
         },
       },
@@ -563,6 +608,7 @@ describe("updateGameState", () => {
       ms: 100,
     };
     const current: GameChart = {
+      holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([
         ["1", { ...aNote, id: "1", column: 0 }],
         ["2", { ...aNote, id: "2", column: 1 }],
@@ -593,6 +639,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 2,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([
             [
               "1",
@@ -667,12 +714,13 @@ describe("createChart", () => {
         ],
       ],
     };
+
     const actual = createChart({
       tapNotes: [makeTapNote({ id: "1", ms: 1000, column: 0 })],
       holdNotes: [
         [
-          makeTapNote({ id: "hold-1", ms: 1100, column: 1 }),
-          makeTapNote({ id: "hold-2", ms: 1150, column: 1 }),
+          makeTapNote({ id: "hold-1", ms: 1000, column: 1 }),
+          makeTapNote({ id: "hold-2", ms: 1050, column: 1 }),
         ],
       ],
       offset: 100,

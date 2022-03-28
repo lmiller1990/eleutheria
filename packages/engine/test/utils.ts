@@ -17,6 +17,7 @@ export function createWorld(
     ...overrides,
     chart: {
       tapNotes: chart.tapNotes || new Map(),
+      holdNotes: chart.holdNotes || new Map(),
     },
   };
 }

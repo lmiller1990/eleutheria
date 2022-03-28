@@ -127,6 +127,7 @@ export class Game {
       inputManager,
       chart: {
         tapNotes: gs.tapNotes,
+        holdNotes: gs.holdNotes,
       },
       startTime,
       inputs: [],

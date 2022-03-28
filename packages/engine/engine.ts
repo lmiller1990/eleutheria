@@ -114,6 +114,7 @@ export function createChart(args: CreateChart): Chart {
       return notes.map((note, idx) => {
         return {
           ...note,
+          ms: note.ms + args.offset,
           missed: false,
           canHit: true,
           dependsOn: idx === 0 ? undefined : notes[idx - 1].id,
@@ -163,6 +164,7 @@ export function judge(input: Input, note: EngineNote): number {
 
 export interface GameChart {
   tapNotes: Map<string, EngineNote>;
+  holdNotes: Map<string, EngineNote[]>;
 }
 
 /**
@@ -303,8 +305,22 @@ export function initGameState(chart: Chart): GameChart {
     });
   });
 
+  const holdNotes = new Map<string, EngineNote[]>();
+
+  chart.holdNotes.forEach((notes) => {
+    holdNotes.set(
+      `h${notes[0].id}`,
+      notes.map((note) => ({
+        ...note,
+        timingWindowName: undefined,
+        canHit: true,
+      }))
+    );
+  });
+
   return {
     tapNotes,
+    holdNotes,
   };
 }
 
@@ -387,6 +403,26 @@ export function updateGameState(
   const prevFrameMissedNotes = prevFrameNotes.filter((x) => x.missed).length;
   let nextFrameMissedCount: number = 0;
 
+  const newHolds = new Map<string, EngineNote[]>();
+  for (const key of world.chart.holdNotes.keys()) {
+    const notesInHold = world.chart.holdNotes.get(key)!;
+
+    const updatedHoldNotes = notesInHold.map((note) => {
+      return processNoteJudgement(
+        note,
+        judgementResults,
+        world.time,
+        config.maxHitWindow
+      );
+    });
+
+    // if (newNote.missed) {
+    //   nextFrameMissedCount++;
+    // }
+
+    newHolds.set(key, updatedHoldNotes);
+  }
+
   const newNotes = new Map<string, EngineNote>();
   for (const key of world.chart.tapNotes.keys()) {
     const newNote = processNoteJudgement(
@@ -415,6 +451,7 @@ export function updateGameState(
       chart: {
         ...world.chart,
         tapNotes: newNotes,
+        holdNotes: newHolds,
       },
     },
     previousFrameMeta: {
