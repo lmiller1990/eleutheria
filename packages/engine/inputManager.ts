@@ -26,9 +26,8 @@ export class InputManager {
     this.t0 = t0;
   }
 
-  // arrow function for lexical this
-  onKeyDown = (e: KeyboardEvent) => {
-    if (!this.t0) {
+  onKey = (e: KeyboardEvent, type: "up" | "down") => {
+    if (this.t0 === undefined) {
       throw Error(
         `t0 must be set before listening for keyboard events! Set it with InputManager#setOrigin`
       );
@@ -46,11 +45,24 @@ export class InputManager {
       return;
     }
 
-    this.activeInputs.push({
+    const input: Input = {
       id: (e.timeStamp - this.t0).toString(),
       column,
       ms: e.timeStamp - this.t0,
-    });
+      type,
+    };
+
+    this.activeInputs.push(input);
+  };
+
+  // arrow function for lexical this
+  onKeyUp = (e: KeyboardEvent) => {
+    return this.onKey(e, "up");
+  };
+
+  // arrow function for lexical this
+  onKeyDown = (e: KeyboardEvent) => {
+    return this.onKey(e, "down");
   };
 
   get activeInputHash() {
@@ -92,9 +104,11 @@ export class InputManager {
 
   listen() {
     document.addEventListener("keydown", this.onKeyDown);
+    document.addEventListener("keyup", this.onKeyUp);
   }
 
   teardown() {
     document.removeEventListener("keydown", this.onKeyDown);
+    document.removeEventListener("keyup", this.onKeyUp);
   }
 }

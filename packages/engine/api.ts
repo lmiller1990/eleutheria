@@ -95,7 +95,7 @@ export class Game {
         canHit: true,
       })),
       holdNotes: this.config.song.holdNotes.map<EngineNote[]>((notes) => {
-        return notes.map((note, idx) => ({
+        return notes.map((note) => ({
           ...note,
           missed: false,
           canHit: true,
@@ -121,6 +121,7 @@ export class Game {
     const gameState: World = {
       audioContext,
       songCompleted: false,
+      activeHolds: new Set(),
       source,
       combo: 0,
       t0: startTime,
