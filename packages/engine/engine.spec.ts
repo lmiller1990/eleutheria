@@ -87,7 +87,10 @@ describe("nearestScorableNote", () => {
       ],
       holdNotes: [],
     };
-    const actual = nearestScorableNote(createInput({ ms: 600, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 600, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(chart.tapNotes[2]);
   });
@@ -100,7 +103,10 @@ describe("nearestScorableNote", () => {
         makeHoldNote({ startMs: 200, durationMs: 10 }),
       ],
     };
-    const actual = nearestScorableNote(createInput({ ms: 110, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 110, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(chart.holdNotes[0][0]);
   });
@@ -110,7 +116,10 @@ describe("nearestScorableNote", () => {
       tapNotes: [],
       holdNotes: [],
     };
-    const actual = nearestScorableNote(createInput({ ms: 600, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 600, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(undefined);
   });
@@ -120,7 +129,10 @@ describe("nearestScorableNote", () => {
       tapNotes: [makeTapNote({ id: "1", ms: 100, column: 0 })],
       holdNotes: [],
     };
-    const actual = nearestScorableNote(createInput({ ms: 600, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 600, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(undefined);
   });
@@ -133,7 +145,10 @@ describe("nearestScorableNote", () => {
       ],
       holdNotes: [],
     };
-    const actual = nearestScorableNote(createInput({ ms: 450, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 450, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(chart.tapNotes[1]);
   });
@@ -866,6 +881,40 @@ describe("updateGameState", () => {
 
     expect(s2.world.activeHolds).toEqual(new Set());
     expect(s2.previousFrameMeta.comboBroken).toEqual(true);
+  });
+
+  it("removes hold from activeHolds set if end of hold is passed current time", () => {
+    const world = createWorld(
+      {
+        holdNotes: new Map([
+          ["h1", makeHoldNote({ startMs: 100, durationMs: 100 })],
+        ]),
+      },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 100,
+        inputs: [createInput({ ms: 100, column: 1, type: "down" })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    const s1 = updateGameState(world, engineConfiguration);
+
+    expect(s1.world.activeHolds).toEqual(new Set(["h1"]));
+
+    const s2 = updateGameState(
+      {
+        ...s1.world,
+        time: 201,
+        inputs: [],
+      },
+      engineConfiguration
+    );
+
+    expect(s2.world.activeHolds).toEqual(new Set());
   });
 });
 

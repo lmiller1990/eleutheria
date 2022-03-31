@@ -42,10 +42,13 @@ function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
   return $note;
 }
 
-function drawHoldNote (holdNote: EngineNote[], elements: Elements): HTMLDivElement {
-  const $note = drawNote(holdNote.at(0)!, elements)
-  $note.style.height = `${calcInitHeightOfHold(holdNote)}px`
-  return $note
+function drawHoldNote(
+  holdNote: EngineNote[],
+  elements: Elements
+): HTMLDivElement {
+  const $note = drawNote(holdNote.at(0)!, elements);
+  $note.style.height = `${calcInitHeightOfHold(holdNote)}px`;
+  return $note;
 }
 
 // function shouldRemoveHold($note: HTMLDivElement) {
@@ -61,7 +64,7 @@ function shouldRemoveNote($note: HTMLDivElement) {
   // TODO: Support reverse/sideways scrolling?
   const isAboveViewport = y + height < 0;
 
-  return isAboveViewport
+  return isAboveViewport;
 }
 
 function calcInitHeightOfHold(hold: EngineNote[]): number {
@@ -70,16 +73,20 @@ function calcInitHeightOfHold(hold: EngineNote[]): number {
   return (lastNoteOfHold.ms - firstNoteOfHold.ms) * MULTIPLIER;
 }
 
-function isHoldStale (engineHold: EngineNote[]) {
-  const engineNote = engineHold.at(0)!
-  return engineNote.missed
+function isHoldStale(engineHold: EngineNote[]) {
+  const engineNote = engineHold.at(0)!;
+  return engineNote.missed;
 }
 
-function updateHold(engineHold: EngineNote[], ypos: number, $note: HTMLDivElement) {
+function updateHold(
+  engineHold: EngineNote[],
+  ypos: number,
+  $note: HTMLDivElement
+) {
   $note.style.top = `${ypos}px`;
 
   if (isHoldStale(engineHold)) {
-    $note.style.opacity = '0.5'
+    $note.style.opacity = "0.5";
   }
   // const initialHeight = calcInitHeightOfHold(engineHold);
 
@@ -152,7 +159,7 @@ function updateUI(
 
 type SongCompleted = (summary: Summary) => void;
 
-function calcYPosition (note: EngineNote, world: World) {
+function calcYPosition(note: EngineNote, world: World) {
   return (note.ms - world.time) * MULTIPLIER;
 }
 
@@ -189,7 +196,7 @@ export async function start(
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
-        const ypos = calcYPosition(engineNote, world)
+        const ypos = calcYPosition(engineNote, world);
         let $note = noteMap.get(id);
 
         const inViewport = ypos < window.innerHeight;
@@ -232,7 +239,7 @@ export async function start(
       // handle hold notes!
       for (const [id, hold] of world.chart.holdNotes) {
         const engineNote = hold[0];
-        const ypos = calcYPosition(engineNote, world)
+        const ypos = calcYPosition(engineNote, world);
         let $note = holdMap.get(engineNote.id);
 
         const inViewport = ypos < window.innerHeight;

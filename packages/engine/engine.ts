@@ -135,24 +135,27 @@ export function nearestScorableNote(
 ): EngineNote | undefined {
   const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
 
-  const initialCandidate = tapable.find(note => note.column === input.column && note.canHit)
+  const initialCandidate = tapable.find(
+    (note) => note.column === input.column && note.canHit
+  );
 
   if (!initialCandidate) {
-    return undefined
+    return undefined;
   }
 
   const nearest = tapable.reduce((best, note) => {
     // if the note is not scorable, we are not interested
     if (!note.canHit) {
-      return best
+      return best;
     }
 
     // if it's the wrong column, we are not interested.
     if (input.column !== note.column) {
-      return best
+      return best;
     }
 
-    const isCloserToInputMs = Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms)
+    const isCloserToInputMs =
+      Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms);
     // if it's the coreect column and closer to the input ms
     // than the current best, we have a new best note.
     if (isCloserToInputMs) {
@@ -221,6 +224,12 @@ export interface World {
   // does not consider if the actual music is finished playback or not.
   readonly songCompleted: boolean;
 
+  // Set of active holds - that is, a hold that satisifes
+  // startOfHoldMs < world.time < endOfHoldMs
+  // it's "over" the targets - the head of of the hold is
+  // passed the targets, but the tail is not.
+  // It's a list of `EngineNote.id`, where `id` for holds
+  // is prefixed with h, eg h1, h23, etc.
   activeHolds: Set<string>;
 }
 
@@ -452,15 +461,6 @@ export function updateGameState(
   ].filter((x) => x.missed).length;
 
   let nextFrameMissedCount: number = 0;
-  let holdDropped = false;
-
-  for (const key of world.activeHolds) {
-    const hold = world.chart.holdNotes.get(key)!;
-    if (wasHoldReleased(hold, world.inputs)) {
-      holdDropped = true;
-      world.activeHolds.delete(key);
-    }
-  }
 
   const newNotes = new Map<string, EngineNote>();
   for (const key of world.chart.tapNotes.keys()) {
@@ -480,7 +480,14 @@ export function updateGameState(
 
   const newHoldNotes = new Map<string, EngineNote[]>();
   for (const key of world.chart.holdNotes.keys()) {
-    const [holdNote, ...rest] = world.chart.holdNotes.get(key)!;
+    const [holdNote, endNote] = world.chart.holdNotes.get(key)!;
+
+    // If the end of the hold note is stale (eg, it is in the past)
+    // and can never be hit) remove it from the active holds.
+    if (world.time > endNote.ms) {
+      world.activeHolds.delete(key);
+    }
+
     const newHoldNote = processNoteJudgement(
       holdNote,
       judgementResults,
@@ -492,7 +499,17 @@ export function updateGameState(
       nextFrameMissedCount++;
     }
 
-    newHoldNotes.set(key, [newHoldNote, ...rest]);
+    newHoldNotes.set(key, [newHoldNote, endNote]);
+  }
+
+  let holdDropped = false;
+
+  for (const key of world.activeHolds) {
+    const hold = world.chart.holdNotes.get(key)!;
+    if (wasHoldReleased(hold, world.inputs)) {
+      holdDropped = true;
+      world.activeHolds.delete(key);
+    }
   }
 
   // if the number of missed notes changed, they must have
