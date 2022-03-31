@@ -129,21 +129,38 @@ export function createChart(args: CreateChart): Chart {
 /**
  * Finds the "nearest" note given an input and a chart for scoring.
  */
-export function nearestNote(
+export function nearestScorableNote(
   input: Input,
   chart: Chart
 ): EngineNote | undefined {
   const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
 
+  const initialCandidate = tapable.find(note => note.column === input.column && note.canHit)
+
+  if (!initialCandidate) {
+    return undefined
+  }
+
   const nearest = tapable.reduce((best, note) => {
-    if (
-      input.column === note.column &&
-      Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms)
-    ) {
+    // if the note is not scorable, we are not interested
+    if (!note.canHit) {
+      return best
+    }
+
+    // if it's the wrong column, we are not interested.
+    if (input.column !== note.column) {
+      return best
+    }
+
+    const isCloserToInputMs = Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms)
+    // if it's the coreect column and closer to the input ms
+    // than the current best, we have a new best note.
+    if (isCloserToInputMs) {
       return note;
     }
+
     return best;
-  }, tapable[0]);
+  }, initialCandidate);
 
   return nearest && nearest.column === input.column ? nearest : undefined;
 }
@@ -281,7 +298,7 @@ export function judgeInput({
   maxWindow,
   timingWindows,
 }: JudgeInput): JudgementResult | undefined {
-  const note = nearestNote(input, chart);
+  const note = nearestScorableNote(input, chart);
 
   if (note && Math.abs(note.ms - input.ms) <= maxWindow) {
     const timing = judge(input, note);
@@ -368,6 +385,7 @@ function processNoteJudgement(
   if (note.hitAt === undefined && note.ms < time - maxWindowMs) {
     return {
       ...note,
+      canHit: false,
       missed: true,
     };
   }
@@ -481,6 +499,7 @@ export function updateGameState(
   // broke their combo.
   const comboBroken =
     nextFrameMissedCount > prevFrameMissedNotes || holdDropped;
+
   const combo = comboBroken ? 0 : world.combo + judgementResults.length;
 
   return {

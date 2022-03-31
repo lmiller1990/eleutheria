@@ -30,23 +30,38 @@ const holdMap = new Map<string, HTMLDivElement>();
 
 let timeoutId: number | undefined;
 
-function appendNote(
-  engineNote: EngineNote,
-  ypos: number,
-  elements: Elements,
-  map: Map<string, HTMLDivElement>,
-  $noteFactory: () => HTMLDivElement
-) {
-  const $n = $noteFactory();
-  map.set(engineNote.id, $n);
-
-  updateNote($n, ypos);
+function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
+  const $note = $tapNote();
 
   const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {
     throw Error(`Could not get colTarget for column ${engineNote.column}`);
   }
-  colTarget.appendChild($n);
+  colTarget.appendChild($note);
+
+  return $note;
+}
+
+function drawHoldNote (holdNote: EngineNote[], elements: Elements): HTMLDivElement {
+  const $note = drawNote(holdNote.at(0)!, elements)
+  $note.style.height = `${calcInitHeightOfHold(holdNote)}px`
+  return $note
+}
+
+// function shouldRemoveHold($note: HTMLDivElement) {
+//   const rect = $note.getBoundingClientRect()
+//   if (rect.height === 0) {
+//     $note.remove()
+//   }
+// }
+
+function shouldRemoveNote($note: HTMLDivElement) {
+  const { y, height } = $note.getBoundingClientRect();
+
+  // TODO: Support reverse/sideways scrolling?
+  const isAboveViewport = y + height < 0;
+
+  return isAboveViewport
 }
 
 function calcInitHeightOfHold(hold: EngineNote[]): number {
@@ -55,31 +70,37 @@ function calcInitHeightOfHold(hold: EngineNote[]): number {
   return (lastNoteOfHold.ms - firstNoteOfHold.ms) * MULTIPLIER;
 }
 
-function updateHold(hold: EngineNote[], ypos: number, $note: HTMLDivElement) {
-  const initialHeight = calcInitHeightOfHold(hold);
-
-  const newHeight = initialHeight + ypos;
-  if (ypos < 0 && newHeight > 0) {
-    console.log({ initialHeight, ypos, newHeight });
-    $note.style.height = `${newHeight}px`;
-    $note.style.top = `-2px`;
-  } else {
-    $note.style.top = `${ypos}px`;
-  }
-
-  const { y, height } = $note.getBoundingClientRect();
-
-  if (y + height < 0) {
-    $note.remove();
-  }
+function isHoldStale (engineHold: EngineNote[]) {
+  const engineNote = engineHold.at(0)!
+  return engineNote.missed
 }
 
-function updateNote($n: HTMLDivElement, ypos: number) {
-  $n.style.top = `${ypos}px`;
-  const { y, height } = $n.getBoundingClientRect();
-  if (y + height < 0) {
-    $n.remove();
+function updateHold(engineHold: EngineNote[], ypos: number, $note: HTMLDivElement) {
+  $note.style.top = `${ypos}px`;
+
+  if (isHoldStale(engineHold)) {
+    $note.style.opacity = '0.5'
   }
+  // const initialHeight = calcInitHeightOfHold(engineHold);
+
+  // // initial height. This is height before it has crossed the targets
+  // // so it's theoretical "maximum" height
+  // const height = calcInitHeightOfHold(engineHold);
+  // $note.style.height = `${height}px`;
+
+  // const newHeight = initialHeight + ypos;
+
+  // const holdWasHit = engineHold.at(0)!.hitAt;
+
+  // if ((ypos < 0 && newHeight > 0) || holdWasHit) {
+  //   $note.style.height = `${newHeight}px`;
+  //   $note.style.top = `0px`;
+  // } else {
+  // }
+}
+
+function updateNote($note: HTMLDivElement, ypos: number) {
+  $note.style.top = `${ypos}px`;
 }
 
 function updateUI(
@@ -93,7 +114,6 @@ function updateUI(
       const note =
         state.chart.tapNotes.get(judgement.noteId) ||
         state.chart.holdNotes.get(judgement.noteId)?.at(0);
-      console.log(judgement, note, state.chart);
       if (!note || !note.timingWindowName) {
         throw Error(
           `Could not find judged note with id ${judgement.noteId} and timing window ${note?.timingWindowName}. This should never happen.`
@@ -132,6 +152,10 @@ function updateUI(
 
 type SongCompleted = (summary: Summary) => void;
 
+function calcYPosition (note: EngineNote, world: World) {
+  return (note.ms - world.time) * MULTIPLIER;
+}
+
 export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted
@@ -164,55 +188,108 @@ export async function start(
   const lifecycle: GameLifecycle = {
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
       // if (world.time > 4000) { return }
-      for (const [id, n] of world.chart.tapNotes) {
-        const ypos = (n.ms - world.time) * MULTIPLIER;
-        const $note = noteMap.get(id);
+      for (const [id, engineNote] of world.chart.tapNotes) {
+        const ypos = calcYPosition(engineNote, world)
+        let $note = noteMap.get(id);
 
-        if (n.hitTiming) {
+        const inViewport = ypos < window.innerHeight;
+        // If:
+        // - the DOM element does not exist
+        // - it has not already been hit
+        // - it is in the viewport
+        // we need to draw it - it's the first time we've encountered this note.
+        if (!$note && !engineNote.hitTiming && inViewport) {
+          $note = drawNote(engineNote, elements);
+          noteMap.set(id, $note);
+        }
+
+        // We need to update the position, since the note has been drawn
+        // and it is in the viewport
+        if ($note && inViewport) {
+          updateNote($note, ypos);
+        }
+
+        // See if the note has scrolled outside the viewport and remove if necessary
+        // Another perf. optimization.
+        if ($note && shouldRemoveNote($note)) {
+          $note.remove();
+        }
+
+        // If not the has been hit, we should remove it from the DOM
+        // for performance reasons.
+        if (engineNote.hitTiming) {
           if (!$note) {
             throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
           }
+          // We still keep a refererence to the DOM node in `noteMap`
+          // We just want to remove it from the DOM for optimization purposes.
+          // TODO: better memory footprint - don't even keep a reference around
+          // This will be a memory leak.
           $note.remove();
-        } else {
-          if ($note) {
-            updateNote($note, ypos);
-          } else if (ypos < window.innerHeight) {
-            appendNote(n, ypos, elements, noteMap, $tapNote);
-          }
         }
       }
 
+      // handle hold notes!
       for (const [id, hold] of world.chart.holdNotes) {
-        const firstNoteOfHold = hold[0];
-        const ypos = (firstNoteOfHold.ms - world.time) * MULTIPLIER;
-        const $note = holdMap.get(firstNoteOfHold.id);
+        const engineNote = hold[0];
+        const ypos = calcYPosition(engineNote, world)
+        let $note = holdMap.get(engineNote.id);
 
-        if (firstNoteOfHold.hitTiming) {
-          if (!$note) {
-            throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
-          }
+        const inViewport = ypos < window.innerHeight;
+
+        // If:
+        // - the DOM element does not exist
+        // - it has not already been hit
+        // - it is in the viewport
+        // we need to draw it - it's the first time we've encountered this note.
+
+        if (!$note && !engineNote.hitTiming && inViewport) {
+          $note = drawHoldNote(hold, elements);
+          holdMap.set(id, $note);
+        }
+
+        // We need to update the position, since the note has been drawn
+        // and it is in the viewport
+        if ($note && inViewport) {
+          updateHold(hold, ypos, $note);
+        }
+
+        // if the tail end of the hold is above the top of the viewport
+        // remove it!
+        if ($note && shouldRemoveNote($note)) {
           $note.remove();
-        } else {
-          if ($note) {
-            updateHold(hold, ypos, $note);
-          } else if (ypos < window.innerHeight) {
-            const height = calcInitHeightOfHold(hold);
-            const $createHoldNote = () => {
-              const $hold = $holdNote();
-              $hold.style.height = `${height}px`;
-              return $hold;
-            };
-
-            appendNote(
-              firstNoteOfHold,
-              ypos,
-              elements,
-              holdMap,
-              $createHoldNote
-            );
-          }
         }
       }
+
+      // for (const [id, hold] of world.chart.holdNotes) {
+      //   const firstNoteOfHold = hold[0];
+      //   const ypos = (firstNoteOfHold.ms - world.time) * MULTIPLIER;
+      //   const $note = holdMap.get(firstNoteOfHold.id);
+
+      //   if (!$note) {
+      //     throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
+      //   }
+      //   if (!firstNoteOfHold.id.startsWith("h")) {
+      //     $note.remove();
+      //   }
+
+      //   // if (hold.at(0)!.hitAt !== undefined) {
+      //   //   console.log(hold);
+      //   // }
+
+      //   updateHold(hold, ypos, $note);
+
+      //   if (ypos < window.innerHeight) {
+      //     const height = calcInitHeightOfHold(hold);
+      //     const $createHoldNote = () => {
+      //       const $hold = $holdNote();
+      //       $hold.style.height = `${height}px`;
+      //       return $hold;
+      //     };
+
+      //     appendNote(firstNoteOfHold, ypos, elements, holdMap, $createHoldNote);
+      //   }
+      // }
 
       updateUI(world, previousFrameMeta, elements);
     },

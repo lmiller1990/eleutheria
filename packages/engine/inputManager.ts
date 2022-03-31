@@ -80,9 +80,11 @@ export class InputManager {
 
   update(now: number) {
     // no need to update - nothing has changed!
-    if (this.activeInputHash === this.lastUpdateHash) {
-      return;
-    }
+    // TODO: is this optimization useful, or does it introduce surface area for
+    // mis-interpreted inputs?
+    // if (this.activeInputHash === this.lastUpdateHash) {
+    //   return;
+    // }
 
     const activeInputs: Input[] = [];
 
