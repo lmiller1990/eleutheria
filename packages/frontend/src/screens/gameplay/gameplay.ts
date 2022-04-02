@@ -73,21 +73,43 @@ function calcInitHeightOfHold(hold: EngineNote[]): number {
   return (lastNoteOfHold.ms - firstNoteOfHold.ms) * MULTIPLIER;
 }
 
-function isHoldStale(engineHold: EngineNote[]) {
+function getHoldState(engineHold: EngineNote[]): "stale" | "held" | undefined {
   const engineNote = engineHold.at(0)!;
-  return engineNote.missed;
+
+  if (engineNote.missed) {
+    return "stale";
+  }
+
+  if (engineNote.isHeld) {
+    return "held";
+  }
+
+  return;
 }
 
 function updateHold(
   engineHold: EngineNote[],
   ypos: number,
   $note: HTMLDivElement
-) {
+): HTMLDivElement {
   $note.style.top = `${ypos}px`;
 
-  if (isHoldStale(engineHold)) {
-    $note.style.opacity = "0.5";
+  const state = getHoldState(engineHold);
+  if (state) {
+    console.log("state", state);
   }
+
+  if (state === "held") {
+    $note.style.filter = "brightness(2.0)";
+    return $note;
+  }
+
+  if (state === "stale") {
+    $note.style.opacity = "0.25";
+    return $note;
+  }
+
+  return $note;
   // const initialHeight = calcInitHeightOfHold(engineHold);
 
   // // initial height. This is height before it has crossed the targets

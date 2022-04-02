@@ -741,7 +741,13 @@ describe("updateGameState", () => {
     );
 
     const expectedHoldNotes: Map<string, EngineNote[]> = new Map([
-      ["h1", [{ ...h1[0], hitAt: 1000, canHit: false, hitTiming: 0 }, h1[1]]],
+      [
+        "h1",
+        [
+          { ...h1[0], hitAt: 1000, canHit: false, hitTiming: 0, isHeld: true },
+          h1[1],
+        ],
+      ],
     ]);
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
@@ -832,6 +838,7 @@ describe("updateGameState", () => {
         id: "h1",
         missed: false,
         ms: 1000,
+        isHeld: true,
         timingWindowName: undefined,
       },
       {
@@ -869,6 +876,7 @@ describe("updateGameState", () => {
     const s1 = updateGameState(world, engineConfiguration);
 
     expect(s1.world.activeHolds).toEqual(new Set(["h1"]));
+    expect(s1.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(true);
     expect(s1.previousFrameMeta.comboBroken).toEqual(false);
 
     const s2 = updateGameState(
@@ -880,6 +888,7 @@ describe("updateGameState", () => {
     );
 
     expect(s2.world.activeHolds).toEqual(new Set());
+    expect(s1.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(false);
     expect(s2.previousFrameMeta.comboBroken).toEqual(true);
   });
 

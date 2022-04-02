@@ -63,6 +63,12 @@ export interface EngineNote {
    * If the note was hit, the name of the relevant timing window.
    */
   timingWindowName?: string;
+
+  /**
+   * If the current note is the leading note of a hold,
+   * is it currently been held?
+   */
+  isHeld?: boolean;
 }
 
 /**
@@ -410,6 +416,14 @@ function wasHoldReleased(hold: HoldNote, inputs: Input[]) {
   return Boolean(released);
 }
 
+function isHoldCurrentlyHeld(hold: HoldNote, inputs: Input[]) {
+  const held = inputs.find((input) => {
+    return input.type === "down" && input.column === hold.at(0)!.column;
+  });
+
+  return Boolean(held);
+}
+
 /**
  * Returns a new chart and relevant data, given the existing state of the world.
  *
@@ -480,7 +494,8 @@ export function updateGameState(
 
   const newHoldNotes = new Map<string, EngineNote[]>();
   for (const key of world.chart.holdNotes.keys()) {
-    const [holdNote, endNote] = world.chart.holdNotes.get(key)!;
+    const fullHold = world.chart.holdNotes.get(key)!;
+    const [holdNote, endNote] = fullHold;
 
     // If the end of the hold note is stale (eg, it is in the past)
     // and can never be hit) remove it from the active holds.
@@ -498,6 +513,9 @@ export function updateGameState(
     if (newHoldNote.missed) {
       nextFrameMissedCount++;
     }
+
+    newHoldNote.isHeld =
+      world.activeHolds.has(key) && isHoldCurrentlyHeld(fullHold, world.inputs);
 
     newHoldNotes.set(key, [newHoldNote, endNote]);
   }
