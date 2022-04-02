@@ -43,6 +43,9 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
       </tr>
     </table>
 
+    <div id="debug-holds">
+    </div>
+
     <div id="targets">
       <div id="target-line">
         ${targetCols}

@@ -171,7 +171,7 @@ export function parseHoldsChart(
       if (hold.length) {
         // add existing hold to list, start new one
         holds.push(hold);
-        hold = [note];
+        hold = [{...note, id: `h${note.id}`}];
       } else {
         // first hold
         hold = [{ ...note, id: `h${note.id}` }];

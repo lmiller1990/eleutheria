@@ -92,15 +92,16 @@ function updateHold(
   ypos: number,
   $note: HTMLDivElement
 ): HTMLDivElement {
-  $note.style.top = `${ypos}px`;
 
   const state = getHoldState(engineHold);
-  if (state) {
-    console.log("state", state);
-  }
+  const { isHeld, missed, id } = engineHold[0]!
 
   if (state === "held") {
+    const initialHeight = calcInitHeightOfHold(engineHold);
+    const newHeight = initialHeight + ypos;
     $note.style.filter = "brightness(2.0)";
+    $note.style.height = `${newHeight}px`
+    $note.style.top = `0px`
     return $note;
   }
 
@@ -108,6 +109,8 @@ function updateHold(
     $note.style.opacity = "0.25";
     return $note;
   }
+
+  $note.style.top = `${ypos}px`;
 
   return $note;
   // const initialHeight = calcInitHeightOfHold(engineHold);
@@ -216,6 +219,7 @@ export async function start(
 
   const lifecycle: GameLifecycle = {
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
+
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
         const ypos = calcYPosition(engineNote, world);
@@ -323,8 +327,8 @@ export async function start(
       updateUI(world, previousFrameMeta, elements);
     },
 
-    onDebug: (_world: World, fps: number) => {
-      writeDebugToHtml(fps, elements);
+    onDebug: (world: World, fps: number) => {
+      writeDebugToHtml(world, fps, elements);
     },
 
     onSongCompleted: (_world: World) => {
