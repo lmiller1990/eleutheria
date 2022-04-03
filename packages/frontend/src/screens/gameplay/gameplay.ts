@@ -47,6 +47,7 @@ function drawHoldNote(
   elements: Elements
 ): HTMLDivElement {
   const $note = drawNote(holdNote.at(0)!, elements);
+  console.log('draw', holdNote)
   $note.style.height = `${calcInitHeightOfHold(holdNote)}px`;
   return $note;
 }
@@ -91,7 +92,6 @@ function updateHold(
 
   const hold = engineHold[0]!
 
-  console.log(engineHold)
   const initialHeight = calcInitHeightOfHold(engineHold);
   const newHeight = initialHeight + ypos;
 
@@ -124,26 +124,6 @@ function updateHold(
 
   $note.style.top = `${ypos}px`;
   return $note
-
-  // $note.style.top = `${ypos}px`;
-
-  // return $note;
-  // const initialHeight = calcInitHeightOfHold(engineHold);
-
-  // // initial height. This is height before it has crossed the targets
-  // // so it's theoretical "maximum" height
-  // const height = calcInitHeightOfHold(engineHold);
-  // $note.style.height = `${height}px`;
-
-  // const newHeight = initialHeight + ypos;
-
-  // const holdWasHit = engineHold.at(0)!.hitAt;
-
-  // if ((ypos < 0 && newHeight > 0) || holdWasHit) {
-  //   $note.style.height = `${newHeight}px`;
-  //   $note.style.top = `0px`;
-  // } else {
-  // }
 }
 
 function updateNote($note: HTMLDivElement, ypos: number) {
