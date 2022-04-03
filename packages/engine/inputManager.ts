@@ -51,6 +51,7 @@ export class InputManager {
       ms: e.timeStamp - this.t0,
       type,
     };
+    console.log(input)
 
     this.activeInputs.push(input);
   };

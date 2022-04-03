@@ -73,46 +73,61 @@ function calcInitHeightOfHold(hold: EngineNote[]): number {
   return (lastNoteOfHold.ms - firstNoteOfHold.ms) * MULTIPLIER;
 }
 
-function getHoldState(engineHold: EngineNote[]): "stale" | "held" | undefined {
-  const engineNote = engineHold.at(0)!;
-
-  if (engineNote.missed) {
-    return "stale";
+function calcHeightOfDroppedHold(hold: EngineNote[]): number {
+  const firstNoteOfHold = hold.at(0)!;
+  const lastNoteOfHold = hold.at(-1)!;
+  if (!firstNoteOfHold.droppedAt) {
+    throw Error('Cannot calc height of dropped hold that was not dropped!')
   }
 
-  if (engineNote.isHeld) {
-    return "held";
-  }
-
-  return;
+  return (lastNoteOfHold.ms - firstNoteOfHold.droppedAt) * MULTIPLIER;
 }
 
 function updateHold(
   engineHold: EngineNote[],
   ypos: number,
-  $note: HTMLDivElement
+  $note: HTMLDivElement,
 ): HTMLDivElement {
 
-  const state = getHoldState(engineHold);
-  const { isHeld, missed, id } = engineHold[0]!
+  const hold = engineHold[0]!
 
-  if (state === "held") {
-    const initialHeight = calcInitHeightOfHold(engineHold);
-    const newHeight = initialHeight + ypos;
+  console.log(engineHold)
+  const initialHeight = calcInitHeightOfHold(engineHold);
+  const newHeight = initialHeight + ypos;
+
+  if (hold.isHeld) {
     $note.style.filter = "brightness(2.0)";
-    $note.style.height = `${newHeight}px`
     $note.style.top = `0px`
+
+    if (newHeight < 0) {
+      $note.style.display = 'none'
+    } else {
+      $note.style.height = `${newHeight}px`
+    }
+
     return $note;
   }
 
-  if (state === "stale") {
+  if (hold.droppedAt) {
+    const adjustedHeight = calcHeightOfDroppedHold(engineHold)
+    const diff = initialHeight - adjustedHeight
+    $note.style.opacity = "0.25";
+    $note.style.top = `${ypos + diff}px`;
+    return $note
+  }
+
+  if (hold.missed) {
+    $note.style.top = `${ypos}px`;
     $note.style.opacity = "0.25";
     return $note;
   }
 
   $note.style.top = `${ypos}px`;
+  return $note
 
-  return $note;
+  // $note.style.top = `${ypos}px`;
+
+  // return $note;
   // const initialHeight = calcInitHeightOfHold(engineHold);
 
   // // initial height. This is height before it has crossed the targets
@@ -294,36 +309,6 @@ export async function start(
         }
       }
 
-      // for (const [id, hold] of world.chart.holdNotes) {
-      //   const firstNoteOfHold = hold[0];
-      //   const ypos = (firstNoteOfHold.ms - world.time) * MULTIPLIER;
-      //   const $note = holdMap.get(firstNoteOfHold.id);
-
-      //   if (!$note) {
-      //     throw Error(`Tried to access note ${id} but wasn't in noteMap!`);
-      //   }
-      //   if (!firstNoteOfHold.id.startsWith("h")) {
-      //     $note.remove();
-      //   }
-
-      //   // if (hold.at(0)!.hitAt !== undefined) {
-      //   //   console.log(hold);
-      //   // }
-
-      //   updateHold(hold, ypos, $note);
-
-      //   if (ypos < window.innerHeight) {
-      //     const height = calcInitHeightOfHold(hold);
-      //     const $createHoldNote = () => {
-      //       const $hold = $holdNote();
-      //       $hold.style.height = `${height}px`;
-      //       return $hold;
-      //     };
-
-      //     appendNote(firstNoteOfHold, ypos, elements, holdMap, $createHoldNote);
-      //   }
-      // }
-
       updateUI(world, previousFrameMeta, elements);
     },
 
@@ -347,5 +332,6 @@ export async function start(
 
   const game = new Game(gameConfig, lifecycle);
 
+  console.log(gameConfig.song.holdNotes)
   await game.start();
 }

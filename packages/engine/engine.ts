@@ -69,6 +69,12 @@ export interface EngineNote {
    * is it currently been held?
    */
   isHeld?: boolean;
+
+  /**
+   * If the current note is the leading note of a hold,
+   * it was previously held and is now released.
+   */
+  droppedAt?: number
 }
 
 /**
@@ -229,14 +235,6 @@ export interface World {
   // is the song over? This is defined as no more remaining notes
   // does not consider if the actual music is finished playback or not.
   readonly songCompleted: boolean;
-
-  // Set of active holds - that is, a hold that satisifes
-  // startOfHoldMs < world.time < endOfHoldMs
-  // it's "over" the targets - the head of of the hold is
-  // passed the targets, but the tail is not.
-  // It's a list of `EngineNote.id`, where `id` for holds
-  // is prefixed with h, eg h1, h23, etc.
-  activeHolds: Set<string>;
 }
 
 export interface JudgementResult {
@@ -416,12 +414,13 @@ function wasHoldReleased(hold: HoldNote, inputs: Input[]) {
   return Boolean(released);
 }
 
-function isHoldCurrentlyHeld(hold: HoldNote, inputs: Input[]) {
-  const held = inputs.find((input) => {
-    return input.type === "down" && input.column === hold.at(0)!.column;
-  });
-
-  return Boolean(held);
+// Set of active holds - that is, a hold that satisifes
+// startOfHoldMs < world.time < endOfHoldMs
+// it's "over" the targets - the head of of the hold is
+// passed the targets, but the tail is not.
+function isHoldPlayable (hold: EngineNote[], world: World, config: EngineConfiguration) {
+  const [holdNote, endNote] = hold
+  return (holdNote.ms < (world.time - config.maxHitWindow) && world.time < (endNote.ms + config.maxHitWindow))
 }
 
 /**
@@ -462,13 +461,6 @@ export function updateGameState(
     []
   );
 
-  for (const result of judgementResults) {
-    // TODO: have type: 'hold' | 'tap'?
-    if (result.noteId.startsWith("h")) {
-      world.activeHolds.add(result.noteId);
-    }
-  }
-
   const prevFrameMissedNotes = [
     ...prevFrameNotes,
     ...prevFrameHoldNotes.map((x) => x[0]),
@@ -497,12 +489,6 @@ export function updateGameState(
     const fullHold = world.chart.holdNotes.get(key)!;
     const [holdNote, endNote] = fullHold;
 
-    // If the end of the hold note is stale (eg, it is in the past)
-    // and can never be hit) remove it from the active holds.
-    if (world.time > endNote.ms) {
-      world.activeHolds.delete(key);
-    }
-
     const newHoldNote = processNoteJudgement(
       holdNote,
       judgementResults,
@@ -514,21 +500,22 @@ export function updateGameState(
       nextFrameMissedCount++;
     }
 
-    newHoldNote.isHeld =
-      world.activeHolds.has(key) && isHoldCurrentlyHeld(fullHold, world.inputs);
+    for (const result of judgementResults) {
+      if (result.noteId === key && !newHoldNote.isHeld) {
+        newHoldNote.isHeld = true
+      }
+    }
+
+    const playable = isHoldPlayable(fullHold, world, config)
+    if (playable && newHoldNote.isHeld && wasHoldReleased(fullHold, world.inputs)) {
+      newHoldNote.droppedAt = world.time
+      newHoldNote.isHeld = false
+    }
 
     newHoldNotes.set(key, [newHoldNote, endNote]);
   }
 
   let holdDropped = false;
-
-  for (const key of world.activeHolds) {
-    const hold = world.chart.holdNotes.get(key)!;
-    if (wasHoldReleased(hold, world.inputs)) {
-      holdDropped = true;
-      world.activeHolds.delete(key);
-    }
-  }
 
   // if the number of missed notes changed, they must have
   // broke their combo.

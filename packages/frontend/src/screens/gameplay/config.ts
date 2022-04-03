@@ -32,5 +32,5 @@ export const codeColumnMap = new Map<string, number>([
   ["KeyF", 2],
   ["KeyJ", 3],
   ["KeyK", 4],
-  ["KeyL", 4],
+  ["KeyL", 5],
 ]);

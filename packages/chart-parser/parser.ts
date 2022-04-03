@@ -32,6 +32,11 @@ interface GetQuantization {
   measureMs: number;
 }
 
+function randomId() {
+  const num = () => (Math.random() * 9999).toFixed(0)
+  return Array(4).fill('').map(num).join('-')
+}
+
 export function getQuantizationMs(
   measure: string[],
   bpm: number
@@ -129,7 +134,7 @@ export function parseChart(
               }
 
               _newNotes.push({
-                id: (acc.noteCount + idx + 1).toString(),
+                id: randomId(),
                 char: col,
                 column: i,
                 ms: (acc.measureCount * measureMs + quantization * idx) * 1000,
