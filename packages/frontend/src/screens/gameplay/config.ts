@@ -9,7 +9,7 @@ export const NOTE_WIDTH = parseInt(
   10
 );
 
-export const MULTIPLIER = 1.25;
+export const MULTIPLIER = 1; // 1.25;
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {
@@ -32,5 +32,5 @@ export const codeColumnMap = new Map<string, number>([
   ["KeyF", 2],
   ["KeyJ", 3],
   ["KeyK", 4],
-  ["KeyL", 4],
+  ["KeyL", 5],
 ]);

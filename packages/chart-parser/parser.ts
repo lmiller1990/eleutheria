@@ -16,12 +16,12 @@ export interface ParsedTapNoteChart {
   tapNotes: BaseNote[];
 }
 
-type HoldNote = BaseNote[];
+export type HoldNote = BaseNote[];
 
-type ParsedHoldNoteChart = {
+export interface ParsedHoldNoteChart {
   metadata: ChartMetadata;
   holdNotes: HoldNote[];
-};
+}
 
 export type ValidQuantization = typeof validQuantizations[number];
 
@@ -70,6 +70,12 @@ export function parseChart(
   dataJson: ChartMetadata,
   chartRaw: string
 ): ParsedTapNoteChart {
+  let i = 0;
+
+  function incId() {
+    i++;
+    return i.toString();
+  }
   const lines = chartRaw.split("\n").filter((x) => x.trim().length > 0);
 
   const measures = lines.reduce<{
@@ -129,7 +135,7 @@ export function parseChart(
               }
 
               _newNotes.push({
-                id: (acc.noteCount + idx + 1).toString(),
+                id: incId(),
                 char: col,
                 column: i,
                 ms: (acc.measureCount * measureMs + quantization * idx) * 1000,
@@ -165,24 +171,22 @@ export function parseHoldsChart(
 
   let holds: HoldNote[] = [];
   let hold: HoldNote = [];
+  let holdMap = new Map<number, HoldNote>();
 
   for (const note of result.tapNotes) {
     if (note.char === "1") {
-      if (hold.length) {
-        // add existing hold to list, start new one
-        holds.push(hold);
-        hold = [note];
-      } else {
-        // first hold
-        hold = [note];
+      // start of new hold.
+      if (holdMap.has(note.column)) {
+        holds.push(holdMap.get(note.column)!);
       }
-    } else if (note.char.match(/[2-9]/)) {
-      hold.push(note);
+      holdMap.set(note.column, [{ ...note, id: `h${note.id}` }]);
+    } else {
+      const curr = holdMap.get(note.column)!;
+      holdMap.set(note.column, [...curr, { ...note, id: `h${note.id}` }]);
     }
   }
 
-  // final hold
-  if (hold.length) {
+  for (const [k, hold] of holdMap) {
     holds.push(hold);
   }
 

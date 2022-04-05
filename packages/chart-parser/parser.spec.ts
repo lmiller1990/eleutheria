@@ -25,8 +25,14 @@ describe("parseChart", () => {
 });
 
 describe("parseHoldsChart", () => {
-  it.only("works", () => {
+  it("works", () => {
     const data = loadData("example-song", "holds");
+    const actual = parseHoldsChart(data.metadata, data.noteChart);
+    expect(actual).toMatchSnapshot();
+  });
+
+  it("supports multiple holds holds-simultaneously", () => {
+    const data = loadData("holds-simultaneously", "holds");
     const actual = parseHoldsChart(data.metadata, data.noteChart);
     expect(actual).toMatchSnapshot();
   });

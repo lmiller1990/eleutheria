@@ -7,7 +7,7 @@ import {
   judgeInput,
   JudgementResult,
   EngineConfiguration,
-  nearestNote,
+  nearestScorableNote,
   Input,
   judge,
   GameChart,
@@ -23,14 +23,48 @@ const engineConfiguration: EngineConfiguration = {
 const createInput = ({
   ms,
   column,
+  type = "down",
 }: {
   ms: number;
   column: number;
+  type?: "up" | "down";
 }): Input => ({
   id: ms.toString(),
   ms,
   column,
+  type,
 });
+
+function makeHoldNote(options: {
+  startMs: number;
+  durationMs: number;
+}): EngineNote[] {
+  const baseNote = makeTapNote({
+    id: "1",
+    ms: 0,
+    column: 0,
+    canHit: true,
+    timingWindowName: undefined,
+  });
+
+  const n1 = {
+    ...baseNote,
+    column: 1,
+    id: "h1",
+    ms: options.startMs,
+    dependsOn: undefined,
+  };
+
+  const n2 = {
+    ...baseNote,
+    column: 1,
+    id: "h2",
+    ms: options.startMs + options.durationMs,
+    dependsOn: "h1",
+  };
+
+  return [n1, n2];
+}
 
 function makeTapNote(note: Partial<EngineNote>): EngineNote {
   return {
@@ -43,7 +77,7 @@ function makeTapNote(note: Partial<EngineNote>): EngineNote {
   };
 }
 
-describe("nearestNode", () => {
+describe("nearestScorableNote", () => {
   it("captures nearest note based on time and input", () => {
     const chart: Chart = {
       tapNotes: [
@@ -51,17 +85,41 @@ describe("nearestNode", () => {
         makeTapNote({ id: "2", ms: 500, column: 0 }),
         makeTapNote({ id: "3", ms: 1000, column: 1 }),
       ],
+      holdNotes: [],
     };
-    const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 600, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(chart.tapNotes[2]);
+  });
+
+  it("captures nearest hold note leader based on time and input", () => {
+    const chart: Chart = {
+      tapNotes: [],
+      holdNotes: [
+        makeHoldNote({ startMs: 100, durationMs: 10 }),
+        makeHoldNote({ startMs: 200, durationMs: 10 }),
+      ],
+    };
+    const actual = nearestScorableNote(
+      createInput({ ms: 110, column: 1 }),
+      chart
+    );
+
+    expect(actual).toBe(chart.holdNotes[0][0]);
   });
 
   it("handles chart with no tapNotes", () => {
     const chart: Chart = {
       tapNotes: [],
+      holdNotes: [],
     };
-    const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 600, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(undefined);
   });
@@ -69,10 +127,30 @@ describe("nearestNode", () => {
   it("handles chart with no valid tapNotes", () => {
     const chart: Chart = {
       tapNotes: [makeTapNote({ id: "1", ms: 100, column: 0 })],
+      holdNotes: [],
     };
-    const actual = nearestNote(createInput({ ms: 600, column: 1 }), chart);
+    const actual = nearestScorableNote(
+      createInput({ ms: 600, column: 1 }),
+      chart
+    );
 
     expect(actual).toBe(undefined);
+  });
+
+  it("ignores notes that have been hit already", () => {
+    const chart: Chart = {
+      tapNotes: [
+        makeTapNote({ id: "1", ms: 450, column: 1, hitAt: 450, canHit: false }),
+        makeTapNote({ id: "2", ms: 500, column: 1 }),
+      ],
+      holdNotes: [],
+    };
+    const actual = nearestScorableNote(
+      createInput({ ms: 450, column: 1 }),
+      chart
+    );
+
+    expect(actual).toBe(chart.tapNotes[1]);
   });
 });
 
@@ -86,7 +164,7 @@ describe("judgeInput", () => {
     const note: EngineNote = makeTapNote({ id: "1", column: 1, ms: 200 });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -109,7 +187,7 @@ describe("judgeInput", () => {
     const note = makeTapNote({ id: "1", column: 1, ms: 201 });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -125,7 +203,7 @@ describe("judgeInput", () => {
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -156,7 +234,7 @@ describe("judgeInput", () => {
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -188,7 +266,7 @@ describe("judgeInput", () => {
 
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -219,7 +297,7 @@ describe("judgeInput", () => {
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note] },
+      chart: { tapNotes: [note], holdNotes: [] },
       maxWindow: 100,
       timingWindows: [
         {
@@ -300,6 +378,7 @@ describe("updateGameState", () => {
         { tapNotes },
         {
           ...world,
+          activeHolds: new Set(),
           combo: 0,
         }
       ),
@@ -376,6 +455,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map([
             [
               baseNote.id,
@@ -429,6 +509,7 @@ describe("updateGameState", () => {
     };
 
     const current: GameChart = {
+      holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([
         ["1", alreadyHitNote],
         ["2", { ...upcomingNote }],
@@ -455,6 +536,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 1,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([
             [
               "1",
@@ -511,6 +593,7 @@ describe("updateGameState", () => {
     };
 
     const current: GameChart = {
+      holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([[note.id, note]]),
     };
 
@@ -529,23 +612,15 @@ describe("updateGameState", () => {
     const expected: UpdatedGameState = {
       world: {
         ...world,
-        combo: 1,
+        combo: 0,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([[note.id, { ...note }]]),
         },
       },
       previousFrameMeta: {
         comboBroken: false,
-        judgementResults: [
-          {
-            noteId: "1",
-            time: 90,
-            timing: -10,
-            // no timing windows passed in config.
-            timingWindowName: undefined,
-            inputs: ["90"],
-          },
-        ],
+        judgementResults: [],
       },
     };
 
@@ -560,6 +635,7 @@ describe("updateGameState", () => {
       ms: 100,
     };
     const current: GameChart = {
+      holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([
         ["1", { ...aNote, id: "1", column: 0 }],
         ["2", { ...aNote, id: "2", column: 1 }],
@@ -590,6 +666,7 @@ describe("updateGameState", () => {
         ...world,
         combo: 2,
         chart: {
+          holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([
             [
               "1",
@@ -641,15 +718,239 @@ describe("updateGameState", () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it("updates the world consider holds notes", () => {
+    const holdNotes = new Map<string, EngineNote[]>();
+    const h1: EngineNote[] = [
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
+    ];
+    holdNotes.set("h1", h1);
+
+    const world = createWorld(
+      { holdNotes },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 1000,
+        inputs: [createInput({ ms: 1000, column: 1 })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    const expectedHoldNotes: Map<string, EngineNote[]> = new Map([
+      [
+        "h1",
+        [
+          { ...h1[0], hitAt: 1000, canHit: false, hitTiming: 0, isHeld: true },
+          h1[1],
+        ],
+      ],
+    ]);
+    // 50 ms has passed since last update
+    const expected: UpdatedGameState = {
+      world: createWorld(
+        {
+          holdNotes: expectedHoldNotes,
+        },
+        {
+          ...world,
+          combo: 1,
+        }
+      ),
+      previousFrameMeta: {
+        judgementResults: [
+          {
+            inputs: ["1000"],
+            noteId: "h1",
+            time: 1000,
+            timing: 0,
+            timingWindowName: undefined,
+          },
+        ],
+        comboBroken: false,
+      },
+    };
+
+    const actual = updateGameState(world, engineConfiguration);
+
+    expect(actual).toEqual(expected);
+  });
+
+  it("does not hit hold outside timing window", () => {
+    const holdNotes = new Map<string, EngineNote[]>();
+    holdNotes.set("h1", [
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
+    ]);
+
+    const world = createWorld(
+      { holdNotes },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 800,
+        inputs: [createInput({ ms: 800, column: 1 })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    const actual = updateGameState(world, engineConfiguration);
+
+    // expect(actual).toEqual(expected);
+  });
+
+  it("does hit hold inside timing window", () => {
+    const holdNotes = new Map<string, EngineNote[]>();
+    holdNotes.set("h1", [
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
+    ]);
+
+    const world = createWorld(
+      { holdNotes },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 1000,
+        inputs: [createInput({ ms: 1000, column: 1 })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    const actual = updateGameState(world, engineConfiguration);
+
+    expect(actual.world.chart.holdNotes.get("h1")!).toEqual([
+      {
+        canHit: false,
+        column: 1,
+        dependsOn: undefined,
+        hitAt: 1000,
+        hitTiming: 0,
+        id: "h1",
+        missed: false,
+        ms: 1000,
+        isHeld: true,
+        timingWindowName: undefined,
+      },
+      {
+        canHit: true,
+        column: 1,
+        dependsOn: "h1",
+        id: "h2",
+        missed: false,
+        ms: 1100,
+        timingWindowName: undefined,
+      },
+    ]);
+  });
+
+  it("drops hold if not consistenly held", () => {
+    const holdNotes = new Map<string, EngineNote[]>();
+    holdNotes.set("h1", [
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
+    ]);
+
+    const world = createWorld(
+      { holdNotes },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 1000,
+        inputs: [createInput({ ms: 1000, column: 1, type: "down" })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    const s1 = updateGameState(world, engineConfiguration);
+
+    expect(s1.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(true);
+    expect(s1.previousFrameMeta.comboBroken).toEqual(false);
+
+    const s2 = updateGameState(
+      {
+        ...s1.world,
+        time: 1001,
+        inputs: [createInput({ ms: 1001, column: 1, type: "up" })],
+      },
+      engineConfiguration
+    );
+
+    expect(s2.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(false);
+    expect(s2.world.chart.holdNotes.get("h1")!.at(0)!.droppedAt).toEqual(1001);
+    expect(s2.previousFrameMeta.comboBroken).toEqual(true);
+  });
+
+  it("removes hold from activeHolds set if end of hold is passed current time", () => {
+    const world = createWorld(
+      {
+        holdNotes: new Map([
+          ["h1", makeHoldNote({ startMs: 100, durationMs: 100 })],
+        ]),
+      },
+      {
+        t0: 0,
+        startTime: 0,
+        time: 100,
+        inputs: [createInput({ ms: 100, column: 1, type: "down" })],
+        combo: 0,
+        audioContext: undefined,
+        source: undefined,
+      }
+    );
+
+    const s1 = updateGameState(world, engineConfiguration);
+
+    const s2 = updateGameState(
+      {
+        ...s1.world,
+        time: 201,
+        inputs: [],
+      },
+      engineConfiguration
+    );
+  });
 });
 
 describe("createChart", () => {
   it("returns a new chart considering offset", () => {
     const expected: Chart = {
       tapNotes: [makeTapNote({ id: "1", ms: 1100, column: 0 })],
+      holdNotes: [
+        [
+          makeTapNote({
+            id: "hold-1",
+            ms: 1100,
+            column: 1,
+            dependsOn: undefined,
+          }),
+          makeTapNote({
+            id: "hold-2",
+            ms: 1150,
+            column: 1,
+            dependsOn: "hold-1",
+          }),
+        ],
+      ],
     };
+
     const actual = createChart({
       tapNotes: [makeTapNote({ id: "1", ms: 1000, column: 0 })],
+      holdNotes: [
+        [
+          makeTapNote({ id: "hold-1", ms: 1000, column: 1 }),
+          makeTapNote({ id: "hold-2", ms: 1050, column: 1 }),
+        ],
+      ],
       offset: 100,
     });
 

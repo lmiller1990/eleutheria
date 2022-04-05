@@ -1,5 +1,6 @@
 import { InputManager } from "./inputManager";
 
+type HoldNote = EngineNote[];
 /**
  * Represents an input from the user.
  * ms is the time of the input in millseconds since
@@ -10,6 +11,7 @@ export interface Input {
   id: string;
   column: number;
   ms: number;
+  type: "up" | "down";
 }
 
 /**
@@ -61,6 +63,18 @@ export interface EngineNote {
    * If the note was hit, the name of the relevant timing window.
    */
   timingWindowName?: string;
+
+  /**
+   * If the current note is the leading note of a hold,
+   * is it currently been held?
+   */
+  isHeld?: boolean;
+
+  /**
+   * If the current note is the leading note of a hold,
+   * it was previously held and is now released.
+   */
+  droppedAt?: number;
 }
 
 /**
@@ -80,6 +94,7 @@ export interface TimingWindow {
 
 export interface Chart {
   tapNotes: EngineNote[];
+  holdNotes: Array<EngineNote[]>;
 }
 
 export interface EngineConfiguration {
@@ -90,6 +105,7 @@ export interface EngineConfiguration {
 interface CreateChart {
   offset: number;
   tapNotes: EngineNote[];
+  holdNotes: Array<EngineNote[]>;
 }
 
 /**
@@ -108,25 +124,58 @@ export function createChart(args: CreateChart): Chart {
         ms: note.ms + args.offset,
       };
     }),
+    holdNotes: args.holdNotes.map<EngineNote[]>((notes) => {
+      return notes.map((note, idx) => {
+        return {
+          ...note,
+          ms: note.ms + args.offset,
+          missed: false,
+          canHit: true,
+          dependsOn: idx === 0 ? undefined : notes[idx - 1].id,
+        };
+      });
+    }),
   };
 }
 
 /**
  * Finds the "nearest" note given an input and a chart for scoring.
  */
-export function nearestNote(
+export function nearestScorableNote(
   input: Input,
   chart: Chart
 ): EngineNote | undefined {
-  const nearest = chart.tapNotes.reduce((best, note) => {
-    if (
-      input.column === note.column &&
-      Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms)
-    ) {
+  const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
+
+  const initialCandidate = tapable.find(
+    (note) => note.column === input.column && note.canHit
+  );
+
+  if (!initialCandidate) {
+    return undefined;
+  }
+
+  const nearest = tapable.reduce((best, note) => {
+    // if the note is not scorable, we are not interested
+    if (!note.canHit) {
+      return best;
+    }
+
+    // if it's the wrong column, we are not interested.
+    if (input.column !== note.column) {
+      return best;
+    }
+
+    const isCloserToInputMs =
+      Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms);
+    // if it's the coreect column and closer to the input ms
+    // than the current best, we have a new best note.
+    if (isCloserToInputMs) {
       return note;
     }
+
     return best;
-  }, chart.tapNotes[0]);
+  }, initialCandidate);
 
   return nearest && nearest.column === input.column ? nearest : undefined;
 }
@@ -151,6 +200,7 @@ export function judge(input: Input, note: EngineNote): number {
 
 export interface GameChart {
   tapNotes: Map<string, EngineNote>;
+  holdNotes: Map<string, EngineNote[]>;
 }
 
 /**
@@ -261,7 +311,7 @@ export function judgeInput({
   maxWindow,
   timingWindows,
 }: JudgeInput): JudgementResult | undefined {
-  const note = nearestNote(input, chart);
+  const note = nearestScorableNote(input, chart);
 
   if (note && Math.abs(note.ms - input.ms) <= maxWindow) {
     const timing = judge(input, note);
@@ -291,8 +341,22 @@ export function initGameState(chart: Chart): GameChart {
     });
   });
 
+  const holdNotes = new Map<string, EngineNote[]>();
+
+  chart.holdNotes.forEach((notes) => {
+    holdNotes.set(
+      notes[0].id,
+      notes.map((note) => ({
+        ...note,
+        timingWindowName: undefined,
+        canHit: true,
+      }))
+    );
+  });
+
   return {
     tapNotes,
+    holdNotes,
   };
 }
 
@@ -334,11 +398,39 @@ function processNoteJudgement(
   if (note.hitAt === undefined && note.ms < time - maxWindowMs) {
     return {
       ...note,
+      canHit: false,
       missed: true,
     };
   }
 
   return note;
+}
+
+function wasHoldReleased(hold: HoldNote, inputs: Input[]) {
+  const released = inputs.find((input) => {
+    return input.type === "up" && input.column === hold.at(0)!.column;
+  });
+
+  return Boolean(released);
+}
+
+// Set of active holds - that is, a hold that satisifes
+// startOfHoldMs < world.time < endOfHoldMs
+// it's "over" the targets - the head of of the hold is
+// passed the targets, but the tail is not.
+// TODO: probably worth unit testing this
+function isHoldPlayable(
+  hold: EngineNote[],
+  world: World,
+  config: EngineConfiguration
+) {
+  const [holdNote, endNote] = hold;
+  // we subtract/add the maxHitWindow either side since you
+  // can potentially hit the hold earlier/later
+  return (
+    holdNote.ms - config.maxHitWindow < world.time &&
+    world.time < endNote.ms + config.maxHitWindow
+  );
 }
 
 /**
@@ -355,12 +447,19 @@ export function updateGameState(
   config: EngineConfiguration
 ): UpdatedGameState {
   const prevFrameNotes = Array.from(world.chart.tapNotes.values());
+  const prevFrameHoldNotes = Array.from(world.chart.holdNotes.values());
 
   const judgementResults = world.inputs.reduce<JudgementResult[]>(
     (acc, input) => {
+      // we only judge inputs on key presses right now
+      // maybe in the future we will have some judge-on-release mechanic (lift?)
+      if (input.type === "up") {
+        return acc;
+      }
+
       const result = judgeInput({
         input,
-        chart: { tapNotes: prevFrameNotes },
+        chart: { tapNotes: prevFrameNotes, holdNotes: prevFrameHoldNotes },
         maxWindow: config.maxHitWindow,
         timingWindows: config.timingWindows,
       });
@@ -372,7 +471,11 @@ export function updateGameState(
     []
   );
 
-  const prevFrameMissedNotes = prevFrameNotes.filter((x) => x.missed).length;
+  const prevFrameMissedNotes = [
+    ...prevFrameNotes,
+    ...prevFrameHoldNotes.map((x) => x[0]),
+  ].filter((x) => x.missed).length;
+
   let nextFrameMissedCount: number = 0;
 
   const newNotes = new Map<string, EngineNote>();
@@ -391,9 +494,50 @@ export function updateGameState(
     newNotes.set(key, newNote);
   }
 
+  let holdDropped = false;
+
+  const newHoldNotes = new Map<string, EngineNote[]>();
+  for (const key of world.chart.holdNotes.keys()) {
+    const fullHold = world.chart.holdNotes.get(key)!;
+    const [holdNote, endNote] = fullHold;
+
+    const newHoldNote = processNoteJudgement(
+      holdNote,
+      judgementResults,
+      world.time,
+      config.maxHitWindow
+    );
+
+    if (newHoldNote.missed) {
+      nextFrameMissedCount++;
+    }
+
+    for (const result of judgementResults) {
+      if (result.noteId === key && !newHoldNote.isHeld) {
+        newHoldNote.isHeld = true;
+      }
+    }
+
+    const playable = isHoldPlayable(fullHold, world, config);
+
+    if (
+      playable &&
+      newHoldNote.isHeld &&
+      wasHoldReleased(fullHold, world.inputs)
+    ) {
+      holdDropped = true;
+      newHoldNote.droppedAt = world.time;
+      newHoldNote.isHeld = false;
+    }
+
+    newHoldNotes.set(key, [newHoldNote, endNote]);
+  }
+
   // if the number of missed notes changed, they must have
   // broke their combo.
-  const comboBroken = nextFrameMissedCount > prevFrameMissedNotes;
+  const comboBroken =
+    nextFrameMissedCount > prevFrameMissedNotes || holdDropped;
+
   const combo = comboBroken ? 0 : world.combo + judgementResults.length;
 
   return {
@@ -403,6 +547,7 @@ export function updateGameState(
       chart: {
         ...world.chart,
         tapNotes: newNotes,
+        holdNotes: newHoldNotes,
       },
     },
     previousFrameMeta: {

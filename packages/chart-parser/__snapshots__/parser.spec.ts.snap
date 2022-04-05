@@ -1,69 +1,221 @@
 // Vitest Snapshot v1
 
-exports[`parseHoldsChart > works 1`] = `
+exports[`parseChart > works 1`] = `
+{
+  "metadata": {
+    "bpm": 120,
+    "offset": 0,
+    "title": "Example Song",
+  },
+  "tapNotes": [
+    {
+      "char": "N",
+      "column": 0,
+      "id": "1",
+      "ms": 0,
+    },
+    {
+      "char": "N",
+      "column": 3,
+      "id": "2",
+      "ms": 500,
+    },
+    {
+      "char": "N",
+      "column": 1,
+      "id": "3",
+      "ms": 1000,
+    },
+    {
+      "char": "N",
+      "column": 2,
+      "id": "4",
+      "ms": 1500,
+    },
+    {
+      "char": "N",
+      "column": 0,
+      "id": "5",
+      "ms": 2000,
+    },
+    {
+      "char": "N",
+      "column": 3,
+      "id": "6",
+      "ms": 2250,
+    },
+    {
+      "char": "N",
+      "column": 0,
+      "id": "7",
+      "ms": 2500,
+    },
+    {
+      "char": "N",
+      "column": 3,
+      "id": "8",
+      "ms": 2750,
+    },
+    {
+      "char": "N",
+      "column": 0,
+      "id": "9",
+      "ms": 3000,
+    },
+    {
+      "char": "N",
+      "column": 1,
+      "id": "10",
+      "ms": 3000,
+    },
+    {
+      "char": "N",
+      "column": 2,
+      "id": "11",
+      "ms": 3250,
+    },
+    {
+      "char": "N",
+      "column": 3,
+      "id": "12",
+      "ms": 3250,
+    },
+    {
+      "char": "N",
+      "column": 0,
+      "id": "13",
+      "ms": 3500,
+    },
+    {
+      "char": "N",
+      "column": 3,
+      "id": "14",
+      "ms": 3500,
+    },
+    {
+      "char": "N",
+      "column": 1,
+      "id": "15",
+      "ms": 3750,
+    },
+    {
+      "char": "N",
+      "column": 2,
+      "id": "16",
+      "ms": 3750,
+    },
+  ],
+}
+`;
+
+exports[`parseHoldsChart > supports multiple holds holds-simultaneously 1`] = `
 {
   "holdNotes": [
     [
       {
         "char": "1",
         "column": 0,
-        "id": "1",
+        "id": "h1",
         "ms": 0,
       },
       {
         "char": "2",
-        "column": 3,
-        "id": "2",
-        "ms": 500,
-      },
-      {
-        "char": "3",
         "column": 0,
-        "id": "3",
+        "id": "h3",
         "ms": 1000,
       },
+    ],
+    [
       {
-        "char": "4",
-        "column": 3,
-        "id": "4",
-        "ms": 1500,
+        "char": "1",
+        "column": 5,
+        "id": "h2",
+        "ms": 0,
       },
       {
-        "char": "5",
-        "column": 0,
-        "id": "4",
-        "ms": 1500,
+        "char": "2",
+        "column": 5,
+        "id": "h4",
+        "ms": 1000,
+      },
+    ],
+  ],
+  "metadata": {
+    "bpm": 120,
+    "offset": 0,
+    "title": "Example Song",
+  },
+  "tapNotes": [
+    {
+      "char": "1",
+      "column": 0,
+      "id": "1",
+      "ms": 0,
+    },
+    {
+      "char": "1",
+      "column": 5,
+      "id": "2",
+      "ms": 0,
+    },
+    {
+      "char": "2",
+      "column": 0,
+      "id": "3",
+      "ms": 1000,
+    },
+    {
+      "char": "2",
+      "column": 5,
+      "id": "4",
+      "ms": 1000,
+    },
+  ],
+}
+`;
+
+exports[`parseHoldsChart > works 1`] = `
+{
+  "holdNotes": [
+    [
+      {
+        "char": "1",
+        "column": 3,
+        "id": "h3",
+        "ms": 2000,
+      },
+      {
+        "char": "2",
+        "column": 3,
+        "id": "h4",
+        "ms": 2750,
       },
     ],
     [
       {
         "char": "1",
         "column": 0,
-        "id": "5",
-        "ms": 2000,
+        "id": "h1",
+        "ms": 0,
+      },
+      {
+        "char": "2",
+        "column": 0,
+        "id": "h2",
+        "ms": 1500,
+      },
+    ],
+    [
+      {
+        "char": "1",
+        "column": 3,
+        "id": "h5",
+        "ms": 3000,
       },
       {
         "char": "2",
         "column": 3,
-        "id": "7",
-        "ms": 2500,
-      },
-      {
-        "char": "3",
-        "column": 0,
-        "id": "9",
-        "ms": 3000,
-      },
-      {
-        "char": "4",
-        "column": 3,
-        "id": "11",
-        "ms": 3500,
-      },
-      {
-        "char": "5",
-        "column": 0,
-        "id": "12",
+        "id": "h6",
         "ms": 3750,
       },
     ],
@@ -82,56 +234,32 @@ exports[`parseHoldsChart > works 1`] = `
     },
     {
       "char": "2",
-      "column": 3,
+      "column": 0,
       "id": "2",
-      "ms": 500,
-    },
-    {
-      "char": "3",
-      "column": 0,
-      "id": "3",
-      "ms": 1000,
-    },
-    {
-      "char": "4",
-      "column": 3,
-      "id": "4",
-      "ms": 1500,
-    },
-    {
-      "char": "5",
-      "column": 0,
-      "id": "4",
       "ms": 1500,
     },
     {
       "char": "1",
-      "column": 0,
-      "id": "5",
+      "column": 3,
+      "id": "3",
       "ms": 2000,
     },
     {
       "char": "2",
       "column": 3,
-      "id": "7",
-      "ms": 2500,
+      "id": "4",
+      "ms": 2750,
     },
     {
-      "char": "3",
-      "column": 0,
-      "id": "9",
+      "char": "1",
+      "column": 3,
+      "id": "5",
       "ms": 3000,
     },
     {
-      "char": "4",
+      "char": "2",
       "column": 3,
-      "id": "11",
-      "ms": 3500,
-    },
-    {
-      "char": "5",
-      "column": 0,
-      "id": "12",
+      "id": "6",
       "ms": 3750,
     },
   ],

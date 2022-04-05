@@ -1,5 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import type { BaseNote, ChartMetadata } from "@packages/chart-parser";
+import type { BaseNote, ChartMetadata, HoldNote } from "@packages/chart-parser";
 import {
   createChart,
   EngineConfiguration,
@@ -10,6 +10,7 @@ import {
   updateGameState,
   World,
 } from ".";
+import { EngineNote } from "./engine";
 
 const SONG = {
   // SONG_ID: "rave",
@@ -50,6 +51,7 @@ export interface GameConfig {
   song: {
     metadata: ChartMetadata;
     tapNotes: BaseNote[];
+    holdNotes: HoldNote[];
   };
   preSongPadding?: number;
   postSongPadding?: number;
@@ -92,6 +94,13 @@ export class Game {
         missed: false,
         canHit: true,
       })),
+      holdNotes: this.config.song.holdNotes.map<EngineNote[]>((notes) => {
+        return notes.map((note) => ({
+          ...note,
+          missed: false,
+          canHit: true,
+        }));
+      }),
       offset:
         (this.config.preSongPadding || 0) + this.config.song.metadata.offset,
     });
@@ -112,12 +121,14 @@ export class Game {
     const gameState: World = {
       audioContext,
       songCompleted: false,
+      activeHolds: new Set(),
       source,
       combo: 0,
       t0: startTime,
       inputManager,
       chart: {
         tapNotes: gs.tapNotes,
+        holdNotes: gs.holdNotes,
       },
       startTime,
       inputs: [],
