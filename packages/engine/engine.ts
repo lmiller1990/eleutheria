@@ -74,7 +74,7 @@ export interface EngineNote {
    * If the current note is the leading note of a hold,
    * it was previously held and is now released.
    */
-  droppedAt?: number
+  droppedAt?: number;
 }
 
 /**
@@ -418,9 +418,19 @@ function wasHoldReleased(hold: HoldNote, inputs: Input[]) {
 // startOfHoldMs < world.time < endOfHoldMs
 // it's "over" the targets - the head of of the hold is
 // passed the targets, but the tail is not.
-function isHoldPlayable (hold: EngineNote[], world: World, config: EngineConfiguration) {
-  const [holdNote, endNote] = hold
-  return (holdNote.ms < (world.time - config.maxHitWindow) && world.time < (endNote.ms + config.maxHitWindow))
+// TODO: probably worth unit testing this
+function isHoldPlayable(
+  hold: EngineNote[],
+  world: World,
+  config: EngineConfiguration
+) {
+  const [holdNote, endNote] = hold;
+  // we subtract/add the maxHitWindow either side since you
+  // can potentially hit the hold earlier/later
+  return (
+    holdNote.ms - config.maxHitWindow < world.time &&
+    world.time < endNote.ms + config.maxHitWindow
+  );
 }
 
 /**
@@ -484,6 +494,8 @@ export function updateGameState(
     newNotes.set(key, newNote);
   }
 
+  let holdDropped = false;
+
   const newHoldNotes = new Map<string, EngineNote[]>();
   for (const key of world.chart.holdNotes.keys()) {
     const fullHold = world.chart.holdNotes.get(key)!;
@@ -502,20 +514,24 @@ export function updateGameState(
 
     for (const result of judgementResults) {
       if (result.noteId === key && !newHoldNote.isHeld) {
-        newHoldNote.isHeld = true
+        newHoldNote.isHeld = true;
       }
     }
 
-    const playable = isHoldPlayable(fullHold, world, config)
-    if (playable && newHoldNote.isHeld && wasHoldReleased(fullHold, world.inputs)) {
-      newHoldNote.droppedAt = world.time
-      newHoldNote.isHeld = false
+    const playable = isHoldPlayable(fullHold, world, config);
+
+    if (
+      playable &&
+      newHoldNote.isHeld &&
+      wasHoldReleased(fullHold, world.inputs)
+    ) {
+      holdDropped = true;
+      newHoldNote.droppedAt = world.time;
+      newHoldNote.isHeld = false;
     }
 
     newHoldNotes.set(key, [newHoldNote, endNote]);
   }
-
-  let holdDropped = false;
 
   // if the number of missed notes changed, they must have
   // broke their combo.

@@ -801,7 +801,6 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(world, engineConfiguration);
 
-    expect(actual.world.activeHolds).toEqual(new Set());
     // expect(actual).toEqual(expected);
   });
 
@@ -827,7 +826,6 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(world, engineConfiguration);
 
-    expect(actual.world.activeHolds).toEqual(new Set(["h1"]));
     expect(actual.world.chart.holdNotes.get("h1")!).toEqual([
       {
         canHit: false,
@@ -875,20 +873,20 @@ describe("updateGameState", () => {
 
     const s1 = updateGameState(world, engineConfiguration);
 
-    expect(s1.world.activeHolds).toEqual(new Set(["h1"]));
     expect(s1.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(true);
     expect(s1.previousFrameMeta.comboBroken).toEqual(false);
 
     const s2 = updateGameState(
       {
         ...s1.world,
+        time: 1001,
         inputs: [createInput({ ms: 1001, column: 1, type: "up" })],
       },
       engineConfiguration
     );
 
-    expect(s2.world.activeHolds).toEqual(new Set());
-    expect(s1.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(false);
+    expect(s2.world.chart.holdNotes.get("h1")!.at(0)!.isHeld).toEqual(false);
+    expect(s2.world.chart.holdNotes.get("h1")!.at(0)!.droppedAt).toEqual(1001);
     expect(s2.previousFrameMeta.comboBroken).toEqual(true);
   });
 
@@ -912,8 +910,6 @@ describe("updateGameState", () => {
 
     const s1 = updateGameState(world, engineConfiguration);
 
-    expect(s1.world.activeHolds).toEqual(new Set(["h1"]));
-
     const s2 = updateGameState(
       {
         ...s1.world,
@@ -922,8 +918,6 @@ describe("updateGameState", () => {
       },
       engineConfiguration
     );
-
-    expect(s2.world.activeHolds).toEqual(new Set());
   });
 });
 

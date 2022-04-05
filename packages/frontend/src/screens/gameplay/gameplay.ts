@@ -47,7 +47,7 @@ function drawHoldNote(
   elements: Elements
 ): HTMLDivElement {
   const $note = drawNote(holdNote.at(0)!, elements);
-  console.log('draw', holdNote)
+  console.log("draw", holdNote);
   $note.style.height = `${calcInitHeightOfHold(holdNote)}px`;
   return $note;
 }
@@ -78,7 +78,7 @@ function calcHeightOfDroppedHold(hold: EngineNote[]): number {
   const firstNoteOfHold = hold.at(0)!;
   const lastNoteOfHold = hold.at(-1)!;
   if (!firstNoteOfHold.droppedAt) {
-    throw Error('Cannot calc height of dropped hold that was not dropped!')
+    throw Error("Cannot calc height of dropped hold that was not dropped!");
   }
 
   return (lastNoteOfHold.ms - firstNoteOfHold.droppedAt) * MULTIPLIER;
@@ -87,33 +87,32 @@ function calcHeightOfDroppedHold(hold: EngineNote[]): number {
 function updateHold(
   engineHold: EngineNote[],
   ypos: number,
-  $note: HTMLDivElement,
+  $note: HTMLDivElement
 ): HTMLDivElement {
-
-  const hold = engineHold[0]!
+  const hold = engineHold[0]!;
 
   const initialHeight = calcInitHeightOfHold(engineHold);
   const newHeight = initialHeight + ypos;
 
   if (hold.isHeld) {
     $note.style.filter = "brightness(2.0)";
-    $note.style.top = `0px`
+    $note.style.top = `0px`;
 
     if (newHeight < 0) {
-      $note.style.display = 'none'
+      $note.style.display = "none";
     } else {
-      $note.style.height = `${newHeight}px`
+      $note.style.height = `${newHeight}px`;
     }
 
     return $note;
   }
 
   if (hold.droppedAt) {
-    const adjustedHeight = calcHeightOfDroppedHold(engineHold)
-    const diff = initialHeight - adjustedHeight
+    const adjustedHeight = calcHeightOfDroppedHold(engineHold);
+    const diff = initialHeight - adjustedHeight;
     $note.style.opacity = "0.25";
     $note.style.top = `${ypos + diff}px`;
-    return $note
+    return $note;
   }
 
   if (hold.missed) {
@@ -123,7 +122,7 @@ function updateHold(
   }
 
   $note.style.top = `${ypos}px`;
-  return $note
+  return $note;
 }
 
 function updateNote($note: HTMLDivElement, ypos: number) {
@@ -214,7 +213,6 @@ export async function start(
 
   const lifecycle: GameLifecycle = {
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
-
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
         const ypos = calcYPosition(engineNote, world);
@@ -312,6 +310,6 @@ export async function start(
 
   const game = new Game(gameConfig, lifecycle);
 
-  console.log(gameConfig.song.holdNotes)
+  console.log(gameConfig.song.holdNotes);
   await game.start();
 }
