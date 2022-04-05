@@ -378,7 +378,6 @@ describe("updateGameState", () => {
         { tapNotes },
         {
           ...world,
-          activeHolds: new Set(),
           combo: 0,
         }
       ),
