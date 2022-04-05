@@ -22,7 +22,8 @@
     "dev": "yarn gulp dev",
     "install": "lerna exec yarn install",
     "lint": "prettier --write packages",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "lint:check": "yarn prettier --check packages"
   },
   "workspaces": {
     "packages": [
