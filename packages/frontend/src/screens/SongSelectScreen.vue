@@ -1,22 +1,52 @@
 <template>
-  <div class="flex h-full bg-gradient-to-t from-gray-400 to-gray-100">
-    <div class="grow">Placeholder</div>
-    <div class="flex flex-col justify-center h-full px-4">
-      <SongItem
-        v-for="song of songs"
-        :id="song.id"
-        :song="song"
-        :selectedDifficulty="selectedDifficulty"
-        :selected="song.order === selectedSong"
-      />
-    </div>
+  <div class="flex h-100 padding-m">
+
+    <section class="w-100">
+      <div class="flex flex-col justify-center h-100">
+
+        <div class="h-100 margin-s">
+          <div class="rounded-border-s h-100">
+            <div style="background: skyblue" class="h-100 rounded-border-s flex items-center justify-center">
+              Banner
+            </div>
+          </div>
+        </div>
+
+        <div class="flex h-100 margin-s justify-center rounded-border-s" style="background: skyblue">
+          <div class="margin-horizontal-s">
+            <SongInfo :chartSummary="chartSummary" />
+          </div>
+          <div class="margin-horizontal-s">
+            <SongPersonalBest :personalBest="personalBest" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="w-100">
+      <div class="margin-s">
+        <SongItem
+          v-for="song of songs"
+          :key="song.id"
+          :id="song.id"
+          :song="song"
+          :selectedDifficulty="selectedDifficulty"
+          :selected="song.order === selectedSong"
+        />
+      </div>
+    </section>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import type { BaseSong, Difficulty } from "@packages/types";
+import '../index.css'
+import type { BaseSong, ChartSummary, Difficulty, PersonalBest } from "@packages/types";
 import type { Song } from "../types";
 import SongItem from "../components/SongItem.vue";
+import SongPersonalBest from "../components/SongPersonalBest.vue";
+import SongInfo from "../components/SongInfo.vue";
 import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 
@@ -62,6 +92,24 @@ onBeforeUnmount(() => {
 
 const songs = ref<Song[]>([]);
 
+const chartSummary: ChartSummary = {
+  tapNotes: 512,
+  holdNotes: 18,
+  durationSeconds: 198,
+  chords: {
+    twoNoteCount: 22,
+    threeNoteCount: 12,
+    fourNoteCount: 9,
+    fiveNoteCount: 8,
+    sixNoteCount: 1
+  }
+}
+
+const personalBest: PersonalBest = {
+  percent: 95.5,
+  date: '2022-04-06T12:12:11.308Z'
+}
+
 async function fetchSongs() {
   const res = await window.fetch("http://localhost:8000/songs");
   const data = (await res.json()) as BaseSong[];
@@ -70,3 +118,47 @@ async function fetchSongs() {
 
 fetchSongs();
 </script>
+
+<style>
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.d {
+  border: 1px solid red;
+}
+
+.padding-s { padding: 12px; }
+.padding-m { padding: 36px; }
+
+.margin-s { margin: 12px; }
+.margin-m { margin: 36px; }
+
+.margin-horizontal-s {
+  margin: 0 8px 0 8px;
+}
+
+.rounded-border-s {
+  border-radius: 8px;
+}
+</style>

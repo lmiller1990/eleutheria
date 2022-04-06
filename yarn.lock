@@ -40,7 +40,7 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
-"@cypress/mount-utils@^1.0.2":
+"@cypress/mount-utils@1.0.2", "@cypress/mount-utils@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@cypress/mount-utils/-/mount-utils-1.0.2.tgz#afbc4f8c350b7cd86edc5ad0db0cbe1e0181edc8"
   integrity sha512-Fn3fdTiyayHoy8Ol0RSu4MlBH2maQ2ZEXeEVKl/zHHXEQpld5HX3vdNLhK5YLij8cLynA4DxOT/nO9iEnIiOXw==
@@ -76,6 +76,14 @@
   dependencies:
     debug "^4.3.2"
     get-port "^5.1.1"
+
+"@cypress/vue@^3.0.0":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@cypress/vue/-/vue-3.1.1.tgz#0e6b4a1cb972d2f271ba05209c55e9101a96d0a4"
+  integrity sha512-wD1vunuPFPLC8FZtgwdq+mcSEOs27qquuJJdGcY8aAN0y38rqYuuaj+N4UxKoAjhkSwthaOeZehjBtvDvv9C6w==
+  dependencies:
+    "@cypress/mount-utils" "1.0.2"
+    "@vue/test-utils" "^2.0.0-rc.10"
 
 "@cypress/xvfb@^1.2.4":
   version "1.2.4"
@@ -1306,6 +1314,11 @@
   version "3.2.30"
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.30.tgz#e2ba8f6692399c27c81c668ecd3f1a4e13ee2f5e"
   integrity sha512-B3HouBtUxcfu2w2d+VhdLcVBXKYYhXiFMAfQ+hoe8NUhKkPRkWDIqhpuehCZxVQ3S2dN1P1WfKGlxGC+pfmxGg==
+
+"@vue/test-utils@^2.0.0-rc.10":
+  version "2.0.0-rc.19"
+  resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-2.0.0-rc.19.tgz#cd10480b695027481981085c3f705081495a7ca0"
+  integrity sha512-vQ/34z9NH/pqJzl9YTWtTq/vrx5JzLbMojcBB0qydeb7FtGqxp11nLYCgVso+pa8ZOSn2j+OQfjc5aBnb32uzw==
 
 "@zeit/schemas@2.6.0":
   version "2.6.0"
