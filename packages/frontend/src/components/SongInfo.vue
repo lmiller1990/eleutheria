@@ -28,12 +28,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { ChartSummary } from '@packages/types';
+import type { ChartSummary } from "@packages/types";
 
 function displayDuration(seconds: number) {
-  const s = (seconds % 60).toString().padStart(2, '0')
-  const m = Math.floor(seconds / 60)
-  return `${m}:${s}`
+  const s = (seconds % 60).toString().padStart(2, "0");
+  const m = Math.floor(seconds / 60);
+  return `${m}:${s}`;
 }
 
 const keys = [
@@ -41,10 +41,10 @@ const keys = [
   { key: "threeNoteCount", num: "3" },
   { key: "fourNoteCount", num: "4" },
   { key: "fiveNoteCount", num: "5" },
-  { key: "sixNoteCount", num: "6" }
-] as const
+  { key: "sixNoteCount", num: "6" },
+] as const;
 
 const props = defineProps<{
-  chartSummary: ChartSummary
-}>()
+  chartSummary: ChartSummary;
+}>();
 </script>

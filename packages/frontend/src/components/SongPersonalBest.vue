@@ -13,17 +13,21 @@
 </template>
 
 <script lang="ts" setup>
-import type { PersonalBest } from '@packages/types';
+import type { PersonalBest } from "@packages/types";
 
 function formatDate(string: string) {
-  return new Date(string).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date(string).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function formatPercent(percent: number) {
-  return `${percent.toPrecision(4).toString()}%`
+  return `${percent.toPrecision(4).toString()}%`;
 }
 
 const props = defineProps<{
-  personalBest: PersonalBest
-}>()
+  personalBest: PersonalBest;
+}>();
 </script>

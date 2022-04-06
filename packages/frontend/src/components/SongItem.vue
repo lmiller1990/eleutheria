@@ -1,5 +1,10 @@
 <template>
-  {{ props.song.title }}
+  <div
+    class="w-100 rounded-border-s flex items-center padding-horizontal-s"
+    style="background: skyblue"
+  >
+    {{ props.song.title }}
+  </div>
 </template>
 
 <script lang="ts" setup>

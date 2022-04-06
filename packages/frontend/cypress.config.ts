@@ -1,4 +1,4 @@
-import { devServer } from '@cypress/vite-dev-server'
+import { devServer } from "@cypress/vite-dev-server";
 
 export default {
   component: {
@@ -7,4 +7,4 @@ export default {
       // optionally provide your Vite config overrides.
     },
   },
-}
+};
