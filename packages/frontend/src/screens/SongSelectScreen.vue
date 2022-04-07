@@ -1,27 +1,42 @@
 <template>
-  <div class="flex h-100 padding-m">
+  <div class="grid grid-cols-1fr-1fr grid-col-gap-m padding-m h-100">
+    <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
+      <SongBanner />
+      <div class="grid grid-cols-1fr-1fr items-start d rounded-border-s">
+        <SongPersonalBest :personalBest="personalBest" />
+        <SongInfo :chartSummary="chartSummary" />
+      </div>
+    </div>
+
+    <div class="h-100 grid grid-row-gap-s grid-rows-3">
+      <SongItem
+        class="d"
+        v-for="song of songs"
+        :key="song.id"
+        :id="song.id"
+        :song="song"
+        :selectedDifficulty="selectedDifficulty"
+        :selected="song.order === selectedSong"
+      />
+
+    </div>
+  </div>
+
+  <!-- <div class="flex h-100 padding-m">
     <section class="w-100">
       <div class="flex flex-col justify-center h-100">
         <div class="h-100 margin-s">
-          <div class="rounded-border-s h-100">
-            <div
-              style="background: skyblue"
-              class="h-100 rounded-border-s flex items-center justify-center"
-            >
-              Banner
-            </div>
-          </div>
+          <SongBanner />
         </div>
 
         <div
-          class="flex h-100 margin-s justify-center rounded-border-s"
-          style="background: skyblue"
+          class="flex rounded-border-s"
         >
-          <div class="margin-horizontal-s">
-            <SongInfo :chartSummary="chartSummary" />
-          </div>
-          <div class="margin-horizontal-s">
+          <div class="w-100 margin-horizontal-s rounded-border-s" style="background: skyblue">
             <SongPersonalBest :personalBest="personalBest" />
+          </div>
+          <div class="w-100 margin-horizontal-s rounded-border-s" style="background: skyblue">
+            <SongInfo :chartSummary="chartSummary" />
           </div>
         </div>
       </div>
@@ -41,7 +56,7 @@
         </div>
       </div>
     </section>
-  </div>
+  </div>-->
 </template>
 
 <script setup lang="ts">
@@ -58,6 +73,7 @@ import SongPersonalBest from "../components/SongPersonalBest.vue";
 import SongInfo from "../components/SongInfo.vue";
 import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
+import SongBanner from "../components/SongBanner.vue";
 
 const selectedDifficulty = ref<Difficulty>("expert");
 const selectedSong = ref(1);
@@ -137,9 +153,8 @@ fetchSongs();
   justify-content: center;
 }
 
-.items-center {
-  align-items: center;
-}
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
 
 .flex-col {
   flex-direction: column;
@@ -196,7 +211,25 @@ fetchSongs();
 .grid {
   display: grid;
 }
-.grid-row-gap-s {
-  grid-row-gap: 8px;
+.grid-row-gap-s { grid-row-gap: 8px; }
+.grid-row-gap-m { grid-row-gap: 16px; }
+
+.grid-col-gap-s { grid-column-gap: 8px; }
+.grid-col-gap-m { grid-column-gap: 16px; }
+
+.grid-cols-1fr-1fr {
+  grid-template-columns: 1fr 1fr;
+}
+
+.grid-rows-1fr-2fr {
+  grid-template-rows: 1fr 2fr;
+}
+
+.grid-rows-3 {
+  grid-template-rows: repeat(3, 1fr)
+}
+
+.grid-rows-10 {
+  grid-template-rows: repeat(10, 1fr)
 }
 </style>
