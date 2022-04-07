@@ -18,7 +18,6 @@
         :selectedDifficulty="selectedDifficulty"
         :selected="song.order === selectedSong"
       />
-
     </div>
   </div>
 
@@ -153,8 +152,12 @@ fetchSongs();
   justify-content: center;
 }
 
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
+.items-center {
+  align-items: center;
+}
+.items-start {
+  align-items: flex-start;
+}
 
 .flex-col {
   flex-direction: column;
@@ -211,11 +214,19 @@ fetchSongs();
 .grid {
   display: grid;
 }
-.grid-row-gap-s { grid-row-gap: 8px; }
-.grid-row-gap-m { grid-row-gap: 16px; }
+.grid-row-gap-s {
+  grid-row-gap: 8px;
+}
+.grid-row-gap-m {
+  grid-row-gap: 16px;
+}
 
-.grid-col-gap-s { grid-column-gap: 8px; }
-.grid-col-gap-m { grid-column-gap: 16px; }
+.grid-col-gap-s {
+  grid-column-gap: 8px;
+}
+.grid-col-gap-m {
+  grid-column-gap: 16px;
+}
 
 .grid-cols-1fr-1fr {
   grid-template-columns: 1fr 1fr;
@@ -226,10 +237,10 @@ fetchSongs();
 }
 
 .grid-rows-3 {
-  grid-template-rows: repeat(3, 1fr)
+  grid-template-rows: repeat(3, 1fr);
 }
 
 .grid-rows-10 {
-  grid-template-rows: repeat(10, 1fr)
+  grid-template-rows: repeat(10, 1fr);
 }
 </style>
