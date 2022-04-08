@@ -1,23 +1,27 @@
 <template>
-  <div class="grid grid-cols-1fr-1fr grid-col-gap-m padding-m h-100">
+  <div class="grid grid-columns-repeat-2 grid-col-gap-m padding-m h-100">
     <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
       <SongBanner />
-      <div class="grid grid-cols-1fr-1fr items-start d rounded-border-s">
+      <div class="grid grid-columns-repeat-2 items-start d rounded-border-s">
         <SongPersonalBest :personalBest="personalBest" />
         <SongInfo :chartSummary="chartSummary" />
       </div>
     </div>
 
-    <div class="h-100 grid grid-row-gap-s grid-rows-3">
-      <SongItem
-        class="d"
-        v-for="song of songs"
-        :key="song.id"
-        :id="song.id"
-        :song="song"
-        :selectedDifficulty="selectedDifficulty"
-        :selected="song.order === selectedSong"
-      />
+    <div class="grid grid-rows-repeat-3">
+      <div />
+      <div class="h-100 grid grid-row-gap-s grid-rows-3">
+        <SongItem
+          class="d"
+          v-for="song of songs"
+          :key="song.id"
+          :id="song.id"
+          :song="song"
+          :selectedDifficulty="selectedDifficulty"
+          :selected="song.order === selectedSong"
+        />
+      </div>
+      <div />
     </div>
   </div>
 
@@ -144,7 +148,7 @@ fetchSongs();
 </script>
 
 <style>
-.flex {
+@import "@packages/breeze-css/dist/breeze.css"; /* .flex {
   display: flex;
 }
 
@@ -242,5 +246,5 @@ fetchSongs();
 
 .grid-rows-10 {
   grid-template-rows: repeat(10, 1fr);
-}
+} */
 </style>

@@ -1,0 +1,15 @@
+{
+  "name": "@packages/breeze-css",
+  "version": "0.0.0-development",
+  "main": "index.ts",
+  "scripts": {
+    "generate": "ts-node index.ts",
+    "test": "echo 'ok'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/dedent": "0.7.0",
+    "dedent": "0.7.0",
+    "typescript": "4.5.4"
+  }
+}

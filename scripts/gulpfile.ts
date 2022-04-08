@@ -1,5 +1,6 @@
 import gulp from "gulp";
 import fs from "fs-extra";
+import chokidar from 'chokidar'
 import path from "path";
 import inquirer from "inquirer";
 import { spawn } from "child_process";
@@ -16,6 +17,26 @@ async function assetsServer() {
     stdio: "inherit",
     cwd: "packages/static",
   });
+}
+
+async function breezeCss() {
+  const watcher = chokidar.watch(path.join(__dirname, '..', 'packages', 'breeze-css', '**/*.ts'))
+
+  function generate () {
+    spawn("yarn", ["generate"], {
+      stdio: "inherit",
+      cwd: "packages/breeze-css",
+    })
+    .on("exit", () => {
+      console.log('Generated latest breeze.css assets!')
+    });
+  }
+
+  watcher.on("change", () => {
+    generate()
+  })
+
+  generate()
 }
 
 async function gameDataServer() {
@@ -67,4 +88,4 @@ async function createPkg() {
 
 gulp.task("createPkg", createPkg);
 
-gulp.task("dev", gulp.series(serverDev, assetsServer, gameDataServer));
+gulp.task("dev", gulp.series(serverDev, assetsServer, gameDataServer, breezeCss));
