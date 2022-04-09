@@ -32,8 +32,6 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
     .join("");
 
   const html = `
-    <button id="start">Start</button>
-    <button id="stop">Stop</button>
     <table id="debug">
       <tr>
         <th>Live notes</th>
@@ -43,10 +41,11 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
       </tr>
     </table>
 
-    <div id="debug-holds">
+    <div id="lhs" class="blue-1 w-100">
+      LHS
     </div>
 
-    <div id="targets">
+    <div id="targets" class="w-100">
       <div id="target-line">
         ${targetCols}
       </div>
@@ -55,6 +54,10 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
 
       <div id="timing"></div>
       <div id="combo"></div>
+    </div>
+
+    <div id="rhs" class="w-100 red-1">
+      RHS
     </div>
   `;
 

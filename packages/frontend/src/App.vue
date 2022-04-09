@@ -3,6 +3,7 @@
 </template>
 
 <style>
+@import "@packages/breeze-css/dist/breeze.css";
 body {
   height: 100%;
   font-size: 1rem;

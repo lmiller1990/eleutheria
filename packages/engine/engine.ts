@@ -1,3 +1,4 @@
+import { ChartMetadata } from "@packages/chart-parser";
 import { InputManager } from "./inputManager";
 
 type HoldNote = EngineNote[];
@@ -235,6 +236,8 @@ export interface World {
   // is the song over? This is defined as no more remaining notes
   // does not consider if the actual music is finished playback or not.
   readonly songCompleted: boolean;
+
+  songData: ChartMetadata;
 }
 
 export interface JudgementResult {

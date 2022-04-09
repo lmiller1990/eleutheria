@@ -150,7 +150,3 @@ async function fetchSongs() {
 
 fetchSongs();
 </script>
-
-<style>
-@import "@packages/breeze-css/dist/breeze.css";
-</style>

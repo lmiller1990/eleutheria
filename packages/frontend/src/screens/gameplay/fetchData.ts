@@ -1,11 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import type { LoadSongData } from "@packages/game-data";
 import { PADDING_MS } from "./config";
-
-export async function fetchData(): Promise<LoadSongData> {
-  const res = await window.fetch(`http://localhost:8000/songs/${SONG.SONG_ID}`);
-  return res.json();
-}
 
 const SONG = {
   // SONG_ID: "rave",

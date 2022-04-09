@@ -28,7 +28,7 @@ export class InputManager {
 
   onKey = (e: KeyboardEvent, type: "up" | "down") => {
     if (!this.codeColumnMap.has(e.code)) {
-      return
+      return;
     }
 
     if (this.t0 === undefined) {

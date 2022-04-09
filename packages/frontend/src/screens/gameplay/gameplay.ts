@@ -7,7 +7,6 @@ import type {
   EngineNote,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
-import { fetchData } from "./fetchData";
 import {
   $tapNote,
   createElements,
@@ -15,7 +14,6 @@ import {
   targetNoteHitFlash,
   judgementFlash,
   Elements,
-  $holdNote,
 } from "./elements";
 import {
   engineConfiguration,
@@ -24,6 +22,7 @@ import {
   codeColumnMap,
 } from "./config";
 import { writeDebugToHtml } from "./debug";
+import { LoadSongData } from "@packages/game-data";
 
 const noteMap = new Map<string, HTMLDivElement>();
 const holdMap = new Map<string, HTMLDivElement>();
@@ -182,6 +181,17 @@ function calcYPosition(note: EngineNote, world: World) {
   return (note.ms - world.time) * MULTIPLIER;
 }
 
+export async function fetchData(): Promise<LoadSongData> {
+  const url = new URL(window.location.toString());
+  const params = new URLSearchParams(url.search);
+  const id = params.get("song");
+  if (!id) {
+    throw Error(`Expected ${window.location} to have search params ?song=<ID>`);
+  }
+  const res = await window.fetch(`http://localhost:8000/songs/${id}`);
+  return res.json();
+}
+
 export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted
@@ -306,10 +316,15 @@ export async function start(
       window.clearTimeout(timeoutId);
       songCompleted(summary);
     },
+
+    onStart: (world: World) => {
+      console.log(document.querySelector("#combo"));
+      // throw Error()
+      console.log("Start!", world.songData);
+    },
   };
 
   const game = new Game(gameConfig, lifecycle);
 
-  console.log(gameConfig.song.holdNotes);
-  await game.start();
+  await game.start(data.metadata);
 }

@@ -63,6 +63,7 @@ export interface GameConfig {
 export interface GameLifecycle {
   onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void;
   onDebug?: (world: World, fps: number) => void;
+  onStart?: (world: World) => void;
   onSongCompleted?: (
     world: World,
     previousFrameMeta: PreviousFrameMeta
@@ -87,7 +88,7 @@ export class Game {
       (this.config.postSongPadding || 0);
   }
 
-  async start() {
+  async start(songData: ChartMetadata) {
     const chart = createChart({
       tapNotes: this.config.song.tapNotes.map((x) => ({
         ...x,
@@ -121,10 +122,10 @@ export class Game {
     const gameState: World = {
       audioContext,
       songCompleted: false,
-      activeHolds: new Set(),
       source,
       combo: 0,
       t0: startTime,
+      songData,
       inputManager,
       chart: {
         tapNotes: gs.tapNotes,
@@ -137,6 +138,7 @@ export class Game {
 
     gameState.inputManager.setOrigin(gameState.t0);
 
+    this.lifecycle.onStart?.(gameState);
     this.gameLoop(gameState);
 
     this.#inputManager = inputManager;
@@ -154,6 +156,10 @@ export class Game {
     const dt =
       gameState.audioContext.getOutputTimestamp().performanceTime! -
       gameState.t0;
+
+    if (dt > 8000) {
+      return;
+    }
 
     const world: World = {
       ...gameState,
