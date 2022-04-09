@@ -1,18 +1,16 @@
 <template>
   <div class="flex justify-center h-100 items-center flex-col">
     <div class="w-100 h-5rem flex justify-center margin-vertical-m">
-      <div class="
-        max-w-l w-100 font-3 upcase blue-3 
-        padding-horizontal-s 
-        rounded-border-m
-        shadow
-        "
+      <div
+        class="max-w-l w-100 font-3 upcase blue-3 padding-horizontal-s rounded-border-m shadow"
       >
         Select Music
       </div>
     </div>
 
-    <div class="grid grid-columns-repeat-2 grid-column-gap-s padding-m h-100 max-w-l w-100">
+    <div
+      class="grid grid-columns-repeat-2 grid-column-gap-s padding-m h-100 max-w-l w-100"
+    >
       <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
         <SongBanner v-if="selectedSong" :banner="selectedSong.banner" />
         <div class="grid grid-columns-repeat-2 items-start rounded-border-s">
@@ -33,7 +31,7 @@
       <div class="margin-top-5rem">
         <SongItem
           class="h-8rem margin-bottom-1rem"
-          :class="{ 'shadow': selectedSong.order === song.order }"
+          :class="{ shadow: selectedSong.order === song.order }"
           v-for="song of songs"
           :key="song.id"
           :id="song.id"
@@ -127,22 +125,22 @@ const personalBest: PersonalBest = {
 
 const charts: Chart[] = [
   {
-    difficulty: 'basic',
-    level: 3
+    difficulty: "basic",
+    level: 3,
   },
   {
-    difficulty: 'standard',
-    level: 5
+    difficulty: "standard",
+    level: 5,
   },
   {
-    difficulty: 'expert',
-    level: 8
-  }
-]
+    difficulty: "expert",
+    level: 8,
+  },
+];
 
 const selectedSong = computed(() => {
-  return songs.value.find(x => x.order === selectedSongIdx.value)!
-})
+  return songs.value.find((x) => x.order === selectedSongIdx.value)!;
+});
 
 async function fetchSongs() {
   const res = await window.fetch("http://localhost:8000/songs");

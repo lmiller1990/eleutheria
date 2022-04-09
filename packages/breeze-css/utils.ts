@@ -30,8 +30,7 @@ export function generate(type: "padding" | "margin") {
         output.push(dedent`
           .${type}-${dir}-${i}${unit} {
             ${type}-${dir}: ${i}${unit}; 
-          }`
-        );
+          }`);
       }
     }
   }

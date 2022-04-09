@@ -9,21 +9,18 @@ const basic = dedent`
   .caps {
     text-transform: capitalize;
   }
-`
+`;
 
-const sizes = joinGroup(output => {
+const sizes = joinGroup((output) => {
   for (let i = 0; i < 5; i++) {
     output.push(dedent`
-      .font-${i+1} {
-        font-size: ${i+1}rem;
+      .font-${i + 1} {
+        font-size: ${i + 1}rem;
       }
-    `)
+    `);
   }
-})
+});
 
-export const typography = joinGroup(output => {
-  return output.push(
-    basic,
-    sizes
-  )
-})
+export const typography = joinGroup((output) => {
+  return output.push(basic, sizes);
+});

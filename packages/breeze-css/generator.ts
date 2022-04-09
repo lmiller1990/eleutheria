@@ -20,5 +20,5 @@ export const style = [
   colors,
   typography,
   maxWidth,
-  shadows
+  shadows,
 ].join("\n\n");

@@ -7,7 +7,7 @@
       :class="{
         'blue-2': chart.difficulty === 'basic',
         'red-2': chart.difficulty === 'standard',
-        'green-2': chart.difficulty === 'expert'
+        'green-2': chart.difficulty === 'expert',
       }"
     >
       <div>{{ chart.difficulty }}</div>
@@ -17,10 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Chart, Difficulty } from '@packages/types'
+import type { Chart, Difficulty } from "@packages/types";
 
 const props = defineProps<{
-  selected: Difficulty
-  charts: Chart[]
-}>()
+  selected: Difficulty;
+  charts: Chart[];
+}>();
 </script>
