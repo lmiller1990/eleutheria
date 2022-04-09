@@ -12,6 +12,5 @@ import type { Song } from "../types";
 
 const props = defineProps<{
   song: Song;
-  selected: boolean;
 }>();
 </script>

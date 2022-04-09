@@ -7,6 +7,7 @@ import { maxWidth, widthHeight } from "./widthHeight";
 import { misc } from "./misc";
 import { colors } from "./colors";
 import { typography } from "./typography";
+import { shadows } from "./boxShadow";
 
 export const style = [
   flex,
@@ -18,5 +19,6 @@ export const style = [
   misc,
   colors,
   typography,
-  maxWidth
+  maxWidth,
+  shadows
 ].join("\n\n");

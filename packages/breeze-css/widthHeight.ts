@@ -5,7 +5,23 @@ const nums = Array(10)
   .fill(null)
   .map((_, idx) => 100 - idx * 10);
 
-function generateWidthHeight() {
+function generateWidthHeight(unit: "rem" | "px") {
+  return joinGroup((output) => {
+    for (let i = 0; i < 21; i++) {
+      output.push(dedent`
+      .h-${i}${unit} {
+        height: ${i}${unit}; 
+      }`);
+
+      output.push(dedent`
+      .w-${i}${unit} {
+        width: ${i}${unit}; 
+      }`);
+    }
+  });
+}
+
+function generateWidthHeightPercent() {
   let output: string[] = [];
   for (const num of nums) {
     for (const dir of ["width", "height"] as const) {
@@ -40,4 +56,11 @@ export const maxWidth = Array.from(_maxWidths.entries())
   })
   .join("\n\n");
 
-export const widthHeight = generateWidthHeight();
+export const widthHeight = joinGroup((output) => {
+  output.push(
+    generateWidthHeightPercent(),
+    generateWidthHeight("px"),
+    generateWidthHeight("rem")
+  );
+  return output;
+});

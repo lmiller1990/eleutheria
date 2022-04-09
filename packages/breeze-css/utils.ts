@@ -10,6 +10,11 @@ export function generate(type: "padding" | "margin") {
   let output: string[] = [];
 
   for (const [letter, num] of sizes) {
+    /**
+     * padding-s {
+     *   padding: 2rem;
+     * }
+     */
     output.push(
       dedent`
       .${type}-${letter} {
@@ -17,6 +22,18 @@ export function generate(type: "padding" | "margin") {
       }
     `
     );
+  }
+
+  for (const unit of ["px", "rem"]) {
+    for (const dir of ["top", "bottom", "left", "right"]) {
+      for (let i = 0; i < 21; i++) {
+        output.push(dedent`
+          .${type}-${dir}-${i}${unit} {
+            ${type}-${dir}: ${i}${unit}; 
+          }`
+        );
+      }
+    }
   }
 
   for (const [letter, num] of sizes) {
@@ -34,9 +51,8 @@ export function generate(type: "padding" | "margin") {
   return output.join("\n\n");
 }
 
-
 export function joinGroup(fn: (output: string[]) => void) {
   let output: string[] = [];
-  fn(output)
+  fn(output);
   return output.join("\n\n");
 }

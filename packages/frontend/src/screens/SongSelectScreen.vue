@@ -1,8 +1,20 @@
 <template>
-  <div class="flex justify-center h-100 items-center">
-    <div class="grid grid-columns-repeat-2 grid-col-gap-m padding-m h-100 max-w-l w-100 items-center">
+  <div class="flex justify-center h-100 items-center flex-col">
+    <div class="w-100 h-5rem flex justify-center margin-vertical-m">
+      <div class="
+        max-w-l w-100 font-3 upcase blue-3 
+        padding-horizontal-s 
+        rounded-border-m
+        shadow
+        "
+      >
+        Select Music
+      </div>
+    </div>
+
+    <div class="grid grid-columns-repeat-2 grid-column-gap-s padding-m h-100 max-w-l w-100">
       <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
-        <SongBanner />
+        <SongBanner v-if="selectedSong" :banner="selectedSong.banner" />
         <div class="grid grid-columns-repeat-2 items-start rounded-border-s">
           <div>
             <Panel>
@@ -18,20 +30,17 @@
         </div>
       </div>
 
-      <div class="grid grid-rows-repeat-3">
-        <div />
-        <div class="h-100 grid grid-row-gap-s grid-rows-3">
-          <SongItem
-            class="d"
-            v-for="song of songs"
-            :key="song.id"
-            :id="song.id"
-            :song="song"
-            :selectedDifficulty="selectedDifficulty"
-            :selected="song.order === selectedSong"
-          />
-        </div>
-        <div />
+      <div class="margin-top-5rem">
+        <SongItem
+          class="h-8rem margin-bottom-1rem"
+          :class="{ 'shadow': selectedSong.order === song.order }"
+          v-for="song of songs"
+          :key="song.id"
+          :id="song.id"
+          :song="song"
+          :selectedDifficulty="selectedDifficulty"
+          :selected="song.order === selectedSong.order"
+        />
       </div>
     </div>
   </div>
@@ -51,29 +60,29 @@ import SongItem from "../components/SongItem.vue";
 import SongPersonalBest from "../components/SongPersonalBest.vue";
 import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
-import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import SongBanner from "../components/SongBanner.vue";
 import Panel from "../components/Panel.vue";
 
 const selectedDifficulty = ref<Difficulty>("expert");
-const selectedSong = ref(1);
+const selectedSongIdx = ref(1);
 
 function nextSong() {
-  if (selectedSong.value >= songs.value.length - 1) {
+  if (selectedSongIdx.value >= songs.value.length - 1) {
     return;
   }
-  selectedSong.value++;
+  selectedSongIdx.value++;
 }
 
 function prevSong() {
-  if (selectedSong.value === 0) {
+  if (selectedSongIdx.value === 0) {
     return;
   }
-  selectedSong.value--;
+  selectedSongIdx.value--;
 }
 
-watchEffect(() => console.log(selectedSong.value));
+watchEffect(() => console.log(selectedSongIdx.value));
 
 const router = useRouter();
 
@@ -83,7 +92,7 @@ function changeSong(event: KeyboardEvent) {
   } else if (event.code === "KeyJ") {
     nextSong();
   } else if (event.code === "Enter") {
-    const song = songs.value[selectedSong.value];
+    const song = songs.value[selectedSongIdx.value];
     router.push({ path: "game", query: { song: song.id } });
   }
 }
@@ -130,6 +139,10 @@ const charts: Chart[] = [
     level: 8
   }
 ]
+
+const selectedSong = computed(() => {
+  return songs.value.find(x => x.order === selectedSongIdx.value)!
+})
 
 async function fetchSongs() {
   const res = await window.fetch("http://localhost:8000/songs");

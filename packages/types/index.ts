@@ -1,3 +1,5 @@
+import type { ChartMetadata } from "@packages/chart-parser";
+
 export const difficulties = ["basic", "standard", "expert"] as const;
 
 export type Difficulty = typeof difficulties[number];
@@ -7,10 +9,8 @@ export interface Chart {
   level: number;
 }
 
-export interface BaseSong {
+export interface BaseSong extends ChartMetadata {
   id: string;
-  bpm: number;
-  title: string;
   charts: Chart[];
 }
 

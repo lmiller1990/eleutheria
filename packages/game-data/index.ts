@@ -57,9 +57,8 @@ app.get("/songs", async (req, res) => {
       const json = (await fs.readJson(t)) as ChartMetadata;
 
       return {
+        ...json,
         id: p,
-        bpm: json.bpm,
-        title: json.title,
         charts: [],
       };
     })

@@ -6,11 +6,11 @@ const basic = dedent`
     display: grid;
   }
 
-  grid-rows-1fr-2fr {
+  .grid-rows-1fr-2fr {
     grid-template-rows: 1fr 2fr;
   }
 
-  grid-columns-1fr-2fr {
+  .grid-columns-1fr-2fr {
     grid-template-columns: 1fr 2fr;
   }
 

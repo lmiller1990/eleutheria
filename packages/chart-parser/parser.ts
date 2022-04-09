@@ -9,6 +9,7 @@ export interface ChartMetadata {
   title: string;
   bpm: number;
   offset: number;
+  banner: string
 }
 
 export interface ParsedTapNoteChart {
@@ -156,6 +157,7 @@ export function parseChart(
     metadata: {
       title: dataJson.title,
       bpm: dataJson.bpm,
+      banner: dataJson.banner,
       offset: dataJson.offset,
     },
     tapNotes,

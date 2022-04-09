@@ -1,4 +1,5 @@
 import dedent from "dedent";
+import { joinGroup } from "./utils";
 
 const basic = dedent`
   .upcase {
@@ -10,4 +11,19 @@ const basic = dedent`
   }
 `
 
-export const typography = [basic].join("\n\n")
+const sizes = joinGroup(output => {
+  for (let i = 0; i < 5; i++) {
+    output.push(dedent`
+      .font-${i+1} {
+        font-size: ${i+1}rem;
+      }
+    `)
+  }
+})
+
+export const typography = joinGroup(output => {
+  return output.push(
+    basic,
+    sizes
+  )
+})
