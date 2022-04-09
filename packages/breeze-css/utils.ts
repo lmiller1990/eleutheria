@@ -33,3 +33,10 @@ export function generate(type: "padding" | "margin") {
 
   return output.join("\n\n");
 }
+
+
+export function joinGroup(fn: (output: string[]) => void) {
+  let output: string[] = [];
+  fn(output)
+  return output.join("\n\n");
+}

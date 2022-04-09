@@ -1,27 +1,38 @@
 <template>
-  <div class="grid grid-columns-repeat-2 grid-col-gap-m padding-m h-100">
-    <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
-      <SongBanner />
-      <div class="grid grid-columns-repeat-2 items-start d rounded-border-s">
-        <SongPersonalBest :personalBest="personalBest" />
-        <SongInfo :chartSummary="chartSummary" />
+  <div class="flex justify-center h-100 items-center">
+    <div class="grid grid-columns-repeat-2 grid-col-gap-m padding-m h-100 max-w-l w-100 items-center">
+      <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
+        <SongBanner />
+        <div class="grid grid-columns-repeat-2 items-start rounded-border-s">
+          <div>
+            <Panel>
+              <SongPersonalBest :personalBest="personalBest" />
+            </Panel>
+            <Panel>
+              <SongDifficulty :charts="charts" selected="expert" />
+            </Panel>
+          </div>
+          <Panel>
+            <SongInfo :chartSummary="chartSummary" />
+          </Panel>
+        </div>
       </div>
-    </div>
 
-    <div class="grid grid-rows-repeat-3">
-      <div />
-      <div class="h-100 grid grid-row-gap-s grid-rows-3">
-        <SongItem
-          class="d"
-          v-for="song of songs"
-          :key="song.id"
-          :id="song.id"
-          :song="song"
-          :selectedDifficulty="selectedDifficulty"
-          :selected="song.order === selectedSong"
-        />
+      <div class="grid grid-rows-repeat-3">
+        <div />
+        <div class="h-100 grid grid-row-gap-s grid-rows-3">
+          <SongItem
+            class="d"
+            v-for="song of songs"
+            :key="song.id"
+            :id="song.id"
+            :song="song"
+            :selectedDifficulty="selectedDifficulty"
+            :selected="song.order === selectedSong"
+          />
+        </div>
+        <div />
       </div>
-      <div />
     </div>
   </div>
 </template>
@@ -30,6 +41,7 @@
 import "../index.css";
 import type {
   BaseSong,
+  Chart,
   ChartSummary,
   Difficulty,
   PersonalBest,
@@ -37,10 +49,12 @@ import type {
 import type { Song } from "../types";
 import SongItem from "../components/SongItem.vue";
 import SongPersonalBest from "../components/SongPersonalBest.vue";
+import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
 import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import SongBanner from "../components/SongBanner.vue";
+import Panel from "../components/Panel.vue";
 
 const selectedDifficulty = ref<Difficulty>("expert");
 const selectedSong = ref(1);
@@ -101,6 +115,21 @@ const personalBest: PersonalBest = {
   percent: 95.5,
   date: "2022-04-06T12:12:11.308Z",
 };
+
+const charts: Chart[] = [
+  {
+    difficulty: 'basic',
+    level: 3
+  },
+  {
+    difficulty: 'standard',
+    level: 5
+  },
+  {
+    difficulty: 'expert',
+    level: 8
+  }
+]
 
 async function fetchSongs() {
   const res = await window.fetch("http://localhost:8000/songs");

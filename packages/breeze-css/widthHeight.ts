@@ -1,4 +1,5 @@
 import dedent from "dedent";
+import { joinGroup } from "./utils";
 
 const nums = Array(10)
   .fill(null)
@@ -18,5 +19,25 @@ function generateWidthHeight() {
   }
   return output.join("\n\n");
 }
+
+const _maxWidths = new Map([
+  ["s", 480],
+  ["m", 768],
+  ["l", 1024],
+]);
+
+export const maxWidth = Array.from(_maxWidths.entries())
+  .map((width) => {
+    return joinGroup((output) => {
+      output.push(
+        dedent`
+        .max-w-${width[0]} {
+          max-width: ${width[1]}px;
+        }
+      `
+      );
+    });
+  })
+  .join("\n\n");
 
 export const widthHeight = generateWidthHeight();

@@ -9,6 +9,10 @@ export const flex = dedent`
     justify-content: center;
   }
 
+  .space-between {
+    justify-content: space-between;
+  }
+
   .items-center {
     align-items: center;
   }
