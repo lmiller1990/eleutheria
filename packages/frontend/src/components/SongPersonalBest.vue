@@ -1,7 +1,7 @@
 <template>
   <table>
     <tr>
-      <td>Score</td>
+      <td>Best</td>
       <td>{{ formatPercent(props.personalBest.percent) }}</td>
     </tr>
 

@@ -11,7 +11,7 @@
     <div
       class="grid grid-columns-repeat-2 grid-column-gap-s padding-m h-100 max-w-l w-100"
     >
-      <div class="grid grid-rows-1fr-2fr grid-row-gap-m">
+      <div class="grid grid-row-gap-m">
         <SongBanner v-if="selectedSong" :banner="selectedSong.banner" />
         <div class="grid grid-columns-repeat-2 items-start rounded-border-s">
           <div>
