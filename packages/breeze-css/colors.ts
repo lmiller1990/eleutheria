@@ -23,6 +23,17 @@ const blue = {
   ],
 } as const;
 
+const gray = {
+  name: "gray",
+  colors: [
+    "rgb(229 231 235)",
+    "rgb(209 213 219)",
+    "rgb(156 163 175)",
+    "rgb(107 114 128)",
+    "rgb(75 85 99)",
+  ],
+};
+
 const green = {
   name: "green",
   colors: [
@@ -34,7 +45,7 @@ const green = {
   ],
 };
 
-const all = [red, blue, green];
+const all = [red, blue, green, gray];
 
 const _colors = all.map((col) => {
   return joinGroup((output) => {

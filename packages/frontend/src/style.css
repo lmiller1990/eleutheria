@@ -27,8 +27,8 @@ body,
 
 #debug {
   position: absolute;
-  top: 5px;
-  left: 5px;
+  bottom: 40px;
+  right: 10px;
 }
 
 .note {

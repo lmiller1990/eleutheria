@@ -1,8 +1,5 @@
 <template>
-  <div
-    style="background-color: gainsboro"
-    class="padding-s rounded-border-s margin-s shadow"
-  >
+  <div class="padding-s rounded-border-s margin-s shadow gray-1">
     <slot />
   </div>
 </template>

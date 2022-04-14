@@ -1,3 +1,5 @@
+import { ChartMetadata } from "@packages/chart-parser";
+import './webComponents'
 import { windows } from "./config";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
@@ -21,7 +23,7 @@ function createElement(tagName: string, id?: string, className?: string) {
     ></${tagName}>`;
 }
 
-export function createElements($root: HTMLDivElement, columnCount: number) {
+export function createElements($root: HTMLDivElement, columnCount: number, metadata: ChartMetadata) {
   const targetCols = Array(columnCount)
     .fill(0)
     .map((_, idx) => createElement("div", `target-col-${idx}`, "target-col"))
@@ -41,8 +43,19 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
       </tr>
     </table>
 
-    <div id="lhs" class="blue-1 w-100">
-      LHS
+    <div id="lhs" class="w-100 margin-m">
+      <!-- banner -->
+      <b-panel>
+        <img class="rounded-border-m" src="${metadata.banner}" />
+      </b-panel>
+
+      <div class="margin-vertical-s">
+        <ul>
+          <li>${metadata.title}</li>
+          <li>Artist</li>
+          <li>${metadata.bpm} BPM</li>
+        <ul>
+      </div>
     </div>
 
     <div id="targets" class="w-100">
@@ -56,8 +69,33 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
       <div id="combo"></div>
     </div>
 
-    <div id="rhs" class="w-100 red-1">
-      RHS
+    <div id="rhs" class="w-100 margin-m">
+      <!-- score panel -->
+      <b-panel>
+        <table>
+          <tr>
+            <td>Score</td>
+            <td>52.55% (-4.53%)</td>
+          </tr>
+
+          <tr>
+            <td>Perfect</td>
+            <td>120</td>
+          </tr>
+
+          <tr>
+            <td>Great</td>
+            <td>12</td>
+          </tr>
+
+          <tr>
+            <td>Miss</td>
+            <td>5</td>
+          </tr>
+
+        </table>
+      </b-panel>
+
     </div>
   `;
 

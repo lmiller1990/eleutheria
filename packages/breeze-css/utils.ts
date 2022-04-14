@@ -18,7 +18,7 @@ export function generate(type: "padding" | "margin") {
     output.push(
       dedent`
       .${type}-${letter} {
-        ${type}: ${num}rem;
+        ${type}: ${num}rem !important;
       }
     `
     );
@@ -29,7 +29,7 @@ export function generate(type: "padding" | "margin") {
       for (let i = 0; i < 21; i++) {
         output.push(dedent`
           .${type}-${dir}-${i}${unit} {
-            ${type}-${dir}: ${i}${unit}; 
+            ${type}-${dir}: ${i}${unit} !important; 
           }`);
       }
     }
@@ -37,7 +37,7 @@ export function generate(type: "padding" | "margin") {
 
   for (const [letter, num] of sizes) {
     for (const dir of ["horizontal", "vertical"] as const) {
-      const s = dir === "horizontal" ? `0 ${num}rem` : `${num}rem 0`;
+      const s = dir === "horizontal" ? `0 ${num}rem` : `${num}rem 0 !important`;
 
       output.push(dedent`
       .${type}-${dir}-${letter} {

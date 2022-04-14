@@ -196,8 +196,8 @@ export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted
 ) {
-  const elements = createElements($root, 6);
   const data = await fetchData();
+  const elements = createElements($root, 6, data.metadata);
 
   const gameConfig: GameConfig = {
     song: {
