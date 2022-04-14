@@ -27,6 +27,10 @@ export class InputManager {
   }
 
   onKey = (e: KeyboardEvent, type: "up" | "down") => {
+    if (!this.codeColumnMap.has(e.code)) {
+      return;
+    }
+
     if (this.t0 === undefined) {
       throw Error(
         `t0 must be set before listening for keyboard events! Set it with InputManager#setOrigin`

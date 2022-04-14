@@ -3,6 +3,7 @@
 exports[`parseChart > works 1`] = `
 {
   "metadata": {
+    "banner": "https://dummyimage.com/640x360/def/123",
     "bpm": 120,
     "offset": 0,
     "title": "Example Song",
@@ -141,6 +142,7 @@ exports[`parseHoldsChart > supports multiple holds holds-simultaneously 1`] = `
     ],
   ],
   "metadata": {
+    "banner": "https://dummyimage.com/640x360/def/123",
     "bpm": 120,
     "offset": 0,
     "title": "Example Song",
@@ -221,6 +223,7 @@ exports[`parseHoldsChart > works 1`] = `
     ],
   ],
   "metadata": {
+    "banner": "https://dummyimage.com/640x360/def/123",
     "bpm": 120,
     "offset": 0,
     "title": "Example Song",

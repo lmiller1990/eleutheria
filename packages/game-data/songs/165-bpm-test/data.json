@@ -1,5 +1,6 @@
 {
   "title": "165 BPM Example Song",
   "bpm": 165,
-  "offset": 1118
+  "offset": 1118,
+  "banner": "https://dummyimage.com/640x360/def/123"
 }

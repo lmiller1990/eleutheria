@@ -1,5 +1,5 @@
 <template>
-  <div id="game-app" ref="root" />
+  <div id="game-app" ref="root" class="max-w-l" />
 </template>
 
 <script lang="ts" setup>

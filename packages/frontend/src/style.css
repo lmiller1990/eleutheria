@@ -6,8 +6,8 @@ body,
 }
 
 :root {
-  --note-width: 100px;
   --note-height: 50px;
+  --col-width: 60px;
 
   --track-bg: #150d10;
   --root-bg: #4d4c4a;
@@ -17,7 +17,7 @@ body,
 }
 
 #game-app {
-  background: var(--root-bg);
+  /* background: var(--root-bg); */
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -25,26 +25,10 @@ body,
   width: 100vw;
 }
 
-#start,
-#stop,
 #debug {
   position: absolute;
-}
-
-#start,
-#stop {
-  top: 5px;
-}
-#debug {
-  top: 30px;
-}
-
-#start,
-#debug {
-  left: 5px;
-}
-#stop {
-  left: 55px;
+  bottom: 40px;
+  right: 10px;
 }
 
 .note {
@@ -93,7 +77,7 @@ body,
 .col {
   background: var(--track-bg);
   height: 100vh;
-  width: 100%;
+  width: var(--col-width); /*100%;*/
   margin: 0 2px;
 }
 
@@ -102,18 +86,18 @@ body,
   display: flex;
   justify-content: center;
   height: var(--target-height);
-  width: calc(var(--note-width) * 4);
+  width: calc(var(--col-width) * 6);
   z-index: 10;
 }
 
 #target-line {
   height: var(--target-height);
-  top: 250px;
+  top: 100px;
   position: absolute;
   box-shadow: 0px 0px 2px 2px white;
   display: flex;
   background: var(--track-bg);
-  width: 100%;
+  width: calc(var(--col-width) * 6);
 }
 
 @keyframes judgement {
