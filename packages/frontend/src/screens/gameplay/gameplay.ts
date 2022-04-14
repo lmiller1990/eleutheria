@@ -318,9 +318,7 @@ export async function start(
     },
 
     onStart: (world: World) => {
-      console.log(document.querySelector("#combo"));
-      // throw Error()
-      console.log("Start!", world.songData);
+      // console.log("Start!", world.songData);
     },
   };
 

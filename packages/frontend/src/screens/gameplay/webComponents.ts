@@ -1,7 +1,7 @@
 class Panel extends HTMLElement {
   constructor() {
-    super()
-    const slot = this.innerHTML
+    super();
+    const slot = this.innerHTML;
     this.innerHTML = `
       <div class="padding-s rounded-border-s shadow gray-1">
         ${slot}
@@ -10,4 +10,4 @@ class Panel extends HTMLElement {
   }
 }
 
-window.customElements.define('b-panel', Panel)
+window.customElements.define("b-panel", Panel);
