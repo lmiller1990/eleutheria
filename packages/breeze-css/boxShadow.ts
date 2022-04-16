@@ -7,7 +7,7 @@ const basic = dedent`
   }
 `;
 
-export const shadows = joinGroup((output) => {
+const _shadows = joinGroup((output) => {
   const r = (x: number) => x.toFixed(2);
 
   const floating = joinGroup((output) => {
@@ -29,3 +29,24 @@ export const shadows = joinGroup((output) => {
 
   output.push(basic, floating);
 });
+
+const shadowsHorizontal = joinGroup((output) => {
+  for (let i = 0; i < 5; i++) {
+    output.push(dedent`
+      .shadow-h-${i + 1} {
+        box-shadow: 0px 0px 10px ${i * 3}px black;
+      }
+    `);
+
+    output.push(dedent`
+      .border-v-${i + 1} {
+        border-top: ${(i + 1) * 2}px solid;
+        border-bottom: ${(i + 1) * 2}px solid;
+      }
+    `);
+  }
+});
+
+export const shadows = joinGroup((output => {
+  output.push(_shadows, basic, shadowsHorizontal)
+}))

@@ -45,9 +45,9 @@ const green = {
   ],
 };
 
-const all = [red, blue, green, gray];
+export const allColors = [red, blue, green, gray];
 
-const _colors = all.map((col) => {
+const _colors = allColors.map((col) => {
   return joinGroup((output) => {
     for (let i = 0; i < col.colors.length; i++) {
       output.push(

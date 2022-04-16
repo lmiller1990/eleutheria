@@ -1,8 +1,8 @@
 import dedent from "dedent";
-import { sizes } from "./utils";
+import { joinGroup, sizes } from "./utils";
+import { allColors } from "./colors";
 
-function generateBorder() {
-  let output: string[] = [];
+const rounded = joinGroup((output) => {
   for (const [letter, num] of sizes) {
     output.push(dedent`
       .rounded-border-${letter} {
@@ -10,7 +10,44 @@ function generateBorder() {
       }
     `);
   }
-  return output.join("\n\n");
-}
+});
 
-export const border = generateBorder();
+const horizontalVertical = joinGroup((output) => {
+  for (let i = 0; i < 5; i++) {
+    output.push(dedent`
+      .border-h-${i + 1} {
+        border-left: ${(i + 1) * 2}px solid;
+        border-right: ${(i + 1) * 2}px solid;
+      }
+    `);
+
+    output.push(dedent`
+      .border-v-${i + 1} {
+        border-top: ${(i + 1) * 2}px solid;
+        border-bottom: ${(i + 1) * 2}px solid;
+      }
+    `);
+
+    output.push(dedent`
+      .border-${i + 1} {
+        border: ${(i + 1) * 2}px solid;
+      }
+    `);
+  }
+});
+
+const color = joinGroup((output) => {
+  for (const c of allColors) {
+  for (let i = 0; i < 5; i++) {
+    output.push(dedent`
+      .border-${c.name}-${i + 1} {
+        border-color: ${c.colors[i]};
+      }
+    `);
+  }
+  }
+});
+
+export const border = joinGroup((output) => {
+  return output.push(rounded, horizontalVertical, color);
+});

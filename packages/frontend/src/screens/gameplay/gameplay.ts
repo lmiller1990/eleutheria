@@ -30,7 +30,7 @@ const holdMap = new Map<string, HTMLDivElement>();
 let timeoutId: number | undefined;
 
 function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
-  const $note = $tapNote();
+  const $note = $tapNote("gray-2 border-gray-5");
 
   const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {

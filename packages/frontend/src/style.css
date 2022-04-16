@@ -17,7 +17,6 @@ body,
 }
 
 #game-app {
-  /* background: var(--root-bg); */
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -35,9 +34,9 @@ body,
   height: var(--note-height);
   width: 100%;
 
-  background: var(--root-bg);
-  border-radius: 5px;
-  border: 2px solid white;
+  /* background: var(--root-bg); */
+  /* border-radius: 5px; */
+  /* border: 2px solid white; */
   box-sizing: border-box;
   position: absolute;
   font-size: 3rem;
@@ -75,10 +74,11 @@ body,
 }
 
 .col {
-  background: var(--track-bg);
+  /* background: var(--track-bg);
+  margin: 0 2px; */
+  border: 1px solid black;
   height: 100vh;
   width: var(--col-width); /*100%;*/
-  margin: 0 2px;
 }
 
 #targets {
@@ -88,16 +88,19 @@ body,
   height: var(--target-height);
   width: calc(var(--col-width) * 6);
   z-index: 10;
+  height: 100vh;
 }
 
 #target-line {
   height: var(--target-height);
+  width: calc(var(--col-width) * 6);
   top: 100px;
   position: absolute;
-  box-shadow: 0px 0px 2px 2px white;
   display: flex;
-  background: var(--track-bg);
-  width: calc(var(--col-width) * 6);
+
+  border: 1px solid;
+  /* box-shadow: 0px 0px 2px 2px white; */
+  /* background: var(--track-bg); */
 }
 
 @keyframes judgement {

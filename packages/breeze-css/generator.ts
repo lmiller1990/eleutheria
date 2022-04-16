@@ -8,6 +8,7 @@ import { misc } from "./misc";
 import { colors } from "./colors";
 import { typography } from "./typography";
 import { shadows } from "./boxShadow";
+import { opacity } from "./opacity";
 
 export const style = [
   flex,
@@ -21,4 +22,5 @@ export const style = [
   typography,
   maxWidth,
   shadows,
+  opacity,
 ].join("\n\n");
