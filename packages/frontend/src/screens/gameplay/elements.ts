@@ -30,7 +30,9 @@ export function createElements(
 ) {
   const targetCols = Array(columnCount)
     .fill(0)
-    .map((_, idx) => createElement("div", `target-col-${idx}`, "target-col rounded-border-m"))
+    .map((_, idx) =>
+      createElement("div", `target-col-${idx}`, "target-col rounded-border-m")
+    )
     .join("");
   const cols = Array(columnCount)
     .fill(0)
@@ -134,7 +136,7 @@ export function createElements(
 
 export type Elements = ReturnType<typeof createElements>;
 
-export function $tapNote(classes: string = '') {
+export function $tapNote(classes: string = "") {
   const d = document.createElement("div");
   d.className = `note rounded-border-m border-1 ${classes}`;
   return d;

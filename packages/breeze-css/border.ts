@@ -38,13 +38,13 @@ const horizontalVertical = joinGroup((output) => {
 
 const color = joinGroup((output) => {
   for (const c of allColors) {
-  for (let i = 0; i < 5; i++) {
-    output.push(dedent`
+    for (let i = 0; i < 5; i++) {
+      output.push(dedent`
       .border-${c.name}-${i + 1} {
         border-color: ${c.colors[i]};
       }
     `);
-  }
+    }
   }
 });
 

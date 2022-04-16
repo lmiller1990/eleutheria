@@ -47,6 +47,6 @@ const shadowsHorizontal = joinGroup((output) => {
   }
 });
 
-export const shadows = joinGroup((output => {
-  output.push(_shadows, basic, shadowsHorizontal)
-}))
+export const shadows = joinGroup((output) => {
+  output.push(_shadows, basic, shadowsHorizontal);
+});

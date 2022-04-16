@@ -11,6 +11,6 @@ const _opacity = joinGroup((output) => {
   }
 });
 
-export const opacity = joinGroup((output => {
-  output.push(_opacity)
-}))
+export const opacity = joinGroup((output) => {
+  output.push(_opacity);
+});
