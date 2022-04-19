@@ -15,12 +15,19 @@ const $ = <T extends Element = HTMLDivElement>(sel: string) => {
 
 type ColMap = Map<number, HTMLDivElement>;
 
-function createElement(tagName: string, id?: string, className?: string) {
+function createElement(
+  tagName: string,
+  props: { id?: string; className?: string },
+  children: string[] = []
+) {
+  const { className = "", id = "" } = props;
   return `
     <${tagName} 
-     class="${className || ""}" 
-     id="${id || ""}"
-    ></${tagName}>`;
+     class="${className}" 
+     id="${id}"
+    >
+      ${children.join("")}
+    </${tagName}>`;
 }
 
 export function createElements(
@@ -30,13 +37,30 @@ export function createElements(
 ) {
   const targetCols = Array(columnCount)
     .fill(0)
-    .map((_, idx) =>
-      createElement("div", `target-col-${idx}`, "target-col rounded-border-m")
-    )
+    .map((_, idx) => {
+      const outlineEl = createElement("div", {
+        id: `target-col-el-${idx}`,
+        className: "target-col-el rounded-border-m border-red-3 w-100 h-100",
+      });
+
+      const targetEl = createElement(
+        "div",
+        {
+          id: `target-col-${idx}`,
+          className: "target-col rounded-border-m",
+        },
+        [outlineEl]
+      );
+
+      return targetEl;
+    })
     .join("");
+
   const cols = Array(columnCount)
     .fill(0)
-    .map((_, idx) => createElement("div", `col-${idx}`, "col blue-5"))
+    .map((_, idx) =>
+      createElement("div", { id: `col-${idx}`, className: "col blue-5" })
+    )
     .join("");
 
   const html = `
@@ -67,7 +91,7 @@ export function createElements(
     </div>
 
     <div id="targets" class="w-100 gray-3 shadow-h-4">
-      <div id="target-line" class="blue-5">
+      <div id="target-line">
         ${targetCols}
       </div>
 

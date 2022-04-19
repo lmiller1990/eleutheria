@@ -34,9 +34,6 @@ body,
   height: var(--note-height);
   width: 100%;
 
-  /* background: var(--root-bg); */
-  /* border-radius: 5px; */
-  /* border: 2px solid white; */
   box-sizing: border-box;
   position: absolute;
   font-size: 3rem;
@@ -65,6 +62,11 @@ body,
   position: relative;
 }
 
+.target-col-el {
+  outline: 1px solid lightblue;
+  outline-offset: -3px;
+}
+
 .target-col-flash {
   animation: target-flash 0.5s;
 }
@@ -74,9 +76,6 @@ body,
 }
 
 .col {
-  /* background: var(--track-bg);
-  margin: 0 2px; */
-  border: 1px solid black;
   height: 100vh;
   width: var(--col-width); /*100%;*/
 }
@@ -97,10 +96,7 @@ body,
   top: 100px;
   position: absolute;
   display: flex;
-
-  border: 1px solid;
-  /* box-shadow: 0px 0px 2px 2px white; */
-  /* background: var(--track-bg); */
+  padding: 0 3px;
 }
 
 @keyframes judgement {
@@ -113,16 +109,23 @@ body,
   }
 }
 
+#timing,
+#combo {
+  font-family: "Comfortaa", cursive;
+  text-transform: uppercase;
+}
+
 #timing {
   position: absolute;
-  top: 125px;
+  text-shadow: 0px 0px 30px black;
+  top: 250px;
   font-size: 3rem;
 }
 
 #combo {
   position: absolute;
   top: 200px;
-  font-size: 2rem;
+  font-size: 1.75rem;
   color: white;
 }
 

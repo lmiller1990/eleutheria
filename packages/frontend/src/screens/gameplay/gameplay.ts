@@ -168,7 +168,7 @@ function updateUI(
 
       timeoutId = window.setTimeout(() => {
         elements.timing.innerText = "";
-      }, 2000);
+      }, 20000000);
     }
   }
 
