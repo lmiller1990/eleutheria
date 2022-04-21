@@ -30,13 +30,33 @@ body,
   right: 10px;
 }
 
+#lhs-panel {
+  background: #ff7293;
+}
+
+#rhs-panel {
+  background: #67c9f2;
+}
+
+:root {
+  --blue: rgb(30, 44, 152);
+  --dark: rgb(31, 24, 72);
+}
 .note {
   height: var(--note-height);
-  width: 100%;
+  width: 95%;
 
   box-sizing: border-box;
   position: absolute;
   font-size: 3rem;
+
+  border: 1px solid #a8bdc7;
+  background: #a8bdc7;
+}
+
+.note-1,
+.note-4 {
+  background: #0a6ed6;
 }
 
 @keyframes target-flash {
@@ -60,6 +80,8 @@ body,
 .target-col {
   width: 100%;
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 .target-col-el {
@@ -80,6 +102,20 @@ body,
   width: var(--col-width); /*100%;*/
 }
 
+.col {
+  background: rgb(58 80 90);
+  border-right: 1px solid black;
+}
+
+#col-0 {
+  border-left: 1px solid black;
+}
+
+#col-1,
+#col-4 {
+  background: rgb(13 78 104);
+}
+
 #targets {
   position: relative;
   display: flex;
@@ -96,7 +132,6 @@ body,
   top: 100px;
   position: absolute;
   display: flex;
-  padding: 0 3px;
 }
 
 @keyframes judgement {
@@ -129,9 +164,14 @@ body,
   color: white;
 }
 
+.absolute,
 .perfect,
 .great {
-  animation: judgement 0.05s;
+  animation: judgement 0.1s;
+}
+
+.absolute {
+  color: #ffb2ff;
 }
 
 .perfect {

@@ -30,7 +30,7 @@ const holdMap = new Map<string, HTMLDivElement>();
 let timeoutId: number | undefined;
 
 function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
-  const $note = $tapNote("gray-2 border-gray-5");
+  const $note = $tapNote("gray-2 border-gray-5", engineNote.column);
 
   const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {
@@ -46,7 +46,6 @@ function drawHoldNote(
   elements: Elements
 ): HTMLDivElement {
   const $note = drawNote(holdNote.at(0)!, elements);
-  console.log("draw", holdNote);
   $note.style.height = `${calcInitHeightOfHold(holdNote)}px`;
   return $note;
 }
@@ -145,21 +144,7 @@ function updateUI(
         );
       }
 
-      state.inputManager.consume(judgement.inputs);
-
-      const timing = `(${(judgement.timing * -1).toFixed()})`;
-      const text =
-        note.timingWindowName === "perfect"
-          ? note.timingWindowName
-          : judgement.timing > 0
-          ? `${note.timingWindowName}`
-          : `${note.timingWindowName}`;
-
-      judgementFlash(
-        elements.timing,
-        note.timingWindowName,
-        `${text} ${timing}`
-      );
+      judgementFlash(elements.timing, note.timingWindowName, judgement.timing);
       targetNoteHitFlash(elements.targetColElements, note.column);
 
       if (timeoutId) {

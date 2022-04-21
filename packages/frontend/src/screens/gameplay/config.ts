@@ -1,6 +1,6 @@
 import { EngineConfiguration } from "@packages/engine";
 
-export const windows = ["perfect", "great"] as const;
+export const windows = ["absolute", "perfect", "great"] as const;
 
 export const NOTE_WIDTH = parseInt(
   window
@@ -13,15 +13,19 @@ export const MULTIPLIER = 1.25;
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {
-  maxHitWindow: 75,
+  maxHitWindow: 50,
   timingWindows: [
     {
       name: windows[0],
-      windowMs: 25,
+      windowMs: 15,
     },
     {
       name: windows[1],
-      windowMs: 75,
+      windowMs: 30,
+    },
+    {
+      name: windows[2],
+      windowMs: 100,
     },
   ],
 };

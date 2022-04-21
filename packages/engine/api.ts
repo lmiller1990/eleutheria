@@ -157,9 +157,9 @@ export class Game {
       gameState.audioContext.getOutputTimestamp().performanceTime! -
       gameState.t0;
 
-    // if (dt > 8000) {
-    //   return;
-    // }
+    if (dt > 8000) {
+      return;
+    }
 
     const world: World = {
       ...gameState,
@@ -181,7 +181,7 @@ export class Game {
       this.#lastDebugUpdate = dt;
     }
 
-    gameState.inputManager.update(dt);
+    gameState.inputManager.clear();
 
     if (dt > this.#timeOfLastNote) {
       this.stop();

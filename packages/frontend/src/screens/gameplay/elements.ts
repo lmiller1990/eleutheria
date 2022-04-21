@@ -58,9 +58,9 @@ export function createElements(
 
   const cols = Array(columnCount)
     .fill(0)
-    .map((_, idx) =>
-      createElement("div", { id: `col-${idx}`, className: "col blue-5" })
-    )
+    .map((_, idx) => {
+      return createElement("div", { id: `col-${idx}`, className: "col" });
+    })
     .join("");
 
   const html = `
@@ -73,24 +73,18 @@ export function createElements(
       </tr>
     </table>
 
-    <div id="lhs" class="w-100 margin-m">
-      <div>
-        <b-panel>
-          <img class="rounded-border-m" src="${metadata.banner}" />
-        </b-panel>
-
-        <div class="margin-vertical-s">
-          <ul>
-            <li>${metadata.title}</li>
-            <li>Artist</li>
-            <li>${metadata.bpm} BPM</li>
-          </ul>
-        </div>
-
+    <div id="lhs" class="w-100 margin-left-2rem">
+      <div id="lhs-panel" class="margin-top-2rem padding-s rounded-border-s">
+        <table>
+          <tr><td>${metadata.title}</td></tr>
+          <tr><td>Artist</td></tr>
+          <tr><td>${metadata.bpm} BPM</td></tr>
+          <tr><td>Visualized by XXXX</td></tr>
+        </table>
       </div>
     </div>
 
-    <div id="targets" class="w-100 gray-3 shadow-h-4">
+    <div id="targets" class="w-100 shadow-h-4">
       <div id="target-line">
         ${targetCols}
       </div>
@@ -101,9 +95,9 @@ export function createElements(
       <div id="combo"></div>
     </div>
 
-    <div id="rhs" class="w-100 margin-m">
+    <div id="rhs" class="w-100 margin-right-2rem">
       <!-- score panel -->
-      <b-panel>
+      <div id="rhs-panel" class="margin-top-2rem padding-s rounded-border-s">
         <table>
           <tr>
             <td>Score</td>
@@ -126,7 +120,7 @@ export function createElements(
           </tr>
 
         </table>
-      </b-panel>
+      </div>
 
     </div>
   `;
@@ -160,9 +154,9 @@ export function createElements(
 
 export type Elements = ReturnType<typeof createElements>;
 
-export function $tapNote(classes: string = "") {
+export function $tapNote(classes: string = "", column: number) {
   const d = document.createElement("div");
-  d.className = `note rounded-border-m border-1 ${classes}`;
+  d.className = `note note-${column} rounded-border-m ${classes}`;
   return d;
 }
 
@@ -182,9 +176,20 @@ const TIMING_CLASSES = windows;
 export function judgementFlash(
   $timing: HTMLDivElement,
   timingWindow: string,
-  text: string
+  timing: number
 ) {
   const flip = createFlip(TIMING_CLASSES);
+  let text: string;
+  if (timingWindow === windows[0]) {
+    text = timingWindow;
+  } else {
+    // early
+    if (timing < 0) {
+      text = `-${timingWindow}`;
+    } else {
+      text = `${timingWindow}-`;
+    }
+  }
   $timing.innerText = text;
   flip($timing, timingWindow);
 }
