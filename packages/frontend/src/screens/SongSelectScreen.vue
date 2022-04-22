@@ -32,7 +32,7 @@
                   'not-selected h-5rem': !isSelected(song),
                 }"
                 v-for="song of songs"
-                :key="song.id"
+                :key="song.key"
                 :id="song.id"
                 :song="song"
                 :selectedDifficulty="selectedDifficulty"
@@ -158,7 +158,7 @@ async function fetchSongs() {
       ...s,
       order: i,
       title: `#${i}`,
-      id: i.toString(),
+      key: i.toString(),
     });
   }
 
