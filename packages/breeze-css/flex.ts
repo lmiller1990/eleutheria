@@ -21,6 +21,10 @@ export const flex = dedent`
     align-items: flex-start;
   }
 
+  .align-end {
+    align-items: flex-end;
+  }
+
   .items-start {
     align-items: flex-start;
   }

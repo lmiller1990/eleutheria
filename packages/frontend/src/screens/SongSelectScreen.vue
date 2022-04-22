@@ -26,7 +26,11 @@
           <div class="absolute w-100 padding-horizontal-l" id="wheel">
             <TransitionGroup name="items" mode="out-in">
               <SongItem
-                class="h-8rem margin-bottom-1rem"
+                class="margin-bottom-1rem"
+                :class="{
+                  'border-red-2 border-4 h-9rem selected': isSelected(song),
+                  'not-selected h-5rem': !isSelected(song),
+                }"
                 v-for="song of songs"
                 :key="song.id"
                 :id="song.id"
@@ -38,57 +42,8 @@
           </div>
         </div>
       </div>
-
-      <!-- <div>
-        <div>
-          <SongBanner v-if="selectedSong" :banner="selectedSong.banner" />
-        </div>
-      </div> -->
     </div>
   </div>
-  <!-- <div class="flex justify-center h-100 items-center flex-col">
-    <div class="w-100 h-5rem flex justify-center margin-vertical-m">
-      <div
-        class="max-w-l w-100 font-3 upcase blue-3 padding-horizontal-s rounded-border-m shadow"
-      >
-        Select Music
-      </div>
-    </div>
-
-    <div
-      class="grid grid-columns-repeat-2 grid-column-gap-s padding-m h-100 max-w-l w-100"
-    >
-      <div class="grid grid-row-gap-m">
-        <SongBanner v-if="selectedSong" :banner="selectedSong.banner" />
-        <div class="grid grid-columns-repeat-2 items-start rounded-border-s">
-          <div>
-            <Panel>
-              <SongPersonalBest :personalBest="personalBest" />
-            </Panel>
-            <Panel>
-              <SongDifficulty :charts="charts" selected="expert" />
-            </Panel>
-          </div>
-          <Panel>
-            <SongInfo :chartSummary="chartSummary" />
-          </Panel>
-        </div>
-      </div>
-
-      <div class="margin-top-5rem">
-        <SongItem
-          class="h-8rem margin-bottom-1rem"
-          :class="{ shadow: selectedSong.order === song.order }"
-          v-for="song of songs"
-          :key="song.id"
-          :id="song.id"
-          :song="song"
-          :selectedDifficulty="selectedDifficulty"
-          :selected="song.order === selectedSong.order"
-        />
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -107,23 +62,24 @@ import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import SongBanner from "../components/SongBanner.vue";
 import SelectSongBanner from "../components/SelectSongBanner.vue";
 import Panel from "../components/Panel.vue";
 import { throttle } from "lodash";
 
+const focusSongIndex = 3;
+const scrollSpeed = "0.1s";
+
 const selectedDifficulty = ref<Difficulty>("expert");
 const selectedSongIdx = ref(1);
-
 const songs = ref<Song[]>([]);
+
+function isSelected(song: Song) {
+  return songs.value.indexOf(song) === focusSongIndex;
+}
 
 function nextSong() {
   let [first, ...rest] = songs.value;
   songs.value = [...rest, first];
-  // if (selectedSongIdx.value >= songs.value.length - 1) {
-  //   return;
-  // }
-  // selectedSongIdx.value++;
 }
 
 function prevSong() {
@@ -145,7 +101,8 @@ function changeSong(event: KeyboardEvent) {
 }
 
 onMounted(() => {
-  window.addEventListener("keydown", throttle(changeSong, 100));
+  const ms = parseFloat(scrollSpeed.replace("s", ""));
+  window.addEventListener("keydown", throttle(changeSong, ms * 1000));
 });
 
 onBeforeUnmount(() => {
@@ -218,11 +175,19 @@ fetchSongs();
 }
 
 .items-move {
-  transition: transform 0.1s;
+  transition: transform v-bind(scrollSpeed);
 }
 
 #wheel {
   top: calc(16px * 1);
   color: black;
+}
+
+.not-selected {
+  margin-left: 20px;
+}
+
+.selected {
+  margin-left: -20px;
 }
 </style>
