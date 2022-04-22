@@ -9,12 +9,17 @@ import { colors } from "./colors";
 import { typography } from "./typography";
 import { shadows } from "./boxShadow";
 import { opacity } from "./opacity";
+import { position } from "./position";
+import { overflow } from "./overflow";
+import { zIndex } from "./zIndex";
 
 export const style = [
   flex,
   padding,
   margin,
   grid,
+  zIndex,
+  overflow,
   border,
   widthHeight,
   misc,
@@ -23,4 +28,5 @@ export const style = [
   maxWidth,
   shadows,
   opacity,
+  position,
 ].join("\n\n");

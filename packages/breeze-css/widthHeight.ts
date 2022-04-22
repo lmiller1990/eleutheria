@@ -1,9 +1,9 @@
 import dedent from "dedent";
 import { joinGroup } from "./utils";
 
-const nums = Array(10)
+const nums = Array(20)
   .fill(null)
-  .map((_, idx) => 100 - idx * 10);
+  .map((_, idx) => 100 - idx * 5);
 
 function generateWidthHeight(unit: "rem" | "px") {
   return joinGroup((output) => {

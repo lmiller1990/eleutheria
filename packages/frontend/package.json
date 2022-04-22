@@ -11,6 +11,7 @@
     "@packages/chart-parser": "0.0.0-development",
     "@packages/engine": "0.0.0-development",
     "@packages/types": "0.0.0-development",
+    "lodash": "4.17.21",
     "pinia": "^2.0.11",
     "vue": "^3.2.30",
     "vue-router": "^4.0.12"
@@ -19,6 +20,7 @@
     "@cypress/mount-utils": "^1.0.2",
     "@cypress/vite-dev-server": "^2.2.2",
     "@cypress/vue": "^3.0.0",
+    "@types/lodash": "4.14.182",
     "@vitejs/plugin-vue": "2.2.2",
     "autoprefixer": "^10.4.2",
     "cypress": "^9.3.1",

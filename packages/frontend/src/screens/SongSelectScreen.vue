@@ -1,5 +1,52 @@
 <template>
-  <div class="flex justify-center h-100 items-center flex-col">
+  <div class="h-100 w-100 max-w-l">
+    <div
+      class="grid grid-columns-1fr-2fr grid-column-gap-s padding-m h-100 w-100"
+    >
+      <div>
+        <Panel>
+          <SongInfo :chartSummary="chartSummary" />
+        </Panel>
+
+        <Panel>
+          <SongDifficulty :charts="charts" selected="expert" />
+        </Panel>
+
+        <Panel>
+          <SongPersonalBest :personalBest="personalBest" />
+        </Panel>
+      </div>
+
+      <div class="flex relative justify-center">
+        <div class="w-100 absolute z-10">
+          <SelectSongBanner />
+        </div>
+
+        <div class="relative w-100 overflow-hidden">
+          <div class="absolute w-100 padding-horizontal-l" id="wheel">
+            <TransitionGroup name="items" mode="out-in">
+              <SongItem
+                class="h-8rem margin-bottom-1rem"
+                v-for="song of songs"
+                :key="song.id"
+                :id="song.id"
+                :song="song"
+                :selectedDifficulty="selectedDifficulty"
+                :selected="song.order === selectedSong.order"
+              />
+            </TransitionGroup>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div>
+        <div>
+          <SongBanner v-if="selectedSong" :banner="selectedSong.banner" />
+        </div>
+      </div> -->
+    </div>
+  </div>
+  <!-- <div class="flex justify-center h-100 items-center flex-col">
     <div class="w-100 h-5rem flex justify-center margin-vertical-m">
       <div
         class="max-w-l w-100 font-3 upcase blue-3 padding-horizontal-s rounded-border-m shadow"
@@ -41,7 +88,7 @@
         />
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -58,29 +105,31 @@ import SongItem from "../components/SongItem.vue";
 import SongPersonalBest from "../components/SongPersonalBest.vue";
 import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
-import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import SongBanner from "../components/SongBanner.vue";
+import SelectSongBanner from "../components/SelectSongBanner.vue";
 import Panel from "../components/Panel.vue";
+import { throttle } from "lodash";
 
 const selectedDifficulty = ref<Difficulty>("expert");
 const selectedSongIdx = ref(1);
 
+const songs = ref<Song[]>([]);
+
 function nextSong() {
-  if (selectedSongIdx.value >= songs.value.length - 1) {
-    return;
-  }
-  selectedSongIdx.value++;
+  let [first, ...rest] = songs.value;
+  songs.value = [...rest, first];
+  // if (selectedSongIdx.value >= songs.value.length - 1) {
+  //   return;
+  // }
+  // selectedSongIdx.value++;
 }
 
 function prevSong() {
-  if (selectedSongIdx.value === 0) {
-    return;
-  }
-  selectedSongIdx.value--;
+  const last = songs.value.at(-1)!;
+  songs.value = [last, ...songs.value.slice(0, -1)];
 }
-
-watchEffect(() => console.log(selectedSongIdx.value));
 
 const router = useRouter();
 
@@ -96,14 +145,12 @@ function changeSong(event: KeyboardEvent) {
 }
 
 onMounted(() => {
-  window.addEventListener("keydown", changeSong);
+  window.addEventListener("keydown", throttle(changeSong, 100));
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", changeSong);
 });
-
-const songs = ref<Song[]>([]);
 
 const chartSummary: ChartSummary = {
   tapNotes: 512,
@@ -145,8 +192,37 @@ const selectedSong = computed(() => {
 async function fetchSongs() {
   const res = await window.fetch("http://localhost:8000/songs");
   const data = (await res.json()) as BaseSong[];
-  songs.value = data.map((song, order) => ({ ...song, order }));
+
+  let _songs: Song[] = [];
+
+  for (let i = 0; i < 20; i++) {
+    const s = data[i % data.length];
+    _songs.push({
+      ...s,
+      order: i,
+      title: `#${i}`,
+      id: i.toString(),
+    });
+  }
+
+  songs.value = _songs;
 }
 
 fetchSongs();
 </script>
+
+<style>
+#app {
+  /* https://doodad.dev/pattern-generator */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='100%25' width='100%25'%3E%3Cdefs%3E%3Cpattern id='doodad' width='38' height='38' viewBox='0 0 40 40' patternUnits='userSpaceOnUse' patternTransform='rotate(112)'%3E%3Crect width='100%25' height='100%25' fill='rgba(248, 242, 227,1)'/%3E%3Cpath d='M0 29.5a 9.5-9.5 0 0 0 9.5-9.5a 10.5-10.5 0 0 1 10.5-10.5v1a-9.5 9.5 0 0 0-9.5 9.5a-10.5 10.5 0 0 1-10.5 10.5zM0 69.5a 9.5-9.5 0 0 0 9.5-9.5a 10.5-10.5 0 0 1 10.5-10.5v1a-9.5 9.5 0 0 0-9.5 9.5a-10.5 10.5 0 0 1-10.5 10.5z' fill='rgba(250, 176, 63,1)' filter='url(%23filter-doodad-1)'/%3E%3Cpath d='M20 29.5a 9.5-9.5 0 0 0 9.5-9.5a 10.5-10.5 0 0 1 10.5-10.5v1a-9.5 9.5 0 0 0-9.5 9.5a-10.5 10.5 0 0 1-10.5 10.5z' fill='rgba(253, 209, 73,1)'/%3E%3C/pattern%3E%3Cfilter id='filter-doodad-1'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2' type='fractalNoise' result='result1'/%3E%3CfeDisplacementMap in2='result1' scale='0' result='result2' xChannelSelector='R' in='SourceGraphic'/%3E%3CfeComposite in2='result2' in='SourceGraphic' operator='atop' result='fbSourceGraphic'/%3E%3C/filter%3E%3C/defs%3E%3Crect fill='url(%23doodad)' height='200%25' width='200%25'/%3E%3C/svg%3E");
+}
+
+.items-move {
+  transition: transform 0.1s;
+}
+
+#wheel {
+  top: calc(16px * 1);
+  color: black;
+}
+</style>
