@@ -28,7 +28,7 @@
               <SongItem
                 class="margin-bottom-1rem"
                 :class="{
-                  'border-red-2 border-4 h-9rem selected': isSelected(song),
+                  'h-9rem selected': isSelected(song),
                   'not-selected h-5rem': !isSelected(song),
                 }"
                 v-for="song of songs"
@@ -36,7 +36,6 @@
                 :id="song.id"
                 :song="song"
                 :selectedDifficulty="selectedDifficulty"
-                :selected="song.order === selectedSong.order"
               />
             </TransitionGroup>
           </div>
@@ -60,7 +59,7 @@ import SongItem from "../components/SongItem.vue";
 import SongPersonalBest from "../components/SongPersonalBest.vue";
 import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import SelectSongBanner from "../components/SelectSongBanner.vue";
 import Panel from "../components/Panel.vue";
@@ -70,7 +69,6 @@ const focusSongIndex = 3;
 const scrollSpeed = "0.1s";
 
 const selectedDifficulty = ref<Difficulty>("expert");
-const selectedSongIdx = ref(1);
 const songs = ref<Song[]>([]);
 
 function isSelected(song: Song) {
@@ -95,7 +93,7 @@ function changeSong(event: KeyboardEvent) {
   } else if (event.code === "KeyJ") {
     nextSong();
   } else if (event.code === "Enter") {
-    const song = songs.value[selectedSongIdx.value];
+    const song = songs.value[focusSongIndex];
     router.push({ path: "game", query: { song: song.id } });
   }
 }
@@ -142,10 +140,6 @@ const charts: Chart[] = [
   },
 ];
 
-const selectedSong = computed(() => {
-  return songs.value.find((x) => x.order === selectedSongIdx.value)!;
-});
-
 async function fetchSongs() {
   const res = await window.fetch("http://localhost:8000/songs");
   const data = (await res.json()) as BaseSong[];
@@ -157,7 +151,7 @@ async function fetchSongs() {
     _songs.push({
       ...s,
       order: i,
-      title: `#${i}`,
+      title: `#${i}: ${s.title}`,
       key: i.toString(),
     });
   }
@@ -189,5 +183,6 @@ fetchSongs();
 
 .selected {
   margin-left: -20px;
+  box-shadow: 0px 0px 10px 5px goldenrod;
 }
 </style>
