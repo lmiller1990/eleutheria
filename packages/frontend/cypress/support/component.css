@@ -3,3 +3,5 @@
 [data-v-app] {
   height: 100%;
 }
+
+@import "../../../breeze-css/dist/breeze.css";

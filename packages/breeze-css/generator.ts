@@ -12,6 +12,7 @@ import { opacity } from "./opacity";
 import { position } from "./position";
 import { overflow } from "./overflow";
 import { zIndex } from "./zIndex";
+import { outline } from "./outline";
 
 export const style = [
   flex,
@@ -19,6 +20,7 @@ export const style = [
   margin,
   grid,
   zIndex,
+  outline,
   overflow,
   border,
   widthHeight,

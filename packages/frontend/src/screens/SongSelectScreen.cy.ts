@@ -1,6 +1,8 @@
-import { mount } from "@cypress/vue";
+import { mount } from "cypress/vue";
 import { BaseSong } from "@packages/types";
 import SongSelectScreen from "./SongSelectScreen.vue";
+
+import style from "../../../breeze-css/dist/breeze.css"
 
 const songs: BaseSong[] = Array(10)
   .fill(undefined)
@@ -20,7 +22,9 @@ describe(
         body: songs,
       });
 
-      mount(SongSelectScreen);
+      mount(SongSelectScreen, {
+        styles: [style],
+      });
     });
   }
 );

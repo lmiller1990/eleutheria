@@ -1,10 +1,10 @@
-import { devServer } from "@cypress/vite-dev-server";
+import { defineConfig } from "cypress";
 
-export default {
+export default defineConfig({
   component: {
-    devServer,
-    devServerConfig: {
-      // optionally provide your Vite config overrides.
+    devServer: {
+      framework: "vue",
+      bundler: "vite",
     },
   },
-};
+});

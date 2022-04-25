@@ -74,7 +74,7 @@ export function createElements(
     </table>
 
     <div id="lhs" class="w-100 margin-left-2rem">
-      <div id="lhs-panel" class="red-1 margin-top-2rem padding-s rounded-border-s">
+      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s">
         <table>
           <tr><td>${metadata.title}</td></tr>
           <tr><td>Artist</td></tr>
@@ -97,7 +97,7 @@ export function createElements(
 
     <div id="rhs" class="w-100 margin-right-2rem">
       <!-- score panel -->
-      <div id="rhs-panel" class="margin-top-2rem padding-s rounded-border-s">
+      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s">
         <table>
           <tr>
             <td>Score</td>
