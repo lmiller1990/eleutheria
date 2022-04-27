@@ -1,13 +1,11 @@
 <template>
-  <div class="flex items-center flex-col">
-    <ul class="w-40 mt-48 mb-24">
-      <TimingSummary
-        v-for="win of [...windows, 'miss']"
-        :key="win"
-        :window="win"
-        :data="data(win)"
-      />
-    </ul>
+  <div class="flex items-center flex-col h-100">
+    <table id="timing-table">
+      <tr v-for="win of [...windows, 'miss']" :key="win">
+        <td class="upcase" :class="`timing-${win}`">{{ win }}</td>
+        <td>{{ data(win).count }}</td>
+      </tr>
+    </table>
 
     <button @click="goNext">Continue</button>
   </div>
@@ -17,7 +15,6 @@
 import { useRouter } from "vue-router";
 import { useSummaryStore } from "../../stores/summary";
 import { windows } from "../gameplay/config";
-import TimingSummary from "./TimingSummary.vue";
 
 const summaryStore = useSummaryStore();
 
@@ -41,3 +38,9 @@ function goNext() {
   router.push("/");
 }
 </script>
+
+<style scoped>
+#timing-table {
+  font-family: "Comfortaa", cursive;
+}
+</style>

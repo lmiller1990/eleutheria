@@ -156,20 +156,20 @@ body,
   color: white;
 }
 
-.absolute,
-.perfect,
-.great {
+.timing-absolute,
+.timing-perfect,
+.timing-great {
   animation: judgement 0.1s;
 }
 
-.absolute {
+.timing-absolute {
   color: #ffb2ff;
 }
 
-.perfect {
+.timing-perfect {
   color: lightblue;
 }
 
-.great {
+.timing-great {
   color: lightgreen;
 }

@@ -10,6 +10,11 @@ export const useSummaryStore = defineStore("summary", {
     return {
       summary: {
         timing: {
+          absolute: {
+            count: 405,
+            early: 0,
+            late: 0,
+          },
           miss: {
             count: 10,
             early: 0,

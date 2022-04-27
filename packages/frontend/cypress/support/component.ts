@@ -15,6 +15,16 @@
 
 // Import commands.js using ES2015 syntax:
 import "./commands";
+import { createPinia, Pinia, setActivePinia } from "pinia";
+
+let pinia: Pinia;
+
+beforeEach(() => {
+  pinia = createPinia();
+  setActivePinia(pinia);
+});
+
+import "./component.css";
 
 // import "./component.css";
 // Alternatively you can use CommonJS syntax:

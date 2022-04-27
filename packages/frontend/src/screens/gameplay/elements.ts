@@ -1,5 +1,4 @@
 import { ChartMetadata } from "@packages/chart-parser";
-import "./webComponents";
 import { windows } from "./config";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
@@ -178,7 +177,7 @@ export function judgementFlash(
   timingWindow: string,
   timing: number
 ) {
-  const flip = createFlip(TIMING_CLASSES);
+  const flip = createFlip(TIMING_CLASSES.map((x) => `timing-${x}`));
   let text: string;
   if (timingWindow === windows[0]) {
     text = timingWindow;
@@ -191,7 +190,7 @@ export function judgementFlash(
     }
   }
   $timing.innerText = text;
-  flip($timing, timingWindow);
+  flip($timing, `timing-${timingWindow}`);
 }
 
 const createFlip =
