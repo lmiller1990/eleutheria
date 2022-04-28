@@ -33,6 +33,13 @@ export function generate(type: "padding" | "margin") {
           }`);
       }
     }
+
+    for (let i = 0; i < 21; i++) {
+      output.push(dedent`
+        .${type}-${i}${unit} {
+          ${type}: ${i}${unit} !important; 
+        }`);
+    }
   }
 
   for (const [letter, num] of sizes) {

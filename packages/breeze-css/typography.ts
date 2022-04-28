@@ -14,7 +14,7 @@ const basic = dedent`
 const sizes = joinGroup((output) => {
   for (let i = 0; i < 5; i++) {
     output.push(dedent`
-      .font-${i + 1} {
+      .font-${i + 1}rem {
         font-size: ${i + 1}rem;
       }
     `);

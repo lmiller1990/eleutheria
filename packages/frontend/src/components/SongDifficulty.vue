@@ -4,11 +4,7 @@
       class="flex space-between padding-s rounded-border-s"
       v-for="chart of props.charts"
       :key="chart.difficulty"
-      :class="{
-        'blue-2': chart.difficulty === 'basic',
-        'red-2': chart.difficulty === 'standard',
-        'green-2': chart.difficulty === 'expert',
-      }"
+      :class="difficulties[chart.difficulty]"
     >
       <div>{{ chart.difficulty }}</div>
       <div>{{ chart.level }}</div>
@@ -18,6 +14,7 @@
 
 <script setup lang="ts">
 import type { Chart, Difficulty } from "@packages/types";
+import { difficulties } from "../shared";
 
 const props = defineProps<{
   selected: Difficulty;

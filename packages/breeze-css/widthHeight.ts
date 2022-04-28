@@ -1,13 +1,15 @@
 import dedent from "dedent";
 import { joinGroup } from "./utils";
 
+const total = 35;
+
 const nums = Array(20)
   .fill(null)
   .map((_, idx) => 100 - idx * 5);
 
 function generateWidthHeight(unit: "rem" | "px") {
   return joinGroup((output) => {
-    for (let i = 0; i < 21; i++) {
+    for (let i = 0; i < total; i++) {
       output.push(dedent`
       .h-${i}${unit} {
         height: ${i}${unit}; 
