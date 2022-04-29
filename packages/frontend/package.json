@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc && vite build",
-    "test": "echo 'ok'"
+    "test": "echo 'ok'",
+    "cy:open": "cypress open --component"
   },
   "dependencies": {
     "@packages/audio-utils": "0.0.0-development",

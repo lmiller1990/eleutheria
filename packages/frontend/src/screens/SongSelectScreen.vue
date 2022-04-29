@@ -31,7 +31,7 @@
                   'h-9rem selected': isSelected(song),
                   'not-selected h-5rem': !isSelected(song),
                 }"
-                v-for="song of songs"
+                v-for="song of songsStore.songs"
                 :key="song.key"
                 :id="song.id"
                 :song="song"
@@ -48,7 +48,6 @@
 <script setup lang="ts">
 import "../index.css";
 import type {
-  BaseSong,
   Chart,
   ChartSummary,
   Difficulty,
@@ -64,25 +63,26 @@ import { useRouter } from "vue-router";
 import SelectSongBanner from "../components/SelectSongBanner.vue";
 import Panel from "../components/Panel.vue";
 import { throttle } from "lodash";
+import { useSongsStore } from "../stores/songs";
 
 const focusSongIndex = 3;
 const scrollSpeed = "0.1s";
 
 const selectedDifficulty = ref<Difficulty>("expert");
-const songs = ref<Song[]>([]);
+const songsStore = useSongsStore();
 
 function isSelected(song: Song) {
-  return songs.value.indexOf(song) === focusSongIndex;
+  return songsStore.songs.indexOf(song) === focusSongIndex;
 }
 
 function nextSong() {
-  let [first, ...rest] = songs.value;
-  songs.value = [...rest, first];
+  let [first, ...rest] = songsStore.songs;
+  songsStore.setSongs([...rest, first]);
 }
 
 function prevSong() {
-  const last = songs.value.at(-1)!;
-  songs.value = [last, ...songs.value.slice(0, -1)];
+  const last = songsStore.songs.at(-1)!;
+  songsStore.setSongs([last, ...songsStore.songs.slice(0, -1)]);
 }
 
 const router = useRouter();
@@ -93,7 +93,7 @@ function changeSong(event: KeyboardEvent) {
   } else if (event.code === "KeyJ") {
     nextSong();
   } else if (event.code === "Enter") {
-    const song = songs.value[focusSongIndex];
+    const song = songsStore.songs[focusSongIndex];
     router.push({ path: "game", query: { song: song.id } });
   }
 }
@@ -140,26 +140,7 @@ const charts: Chart[] = [
   },
 ];
 
-async function fetchSongs() {
-  const res = await window.fetch("http://localhost:8000/songs");
-  const data = (await res.json()) as BaseSong[];
-
-  let _songs: Song[] = [];
-
-  for (let i = 0; i < 20; i++) {
-    const s = data[i % data.length];
-    _songs.push({
-      ...s,
-      order: i,
-      title: `#${i}: ${s.title}`,
-      key: i.toString(),
-    });
-  }
-
-  songs.value = _songs;
-}
-
-fetchSongs();
+songsStore.fetchSongs();
 </script>
 
 <style lang="scss">
