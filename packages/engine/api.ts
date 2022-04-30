@@ -158,7 +158,7 @@ export class Game {
       gameState.t0;
 
     if (dt > 8000) {
-      return;
+      // return;
     }
 
     const world: World = {
