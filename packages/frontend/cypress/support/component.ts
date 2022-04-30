@@ -17,7 +17,7 @@
 import "./commands";
 import { createPinia, Pinia, setActivePinia } from "pinia";
 
-let pinia: Pinia;
+export let pinia: Pinia;
 
 beforeEach(() => {
   pinia = createPinia();

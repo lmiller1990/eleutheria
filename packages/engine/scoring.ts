@@ -7,6 +7,8 @@ export interface TimingTypeSummary {
 }
 
 export interface Summary {
+  achievements: string[];
+  percent: string;
   timing: {
     [key: string]: TimingTypeSummary;
   };
@@ -16,29 +18,33 @@ export function summarizeResults(
   world: World,
   timingWindowNames: readonly string[]
 ) {
-  const summary = timingWindowNames.reduce<Summary>(
-    (acc, curr) => {
-      return {
-        timing: {
-          ...acc.timing,
-          [curr]: {
-            early: 0,
-            late: 0,
-            count: 0,
-          },
-        },
-      };
+  const init: Summary = {
+    percent: "99.55",
+    achievements: [],
+    timing: {
+      miss: {
+        count: 0,
+        early: 0,
+        late: 0,
+      },
     },
-    {
+  };
+
+  const summary = timingWindowNames.reduce<Summary>((acc, curr) => {
+    const summary: Summary = {
+      ...acc,
       timing: {
-        miss: {
-          count: 0,
+        ...acc.timing,
+        [curr]: {
           early: 0,
           late: 0,
+          count: 0,
         },
       },
-    }
-  );
+    };
+
+    return summary;
+  }, init);
 
   for (const [id, note] of world.chart.tapNotes) {
     if (note.missed) {

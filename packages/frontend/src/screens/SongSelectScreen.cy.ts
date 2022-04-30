@@ -1,17 +1,8 @@
 import { mount } from "cypress/vue";
-import { BaseSong } from "@packages/types";
+import { songs } from "../../cypress/fixtures";
 import SongSelectScreen from "./SongSelectScreen.vue";
 
 import style from "../../../breeze-css/dist/breeze.css";
-
-const songs: BaseSong[] = Array(10)
-  .fill(undefined)
-  .map((_, idx) => ({
-    id: (idx + 1).toString(),
-    bpm: 150,
-    charts: [],
-    title: `Test Song #${idx + 1}`,
-  }));
 
 describe(
   "SongSelectScreen",

@@ -2,10 +2,10 @@ import { createApp, defineComponent, h, onUnmounted } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
 import { InputManager } from "@packages/engine";
+import { createPinia } from "pinia";
 import SongSelectScreen from "./screens/SongSelectScreen.vue";
 import GameplayScreen from "./screens/gameplay/GameplayScreen.vue";
 import SummaryScreen from "./screens/summary/SummaryScreen.vue";
-import { createPinia } from "pinia";
 import "./index.css";
 
 const router = createRouter({
