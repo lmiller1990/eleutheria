@@ -14,9 +14,9 @@ import { EngineNote } from "./engine";
 
 const SONG = {
   // SONG_ID: "rave",
-  // FORMAT: "mp3"
-  SONG_ID: "165-bpm-test",
-  FORMAT: "ogg",
+  FORMAT: "mp3",
+  SONG_ID: "clearday",
+  // FORMAT: "ogg",
 } as const;
 
 export const url = (song: typeof SONG) =>

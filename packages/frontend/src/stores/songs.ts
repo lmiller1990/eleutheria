@@ -36,8 +36,9 @@ export const useSongsStore = defineStore("songs", {
       const data = (await res.json()) as BaseSong[];
 
       let _songs: Song[] = [];
+      const _offset = 3;
 
-      for (let i = 0; i < 20; i++) {
+      for (let i = _offset; i < 20 + _offset; i++) {
         const s = data[i % data.length];
         _songs.push({
           ...s,

@@ -9,7 +9,7 @@ export const NOTE_WIDTH = parseInt(
   10
 );
 
-export const MULTIPLIER = 1.25;
+export const MULTIPLIER = 1.5;
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {
@@ -17,11 +17,11 @@ export const engineConfiguration: EngineConfiguration = {
   timingWindows: [
     {
       name: windows[0],
-      windowMs: 15,
+      windowMs: 20,
     },
     {
       name: windows[1],
-      windowMs: 30,
+      windowMs: 35,
     },
     {
       name: windows[2],

@@ -49,7 +49,7 @@ app.get("/songs/:id", (req, res) => {
 });
 
 app.get("/songs", async (req, res) => {
-  const assets = await fs.readdir(songsDir);
+  const assets = (await fs.readdir(songsDir)).filter((x) => !x.startsWith("."));
 
   const songs: BaseSong[] = await Promise.all(
     assets.map(async (p) => {
