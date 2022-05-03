@@ -291,6 +291,7 @@ export async function start(
 
     onSongCompleted: (_world: World) => {
       noteMap.clear();
+      holdMap.clear();
       timeoutId = undefined;
 
       const summary = summarizeResults(
@@ -303,7 +304,7 @@ export async function start(
     },
 
     onStart: (world: World) => {
-      // console.log("Start!", world.songData);
+      // ...
     },
   };
 
