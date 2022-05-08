@@ -5,5 +5,3 @@ export interface Song extends BaseSong {
   banner: string;
   key: string;
 }
-
-const T: Song = {}
