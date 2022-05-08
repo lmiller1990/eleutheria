@@ -428,6 +428,61 @@ describe("updateGameState", () => {
     expect(actual).toEqual(expected);
   });
 
+  it("counts a missed note as a judgement", () => {
+    // 2000 ms has passed since game started
+    const tapNotes = new Map<string, EngineNote>();
+    tapNotes.set(baseNote.id, { ...baseNote, ms: 1000, canHit: true });
+
+    // 2000 ms has passed since last update
+    const world = createWorld(
+      { tapNotes },
+      {
+        combo: 0,
+        startTime: 0,
+        time: 2000,
+        inputs: [],
+      }
+    );
+
+    const expected: UpdatedGameState = {
+      world: {
+        ...world,
+        combo: 0,
+        chart: {
+          holdNotes: new Map(),
+          tapNotes: new Map([
+            [
+              baseNote.id,
+              {
+                ...baseNote,
+                ms: 1000,
+                missed: true,
+                canHit: false,
+                timingWindowName: "miss",
+              },
+            ],
+          ]),
+        },
+      },
+      previousFrameMeta: {
+        comboBroken: true,
+        judgementResults: [
+          {
+            noteId: "1",
+            time: 0,
+            timing: 0,
+            timingWindowName: "miss",
+            inputs: [],
+          },
+        ],
+      },
+    };
+
+    const actual = updateGameState(world, engineConfiguration);
+
+    expect(actual).toEqual(expected);
+  });
+
   it("update game state considering input", () => {
     // 900 ms has passed since game started
     const tapNotes = new Map<string, EngineNote>();

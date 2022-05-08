@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "ts-node index.ts",
-    "test": "echo 'ok'"
+    "test": "echo 'ok'",
+    "check-ts": "tsc --noEmit"
   }
 }

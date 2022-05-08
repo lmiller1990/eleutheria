@@ -10,7 +10,7 @@ import {
   updateGameState,
   World,
 } from ".";
-import { EngineNote } from "./engine";
+import type { EngineNote, JudgementResult } from "./engine";
 
 const SONG = {
   // SONG_ID: "rave",
@@ -64,6 +64,7 @@ export interface GameLifecycle {
   onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void;
   onDebug?: (world: World, fps: number) => void;
   onStart?: (world: World) => void;
+  onJudgement?: (world: World, judgementResults: JudgementResult[]) => void;
   onSongCompleted?: (
     world: World,
     previousFrameMeta: PreviousFrameMeta
@@ -174,6 +175,16 @@ export class Game {
     );
 
     this.lifecycle.onUpdate?.(updatedWorld, previousFrameMeta);
+
+    if (
+      this.lifecycle.onJudgement &&
+      previousFrameMeta.judgementResults.length
+    ) {
+      this.lifecycle.onJudgement(
+        updatedWorld,
+        previousFrameMeta.judgementResults
+      );
+    }
 
     if (dt - this.#lastDebugUpdate > 1000) {
       this.lifecycle.onDebug?.(updatedWorld, this.#fps);

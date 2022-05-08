@@ -8,6 +8,7 @@
     "vitest": "0.1.24"
   },
   "scripts": {
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "check-ts": "tsc --noEmit"
   }
 }

@@ -5,6 +5,7 @@ import type {
   GameLifecycle,
   Summary,
   EngineNote,
+  JudgementResult,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import {
@@ -20,6 +21,7 @@ import {
   MULTIPLIER,
   PADDING_MS,
   codeColumnMap,
+  windows,
 } from "./config";
 import { writeDebugToHtml } from "./debug";
 import { LoadSongData } from "@packages/game-data";
@@ -138,6 +140,7 @@ function updateUI(
       const note =
         state.chart.tapNotes.get(judgement.noteId) ||
         state.chart.holdNotes.get(judgement.noteId)?.at(0);
+
       if (!note || !note.timingWindowName) {
         throw Error(
           `Could not find judged note with id ${judgement.noteId} and timing window ${note?.timingWindowName}. This should never happen.`
@@ -285,6 +288,15 @@ export async function start(
       updateUI(world, previousFrameMeta, elements);
     },
 
+    onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
+      const summary = summarizeResults(world, windows);
+
+      for (const win of [...windows, "miss"] as const) {
+        elements.scoreTable[win].textContent =
+          summary.timing[win].count.toString();
+      }
+    },
+
     onDebug: (world: World, fps: number) => {
       writeDebugToHtml(world, fps, elements);
     },
@@ -303,7 +315,7 @@ export async function start(
       songCompleted(summary);
     },
 
-    onStart: (world: World) => {
+    onStart: (_world: World) => {
       // ...
     },
   };

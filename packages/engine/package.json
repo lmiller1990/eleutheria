@@ -3,7 +3,8 @@
   "version": "0.0.0-development",
   "main": "index.ts",
   "scripts": {
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "check-ts": "tsc --noEmit"
   },
   "devDependencies": {
     "typescript": "4.5.4",

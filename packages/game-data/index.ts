@@ -9,7 +9,7 @@ import {
   ParsedHoldNoteChart,
   parseHoldsChart,
 } from "@packages/chart-parser";
-import type { BaseSong } from "@packages/types";
+import type { BaseSong } from "@packages/types/src";
 
 const app = express();
 app.use(cors());

@@ -22,6 +22,8 @@ const createNote = (
 describe("scoring", () => {
   it("summarizes results", () => {
     const expected: Summary = {
+      achievements: [],
+      percent: "99.55",
       timing: {
         perfect: {
           count: 3,
@@ -65,6 +67,8 @@ describe("scoring", () => {
 
   it("does not count future tapNotes as missed", () => {
     const expected: Summary = {
+      achievements: [],
+      percent: "99.55",
       timing: {
         perfect: {
           count: 0,

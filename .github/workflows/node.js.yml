@@ -26,4 +26,5 @@ jobs:
         cache: 'npm'
     - run: yarn install
     - run: yarn lint:check
+    - run: yarn check-ts
     - run: yarn test

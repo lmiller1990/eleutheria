@@ -62,6 +62,33 @@ export function createElements(
     })
     .join("");
 
+  const scoreTableRows = windows
+    .map(
+      (win) => `
+      <tr>
+        <td>${win}</td>
+        <td id="timing-${win}">0</td>
+      </tr>
+    `
+    )
+    .join("");
+
+  const scorePanelTable = `
+      <table id="score-table" class="upcase">
+        <tr>
+          <td>Score</td>
+          <td>52.55% (-4.53%)</td>
+        </tr>
+
+        ${scoreTableRows}
+
+        <tr>
+          <td>Miss</td>
+          <td id="timing-miss">0</td>
+        </tr>
+      </table>
+    `;
+
   const html = `
     <table id="debug">
       <tr>
@@ -97,28 +124,7 @@ export function createElements(
     <div id="rhs" class="w-100 margin-right-2rem">
       <!-- score panel -->
       <div id="rhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s">
-        <table>
-          <tr>
-            <td>Score</td>
-            <td>52.55% (-4.53%)</td>
-          </tr>
-
-          <tr>
-            <td>Perfect</td>
-            <td>120</td>
-          </tr>
-
-          <tr>
-            <td>Great</td>
-            <td>12</td>
-          </tr>
-
-          <tr>
-            <td>Miss</td>
-            <td>5</td>
-          </tr>
-
-        </table>
+        ${scorePanelTable}
       </div>
 
     </div>
@@ -148,6 +154,12 @@ export function createElements(
     debug: $("#debug"),
     debugLiveNoteCount: $("#debug-live-notes"),
     debugFps: $("#debug-fps"),
+    scoreTable: {
+      absolute: $("#score-table").querySelector("#timing-absolute")!,
+      perfect: $("#score-table").querySelector("#timing-perfect")!,
+      great: $("#score-table").querySelector("#timing-great")!,
+      miss: $("#score-table").querySelector("#timing-miss")!,
+    },
   };
 }
 

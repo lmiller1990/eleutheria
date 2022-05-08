@@ -83,6 +83,20 @@ async function createPkg() {
       )
     ),
     fs.writeFile(path.join(newDir, "index.ts"), ""),
+    fs.writeFile(
+      path.join(newDir, "tsconfig.json"),
+      JSON.stringify(
+        {
+          "extends": "../../tsconfig.json",
+          "include": ["**/*.ts"],
+          "compilerOptions": {
+            "skipLibCheck": true
+          }
+        },
+        null,
+        2
+      )
+    ),
   ]);
 }
 

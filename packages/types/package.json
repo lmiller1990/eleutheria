@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "test": "echo 'ok'"
+    "test": "echo 'ok'",
+    "check-ts": "tsc --noEmit"
   }
 }

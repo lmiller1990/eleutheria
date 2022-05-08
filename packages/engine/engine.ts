@@ -397,12 +397,13 @@ function processNoteJudgement(
   }
 
   // the note is past the max timing window and can no longer be hit
-  // it is considered "missed"
+  // it is considered "miss"
   if (note.hitAt === undefined && note.ms < time - maxWindowMs) {
     return {
       ...note,
       canHit: false,
       missed: true,
+      timingWindowName: "miss",
     };
   }
 
@@ -483,15 +484,24 @@ export function updateGameState(
 
   const newNotes = new Map<string, EngineNote>();
   for (const key of world.chart.tapNotes.keys()) {
+    const oldNote = world.chart.tapNotes.get(key)!;
     const newNote = processNoteJudgement(
-      world.chart.tapNotes.get(key)!,
+      oldNote,
       judgementResults,
       world.time,
       config.maxHitWindow
     );
 
-    if (newNote.missed) {
+    if (newNote.missed && !oldNote.missed) {
       nextFrameMissedCount++;
+
+      judgementResults.push({
+        noteId: newNote.id,
+        timing: 0,
+        time: 0,
+        timingWindowName: "miss",
+        inputs: [],
+      });
     }
 
     newNotes.set(key, newNote);
@@ -511,8 +521,16 @@ export function updateGameState(
       config.maxHitWindow
     );
 
-    if (newHoldNote.missed) {
+    if (newHoldNote.missed && !holdNote.missed) {
       nextFrameMissedCount++;
+
+      judgementResults.push({
+        noteId: newHoldNote.id,
+        timing: 0,
+        time: 0,
+        timingWindowName: "miss",
+        inputs: [],
+      });
     }
 
     for (const result of judgementResults) {
@@ -541,7 +559,10 @@ export function updateGameState(
   const comboBroken =
     nextFrameMissedCount > prevFrameMissedNotes || holdDropped;
 
-  const combo = comboBroken ? 0 : world.combo + judgementResults.length;
+  const combo = comboBroken
+    ? 0
+    : world.combo +
+      judgementResults.filter((x) => x.timingWindowName !== "miss").length;
 
   return {
     world: {

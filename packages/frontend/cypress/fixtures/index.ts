@@ -1,4 +1,4 @@
-import { BaseSong } from "@packages/types";
+import { BaseSong } from "@packages/types/src";
 
 export const songs: BaseSong[] = Array(10)
   .fill(undefined)

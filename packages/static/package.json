@@ -3,7 +3,8 @@
   "version": "0.0.0-development",
   "scripts": {
     "server": "serve public -l 4000 --cors",
-    "test": "echo 'ok'"
+    "test": "echo 'ok'",
+    "check-ts": "echo 'ok'"
   },
   "devDependencies": {
     "serve": "^13.0.2"

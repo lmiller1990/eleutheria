@@ -41,12 +41,12 @@
       </div>
 
       <div class="flex align-center">
-        <button @click="replay">
+        <!-- <button @click="replay">
           <Panel class="flex items-center">
             <span class="ascii-icon font-2rem">⟲</span>
             Play Again
           </Panel>
-        </button>
+        </button> -->
 
         <button @click="goNext">
           <Panel>
