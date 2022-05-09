@@ -77,7 +77,7 @@ export function createElements(
       <table id="score-table" class="upcase">
         <tr>
           <td>Score</td>
-          <td>52.55% (-4.53%)</td>
+          <td id="timing-percent">0.00%</td>
         </tr>
 
         ${scoreTableRows}
@@ -155,6 +155,7 @@ export function createElements(
     debugLiveNoteCount: $("#debug-live-notes"),
     debugFps: $("#debug-fps"),
     scoreTable: {
+      percent: $("#score-table").querySelector("#timing-percent")!,
       absolute: $("#score-table").querySelector("#timing-absolute")!,
       perfect: $("#score-table").querySelector("#timing-perfect")!,
       great: $("#score-table").querySelector("#timing-great")!,
@@ -194,10 +195,13 @@ export function judgementFlash(
   if (timingWindow === windows[0]) {
     text = timingWindow;
   } else {
-    // early
-    if (timing < 0) {
+    if (timingWindow === "miss") {
+      text = `${timingWindow}`;
+    } else if (timing < 0) {
+      // early
       text = `-${timingWindow}`;
     } else {
+      // late
       text = `${timingWindow}-`;
     }
   }

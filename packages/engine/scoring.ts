@@ -1,4 +1,4 @@
-import type { World } from "./engine";
+import type { TimingWindow, World } from "./engine";
 
 export interface TimingTypeSummary {
   count: number;
@@ -14,14 +14,9 @@ export interface Summary {
   };
 }
 
-export interface ScoringTimingWindow {
-  timingWindowName: string;
-  weight: number;
-}
-
 export function summarizeResults(
   world: World,
-  timingWindows: ScoringTimingWindow[]
+  timingWindows: Readonly<TimingWindow[]>
 ) {
   const init: Summary = {
     percent: "0.00",
@@ -35,7 +30,7 @@ export function summarizeResults(
     },
   };
 
-  const windowNames = timingWindows.map((x) => x.timingWindowName);
+  const windowNames = timingWindows.map((x) => x.name);
   const totalWeight = timingWindows.reduce((acc, curr) => {
     return acc + (curr.weight > 0 ? curr.weight : 0);
   }, 0);
@@ -49,10 +44,10 @@ export function summarizeResults(
 
   const weights = new Map(
     timingWindows.map((win) => {
-      if (win.timingWindowName === bestWindow.timingWindowName) {
-        return [win.timingWindowName, bestValue];
+      if (win.name === bestWindow.name) {
+        return [win.name, bestValue];
       }
-      return [win.timingWindowName, bestValue * (win.weight / totalWeight)];
+      return [win.name, bestValue * (win.weight / totalWeight)];
     })
   );
 
@@ -61,7 +56,7 @@ export function summarizeResults(
       ...acc,
       timing: {
         ...acc.timing,
-        [curr.timingWindowName]: {
+        [curr.name]: {
           early: 0,
           late: 0,
           count: 0,

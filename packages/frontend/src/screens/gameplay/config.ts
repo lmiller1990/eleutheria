@@ -1,6 +1,24 @@
-import { EngineConfiguration } from "@packages/engine";
+import type { EngineConfiguration } from "@packages/engine";
 
-export const windows = ["absolute", "perfect", "great"] as const;
+export const timingWindows = [
+  {
+    name: "absolute",
+    windowMs: 20,
+    weight: 3,
+  },
+  {
+    name: "perfect",
+    windowMs: 35,
+    weight: 2,
+  },
+  {
+    name: "great",
+    windowMs: 100,
+    weight: 1,
+  },
+] as const;
+
+export const windows = timingWindows.map((x) => x.name);
 
 export const NOTE_WIDTH = parseInt(
   window
@@ -14,20 +32,7 @@ export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {
   maxHitWindow: 50,
-  timingWindows: [
-    {
-      name: windows[0],
-      windowMs: 20,
-    },
-    {
-      name: windows[1],
-      windowMs: 35,
-    },
-    {
-      name: windows[2],
-      windowMs: 100,
-    },
-  ],
+  timingWindows,
 };
 
 export const codeColumnMap = new Map<string, number>([

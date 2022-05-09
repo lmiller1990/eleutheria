@@ -1,19 +1,22 @@
 import { describe, it, expect } from "vitest";
-import type { World, EngineNote } from "./engine";
+import type { World, EngineNote, TimingWindow } from "./engine";
 import { createWorld } from "./test/utils";
-import { Summary, summarizeResults, ScoringTimingWindow } from "./scoring";
+import { Summary, summarizeResults } from "./scoring";
 
-const timingWindows: ScoringTimingWindow[] = [
+const timingWindows: TimingWindow[] = [
   {
-    timingWindowName: "perfect",
+    name: "perfect",
+    windowMs: 100,
     weight: 2,
   },
   {
-    timingWindowName: "great",
+    name: "great",
+    windowMs: 50,
     weight: 1,
   },
   {
-    timingWindowName: "miss",
+    name: "miss",
+    windowMs: 0,
     weight: 0,
   },
 ];

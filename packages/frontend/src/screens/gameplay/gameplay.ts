@@ -22,6 +22,7 @@ import {
   PADDING_MS,
   codeColumnMap,
   windows,
+  timingWindows,
 } from "./config";
 import { writeDebugToHtml } from "./debug";
 import { LoadSongData } from "@packages/game-data";
@@ -289,12 +290,14 @@ export async function start(
     },
 
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
-      const summary = summarizeResults(world, windows);
+      const summary = summarizeResults(world, timingWindows);
 
       for (const win of [...windows, "miss"] as const) {
         elements.scoreTable[win].textContent =
           summary.timing[win].count.toString();
       }
+
+      elements.scoreTable.percent.textContent = `${summary.percent}%`;
     },
 
     onDebug: (world: World, fps: number) => {
@@ -308,7 +311,7 @@ export async function start(
 
       const summary = summarizeResults(
         _world,
-        engineConfiguration.timingWindows?.map((x) => x.name) || []
+        engineConfiguration.timingWindows ?? []
       );
 
       window.clearTimeout(timeoutId);

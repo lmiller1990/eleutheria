@@ -91,6 +91,7 @@ export interface EngineNote {
 export interface TimingWindow {
   name: string;
   windowMs: number;
+  weight: number;
 }
 
 export interface Chart {
@@ -100,7 +101,7 @@ export interface Chart {
 
 export interface EngineConfiguration {
   maxHitWindow: number;
-  timingWindows?: TimingWindow[];
+  timingWindows?: Readonly<TimingWindow[]>;
 }
 
 interface CreateChart {
@@ -269,7 +270,7 @@ export interface JudgementResult {
  */
 function getTimingWindow(
   timing: number,
-  timingWindows: TimingWindow[]
+  timingWindows: Readonly<TimingWindow[]>
 ): TimingWindow | undefined {
   // to make things nice and fast, we use a heuristic:
   // timingWindows is always sorted from
@@ -301,7 +302,7 @@ interface JudgeInput {
   maxWindow: number;
 
   // developer supplied timing windows
-  timingWindows: TimingWindow[] | undefined;
+  timingWindows: Readonly<TimingWindow[]> | undefined;
 }
 
 /**
