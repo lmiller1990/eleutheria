@@ -14,12 +14,17 @@ export interface Summary {
   };
 }
 
+export interface ScoringTimingWindow {
+  timingWindowName: string;
+  weight: number;
+}
+
 export function summarizeResults(
   world: World,
-  timingWindowNames: readonly string[]
+  timingWindows: ScoringTimingWindow[]
 ) {
   const init: Summary = {
-    percent: "99.55",
+    percent: "0.00",
     achievements: [],
     timing: {
       miss: {
@@ -30,12 +35,33 @@ export function summarizeResults(
     },
   };
 
-  const summary = timingWindowNames.reduce<Summary>((acc, curr) => {
+  const windowNames = timingWindows.map((x) => x.timingWindowName);
+  const totalWeight = timingWindows.reduce((acc, curr) => {
+    return acc + (curr.weight > 0 ? curr.weight : 0);
+  }, 0);
+
+  const totalNotes = world.chart.holdNotes.size + world.chart.tapNotes.size;
+  const bestWindow = timingWindows.reduce(
+    (acc, curr) => (curr.weight > acc.weight ? curr : acc),
+    timingWindows[0]
+  );
+  const bestValue = 100 / totalNotes;
+
+  const weights = new Map(
+    timingWindows.map((win) => {
+      if (win.timingWindowName === bestWindow.timingWindowName) {
+        return [win.timingWindowName, bestValue];
+      }
+      return [win.timingWindowName, bestValue * (win.weight / totalWeight)];
+    })
+  );
+
+  const summary = timingWindows.reduce<Summary>((acc, curr) => {
     const summary: Summary = {
       ...acc,
       timing: {
         ...acc.timing,
-        [curr]: {
+        [curr.timingWindowName]: {
           early: 0,
           late: 0,
           count: 0,
@@ -46,21 +72,20 @@ export function summarizeResults(
     return summary;
   }, init);
 
+  let percent = 0;
+
   for (const [id, note] of world.chart.tapNotes) {
     if (note.missed) {
       summary.timing.miss.count += 1;
     }
 
-    if (
-      note.timingWindowName &&
-      timingWindowNames.includes(note.timingWindowName)
-    ) {
+    if (note.timingWindowName && windowNames.includes(note.timingWindowName)) {
       if (note.timingWindowName && !(note.timingWindowName in summary.timing)) {
         // should be impossible - defensive check.
         throw Error(
           `Tried to add note with timing ${
             note.timingWindowName
-          } to summary, which is not a validate timing window. Valid windows are: ${timingWindowNames.join(
+          } to summary, which is not a validate timing window. Valid windows are: ${windowNames.join(
             ","
           )}`
         );
@@ -70,6 +95,7 @@ export function summarizeResults(
       if (note.hitAt !== undefined) {
         // always increase count
         summary.timing[note.timingWindowName].count += 1;
+        percent += weights.get(note.timingWindowName)!;
 
         // early
         if (note.hitAt < note.ms) {
@@ -84,5 +110,8 @@ export function summarizeResults(
     }
   }
 
-  return summary;
+  return {
+    ...summary,
+    percent: percent.toFixed(2),
+  };
 }
