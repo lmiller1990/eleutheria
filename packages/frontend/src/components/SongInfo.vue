@@ -2,7 +2,7 @@
   <table>
     <tr>
       <td>Tap Notes</td>
-      <td>{{ props.chartSummary.tapNotes }}</td>
+      <td>{{ props.chartSummary.totalNotes }}</td>
     </tr>
 
     <tr>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ChartSummary } from "@packages/types";
+import type { ChartSummary } from "@packages/types/src";
 
 function displayDuration(seconds: number) {
   const s = (seconds % 60).toString().padStart(2, "0");

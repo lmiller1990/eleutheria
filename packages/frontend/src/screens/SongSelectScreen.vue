@@ -4,7 +4,7 @@
       class="grid grid-columns-1fr-2fr grid-column-gap-s padding-m h-100 w-100"
     >
       <div>
-        <Panel>
+        <Panel v-if="chartSummary">
           <SongInfo :chartSummary="chartSummary" />
         </Panel>
 
@@ -46,24 +46,24 @@
 </template>
 
 <script setup lang="ts">
-import "../index.css";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { throttle } from "lodash";
 import type {
-  Chart,
   ChartSummary,
   Difficulty,
   PersonalBest,
-} from "@packages/types";
+} from "@packages/types/src";
 import type { Song } from "../types";
 import SongItem from "../components/SongItem.vue";
 import SongPersonalBest from "../components/SongPersonalBest.vue";
 import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
-import { onBeforeUnmount, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import SelectSongBanner from "../components/SelectSongBanner.vue";
 import Panel from "../components/Panel.vue";
-import { throttle } from "lodash";
 import { useSongsStore } from "../stores/songs";
+import { chartInfo } from "@packages/chart-parser";
+import "../index.css";
 
 const focusSongIndex = 3;
 const scrollSpeed = "0.1s";
@@ -74,6 +74,10 @@ const songsStore = useSongsStore();
 function isSelected(song: Song) {
   return songsStore.songs.indexOf(song) === focusSongIndex;
 }
+
+const selectedSong = computed(() => {
+  return songsStore.songs.at(focusSongIndex);
+});
 
 function nextSong() {
   let [first, ...rest] = songsStore.songs;
@@ -107,38 +111,23 @@ onBeforeUnmount(() => {
   window.removeEventListener("keydown", changeSong);
 });
 
-const chartSummary: ChartSummary = {
-  tapNotes: 512,
-  holdNotes: 18,
-  durationSeconds: 198,
-  chords: {
-    twoNoteCount: 22,
-    threeNoteCount: 12,
-    fourNoteCount: 9,
-    fiveNoteCount: 8,
-    sixNoteCount: 1,
-  },
-};
+const chartSummary = computed<ChartSummary | undefined>(() => {
+  if (!selectedSong.value || !selectedSong.value.charts.length) {
+    return;
+  }
+
+  return chartInfo(
+    selectedSong.value.charts[0].parsedTapNoteChart,
+    selectedSong.value.charts[0].parsedHoldNoteChart
+  );
+});
 
 const personalBest: PersonalBest = {
   percent: 95.5,
   date: "2022-04-06T12:12:11.308Z",
 };
 
-const charts: Chart[] = [
-  {
-    difficulty: "basic",
-    level: 3,
-  },
-  {
-    difficulty: "standard",
-    level: 5,
-  },
-  {
-    difficulty: "expert",
-    level: 8,
-  },
-];
+const charts = selectedSong.value?.charts ?? [];
 
 songsStore.fetchSongs();
 </script>

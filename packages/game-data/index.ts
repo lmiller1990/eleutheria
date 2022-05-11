@@ -15,35 +15,35 @@ const app = express();
 app.use(cors());
 
 export interface LoadSongData {
-  tapNotes: ParsedTapNoteChart;
-  holdNotes: ParsedHoldNoteChart;
+  parsedTapNoteChart: ParsedTapNoteChart;
+  parsedHoldNoteChart: ParsedHoldNoteChart;
   metadata: ChartMetadata;
 }
 
 const songsDir = path.join(__dirname, "songs");
 
-app.get("/songs/:id", (req, res) => {
-  const chartPath = path.join(songsDir, req.params.id);
+async function loadSong(id: string): Promise<LoadSongData> {
+  const chartPath = path.join(songsDir, id);
 
-  const tapNotes = fs.readFileSync(
-    path.join(chartPath, `${req.params.id}.chart`),
-    "utf-8"
-  );
+  const [_metadata, tapNotes, holdNotes] = await Promise.all([
+    fs.readFile(path.join(chartPath, "data.json"), "utf-8"),
+    fs.readFile(path.join(chartPath, `${id}.chart`), "utf-8"),
+    fs.readFile(path.join(chartPath, `${id}.holds.chart`), "utf-8"),
+  ]);
 
-  const holdNotes = fs.readFileSync(
-    path.join(chartPath, `${req.params.id}.holds.chart`),
-    "utf-8"
-  );
-
-  const metadata = JSON.parse(
-    fs.readFileSync(path.join(chartPath, "data.json"), "utf-8")
-  );
+  const metadata = JSON.parse(_metadata) as ChartMetadata;
 
   const data: LoadSongData = {
-    tapNotes: parseChart(metadata, tapNotes),
-    holdNotes: parseHoldsChart(metadata, holdNotes),
+    parsedTapNoteChart: parseChart(metadata, tapNotes),
+    parsedHoldNoteChart: parseHoldsChart(metadata, holdNotes),
     metadata,
   };
+
+  return data;
+}
+
+app.get("/songs/:id", async (req, res) => {
+  const data = await loadSong(req.params.id);
 
   res.json(data);
 });
@@ -52,14 +52,21 @@ app.get("/songs", async (req, res) => {
   const assets = (await fs.readdir(songsDir)).filter((x) => !x.startsWith("."));
 
   const songs: BaseSong[] = await Promise.all(
-    assets.map(async (p) => {
-      const t = path.join(songsDir, p, "data.json");
-      const json = (await fs.readJson(t)) as ChartMetadata;
+    assets.map(async (p): Promise<BaseSong> => {
+      const { metadata, parsedTapNoteChart, parsedHoldNoteChart } =
+        await loadSong(p);
 
       return {
-        ...json,
+        ...metadata,
         id: p,
-        charts: [],
+        charts: [
+          {
+            difficulty: "expert",
+            level: 5,
+            parsedTapNoteChart,
+            parsedHoldNoteChart,
+          },
+        ],
       };
     })
   );

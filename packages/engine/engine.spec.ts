@@ -209,10 +209,12 @@ describe("judgeInput", () => {
         {
           name: "perfect",
           windowMs: 22,
+          weight: 1,
         },
         {
           name: "great",
           windowMs: 33,
+          weight: 1,
         },
       ],
     });
@@ -240,10 +242,12 @@ describe("judgeInput", () => {
         {
           name: "perfect",
           windowMs: 10,
+          weight: 1,
         },
         {
           name: "great",
           windowMs: 33,
+          weight: 1,
         },
       ],
     });
@@ -272,10 +276,12 @@ describe("judgeInput", () => {
         {
           name: "perfect",
           windowMs: 10,
+          weight: 1,
         },
         {
           name: "great",
           windowMs: 33,
+          weight: 1,
         },
       ],
     });
@@ -303,10 +309,12 @@ describe("judgeInput", () => {
         {
           name: "perfect",
           windowMs: 10,
+          weight: 1,
         },
         {
           name: "great",
           windowMs: 20,
+          weight: 1,
         },
       ],
     });
