@@ -69,7 +69,7 @@ export function summarizeResults(
 
   let percent = 0;
 
-  for (const [id, note] of world.chart.tapNotes) {
+  for (const [_id, note] of world.chart.tapNotes) {
     if (note.missed) {
       summary.timing.miss.count += 1;
     }

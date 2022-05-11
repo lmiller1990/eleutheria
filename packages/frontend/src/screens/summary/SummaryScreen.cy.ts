@@ -14,11 +14,6 @@ function setTestData() {
   const songsStore = useSongsStore();
   songsStore.$patch((state) => {
     state.songs = [{ ...songs[0], id: "0", order: 0, key: "0" }];
-    state.selectedSongId = "0";
-    state.selectedChart = {
-      level: 5,
-      difficulty: "expert",
-    };
   });
 
   const summaryStore = useSummaryStore();

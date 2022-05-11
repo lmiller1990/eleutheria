@@ -1,6 +1,6 @@
-import type { BaseSong, Difficulty } from "@packages/types/src";
+import type { BaseSong } from "@packages/types/src";
 import { defineStore } from "pinia";
-import { Chart, Song } from "../types";
+import type { Song } from "../types";
 
 interface SongsState {
   songs: Song[];

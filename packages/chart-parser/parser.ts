@@ -172,7 +172,6 @@ export function parseHoldsChart(
   const result = parseChart(dataJson, chartRaw);
 
   let holds: HoldNote[] = [];
-  let hold: HoldNote = [];
   let holdMap = new Map<number, HoldNote>();
 
   for (const note of result.tapNotes) {
@@ -188,7 +187,7 @@ export function parseHoldsChart(
     }
   }
 
-  for (const [k, hold] of holdMap) {
+  for (const [_k, hold] of holdMap) {
     holds.push(hold);
   }
 

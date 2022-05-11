@@ -89,10 +89,6 @@ const router = useRouter();
 function goNext() {
   router.push("/");
 }
-
-function replay() {
-  //
-}
 </script>
 
 <style scoped lang="scss">

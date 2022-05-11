@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { PersonalBest } from "@packages/types";
+import type { PersonalBest } from "@packages/types/src";
 
 function formatDate(string: string) {
   return new Date(string).toLocaleDateString("en-US", {

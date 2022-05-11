@@ -13,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Chart, Difficulty } from "@packages/types";
+import type { Difficulty } from "@packages/types/src";
 import { difficulties } from "../shared";
+import type { Chart } from "../types";
 
 const props = defineProps<{
   selected: Difficulty;
