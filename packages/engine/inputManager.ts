@@ -2,7 +2,7 @@ import { Input } from "@packages/engine";
 
 export interface InputManagerConfig {
   maxWindowMs: number;
-  onKeyCallback?: Map<string, () => void>;
+  onKeyDownCallback?: Map<string, () => void>;
 }
 
 export class InputManager {
@@ -39,10 +39,11 @@ export class InputManager {
 
     const column = this.codeColumnMap.get(e.code);
 
-    const cb = this.config?.onKeyCallback?.get(e.code);
-
-    if (cb) {
-      cb();
+    if (type === "up") {
+      const cb = this.config?.onKeyDownCallback?.get(e.code);
+      if (cb) {
+        cb();
+      }
     }
 
     if (column === undefined) {

@@ -12,20 +12,12 @@ import {
 } from ".";
 import type { EngineNote, JudgementResult } from "./engine";
 
-const SONG = {
-  // SONG_ID: "rave",
-  FORMAT: "mp3",
-  SONG_ID: "clearday",
-  // FORMAT: "ogg",
-} as const;
+export const url = (id: string) => `http://localhost:4000/${id}.mp3`;
 
-export const url = (song: typeof SONG) =>
-  `http://localhost:4000/${song.SONG_ID}.${song.FORMAT}`;
-
-export async function fetchAudio(paddingMs: number) {
+export async function fetchAudio(id: string, paddingMs: number) {
   const audioContext = new AudioContext();
 
-  const res = await window.fetch(url(SONG));
+  const res = await window.fetch(url(id));
   const buf = await res.arrayBuffer();
   let buffer = await audioContext.decodeAudioData(buf);
   buffer = padStart(audioContext, buffer, paddingMs);
@@ -89,7 +81,7 @@ export class Game {
       (this.config.postSongPadding || 0);
   }
 
-  async start(songData: ChartMetadata) {
+  async start(id: string, songData: ChartMetadata) {
     const chart = createChart({
       tapNotes: this.config.song.tapNotes.map((x) => ({
         ...x,
@@ -116,7 +108,7 @@ export class Game {
 
     inputManager.listen();
 
-    const play = await fetchAudio(this.config.preSongPadding || 0);
+    const play = await fetchAudio(id, this.config.preSongPadding || 0);
 
     const { audioContext, source, startTime } = play();
 

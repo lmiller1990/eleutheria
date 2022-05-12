@@ -170,13 +170,17 @@ function calcYPosition(note: EngineNote, world: World) {
   return (note.ms - world.time) * MULTIPLIER;
 }
 
-export async function fetchData(): Promise<LoadSongData> {
+function getSongId(): string {
   const url = new URL(window.location.toString());
   const params = new URLSearchParams(url.search);
   const id = params.get("song");
   if (!id) {
     throw Error(`Expected ${window.location} to have search params ?song=<ID>`);
   }
+  return id;
+}
+
+export async function fetchData(id: string): Promise<LoadSongData> {
   const res = await window.fetch(`http://localhost:8000/songs/${id}`);
   return res.json();
 }
@@ -185,7 +189,8 @@ export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted
 ) {
-  const data = await fetchData();
+  const id = getSongId();
+  const data = await fetchData(id);
   const elements = createElements($root, 6, data.metadata);
 
   const gameConfig: GameConfig = {
@@ -199,7 +204,7 @@ export async function start(
     engineConfiguration,
     codeColumns: codeColumnMap,
     inputManagerConfig: {
-      onKeyCallback: new Map([
+      onKeyDownCallback: new Map([
         ["KeyS", () => targetFlash(elements.targetColElements, 0)],
         ["KeyD", () => targetFlash(elements.targetColElements, 1)],
         ["KeyF", () => targetFlash(elements.targetColElements, 2)],
@@ -325,5 +330,5 @@ export async function start(
 
   const game = new Game(gameConfig, lifecycle);
 
-  await game.start(data.metadata);
+  await game.start(id, data.metadata);
 }
