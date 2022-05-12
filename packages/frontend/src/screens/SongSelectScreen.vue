@@ -5,7 +5,10 @@
     >
       <div>
         <Panel v-if="chartSummary">
-          <SongInfo :chartSummary="chartSummary" />
+          <SongInfo
+            :chartSummary="chartSummary"
+            :durationSeconds="selectedSong?.duration"
+          />
         </Panel>
 
         <Panel>
@@ -46,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { throttle } from "lodash";
 import type {
@@ -77,6 +80,13 @@ function isSelected(song: Song) {
 
 const selectedSong = computed(() => {
   return songsStore.songs.at(focusSongIndex);
+});
+
+watchEffect(() => {
+  if (!selectedSong.value) {
+    return;
+  }
+  songsStore.setSelectedSongId(selectedSong.value.id);
 });
 
 function nextSong() {
@@ -127,7 +137,7 @@ const personalBest: PersonalBest = {
   date: "2022-04-06T12:12:11.308Z",
 };
 
-const charts = selectedSong.value?.charts ?? [];
+const charts = computed(() => selectedSong.value?.charts ?? []);
 
 songsStore.fetchSongs();
 </script>

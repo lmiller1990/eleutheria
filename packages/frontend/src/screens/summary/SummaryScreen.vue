@@ -8,7 +8,7 @@
         <div class="font-3rem">{{ songsStore.selectedSong?.title }}</div>
         <div
           class="h-30px w-30px flex items-center justify-center rounded-border-s padding-4px"
-          :class="difficulties[songsStore.selectedChart?.difficulty]"
+          :class="difficultyClass"
         >
           <span>{{ songsStore.selectedChart?.level }}</span>
         </div>
@@ -69,6 +69,10 @@ import { useSongsStore } from "../../stores/songs";
 
 const summaryStore = useSummaryStore();
 const songsStore = useSongsStore();
+
+const difficultyClass = songsStore.selectedChart
+  ? difficulties[songsStore.selectedChart.difficulty]
+  : undefined;
 
 function data(win: string) {
   const d = summaryStore.summary?.timing?.[win];

@@ -12,7 +12,7 @@
 
     <tr>
       <td>Duration</td>
-      <td>{{ displayDuration(props.chartSummary.durationSeconds) }}</td>
+      <td>{{ durationSeconds }}</td>
     </tr>
 
     <tr>
@@ -30,12 +30,6 @@
 <script lang="ts" setup>
 import type { ChartSummary } from "@packages/types/src";
 
-function displayDuration(seconds: number) {
-  const s = (seconds % 60).toString().padStart(2, "0");
-  const m = Math.floor(seconds / 60);
-  return `${m}:${s}`;
-}
-
 const keys = [
   { key: "twoNoteCount", num: "2" },
   { key: "threeNoteCount", num: "3" },
@@ -46,5 +40,6 @@ const keys = [
 
 const props = defineProps<{
   chartSummary: ChartSummary;
+  durationSeconds: string;
 }>();
 </script>

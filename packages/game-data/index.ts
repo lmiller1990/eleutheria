@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import fs from "fs-extra";
+import mm from "music-metadata";
 import {
   ChartMetadata,
   parseChart,
@@ -25,18 +26,30 @@ const songsDir = path.join(__dirname, "songs");
 async function loadSong(id: string): Promise<LoadSongData> {
   const chartPath = path.join(songsDir, id);
 
-  const [_metadata, tapNotes, holdNotes] = await Promise.all([
+  const [_metadata, tapNotes, holdNotes, audioMetadata] = await Promise.all([
     fs.readFile(path.join(chartPath, "data.json"), "utf-8"),
     fs.readFile(path.join(chartPath, `${id}.chart`), "utf-8"),
     fs.readFile(path.join(chartPath, `${id}.holds.chart`), "utf-8"),
+    mm.parseFile(path.join(__dirname, "..", "static", "public", `${id}.mp3`)),
   ]);
 
   const metadata = JSON.parse(_metadata) as ChartMetadata;
 
+  const toHumanTime = (s: number) => {
+    const min = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${min}:${sec.toFixed(0)}`;
+  };
+
   const data: LoadSongData = {
     parsedTapNoteChart: parseChart(metadata, tapNotes),
     parsedHoldNoteChart: parseHoldsChart(metadata, holdNotes),
-    metadata,
+    metadata: {
+      ...metadata,
+      duration: audioMetadata.format.duration
+        ? toHumanTime(audioMetadata.format.duration)
+        : "?",
+    },
   };
 
   return data;

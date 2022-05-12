@@ -1,19 +1,27 @@
 import type { BaseSong } from "@packages/types/src";
 import { defineStore } from "pinia";
-import type { Song } from "../types";
+import type { Chart, Song } from "../types";
 
 interface SongsState {
   songs: Song[];
+  selectedSongId: string | undefined;
+  selectedChartIdx: number | undefined;
 }
 
 export const useSongsStore = defineStore("songs", {
   state: (): SongsState => {
     return {
+      selectedSongId: undefined,
+      selectedChartIdx: undefined,
       songs: [],
     };
   },
 
   actions: {
+    setSelectedSongId(selectedSongId: string) {
+      this.selectedSongId = selectedSongId;
+    },
+
     setSongs(songs: Song[]) {
       this.songs = songs;
     },
@@ -36,6 +44,18 @@ export const useSongsStore = defineStore("songs", {
       }
 
       this.songs = _songs;
+    },
+  },
+
+  getters: {
+    selectedSong(state): Song | undefined {
+      return state.songs.find((x) => x.id === state.selectedSongId);
+    },
+    selectedChart(state): Chart | undefined {
+      if (!state.selectedChartIdx) {
+        return;
+      }
+      return this.selectedSong?.charts[state.selectedChartIdx];
     },
   },
 });

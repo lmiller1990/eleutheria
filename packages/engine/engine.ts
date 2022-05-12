@@ -330,7 +330,7 @@ export function judgeInput({
     };
   }
 
-  return undefined
+  return undefined;
 }
 
 /**

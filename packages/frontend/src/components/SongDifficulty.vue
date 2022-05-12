@@ -1,5 +1,5 @@
 <template>
-  <ul class="grid grid-row-gap-s grid-rows-repeat-3 upcase">
+  <ul class="upcase">
     <li
       class="flex space-between padding-s rounded-border-s"
       v-for="chart of props.charts"

@@ -13,7 +13,6 @@ export interface BaseSong extends ChartMetadata {
 export interface ChartSummary {
   totalNotes: number;
   holdNotes: number;
-  durationSeconds: number;
   chords: {
     twoNoteCount: number;
     threeNoteCount: number;

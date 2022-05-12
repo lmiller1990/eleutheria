@@ -10,6 +10,7 @@ export interface ChartMetadata {
   bpm: number;
   offset: number;
   banner: string;
+  [x: string]: any;
 }
 
 export interface ParsedTapNoteChart {

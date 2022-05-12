@@ -5,7 +5,6 @@ export function chartInfo(
   taps: ParsedTapNoteChart,
   holds: ParsedHoldNoteChart
 ): ChartSummary {
-  console.log(taps);
   const notes = new Map<number, number>();
 
   for (const n of taps.tapNotes) {
@@ -30,7 +29,6 @@ export function chartInfo(
   const info: ChartSummary = {
     totalNotes: 0,
     holdNotes: 0,
-    durationSeconds: 0,
     chords: {
       twoNoteCount: 0,
       threeNoteCount: 0,

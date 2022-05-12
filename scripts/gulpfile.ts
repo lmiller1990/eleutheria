@@ -1,9 +1,9 @@
 import gulp from "gulp";
 import fs from "fs-extra";
-import chokidar from 'chokidar'
+import chokidar from "chokidar";
 import path from "path";
 import inquirer from "inquirer";
-import { spawn } from "child_process";
+import { ChildProcess, spawn } from "child_process";
 
 async function serverDev() {
   spawn("yarn", ["dev"], {
@@ -20,34 +20,50 @@ async function assetsServer() {
 }
 
 async function breezeCss() {
-  const watcher = chokidar.watch(path.join(__dirname, '..', 'packages', 'breeze-css', '**/*.ts'))
+  const watcher = chokidar.watch(
+    path.join(__dirname, "..", "packages", "breeze-css", "**/*.ts")
+  );
 
-  function generate () {
+  function generate() {
     spawn("yarn", ["generate"], {
       stdio: "inherit",
       cwd: "packages/breeze-css",
-    })
-    .on("exit", () => {
-      console.log('Generated latest breeze.css assets!')
+    }).on("exit", () => {
+      console.log("Generated latest breeze.css assets!");
     });
   }
 
   watcher.on("change", () => {
-    generate()
-  })
+    generate();
+  });
 
-  generate()
+  generate();
 }
 
 async function gameDataServer() {
-  spawn("yarn", ["start"], {
-    stdio: "inherit",
-    cwd: "packages/game-data",
+  const start = () =>
+    spawn("yarn", ["start"], {
+      stdio: "inherit",
+      cwd: "packages/game-data",
+    });
+
+  const watcher = chokidar.watch([
+    path.join(__dirname, "..", "packages", "game-data", "**/*.ts"),
+    path.join(__dirname, "..", "packages", "chart-parser", "**/*.ts"),
+  ]);
+
+  let proc: ChildProcess;
+
+  watcher.on("change", () => {
+    proc?.kill();
+    console.log("Restarting game data server...");
+    proc = start();
   });
+
+  proc = start();
 }
 
 async function createPkg() {
-  console.log(process.env.ar);
   const results = await inquirer.prompt<{
     packageName: string;
   }>([
@@ -87,11 +103,11 @@ async function createPkg() {
       path.join(newDir, "tsconfig.json"),
       JSON.stringify(
         {
-          "extends": "../../tsconfig.json",
-          "include": ["**/*.ts"],
-          "compilerOptions": {
-            "skipLibCheck": true
-          }
+          extends: "../../tsconfig.json",
+          include: ["**/*.ts"],
+          compilerOptions: {
+            skipLibCheck: true,
+          },
         },
         null,
         2
@@ -102,4 +118,7 @@ async function createPkg() {
 
 gulp.task("createPkg", createPkg);
 
-gulp.task("dev", gulp.series(serverDev, assetsServer, gameDataServer, breezeCss));
+gulp.task(
+  "dev",
+  gulp.series(serverDev, assetsServer, gameDataServer, breezeCss)
+);
