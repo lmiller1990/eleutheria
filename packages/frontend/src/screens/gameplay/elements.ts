@@ -221,7 +221,6 @@ const createFlip =
   };
 
 export function targetFlash(targetColElements: ColMap, column: number) {
-  console.log("Target flash");
   const flip = createFlip(CLASSES);
   const $el = targetColElements.get(column);
   flip($el, TARGET_FLASH_CLASS);

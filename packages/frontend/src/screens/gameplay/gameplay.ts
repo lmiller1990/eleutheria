@@ -149,7 +149,10 @@ function updateUI(
       }
 
       judgementFlash(elements.timing, note.timingWindowName, judgement.timing);
-      targetNoteHitFlash(elements.targetColElements, note.column);
+
+      if (judgement.timingWindowName !== "miss") {
+        targetNoteHitFlash(elements.targetColElements, note.column);
+      }
 
       if (timeoutId) {
         window.clearTimeout(timeoutId);
