@@ -5,14 +5,14 @@ import type { Chart, Song } from "../types";
 interface SongsState {
   songs: Song[];
   selectedSongId: string | undefined;
-  selectedChartIdx: number | undefined;
+  selectedChartIdx: number;
 }
 
 export const useSongsStore = defineStore("songs", {
   state: (): SongsState => {
     return {
       selectedSongId: undefined,
-      selectedChartIdx: undefined,
+      selectedChartIdx: 0,
       songs: [],
     };
   },
@@ -45,6 +45,10 @@ export const useSongsStore = defineStore("songs", {
 
       this.songs = _songs;
     },
+
+    setSelectedChartIdx(selectedChartIdx: number) {
+      this.selectedChartIdx = selectedChartIdx;
+    },
   },
 
   getters: {
@@ -52,9 +56,6 @@ export const useSongsStore = defineStore("songs", {
       return state.songs.find((x) => x.id === state.selectedSongId);
     },
     selectedChart(state): Chart | undefined {
-      if (!state.selectedChartIdx) {
-        return;
-      }
       return this.selectedSong?.charts[state.selectedChartIdx];
     },
   },

@@ -66,12 +66,13 @@ import Panel from "../../components/Panel.vue";
 import { difficulties } from "../../shared";
 import { windows } from "../gameplay/config";
 import { useSongsStore } from "../../stores/songs";
+import { Difficulty } from "@packages/types/src";
 
 const summaryStore = useSummaryStore();
 const songsStore = useSongsStore();
 
 const difficultyClass = songsStore.selectedChart
-  ? difficulties[songsStore.selectedChart.difficulty]
+  ? difficulties[songsStore.selectedChart.difficulty as Difficulty]
   : undefined;
 
 function data(win: string) {

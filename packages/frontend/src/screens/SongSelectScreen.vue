@@ -12,11 +12,14 @@
         </Panel>
 
         <Panel>
-          <SongDifficulty :charts="charts" selected="expert" />
+          <SongPersonalBest :personalBest="personalBest" />
         </Panel>
 
-        <Panel>
-          <SongPersonalBest :personalBest="personalBest" />
+        <Panel v-if="charts[songsStore.selectedChartIdx]">
+          <SongDifficulty
+            :charts="charts"
+            :selected="songsStore.selectedChartIdx"
+          />
         </Panel>
       </div>
 
@@ -103,22 +106,44 @@ const router = useRouter();
 
 function changeSong(event: KeyboardEvent) {
   if (event.code === "KeyK") {
+    songsStore.setSelectedChartIdx(0);
     prevSong();
   } else if (event.code === "KeyJ") {
+    songsStore.setSelectedChartIdx(0);
     nextSong();
+  } else if (event.code === "KeyH") {
+    if (songsStore.selectedChartIdx > 0) {
+      songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
+    }
+  } else if (event.code === "KeyL") {
+    if (!selectedSong.value) {
+      return;
+    }
+
+    if (songsStore.selectedChartIdx < selectedSong.value.charts.length - 1) {
+      songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
+    }
   } else if (event.code === "Enter") {
     const song = songsStore.songs[focusSongIndex];
-    router.push({ path: "game", query: { song: song.id } });
+    router.push({
+      path: "game",
+      query: {
+        song: song.id,
+        difficulty: songsStore.selectedChart?.difficulty,
+      },
+    });
   }
 }
 
+const ms = parseFloat(scrollSpeed.replace("s", ""));
+const handleChangeSong = throttle(changeSong, ms * 1000);
+
 onMounted(() => {
-  const ms = parseFloat(scrollSpeed.replace("s", ""));
-  window.addEventListener("keydown", throttle(changeSong, ms * 1000));
+  window.addEventListener("keydown", handleChangeSong);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("keydown", changeSong);
+  window.removeEventListener("keydown", handleChangeSong);
 });
 
 const chartSummary = computed<ChartSummary | undefined>(() => {

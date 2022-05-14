@@ -173,14 +173,17 @@ function calcYPosition(note: EngineNote, world: World) {
   return (note.ms - world.time) * MULTIPLIER;
 }
 
-function getSongId(): string {
+function getSongId(): { id: string; difficulty: string } {
   const url = new URL(window.location.toString());
   const params = new URLSearchParams(url.search);
   const id = params.get("song");
-  if (!id) {
-    throw Error(`Expected ${window.location} to have search params ?song=<ID>`);
+  const difficulty = params.get("difficulty");
+  if (!id || !difficulty) {
+    throw Error(
+      `Expected ${window.location} to have search params ?song=<ID> and ?difficulty=<difficulty>`
+    );
   }
-  return id;
+  return { id, difficulty };
 }
 
 export async function fetchData(id: string): Promise<LoadSongData> {
@@ -192,14 +195,19 @@ export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted
 ) {
-  const id = getSongId();
+  const { id, difficulty } = getSongId();
   const data = await fetchData(id);
   const elements = createElements($root, 6, data.metadata);
 
+  const chart = data.charts.find((x) => x.difficulty === difficulty);
+  if (!chart) {
+    throw Error(`Could not find chart with difficulty ${difficulty}`);
+  }
+
   const gameConfig: GameConfig = {
     song: {
-      tapNotes: data.parsedTapNoteChart.tapNotes,
-      holdNotes: data.parsedHoldNoteChart.holdNotes,
+      tapNotes: chart.parsedTapNoteChart.tapNotes,
+      holdNotes: chart.parsedHoldNoteChart.holdNotes,
       metadata: data.metadata,
     },
     preSongPadding: PADDING_MS,

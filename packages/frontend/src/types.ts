@@ -11,7 +11,7 @@ export interface Song extends BaseSong {
 }
 
 export interface Chart {
-  difficulty: Difficulty;
+  difficulty: Difficulty | string;
   level: number;
   parsedTapNoteChart: ParsedTapNoteChart;
   parsedHoldNoteChart: ParsedHoldNoteChart;

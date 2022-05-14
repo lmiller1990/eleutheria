@@ -16,8 +16,12 @@ const app = express();
 app.use(cors());
 
 export interface LoadSongData {
-  parsedTapNoteChart: ParsedTapNoteChart;
-  parsedHoldNoteChart: ParsedHoldNoteChart;
+  charts: Array<{
+    difficulty: string;
+    level: number;
+    parsedTapNoteChart: ParsedTapNoteChart;
+    parsedHoldNoteChart: ParsedHoldNoteChart;
+  }>;
   metadata: ChartMetadata;
 }
 
@@ -26,14 +30,28 @@ const songsDir = path.join(__dirname, "songs");
 async function loadSong(id: string): Promise<LoadSongData> {
   const chartPath = path.join(songsDir, id);
 
-  const [_metadata, tapNotes, holdNotes, audioMetadata] = await Promise.all([
+  const [_metadata, audioMetadata] = await Promise.all([
     fs.readFile(path.join(chartPath, "data.json"), "utf-8"),
-    fs.readFile(path.join(chartPath, `${id}.chart`), "utf-8"),
-    fs.readFile(path.join(chartPath, `${id}.holds.chart`), "utf-8"),
     mm.parseFile(path.join(__dirname, "..", "static", "public", `${id}.mp3`)),
   ]);
 
   const metadata = JSON.parse(_metadata) as ChartMetadata;
+
+  const charts = await Promise.all(
+    metadata.charts.map(async (chart) => {
+      return {
+        ...chart,
+        tapNotes: await fs.readFile(
+          path.join(chartPath, chart.difficulty, `${id}.chart`),
+          "utf-8"
+        ),
+        holdNotes: await fs.readFile(
+          path.join(chartPath, chart.difficulty, `${id}.holds.chart`),
+          "utf-8"
+        ),
+      };
+    })
+  );
 
   const toHumanTime = (s: number) => {
     const min = Math.floor(s / 60);
@@ -42,8 +60,13 @@ async function loadSong(id: string): Promise<LoadSongData> {
   };
 
   const data: LoadSongData = {
-    parsedTapNoteChart: parseChart(metadata, tapNotes),
-    parsedHoldNoteChart: parseHoldsChart(metadata, holdNotes),
+    charts: charts.map((chartData) => {
+      return {
+        ...chartData,
+        parsedTapNoteChart: parseChart(metadata, chartData.tapNotes),
+        parsedHoldNoteChart: parseHoldsChart(metadata, chartData.holdNotes),
+      };
+    }),
     metadata: {
       ...metadata,
       duration: audioMetadata.format.duration
@@ -66,20 +89,12 @@ app.get("/songs", async (_req, res) => {
 
   const songs: BaseSong[] = await Promise.all(
     assets.map(async (p): Promise<BaseSong> => {
-      const { metadata, parsedTapNoteChart, parsedHoldNoteChart } =
-        await loadSong(p);
+      const data = await loadSong(p);
 
       return {
-        ...metadata,
+        ...data.metadata,
         id: p,
-        charts: [
-          {
-            difficulty: "expert",
-            level: 5,
-            parsedTapNoteChart,
-            parsedHoldNoteChart,
-          },
-        ],
+        charts: data.charts,
       };
     })
   );

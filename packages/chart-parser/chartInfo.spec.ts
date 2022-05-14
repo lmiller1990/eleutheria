@@ -37,6 +37,7 @@ const metadata: ChartMetadata = {
   title: "",
   banner: "",
   bpm: 150,
+  charts: [],
 };
 
 describe("chartInfo", () => {
