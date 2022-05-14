@@ -439,7 +439,14 @@ describe("updateGameState", () => {
   it("counts a missed note as a judgement", () => {
     // 2000 ms has passed since game started
     const tapNotes = new Map<string, EngineNote>();
-    tapNotes.set("0", { ...baseNote, id: "0", ms: 900, canHit: false, missed: true, timingWindowName: "miss", });
+    tapNotes.set("0", {
+      ...baseNote,
+      id: "0",
+      ms: 900,
+      canHit: false,
+      missed: true,
+      timingWindowName: "miss",
+    });
     tapNotes.set("1", { ...baseNote, id: "1", ms: 1000, canHit: true });
 
     // 2000 ms has passed since last update
