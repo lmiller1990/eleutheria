@@ -26,7 +26,8 @@ const createNote = (
   ms: number,
   hitAt: number | undefined,
   timingWindowName: string | undefined,
-  missed: boolean
+  missed: boolean,
+  rest: Partial<EngineNote> = {}
 ): EngineNote => ({
   id,
   ms,
@@ -35,6 +36,7 @@ const createNote = (
   canHit: false,
   column: 0,
   missed,
+  ...rest,
 });
 
 describe("scoring", () => {
@@ -156,6 +158,17 @@ describe("scoring", () => {
           ["4", createNote("4", 400, 400, "perfect", false)],
           ["5", createNote("5", 500, 500, "perfect", false)],
         ]),
+        holdNotes: new Map<string, EngineNote[]>([
+          [
+            "6",
+            [
+              createNote("6", 100, 100, "perfect", false),
+              createNote("7", 150, undefined, undefined, false, {
+                dependsOn: "6",
+              }),
+            ],
+          ],
+        ]),
       },
       {
         time: 500,
@@ -167,6 +180,58 @@ describe("scoring", () => {
     const actual = summarizeResults(world, timingWindows);
 
     expect(expected.percent).toEqual(actual.percent);
+  });
+
+  it("calculates considering dropped hold", () => {
+    const expected: Summary = {
+      achievements: [],
+      percent: "75.00",
+      timing: {
+        perfect: {
+          count: 2,
+          early: 0,
+          late: 0,
+        },
+        great: {
+          count: 0,
+          early: 0,
+          late: 0,
+        },
+        miss: {
+          count: 0,
+          early: 0,
+          late: 0,
+        },
+      },
+    };
+
+    const world: World = createWorld(
+      {
+        tapNotes: new Map<string, EngineNote>([
+          ["1", createNote("1", 100, 100, "perfect", false)],
+        ]),
+        holdNotes: new Map<string, EngineNote[]>([
+          [
+            "2",
+            [
+              createNote("2", 100, 100, "perfect", false, { droppedAt: 120 }),
+              createNote("3", 150, undefined, undefined, false, {
+                dependsOn: "2",
+              }),
+            ],
+          ],
+        ]),
+      },
+      {
+        time: 500,
+        startTime: 0,
+        inputs: [],
+      }
+    );
+
+    const actual = summarizeResults(world, timingWindows);
+
+    expect(expected).toEqual(actual);
   });
 
   it("calculates a non-perfect percentage score ", () => {

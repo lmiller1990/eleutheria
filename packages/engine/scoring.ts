@@ -1,3 +1,4 @@
+import { EngineNote } from ".";
 import type { TimingWindow, World } from "./engine";
 
 export interface TimingTypeSummary {
@@ -69,7 +70,15 @@ export function summarizeResults(
 
   let percent = 0;
 
-  for (const [_id, note] of world.chart.tapNotes) {
+  const allNotes: Array<[string, EngineNote]> = [];
+  for (const [id, note] of world.chart.tapNotes) {
+    allNotes.push([id, note]);
+  }
+  for (const [id, note] of world.chart.holdNotes) {
+    allNotes.push([id, note[0]]);
+  }
+
+  for (const [_id, note] of allNotes) {
     if (note.missed) {
       summary.timing.miss.count += 1;
     }
@@ -90,7 +99,15 @@ export function summarizeResults(
       if (note.hitAt !== undefined) {
         // always increase count
         summary.timing[note.timingWindowName].count += 1;
-        percent += weights.get(note.timingWindowName)!;
+
+        if (note.droppedAt) {
+          // deduct half the score - to get max points for a hold,
+          // you must successfully hit the head and hold until the tail.
+          percent += weights.get(note.timingWindowName)! / 2;
+        } else {
+          // maximum points
+          percent += weights.get(note.timingWindowName)!;
+        }
 
         // early
         if (note.hitAt < note.ms) {
