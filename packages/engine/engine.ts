@@ -478,12 +478,12 @@ export function updateGameState(
     []
   );
 
-  const prevFrameMissedNotes = [
+  const prevFrameMissedNotesCount = [
     ...prevFrameNotes,
     ...prevFrameHoldNotes.map((x) => x[0]),
   ].filter((x) => x.missed).length;
 
-  let nextFrameMissedCount: number = 0;
+  let nextFrameMissedCount: number = prevFrameMissedNotesCount;
 
   const newNotes = new Map<string, EngineNote>();
   for (const key of world.chart.tapNotes.keys()) {
@@ -560,7 +560,7 @@ export function updateGameState(
   // if the number of missed notes changed, they must have
   // broke their combo.
   const comboBroken =
-    nextFrameMissedCount > prevFrameMissedNotes || holdDropped;
+    nextFrameMissedCount > prevFrameMissedNotesCount || holdDropped;
 
   const combo = comboBroken
     ? 0
