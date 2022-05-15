@@ -5,7 +5,7 @@
         <div>
           <!-- placeholder -->
         </div>
-        <div class="font-3rem">{{ songsStore.selectedSong?.title }}</div>
+        <div class="font-3rem upcase">{{ songsStore.selectedSong?.title }}</div>
         <div
           class="h-30px w-30px flex items-center justify-center rounded-border-s padding-4px"
           :class="difficultyClass"
@@ -15,7 +15,10 @@
       </div>
 
       <div class="flex items-center w-100 margin-vertical-l">
-        <div id="vanity-score" class="flex flex-col items-center">
+        <div
+          id="vanity-score"
+          class="flex flex-col items-center margin-right-1rem"
+        >
           <div class="font-5rem">{{ summaryStore.summary?.percent }}%</div>
           <div
             v-for="achievement of summaryStore.summary?.achievements"

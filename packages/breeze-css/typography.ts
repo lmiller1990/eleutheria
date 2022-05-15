@@ -9,6 +9,14 @@ const basic = dedent`
   .caps {
     text-transform: capitalize;
   }
+
+  .align-center {
+    text-align: center;
+  }
+
+  .align-left {
+    text-align: left;
+  }
 `;
 
 const sizes = joinGroup((output) => {

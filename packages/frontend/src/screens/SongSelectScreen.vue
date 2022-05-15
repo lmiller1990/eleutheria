@@ -3,31 +3,30 @@
     <div
       class="grid grid-columns-1fr-2fr grid-column-gap-s padding-m h-100 w-100"
     >
-      <div>
-        <Panel v-if="chartSummary">
-          <SongInfo
-            :chartSummary="chartSummary"
-            :durationSeconds="selectedSong?.duration"
-          />
-        </Panel>
+      <div class="flex flex-col space-between margin-s">
+        <div class="menu-title align-center">Select Song</div>
+        <div>
+          <VerticalPaddedPanel v-if="chartSummary">
+            <SongInfo
+              :chartSummary="chartSummary"
+              :durationSeconds="selectedSong?.duration"
+            />
+          </VerticalPaddedPanel>
 
-        <Panel>
-          <SongPersonalBest :personalBest="personalBest" />
-        </Panel>
+          <VerticalPaddedPanel>
+            <SongPersonalBest :personalBest="personalBest" />
+          </VerticalPaddedPanel>
 
-        <Panel v-if="charts[songsStore.selectedChartIdx]">
-          <SongDifficulty
-            :charts="charts"
-            :selected="songsStore.selectedChartIdx"
-          />
-        </Panel>
+          <VerticalPaddedPanel v-if="charts[songsStore.selectedChartIdx]">
+            <SongDifficulty
+              :charts="charts"
+              :selected="songsStore.selectedChartIdx"
+            />
+          </VerticalPaddedPanel>
+        </div>
       </div>
 
       <div class="flex relative justify-center">
-        <div class="w-100 absolute z-10">
-          <SelectSongBanner />
-        </div>
-
         <div class="relative w-100 overflow-hidden">
           <div class="absolute w-100 padding-horizontal-l" id="wheel">
             <TransitionGroup name="items" mode="out-in">
@@ -35,7 +34,7 @@
                 class="margin-bottom-1rem"
                 :class="{
                   'h-9rem selected': isSelected(song),
-                  'not-selected h-5rem': !isSelected(song),
+                  'h-5rem': !isSelected(song),
                 }"
                 v-for="song of songsStore.songs"
                 :key="song.key"
@@ -52,7 +51,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
+import {
+  computed,
+  FunctionalComponent,
+  h,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watchEffect,
+} from "vue";
 import { useRouter } from "vue-router";
 import { throttle } from "lodash";
 import type {
@@ -65,11 +72,13 @@ import SongItem from "../components/SongItem.vue";
 import SongPersonalBest from "../components/SongPersonalBest.vue";
 import SongDifficulty from "../components/SongDifficulty.vue";
 import SongInfo from "../components/SongInfo.vue";
-import SelectSongBanner from "../components/SelectSongBanner.vue";
 import Panel from "../components/Panel.vue";
 import { useSongsStore } from "../stores/songs";
 import { chartInfo } from "@packages/chart-parser";
 import "../index.css";
+
+const VerticalPaddedPanel: FunctionalComponent = (_props, _ctx) =>
+  h(Panel, { class: "margin-vertical-s" }, _ctx.slots["default"]);
 
 const focusSongIndex = 3;
 const scrollSpeed = "0.1s";
@@ -184,12 +193,17 @@ songsStore.fetchSongs();
   color: black;
 }
 
-.not-selected {
-  margin-left: 20px;
+@keyframes pulsate {
+  0% {
+    box-shadow: 0px 0px 10px 3px goldenrod;
+  }
+
+  100% {
+    box-shadow: 0px 0px 10px 8px goldenrod;
+  }
 }
 
 .selected {
-  margin-left: -20px;
-  box-shadow: 0px 0px 10px 5px goldenrod;
+  animation: pulsate 0.5s ease-in-out infinite alternate;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <ul class="grid grid-row-gap-s upcase">
+  <ul class="grid grid-row-gap-s grid-rows-repeat-3 upcase">
     <li
       class="flex space-between padding-s rounded-border-s"
       v-for="(chart, idx) of props.charts"

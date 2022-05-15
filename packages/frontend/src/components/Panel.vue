@@ -1,5 +1,5 @@
 <template>
-  <div class="padding-s rounded-border-s margin-s">
+  <div class="padding-s rounded-border-s">
     <slot />
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { ChartMetadata } from "@packages/chart-parser";
+import type { ChartMetadata } from "@packages/chart-parser";
 import { windows } from "./config";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
@@ -89,18 +89,36 @@ export function createElements(
       </table>
     `;
 
-  const html = `
-    <table id="debug">
-      <tr>
-        <th>Live notes</th>
-        <td id="debug-live-notes"></td>
-        <th>FPS</th>
-        <td id="debug-fps"></td>
-      </tr>
-    </table>
+  const debugging = [
+    { name: "Live Notes", id: "debug-live-notes" },
+    {
+      name: "FPS",
+      id: "debug-fps",
+    },
+  ];
 
-    <div id="lhs" class="w-100 margin-left-2rem">
-      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s">
+  const debugRows = debugging
+    .map((field) => {
+      return `
+      <tr class="align-left">
+        <th>${field.name}</th>
+        <td id="${field.id}"></td>
+      </tr>
+    `;
+    })
+    .join("");
+
+  const debugTable = `
+    <table id="debug">
+    ${debugRows}
+    </table>
+  `;
+
+  const html = `
+    ${debugTable}
+
+    <div id="lhs" class="w-100 margin-left-1rem">
+      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s margin-right-2rem">
         <table>
           <tr><td>${metadata.title}</td></tr>
           <tr><td>Artist</td></tr>
@@ -121,9 +139,9 @@ export function createElements(
       <div id="combo"></div>
     </div>
 
-    <div id="rhs" class="w-100 margin-right-2rem">
+    <div id="rhs" class="w-100 margin-right-1rem">
       <!-- score panel -->
-      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s">
+      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s margin-left-2rem">
         ${scorePanelTable}
       </div>
 
