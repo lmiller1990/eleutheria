@@ -205,6 +205,7 @@ export async function start(
   }
 
   const gameConfig: GameConfig = {
+    manualMode: false,
     song: {
       tapNotes: chart.parsedTapNoteChart.tapNotes,
       holdNotes: chart.parsedHoldNoteChart.holdNotes,
@@ -340,6 +341,11 @@ export async function start(
   };
 
   const game = new Game(gameConfig, lifecycle);
+
+  // let i = 0;
+  // window.manualTick = () => {
+  //   game.setTestOnlyDeltaTime((i += 100));
+  // };
 
   await game.start(id, data.metadata);
 }

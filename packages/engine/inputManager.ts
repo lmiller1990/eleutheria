@@ -3,31 +3,39 @@ import { Input } from "@packages/engine";
 export interface InputManagerConfig {
   maxWindowMs: number;
   onKeyDownCallback?: Map<string, () => void>;
+  manualMode?: boolean;
 }
 
 export class InputManager {
   historicalInputs: Input[] = [];
+  #codeColumnMap: Map<string, number>;
   activeInputs: Input[] = [];
   config: InputManagerConfig;
   lastUpdateHash: string = "";
+  #dt: number = 0;
   t0?: number;
 
   constructor(
-    private codeColumnMap: Map<string, number>,
+    codeColumnMap: Map<string, number>,
     config: Partial<InputManagerConfig> = {}
   ) {
     this.config = {
       ...config,
       maxWindowMs: 500,
     };
+    this.#codeColumnMap = codeColumnMap;
   }
 
   setOrigin(t0: number) {
     this.t0 = t0;
   }
 
+  setTestOnlyDeltaTime(dt: number) {
+    this.#dt = dt;
+  }
+
   onKey = (e: KeyboardEvent, type: "up" | "down") => {
-    if (!this.codeColumnMap.has(e.code)) {
+    if (!this.#codeColumnMap.has(e.code)) {
       return;
     }
 
@@ -37,7 +45,7 @@ export class InputManager {
       );
     }
 
-    const column = this.codeColumnMap.get(e.code);
+    const column = this.#codeColumnMap.get(e.code);
 
     if (type === "up") {
       const cb = this.config?.onKeyDownCallback?.get(e.code);
@@ -50,10 +58,12 @@ export class InputManager {
       return;
     }
 
+    const ms = this.config.manualMode ? this.#dt : e.timeStamp - this.t0;
+
     const input: Input = {
-      id: (e.timeStamp - this.t0).toString(),
+      id: ms.toString(),
       column,
-      ms: e.timeStamp - this.t0,
+      ms,
       type,
     };
 

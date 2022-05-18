@@ -50,6 +50,7 @@ export interface GameConfig {
   engineConfiguration: EngineConfiguration;
   codeColumns: Map<string, number>;
   inputManagerConfig: Partial<InputManagerConfig>;
+  manualMode?: boolean;
 }
 
 export interface GameLifecycle {
@@ -65,30 +66,35 @@ export interface GameLifecycle {
 
 export class Game {
   #fps = 0;
+  #dt = 0;
   #lastDebugUpdate = 0;
   #timeOfLastNote: number;
   #source?: AudioBufferSourceNode;
   #inputManager?: InputManager;
+  #config: GameConfig;
+  #lifecycle: GameLifecycle;
 
-  constructor(private config: GameConfig, private lifecycle: GameLifecycle) {
+  constructor(config: GameConfig, lifecycle: GameLifecycle) {
+    this.#config = config;
+    this.#lifecycle = lifecycle;
     this.#timeOfLastNote =
       config.song.tapNotes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
         0
       ) +
-      (this.config.preSongPadding || 0) +
-      this.config.song.metadata.offset +
-      (this.config.postSongPadding || 0);
+      (this.#config.preSongPadding || 0) +
+      this.#config.song.metadata.offset +
+      (this.#config.postSongPadding || 0);
   }
 
   async start(id: string, songData: ChartMetadata) {
     const chart = createChart({
-      tapNotes: this.config.song.tapNotes.map((x) => ({
+      tapNotes: this.#config.song.tapNotes.map((x) => ({
         ...x,
         missed: false,
         canHit: true,
       })),
-      holdNotes: this.config.song.holdNotes.map<EngineNote[]>((notes) => {
+      holdNotes: this.#config.song.holdNotes.map<EngineNote[]>((notes) => {
         return notes.map((note) => ({
           ...note,
           missed: false,
@@ -96,19 +102,19 @@ export class Game {
         }));
       }),
       offset:
-        (this.config.preSongPadding || 0) + this.config.song.metadata.offset,
+        (this.#config.preSongPadding || 0) + this.#config.song.metadata.offset,
     });
 
     const gs = initGameState(chart);
 
-    const inputManager = new InputManager(
-      this.config.codeColumns,
-      this.config.inputManagerConfig
-    );
+    const inputManager = new InputManager(this.#config.codeColumns, {
+      ...this.#config.inputManagerConfig,
+      manualMode: this.#config.manualMode,
+    });
 
     inputManager.listen();
 
-    const play = await fetchAudio(id, this.config.preSongPadding || 0);
+    const play = await fetchAudio(id, this.#config.preSongPadding || 0);
 
     const { audioContext, source, startTime } = play();
 
@@ -131,7 +137,7 @@ export class Game {
 
     gameState.inputManager.setOrigin(gameState.t0);
 
-    this.lifecycle.onStart?.(gameState);
+    this.#lifecycle.onStart?.(gameState);
     this.gameLoop(gameState);
 
     this.#inputManager = inputManager;
@@ -143,52 +149,58 @@ export class Game {
     this.#source?.stop();
   }
 
+  setTestOnlyDeltaTime(dt: number) {
+    this.#dt = dt;
+    this.#inputManager?.setTestOnlyDeltaTime(dt);
+  }
+
   gameLoop(gameState: World) {
     this.#fps += 1;
 
-    const dt =
-      gameState.audioContext.getOutputTimestamp().performanceTime! -
-      gameState.t0;
+    this.#dt = this.#config.manualMode
+      ? this.#dt
+      : gameState.audioContext.getOutputTimestamp().performanceTime! -
+        gameState.t0;
 
-    if (dt > 3000) {
-      return;
+    if (this.#dt > 3000) {
+      // return;
     }
 
     const world: World = {
       ...gameState,
       startTime: gameState.t0,
-      time: dt,
+      time: this.#dt,
       inputs: gameState.inputManager.activeInputs,
     };
 
     const { world: updatedWorld, previousFrameMeta } = updateGameState(
       world,
-      this.config.engineConfiguration
+      this.#config.engineConfiguration
     );
 
-    this.lifecycle.onUpdate?.(updatedWorld, previousFrameMeta);
+    this.#lifecycle.onUpdate?.(updatedWorld, previousFrameMeta);
 
     if (
-      this.lifecycle.onJudgement &&
+      this.#lifecycle.onJudgement &&
       previousFrameMeta.judgementResults.length
     ) {
-      this.lifecycle.onJudgement(
+      this.#lifecycle.onJudgement(
         updatedWorld,
         previousFrameMeta.judgementResults
       );
     }
 
-    if (dt - this.#lastDebugUpdate > 1000) {
-      this.lifecycle.onDebug?.(updatedWorld, this.#fps);
+    if (this.#dt - this.#lastDebugUpdate > 1000) {
+      this.#lifecycle.onDebug?.(updatedWorld, this.#fps);
       this.#fps = 0;
-      this.#lastDebugUpdate = dt;
+      this.#lastDebugUpdate = this.#dt;
     }
 
     gameState.inputManager.clear();
 
-    if (dt > this.#timeOfLastNote) {
+    if (this.#dt > this.#timeOfLastNote) {
       this.stop();
-      this.lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta);
+      this.#lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta);
       return;
     }
 

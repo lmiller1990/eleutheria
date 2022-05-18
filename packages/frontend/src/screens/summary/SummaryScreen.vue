@@ -37,7 +37,7 @@
               class="flex space-between"
             >
               <div class="upcase" :class="`timing-${win}`">{{ win }}</div>
-              <div>{{ data(win).count }}</div>
+              <div>{{ data(win)?.count }}</div>
             </div>
           </table>
         </Panel>
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from "vue-router";
+import { useRouter, onBeforeRouteUpdate } from "vue-router";
 import { useSummaryStore } from "../../stores/summary";
 import Panel from "../../components/Panel.vue";
 import { difficulties } from "../../shared";
@@ -73,26 +73,27 @@ import { Difficulty } from "@packages/types/src";
 
 const summaryStore = useSummaryStore();
 const songsStore = useSongsStore();
+const router = useRouter();
 
 const difficultyClass = songsStore.selectedChart
   ? difficulties[songsStore.selectedChart.difficulty as Difficulty]
   : undefined;
 
+
 function data(win: string) {
   const d = summaryStore.summary?.timing?.[win];
 
   if (!d) {
-    throw Error(`Could not find data for ${win} in summary`);
+    router.push("/")
+    return;
   }
 
   return d;
 }
 
 if (!summaryStore.summary) {
-  throw Error(`Summary not found for song!`);
+  router.push("/")
 }
-
-const router = useRouter();
 
 function goNext() {
   router.push("/");
