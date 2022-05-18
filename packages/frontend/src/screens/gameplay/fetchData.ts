@@ -1,5 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import { PADDING_MS } from "./config";
+import { PADDING_MS } from "./gameConfig";
 
 const SONG = {
   // SONG_ID: "rave",

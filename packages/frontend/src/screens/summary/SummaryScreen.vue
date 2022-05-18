@@ -63,11 +63,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter, onBeforeRouteUpdate } from "vue-router";
+import { useRouter } from "vue-router";
 import { useSummaryStore } from "../../stores/summary";
 import Panel from "../../components/Panel.vue";
 import { difficulties } from "../../shared";
-import { windows } from "../gameplay/config";
+import { windows } from "../gameplay/gameConfig";
 import { useSongsStore } from "../../stores/songs";
 import { Difficulty } from "@packages/types/src";
 
@@ -79,12 +79,11 @@ const difficultyClass = songsStore.selectedChart
   ? difficulties[songsStore.selectedChart.difficulty as Difficulty]
   : undefined;
 
-
 function data(win: string) {
   const d = summaryStore.summary?.timing?.[win];
 
   if (!d) {
-    router.push("/")
+    router.push("/");
     return;
   }
 
@@ -92,7 +91,7 @@ function data(win: string) {
 }
 
 if (!summaryStore.summary) {
-  router.push("/")
+  router.push("/");
 }
 
 function goNext() {

@@ -20,6 +20,7 @@
   },
   "scripts": {
     "dev": "yarn gulp dev",
+    "build": "yarn ts-node --esm scripts/build.ts",
     "install": "lerna exec yarn install",
     "lint": "prettier --write packages",
     "test": "lerna run test",

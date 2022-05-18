@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import fs from "fs-extra";
-import mm from "music-metadata";
 import {
   ChartMetadata,
   parseChart,
@@ -11,6 +10,7 @@ import {
   parseHoldsChart,
 } from "@packages/chart-parser";
 import type { BaseSong } from "@packages/types/src";
+import { toHumanTime } from "./utils";
 
 const app = express();
 app.use(cors());
@@ -25,15 +25,17 @@ export interface LoadSongData {
   metadata: ChartMetadata;
 }
 
+const songMetadata = fs.readJsonSync("./songMetadata.json");
+
 const songsDir = path.join(__dirname, "songs");
 
 async function loadSong(id: string): Promise<LoadSongData> {
   const chartPath = path.join(songsDir, id);
 
-  const [_metadata, audioMetadata] = await Promise.all([
-    fs.readFile(path.join(chartPath, "data.json"), "utf-8"),
-    mm.parseFile(path.join(__dirname, "..", "static", "public", `${id}.mp3`)),
-  ]);
+  const _metadata = await fs.readFile(
+    path.join(chartPath, "data.json"),
+    "utf-8"
+  );
 
   const metadata = JSON.parse(_metadata) as ChartMetadata;
 
@@ -53,12 +55,6 @@ async function loadSong(id: string): Promise<LoadSongData> {
     })
   );
 
-  const toHumanTime = (s: number) => {
-    const min = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${min}:${sec.toFixed(0)}`;
-  };
-
   const data: LoadSongData = {
     charts: charts.map((chartData) => {
       return {
@@ -69,11 +65,10 @@ async function loadSong(id: string): Promise<LoadSongData> {
     }),
     metadata: {
       ...metadata,
-      duration: audioMetadata.format.duration
-        ? toHumanTime(audioMetadata.format.duration)
-        : "?",
+      duration: songMetadata[id] ?? "??",
     },
   };
+  console.log(data);
 
   return data;
 }

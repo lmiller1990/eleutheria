@@ -41,26 +41,33 @@ async function breezeCss() {
 }
 
 async function gameDataServer() {
-  const start = () =>
-    spawn("yarn", ["start"], {
-      stdio: "inherit",
-      cwd: "packages/game-data",
-    });
+  const start = () => {
+    return [
+      spawn("yarn", ["start"], {
+        stdio: "inherit",
+        cwd: "packages/game-data",
+      }),
+      spawn("yarn", ["build-metadata"], {
+        stdio: "inherit",
+        cwd: "packages/game-data",
+      }),
+    ];
+  };
 
-  const watcher = chokidar.watch([
+  const watcherAll = chokidar.watch([
     path.join(__dirname, "..", "packages", "game-data", "**/*.ts"),
     path.join(__dirname, "..", "packages", "chart-parser", "**/*.ts"),
   ]);
 
-  let proc: ChildProcess;
+  let procs: ChildProcess[] = [];
 
-  watcher.on("change", () => {
-    proc?.kill();
+  watcherAll.on("change", () => {
+    procs.forEach(p => p.kill())
     console.log("Restarting game data server...");
-    proc = start();
+    procs = start();
   });
 
-  proc = start();
+  procs = start();
 }
 
 async function createPkg() {

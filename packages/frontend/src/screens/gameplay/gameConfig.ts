@@ -3,12 +3,12 @@ import type { EngineConfiguration } from "@packages/engine";
 export const timingWindows = [
   {
     name: "absolute",
-    windowMs: 20,
+    windowMs: 15,
     weight: 3,
   },
   {
     name: "perfect",
-    windowMs: 35,
+    windowMs: 40,
     weight: 2,
   },
   {

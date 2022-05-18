@@ -12,12 +12,14 @@ import {
 } from ".";
 import type { EngineNote, JudgementResult } from "./engine";
 
-export const url = (id: string) => `http://localhost:4000/${id}.mp3`;
-
-export async function fetchAudio(id: string, paddingMs: number) {
+export async function fetchAudio(
+  id: string,
+  songUrl: string,
+  paddingMs: number
+) {
   const audioContext = new AudioContext();
 
-  const res = await window.fetch(url(id));
+  const res = await window.fetch(`${songUrl}/${id}.mp3`);
   const buf = await res.arrayBuffer();
   let buffer = await audioContext.decodeAudioData(buf);
   buffer = padStart(audioContext, buffer, paddingMs);
@@ -47,6 +49,7 @@ export interface GameConfig {
   };
   preSongPadding?: number;
   postSongPadding?: number;
+  songUrl: string;
   engineConfiguration: EngineConfiguration;
   codeColumns: Map<string, number>;
   inputManagerConfig: Partial<InputManagerConfig>;
@@ -114,7 +117,11 @@ export class Game {
 
     inputManager.listen();
 
-    const play = await fetchAudio(id, this.#config.preSongPadding || 0);
+    const play = await fetchAudio(
+      id,
+      this.#config.songUrl,
+      this.#config.preSongPadding || 0
+    );
 
     const { audioContext, source, startTime } = play();
 

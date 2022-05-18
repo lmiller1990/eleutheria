@@ -1,5 +1,5 @@
 import type { ChartMetadata } from "@packages/chart-parser";
-import { windows } from "./config";
+import { windows } from "./gameConfig";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
   const el = document.querySelector<T>(sel);

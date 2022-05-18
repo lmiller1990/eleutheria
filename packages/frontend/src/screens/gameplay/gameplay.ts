@@ -23,9 +23,10 @@ import {
   codeColumnMap,
   windows,
   timingWindows,
-} from "./config";
+} from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { LoadSongData } from "@packages/game-data";
+import { getGameDataUrl } from "./env";
 
 const noteMap = new Map<string, HTMLDivElement>();
 const holdMap = new Map<string, HTMLDivElement>();
@@ -187,7 +188,7 @@ function getSongId(): { id: string; difficulty: string } {
 }
 
 export async function fetchData(id: string): Promise<LoadSongData> {
-  const res = await window.fetch(`http://localhost:8000/songs/${id}`);
+  const res = await window.fetch(getGameDataUrl(`/songs/${id}`));
   return res.json();
 }
 
@@ -206,6 +207,7 @@ export async function start(
 
   const gameConfig: GameConfig = {
     manualMode: false,
+    songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
       tapNotes: chart.parsedTapNoteChart.tapNotes,
       holdNotes: chart.parsedHoldNoteChart.holdNotes,

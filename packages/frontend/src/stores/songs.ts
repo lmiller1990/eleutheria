@@ -1,5 +1,6 @@
 import type { BaseSong } from "@packages/types/src";
 import { defineStore } from "pinia";
+import { getGameDataUrl } from "../screens/gameplay/env";
 import type { Chart, Song } from "../types";
 
 interface SongsState {
@@ -27,7 +28,7 @@ export const useSongsStore = defineStore("songs", {
     },
 
     async fetchSongs() {
-      const res = await window.fetch("http://localhost:8000/songs");
+      const res = await window.fetch(getGameDataUrl("/songs"));
       const data = (await res.json()) as BaseSong[];
 
       let _songs: Song[] = [];
