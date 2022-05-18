@@ -14,6 +14,7 @@
   "scripts": {
     "test": "vitest --run",
     "check-ts": "tsc --noEmit",
-    "build": "yarn tsc"
+    "build": "yarn tsc",
+    "clean": "rm -rf dist"
   }
 }

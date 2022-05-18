@@ -6,7 +6,8 @@
     "build": "tsc && vite build",
     "test": "echo 'ok'",
     "check-ts": "vue-tsc",
-    "cy:open": "cypress open --component"
+    "cy:open": "cypress open --component",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@packages/audio-utils": "0.0.0-development",

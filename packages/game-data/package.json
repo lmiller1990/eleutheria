@@ -21,6 +21,7 @@
     "test": "echo 'ok'",
     "build": "yarn tsc && cp -r songs dist",
     "build-metadata": "yarn ts-node --esm scripts/generateMetadata.ts",
-    "check-ts": "tsc --noEmit"
+    "check-ts": "tsc --noEmit",
+    "clean": "rm -rf dist"
   }
 }
