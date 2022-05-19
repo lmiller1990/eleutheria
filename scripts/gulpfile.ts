@@ -24,8 +24,8 @@ async function breezeCss() {
     path.join(__dirname, "..", "packages", "breeze-css", "**/*.ts")
   );
 
-  function generate() {
-    spawn("yarn", ["generate"], {
+  function build() {
+    spawn("yarn", ["build"], {
       stdio: "inherit",
       cwd: "packages/breeze-css",
     }).on("exit", () => {
@@ -34,10 +34,10 @@ async function breezeCss() {
   }
 
   watcher.on("change", () => {
-    generate();
+    build();
   });
 
-  generate();
+  build();
 }
 
 async function gameDataServer() {
