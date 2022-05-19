@@ -8,12 +8,6 @@ async function build() {
   await execa("yarn", ["lerna", "run", "build"], {
     cwd: root
   });
-
-  await execa("mv", [
-    path.join(pkg, "frontend", "dist"),
-    path.join("dist", "app"),
-  ]);
-
   await execa("yarn", ["build"], {
     cwd: path.join(pkg, "game-data"),
   });
@@ -21,8 +15,6 @@ async function build() {
   await execa("yarn", ["build"], {
     cwd: path.join(pkg, "chart-parser"),
   });
-
-  // await execa("")
 }
 
 build();
