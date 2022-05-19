@@ -10,7 +10,6 @@ import {
   parseHoldsChart,
 } from "@packages/chart-parser";
 import type { BaseSong } from "@packages/types/src";
-import { toHumanTime } from "./utils";
 
 const app = express();
 app.use(cors());
