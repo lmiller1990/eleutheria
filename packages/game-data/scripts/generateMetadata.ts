@@ -10,7 +10,6 @@ type AwaitedOrNull<T> = T extends Promise<infer U> ? U : null;
 type AudioMetadata = AwaitedOrNull<ReturnType<typeof mm.parseFile>>;
 
 async function generate() {
-  console.log(songsDir);
   const mp3s = (await fs.readdir(songsDir))
     .filter((x) => x.endsWith("mp3"))
     .map((x) => x.split(".mp3")[0]);

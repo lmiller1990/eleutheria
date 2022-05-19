@@ -19,8 +19,8 @@
   "scripts": {
     "start": "ts-node index.ts",
     "test": "echo 'ok'",
-    "build": "yarn tsc && cp -r songs dist",
-    "build-metadata": "yarn ts-node --esm scripts/generateMetadata.ts",
+    "build": "yarn build-metadata && tsc && cp -r songs dist && cp songMetadata.json dist",
+    "build-metadata": "ts-node --esm scripts/generateMetadata.ts",
     "check-ts": "tsc --noEmit",
     "clean": "rm -rf dist"
   }
