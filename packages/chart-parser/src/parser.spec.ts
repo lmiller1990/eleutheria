@@ -5,7 +5,7 @@ import { parseChart } from "./parser";
 import { parseHoldsChart } from ".";
 
 function loadData(id: string, type: "notes" | "holds") {
-  const exampleDir = path.resolve(__dirname, "test", "resources", id);
+  const exampleDir = path.resolve(__dirname, "..", "test", "resources", id);
   const metadata = fs.readFileSync(path.join(exampleDir, "data.json"), "utf-8");
   const file = type === "notes" ? `${id}.chart` : `${id}-holds.chart`;
   const noteChart = fs.readFileSync(path.join(exampleDir, file), "utf-8");

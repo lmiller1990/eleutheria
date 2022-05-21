@@ -159,8 +159,8 @@ export class Game {
   }
 
   stop() {
-    // this.#inputManager?.teardown();
-    // this.#source?.stop();
+    this.#inputManager?.teardown();
+    this.#source?.stop();
   }
 
   setTestOnlyDeltaTime(dt: number) {
