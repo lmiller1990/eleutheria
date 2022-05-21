@@ -3,10 +3,6 @@
   "name": "@packages/chart-parser",
   "private": true,
   "main": "index.ts",
-  "exports": {
-    "require": "./dist/index.js",
-    "import": "./index.ts"
-  },
   "devDependencies": {
     "typescript": "4.5.4",
     "vitest": "0.1.24"

@@ -91,7 +91,7 @@ export function parseChart(
     (acc, _curr, idx) => {
       const curr = _curr.trim();
 
-      if (curr === "," && measureQuantizationValid(acc.currMeasure)) {
+      if (curr.startsWith(",") && measureQuantizationValid(acc.currMeasure)) {
         acc.measures.push(acc.currMeasure);
         acc.currMeasure = [];
         return acc;

@@ -208,7 +208,7 @@ export async function start(
   const gameConfig: GameConfig = {
     dev: {
       manualMode: false,
-      startAtMs: 38000,
+      // startAtMs: 38000,
     },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {

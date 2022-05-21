@@ -67,7 +67,6 @@ async function loadSong(id: string): Promise<LoadSongData> {
       duration: songMetadata[id] ?? "??",
     },
   };
-  console.log(data);
 
   return data;
 }
