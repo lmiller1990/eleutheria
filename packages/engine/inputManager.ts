@@ -1,9 +1,10 @@
 import { Input } from "@packages/engine";
+import { DevModeOptions } from "./api";
 
 export interface InputManagerConfig {
   maxWindowMs: number;
   onKeyDownCallback?: Map<string, () => void>;
-  manualMode?: boolean;
+  dev?: DevModeOptions;
 }
 
 export class InputManager {
@@ -58,7 +59,9 @@ export class InputManager {
       return;
     }
 
-    const ms = this.config.manualMode ? this.#dt : e.timeStamp - this.t0;
+    const ms = this.config.dev?.manualMode
+      ? this.#dt
+      : e.timeStamp - this.t0 + (this.config.dev?.startAtMs ?? 0);
 
     const input: Input = {
       id: ms.toString(),

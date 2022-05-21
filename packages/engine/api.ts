@@ -15,7 +15,8 @@ import type { EngineNote, JudgementResult } from "./engine";
 export async function fetchAudio(
   id: string,
   songUrl: string,
-  paddingMs: number
+  paddingMs: number,
+  startAtMs: number = 0
 ) {
   const audioContext = new AudioContext();
 
@@ -34,11 +35,16 @@ export async function fetchAudio(
     // use this for no assist tick
     // source.connect(audioContext.destination);
     source.connect(gainNode);
-    source.start();
+    source.start(0, startAtMs / 1000);
     const startTime = audioContext.getOutputTimestamp().performanceTime!;
 
     return { audioContext, source, startTime };
   };
+}
+
+export interface DevModeOptions {
+  manualMode?: boolean;
+  startAtMs?: number;
 }
 
 export interface GameConfig {
@@ -53,7 +59,7 @@ export interface GameConfig {
   engineConfiguration: EngineConfiguration;
   codeColumns: Map<string, number>;
   inputManagerConfig: Partial<InputManagerConfig>;
-  manualMode?: boolean;
+  dev?: DevModeOptions;
 }
 
 export interface GameLifecycle {
@@ -112,7 +118,7 @@ export class Game {
 
     const inputManager = new InputManager(this.#config.codeColumns, {
       ...this.#config.inputManagerConfig,
-      manualMode: this.#config.manualMode,
+      dev: this.#config.dev,
     });
 
     inputManager.listen();
@@ -120,7 +126,8 @@ export class Game {
     const play = await fetchAudio(
       id,
       this.#config.songUrl,
-      this.#config.preSongPadding || 0
+      this.#config.preSongPadding || 0,
+      this.#config.dev?.startAtMs
     );
 
     const { audioContext, source, startTime } = play();
@@ -152,8 +159,8 @@ export class Game {
   }
 
   stop() {
-    this.#inputManager?.teardown();
-    this.#source?.stop();
+    // this.#inputManager?.teardown();
+    // this.#source?.stop();
   }
 
   setTestOnlyDeltaTime(dt: number) {
@@ -164,10 +171,11 @@ export class Game {
   gameLoop(gameState: World) {
     this.#fps += 1;
 
-    this.#dt = this.#config.manualMode
+    this.#dt = this.#config.dev?.manualMode
       ? this.#dt
       : gameState.audioContext.getOutputTimestamp().performanceTime! -
-        gameState.t0;
+        gameState.t0 +
+        (this.#config.dev?.startAtMs ?? 0);
 
     if (this.#dt > 3000) {
       // return;

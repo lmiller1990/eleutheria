@@ -206,7 +206,10 @@ export async function start(
   }
 
   const gameConfig: GameConfig = {
-    manualMode: false,
+    dev: {
+      manualMode: false,
+      // startAtMs: 8000,
+    },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
       tapNotes: chart.parsedTapNoteChart.tapNotes,
