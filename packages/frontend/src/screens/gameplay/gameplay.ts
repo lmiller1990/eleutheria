@@ -1,3 +1,4 @@
+import { playBeep } from "@packages/audio-utils";
 import type {
   World,
   PreviousFrameMeta,
@@ -208,7 +209,7 @@ export async function start(
   const gameConfig: GameConfig = {
     dev: {
       manualMode: false,
-      // startAtMs: 38000,
+      startAtMs: 150000,
     },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
@@ -232,12 +233,19 @@ export async function start(
     },
   };
 
+  let beeped = new Map<string, boolean>();
+
   const lifecycle: GameLifecycle = {
     onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
         const ypos = calcYPosition(engineNote, world);
         let $note = noteMap.get(id);
+
+        if (ypos < 0 && !beeped.has(id)) {
+          beeped.set(id, true);
+          playBeep();
+        }
 
         const inViewport = ypos < window.innerHeight;
         // If:
@@ -283,6 +291,11 @@ export async function start(
         let $note = holdMap.get(engineNote.id);
 
         const inViewport = ypos < window.innerHeight;
+
+        if (ypos < 0 && !beeped.has(id)) {
+          beeped.set(id, true);
+          playBeep();
+        }
 
         // If:
         // - the DOM element does not exist
