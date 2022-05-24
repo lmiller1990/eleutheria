@@ -162,7 +162,7 @@ function updateUI(
 
       timeoutId = window.setTimeout(() => {
         elements.timing.innerText = "";
-      }, 20000000);
+      }, 2000);
     }
   }
 
@@ -209,7 +209,7 @@ export async function start(
   const gameConfig: GameConfig = {
     dev: {
       manualMode: false,
-      startAtMs: 150000,
+      startAtMs: 125000,
     },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
