@@ -3,6 +3,7 @@
   "bpm": 128,
   "offset": 2350,
   "banner": "https://dummyimage.com/640x360/gaa/def",
+  "artist": "litmus*",
   "charts": [
     {
       "difficulty": "standard",

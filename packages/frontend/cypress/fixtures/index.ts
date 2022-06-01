@@ -6,6 +6,7 @@ export const songs: BaseSong[] = Array(10)
     id: (idx + 1).toString(),
     offset: 0,
     banner: "",
+    artist: "Unknown",
     bpm: 150,
     charts: [],
     title: `Test Song #${idx + 1}`,

@@ -36,6 +36,7 @@ const metadata: ChartMetadata = {
   offset: 0,
   title: "",
   banner: "",
+  artist: "",
   bpm: 150,
   charts: [],
 };

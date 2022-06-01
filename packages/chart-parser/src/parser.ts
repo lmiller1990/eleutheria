@@ -9,6 +9,7 @@ export interface ChartMetadata {
   title: string;
   bpm: number;
   offset: number;
+  artist: string;
   banner: string;
   charts: Array<{
     difficulty: string;
@@ -169,6 +170,7 @@ export function parseChart(
       banner: dataJson.banner,
       offset: dataJson.offset,
       charts: dataJson.charts,
+      artist: dataJson.artist,
     },
     tapNotes,
   };
