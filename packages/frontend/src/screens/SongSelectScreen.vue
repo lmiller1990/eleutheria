@@ -1,21 +1,33 @@
 <template>
-  <template v-if="songsStore.songs.length">
-    <SongWheelItem :songTitle="`${selectedSong.order}: ${selectedSong.title}`" id="focused-song" />
-    <div class="absolute" :style="wheelStyle" id="wheel">
-      <div class="relative">
-        <SongItemCompact
-          v-for="song in songsStore.songs"
-          :order="song.order"
-          class="absolute"
-          :style="getSongStyle(song.order)"
-          :key="song.title"
-          :id="song.id"
-          :songTitle="song.title"
-        />
+  <div class="flex flex-col w-100">
+    <div class="nav yellow-2"></div>
+    <div class="nav-border"></div>
+    <div id="content" class="flex justify-end align-end">
+      <div id="song-info">
+        <SongInfo />
       </div>
     </div>
-  </template>
-  <template v-else> Loading... </template>
+    <div class="nav-border-bottom green-2"></div>
+    <div class="nav blue-1" id="nav-bottom"></div>
+
+    <template v-if="songsStore.songs.length">
+      <SongWheelItem :songTitle="`${selectedSong.order}: ${selectedSong.title}`" id="focused-song" />
+      <div class="absolute" :style="wheelStyle" id="wheel">
+        <div class="relative">
+          <SongItemCompact
+            v-for="song in songsStore.songs"
+            :order="song.order"
+            class="absolute"
+            :style="getSongStyle(song.order)"
+            :key="song.title"
+            :id="song.id"
+            :songTitle="song.title"
+          />
+        </div>
+      </div>
+    </template>
+    <template v-else> Loading... </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -25,6 +37,7 @@ import SongItemCompact from "../components/SongItemCompact.vue";
 import SongWheelItem from "../components/SongWheelItem.vue";
 import { useSongsStore } from "../stores/songs";
 import "../index.css";
+import SongInfo from "../components/SongInfo.vue";
 
 const scrollSpeed = "0.1s";
 
@@ -185,5 +198,45 @@ songsStore.fetchSongs();
   top: 275px;
   left: 40px;
   z-index: 10;
+}
+
+$nav: 75px;
+$border-height: 5px;
+
+.nav {
+  height: $nav;
+  width: 100%;
+}
+
+$px: 100;
+
+.nav-border {
+	width: 100%;
+  height: $border-height;
+	background: repeating-linear-gradient(90deg,
+    red,
+    red calc(1px * $px),
+    orange calc(1px * $px),
+    orange calc(2px * $px),
+    yellow calc(2px * $px),
+    yellow calc(3px * $px),
+    green calc(3px * $px),
+    green calc(4px * $px),
+    blue calc(4px * $px),
+    blue calc(5px * $px)
+  );
+}
+
+#content {
+  flex-grow: 1;
+}
+
+.nav-border-bottom {
+  height: $border-height;
+}
+
+#song-info {
+  margin: 0 50px 50px 0;
+  // border:
 }
 </style>
