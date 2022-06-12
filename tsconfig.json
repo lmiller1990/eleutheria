@@ -8,7 +8,7 @@
     "allowJs": true,
     "module": "CommonJS",
     "noImplicitAny": true,
-    "target": "esnext",
+    "target": "es6",
     "moduleResolution": "node"
   },
   "include": [

@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import LevelCircle from "./LevelCircle.vue";
+import DifficultyLabel from "./DifficultyLabel.vue";
+
+const props = defineProps<{
+  songTitle: string
+}>()
 
 const levelIndex = ref(0);
 
@@ -13,6 +19,10 @@ function changeLevel(event: KeyboardEvent) {
   }
 }
 
+const difficulties = ['easy', 'normal', 'hard', 'expert']
+
+const difficulty = computed(() => difficulties[levelIndex.value])
+
 onMounted(() => {
   window.addEventListener("keydown", changeLevel);
 });
@@ -24,25 +34,31 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="blue-4 rounded-border-m wheel-item-wrapper">
-    <div class="flex items-center top-section">
-      <div class="banner-wrapper padding-8px w-100">
+    <div class="flex items-center top-section space-around">
+      <div class="banner-wrapper padding-8px">
         <img
           src="https://img.freepik.com/free-vector/abstract-yellow-black-wide-banner-design_1017-30890.jpg?w=2000"
-          height="100"
-          width="500"
+          height="80"
+          width="300"
         />
       </div>
-      <div class="level-circle">5</div>
+
+      <div class="flex flex-col items-center level-rating">
+        <DifficultyLabel>{{ difficulty }}</DifficultyLabel>
+        <LevelCircle :level="10" :max-level="40" :height="60" />
+      </div>
     </div>
 
-    <div class="upcase flex justify-center blue-5" style="color: white">
-      Egotistic Lemontea
+    <div class="upcase flex justify-center blue-5 song-title-wrapper" style="color: white">
+      <div class="song-title">
+        {{ props.songTitle }}
+      </div>
     </div>
 
     <div class="upcase flex justify-center">
       <div class="level-wrapper flex space-between">
         <div
-          v-for="(n, idx) in ['easy', 'normal', 'hard', 'expert']"
+          v-for="(n, idx) in difficulties"
           :key="n"
           :class="[
             n,
@@ -60,14 +76,18 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style>
+<style lang="scss">
 @import "../index.css";
 @import "../../../breeze-css/dist/breeze.css";
+@import "../shared.scss";
 
 .wheel-item-wrapper {
   outline: 5px solid white;
   outline-offset: -10px;
   padding: 10px;
+  width: 550px;
+
+  @include skew;
 }
 
 .top-section {
@@ -137,5 +157,15 @@ onBeforeUnmount(() => {
 
 .expert-highlight {
   background: #daaac7;
+}
+
+.level-rating {
+  width: 80px;
+}
+
+.song-title-wrapper {
+  font-size: 1.2rem;
+
+  @include unskew;
 }
 </style>

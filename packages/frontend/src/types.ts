@@ -7,7 +7,6 @@ import type { BaseSong, Difficulty } from "@packages/types/src";
 export interface Song extends BaseSong {
   order: number;
   banner: string;
-  key: string;
 }
 
 export interface Chart {

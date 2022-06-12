@@ -13,6 +13,10 @@ export const flex = dedent`
     justify-content: space-between;
   }
 
+  .space-around {
+    justify-content: space-around;
+  }
+
   .items-center {
     align-items: center;
   }
