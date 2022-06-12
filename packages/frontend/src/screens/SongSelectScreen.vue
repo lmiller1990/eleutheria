@@ -1,10 +1,8 @@
 <template>
   <template v-if="songsStore.songs.length">
-    <!-- <div id="red"></div> -->
-    <!-- <SongWheelItem :songTitle="selectedSong.title" id="focused-song" /> -->
+    <SongWheelItem :songTitle="`${selectedSong.order}: ${selectedSong.title}`" id="focused-song" />
     <div class="absolute" :style="wheelStyle" id="wheel">
       <div class="relative">
-        <!-- :style="{ margin: `0 0 10px ${20 * (n + 0)}px` }" -->
         <SongItemCompact
           v-for="song in songsStore.songs"
           :order="song.order"
@@ -64,9 +62,10 @@ const wheelStyle = computed(() => {
 const offset = ref(0);
 
 const selectedSong = computed(() => {
-  const song = songsStore.songs.at(focused.value);
+  const belowZeroOrder = songsStore.songs.reduce((acc, curr) => curr.order < 0 ? acc + 1 : acc, 0)
+  const song = songsStore.songs[focused.value + belowZeroOrder];
   if (!song) {
-    throw Error(`Tried accessing song at index ${focused.value} but was null!`);
+    throw Error(`Tried accessing song at index ${focused.value} but was null.`);
   }
   return song;
 });
@@ -80,8 +79,12 @@ function nextSong() {
   offset.value--;
 
   let order = songsStore.songs.at(-1)!.order + 1;
-  const next = songsStore.originalSongs[nextIndex]!;
-  nextIndex = songsStore.originalSongs.length - 1 < 0 ? 0 : nextIndex + 1;
+  const next = songsStore.originalSongs[nextIndex]!
+  if (nextIndex === songsStore.originalSongs.length - 1) {
+    nextIndex = 0
+  } else {
+    nextIndex++
+  }
 
   songsStore.setSongs([
     ...songsStore.songs,
@@ -90,21 +93,26 @@ function nextSong() {
 }
 
 watchEffect(() => {
-  console.log(focused.value);
-});
+  // console.log(focused.value, songsStore.songs.map(x => x.order).join(" "), offset.value)
+})
 
 function prevSong() {
   offset.value++;
 
   let order = songsStore.songs.at(0)!.order - 1;
-  const next = songsStore.originalSongs[prevIndex]!;
-  prevIndex = 0 ? songsStore.originalSongs.length - 1 : prevIndex - 1;
-
+  // console.log(songsStore.songs.at(0)!.order, order)
+  const next = songsStore.originalSongs[prevIndex]!
+  if (prevIndex === 0) {
+    prevIndex = songsStore.originalSongs.length - 1
+  } else {
+    prevIndex--
+  }
   songsStore.setSongs([
     { ...next, id: order.toString(), order },
     ...songsStore.songs,
   ]);
 }
+
 
 const router = useRouter();
 
