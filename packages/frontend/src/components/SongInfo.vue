@@ -1,6 +1,6 @@
 <template>
-  <div class="yellow-2 octogon" id="song-info">
-    <div class="indigo-2 octogon flex" id="song-info-inner">
+  <div class="yellow-3 octogon" id="song-info">
+    <div class="indigo-1 octogon flex" id="song-info-inner">
       <table>
         <tr>
           <th>Notes</th>
@@ -36,7 +36,6 @@
 
 #song-info {
   width: 100%;
-  height: 100%;
   padding: 5px;
   font-size: 1.25rem;
 }
@@ -74,5 +73,10 @@ td {
   color: white;
   padding: 0 5px;
   border-radius: 4px;
+}
+
+#best-grade {
+  color: lightgoldenrodyellow;
+  text-shadow: 0px 10px 10px black;
 }
 </style>
