@@ -4,7 +4,7 @@ import { getGameDataUrl } from "../screens/gameplay/env";
 import type { Chart, Song } from "../types";
 
 interface SongsState {
-  originalSongs: BaseSong[]
+  originalSongs: BaseSong[];
   songs: Song[];
   selectedSongId: string | undefined;
   selectedChartIdx: number;
@@ -35,7 +35,7 @@ export const useSongsStore = defineStore("songs", {
 
       let _songs: Song[] = [];
       const _offset = 0;
-      this.originalSongs = data
+      this.originalSongs = data;
 
       for (let i = _offset; i < data.length * 6 + _offset; i++) {
         const s = data[i % data.length];

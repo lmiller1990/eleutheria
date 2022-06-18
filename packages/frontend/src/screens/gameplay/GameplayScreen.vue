@@ -12,7 +12,6 @@ import "../../style.css";
 const router = useRouter();
 
 function songCompleted(summary: Summary) {
-  return;
   const summaryStore = useSummaryStore();
   summaryStore.setSummary(summary);
   router.push("/summary");

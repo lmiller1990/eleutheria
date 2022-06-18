@@ -1,35 +1,22 @@
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed } from "vue";
 import LevelCircle from "./LevelCircle.vue";
 import DifficultyLabel from "./DifficultyLabel.vue";
 
-const props = defineProps<{
-  songTitle: string
-}>()
-
-const levelIndex = ref(0);
-
-function changeLevel(event: KeyboardEvent) {
-  if (event.key === "ArrowLeft") {
-    levelIndex.value--;
-  }
-
-  if (event.key === "ArrowRight") {
-    levelIndex.value++;
-  }
+interface Chart {
+  difficulty: string;
+  level: number;
 }
 
-const difficulties = ['easy', 'normal', 'hard', 'expert']
+const props = defineProps<{
+  songTitle: string;
+  charts: Chart[];
+  levelIndex: number;
+}>();
 
-const difficulty = computed(() => difficulties[levelIndex.value])
+const difficulties = ["basic", "normal", "hard", "expert"];
 
-onMounted(() => {
-  window.addEventListener("keydown", changeLevel);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", changeLevel);
-});
+const difficulty = computed(() => difficulties[props.levelIndex]);
 </script>
 
 <template>
@@ -49,7 +36,10 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="upcase flex justify-center blue-5 song-title-wrapper" style="color: white">
+    <div
+      class="upcase flex justify-center blue-5 song-title-wrapper"
+      style="color: white"
+    >
       <div class="song-title">
         {{ props.songTitle }}
       </div>
@@ -58,18 +48,18 @@ onBeforeUnmount(() => {
     <div class="upcase flex justify-center">
       <div class="level-wrapper flex space-between">
         <div
-          v-for="(n, idx) in difficulties"
-          :key="n"
+          v-for="(chart, idx) in props.charts"
+          :key="chart.difficulty"
           :class="[
-            n,
+            chart,
             {
-              [`${n}-highlight`]: idx === levelIndex,
+              [`${chart.difficulty}-highlight`]: idx === levelIndex,
               highlight: idx === levelIndex,
             },
           ]"
           class="level-label flex justify-center items-center"
         >
-          {{ n.slice(0, 1) }}: {{ (idx + 1) * 10 }}
+          {{ chart.difficulty.slice(0, 1) }}: {{ (idx + 1) * 10 }}
         </div>
       </div>
     </div>
@@ -119,7 +109,7 @@ onBeforeUnmount(() => {
 }
 
 .level-wrapper {
-  width: calc(30px + var(--label) * 4);
+  width: calc(10px + var(--label) * v-bind("props.charts.length"));
   margin: 5px 0;
 }
 
@@ -127,11 +117,11 @@ onBeforeUnmount(() => {
   border-color: #c3cc6d;
 }
 
-.easy {
+.basic {
   background: #6e92be;
 }
 
-.easy-highlight {
+.basic-highlight {
   background: #8fbef6;
 }
 

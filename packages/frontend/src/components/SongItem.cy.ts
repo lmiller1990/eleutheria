@@ -1,7 +1,7 @@
-import SongWheelItem from "./SongWheelItem.vue"
+import SongWheelItem from "./SongWheelItem.vue";
 
-describe('SongWheelItem', () => {
-  it('playground', () => {
-    cy.mount(SongWheelItem)
-  })
-})
+describe("SongWheelItem", () => {
+  it("playground", () => {
+    cy.mount(SongWheelItem);
+  });
+});

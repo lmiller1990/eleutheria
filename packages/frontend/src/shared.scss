@@ -27,7 +27,7 @@ button {
 
 @mixin skew {
   transform: skew(10deg);
-  
+
   > * {
     transform: skew(-10deg);
   }

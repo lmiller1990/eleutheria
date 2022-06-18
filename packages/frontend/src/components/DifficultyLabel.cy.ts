@@ -1,12 +1,10 @@
-import { h } from "vue"
+import { h } from "vue";
 import DifficultyLabel from "./DifficultyLabel.vue";
 
 describe("DifficultyLabel", () => {
   it("renders", () => {
-    const el = h(() => [
-      h(DifficultyLabel, "easy"),
-    ])
+    const el = h(() => [h(DifficultyLabel, "easy")]);
 
-    cy.mount(() => el)
+    cy.mount(() => el);
   });
 });

@@ -13,8 +13,8 @@ const props = withDefaults(
 );
 
 const strokeWidth = 4;
-const innerRad = ((props.height - 10) / 2) - 5
-const radius = innerRad + 2
+const innerRad = (props.height - 10) / 2 - 5;
+const radius = innerRad + 2;
 const difficulty = props.level / props.maxLevel;
 
 const rotateAbout = radius + strokeWidth / 2;
@@ -52,7 +52,13 @@ const circle2Style: CSSProperties = {
           :stroke-dashoffset="offset"
           :r="radius"
         />
-        <circle stroke="skyblue" cx="50%" cy="50%" fill="skyblue" :r="innerRad" />
+        <circle
+          stroke="skyblue"
+          cx="50%"
+          cy="50%"
+          fill="skyblue"
+          :r="innerRad"
+        />
         <text
           x="50%"
           y="50%"

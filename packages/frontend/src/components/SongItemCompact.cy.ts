@@ -3,7 +3,7 @@ import SongItemCompact from "./SongItemCompact.vue";
 
 describe("SongItemCompact", () => {
   it("playground", () => {
-    cy.viewport(600, 300)
+    cy.viewport(600, 300);
 
     const el = h(
       SongItemCompact,
@@ -18,6 +18,6 @@ describe("SongItemCompact", () => {
       }
     );
 
-    cy.mount(() => el)
-  })
-})
+    cy.mount(() => el);
+  });
+});

@@ -22,6 +22,10 @@
     <template v-if="songsStore.songs.length">
       <SongWheelItem
         :songTitle="`${selectedSong.order}: ${selectedSong.title}`"
+        class="main-song-wheel-item"
+        :class="focusedSongClass"
+        :charts="selectedSong.charts"
+        :levelIndex="songsStore.selectedChartIdx"
         :style="wheelItemStyle"
         id="focused-song"
       />
@@ -45,6 +49,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
+import throttle from "lodash/throttle";
 import { useRouter } from "vue-router";
 import SongItemCompact from "../components/SongItemCompact.vue";
 import SongWheelItem from "../components/SongWheelItem.vue";
@@ -91,6 +96,7 @@ const wheelStyle = computed(() => {
 });
 
 const offset = ref(0);
+const focusedSongClass = ref<"bounce" | "">("");
 
 const selectedSong = computed(() => {
   const belowZeroOrder = songsStore.songs.reduce(
@@ -149,14 +155,39 @@ function prevSong() {
 
 const router = useRouter();
 
+function durationToNum(str: string) {
+  const match = /(\d+).*/.exec(str);
+  if (!match?.[1]) {
+    throw Error(`Could not convert ${str} to number`);
+  }
+  return parseInt(match[1], 10);
+}
+
+let timeoutId: number;
+const durationMs = "50ms";
+
+function bounceFocusedSong() {
+  window.clearTimeout(timeoutId);
+  focusedSongClass.value = "bounce";
+  timeoutId = window.setTimeout(
+    () => (focusedSongClass.value = ""),
+    durationToNum(durationMs)
+  );
+}
+
 function changeSong(event: KeyboardEvent) {
-  if (event.code === "KeyK") {
+  if (["KeyJ", "KeyK"].includes(event.code)) {
     songsStore.setSelectedChartIdx(0);
-    prevSong();
-  } else if (event.code === "KeyJ") {
-    songsStore.setSelectedChartIdx(0);
-    nextSong();
-  } else if (event.code === "KeyH") {
+    bounceFocusedSong();
+
+    if (event.code === "KeyK") {
+      prevSong();
+    } else if (event.code === "KeyJ") {
+      nextSong();
+    }
+  }
+
+  if (event.code === "KeyH") {
     if (songsStore.selectedChartIdx > 0) {
       songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
     }
@@ -164,30 +195,30 @@ function changeSong(event: KeyboardEvent) {
     if (!selectedSong.value) {
       return;
     }
-
     if (songsStore.selectedChartIdx < selectedSong.value.charts.length - 1) {
       songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
     }
   } else if (event.code === "Enter") {
-    // const song = songsStore.songs[focusSongIndex];
-    // router.push({
-    //   path: "game",
-    //   query: {
-    //     song: song.id,
-    //     difficulty: songsStore.selectedChart?.difficulty,
-    //   },
-    // });
+    songsStore.setSelectedSongId(selectedSong.value.id);
+    router.push({
+      path: "game",
+      query: {
+        song: selectedSong.value.id,
+        difficulty: songsStore.selectedChart?.difficulty,
+      },
+    });
   }
 }
 
-const handleChangeSong = changeSong;
-
 onMounted(() => {
-  window.addEventListener("keydown", handleChangeSong);
+  window.addEventListener(
+    "keydown",
+    throttle(changeSong, durationToNum(durationMs))
+  );
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleChangeSong);
+  window.removeEventListener("keydown", changeSong);
 });
 
 songsStore.fetchSongs();
@@ -195,6 +226,10 @@ songsStore.fetchSongs();
 
 <style lang="scss">
 @import "../shared.scss";
+
+:root {
+  --focused-song-top: 275px;
+}
 
 .hidden {
   visibility: hidden;
@@ -215,7 +250,7 @@ songsStore.fetchSongs();
 
 #focused-song {
   position: absolute;
-  top: 275px;
+  top: var(--focused-song-top);
   z-index: 10;
 }
 
@@ -276,5 +311,23 @@ $px: 100;
 
 #song-info-wrapper {
   padding: 0 0 50px 0;
+}
+
+.main-song-wheel-item {
+  transition: 1s;
+}
+
+@keyframes jiggle {
+  0% {
+    top: calc(var(--focused-song-top) + 5px);
+  }
+
+  100% {
+    top: var(--focused-song-top);
+  }
+}
+
+.bounce {
+  animation: jiggle v-bind("durationMs");
 }
 </style>

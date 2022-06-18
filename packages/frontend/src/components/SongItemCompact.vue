@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  songTitle: string
-  order: number
-}>()
+  songTitle: string;
+  order: number;
+}>();
 </script>
 
 <template>
-  <div class="rounded-border-m blue-4 item-wrapper flex items-center justify-center relative">
+  <div
+    class="rounded-border-m blue-4 item-wrapper flex items-center justify-center relative"
+  >
     <div class="align-center item-title blue-5 w-100">
-      <div>{{ order }}:  {{ songTitle }}</div>
+      <div>{{ order }}: {{ songTitle }}</div>
     </div>
-    <div class="item-level flex items-center justify-center absolute">
-      10
-    </div>
+    <div class="item-level flex items-center justify-center absolute">10</div>
   </div>
 </template>
 
