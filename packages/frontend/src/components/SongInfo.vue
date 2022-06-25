@@ -1,6 +1,6 @@
 <template>
-  <div class="yellow-3 octogon" id="song-info">
-    <div class="indigo-1 octogon flex" id="song-info-inner">
+  <div class="gray-3 border-1 rounded-border-m" id="song-info">
+    <div class="flex" id="song-info-inner">
       <table>
         <tr>
           <th>Notes</th>

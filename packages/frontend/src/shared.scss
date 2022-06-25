@@ -26,16 +26,16 @@ button {
 }
 
 @mixin skew {
-  transform: skew(10deg);
+  // transform: skew(10deg);
 
   > * {
-    transform: skew(-10deg);
+    // transform: skew(-10deg);
   }
 }
 
 @mixin unskew {
-  transform: skew(0deg);
+  // transform: skew(0deg);
   > * {
-    transform: skew(-10deg);
+    // transform: skew(-10deg);
   }
 }

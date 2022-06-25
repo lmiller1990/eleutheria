@@ -15,3 +15,8 @@ export interface Chart {
   parsedTapNoteChart: ParsedTapNoteChart;
   parsedHoldNoteChart: ParsedHoldNoteChart;
 }
+
+export interface SongDifficulty {
+  name: string
+  level: number
+}

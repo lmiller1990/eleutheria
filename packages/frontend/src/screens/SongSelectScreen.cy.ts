@@ -1,6 +1,6 @@
 import { mount } from "cypress/vue";
 import { songs } from "../../cypress/fixtures";
-import SongSelectScreen from "./SongSelectScreen.vue";
+import SongSelectScreen from "./SongSelectScreenOld.vue";
 
 import style from "../../../breeze-css/dist/breeze.css";
 

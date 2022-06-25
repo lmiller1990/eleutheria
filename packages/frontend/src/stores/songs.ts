@@ -34,10 +34,9 @@ export const useSongsStore = defineStore("songs", {
       const data = (await res.json()) as BaseSong[];
 
       let _songs: Song[] = [];
-      const _offset = 0;
       this.originalSongs = data;
 
-      for (let i = _offset; i < data.length * 6 + _offset; i++) {
+      for (let i = 0; i < data.length; i++) {
         const s = data[i % data.length];
         _songs.push({
           ...s,
@@ -45,6 +44,9 @@ export const useSongsStore = defineStore("songs", {
         });
       }
 
+      for (let i = 0; i < 3; i++) {
+        _songs.push({..._songs[i], id: i.toString(), order: _songs[i].order + 1 })
+      }
       this.songs = _songs;
     },
 
