@@ -6,7 +6,7 @@ defineProps<Props>();
 </script>
 
 <template>
-  <div class="h-100 w-100 align-center song-title-banner" data-cy="song-tile">
+  <div class="h-100 w-100 align-center song-title-banner" :class="{ selected }" data-cy="song-tile">
     <div class="relative song-img-wrapper flex justify-center items-center" data-cy="image">
       <img class="song-img relative" :src="imgSrc" />
       <PlaySymbol class="play-symbol" :class="{ 'opacity-1': selected }" data-cy="play-symbol" />
@@ -31,10 +31,16 @@ $img-height: 75%;
 }
 
 .song-title-banner {
+  box-sizing: content-box;
   background: #373737;
   font-family: "Sansation", sans-serif;
   font-size: 1.5rem;
   font-weight: bold;
+  border: 5px solid #828282; // match background. TODO: share variable.
+}
+
+.selected {
+  border: 5px solid white;
 }
 
 .song-title {

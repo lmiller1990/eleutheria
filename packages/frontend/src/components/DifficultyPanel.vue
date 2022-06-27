@@ -5,17 +5,30 @@ import Triangle from "./Triangle.vue";
 
 defineProps<{
   difficulties: SongDifficulty[];
-  selectedIndex: number;
+  selectedIndex?: number;
+}>();
+
+const emit = defineEmits<{
+  (event: "selected", index: number): void;
 }>();
 </script>
 
 <template>
   <div class="difficulty-panel">
-    <div v-for="(difficulty, idx) of difficulties" class="row flex items-center">
+    <div
+      v-for="(difficulty, index) of difficulties"
+      class="row flex items-center"
+    >
       <div class="cursor flex justify-center">
-        <Triangle v-if="idx === selectedIndex" />
+        <Triangle
+          v-if="selectedIndex !== undefined && index === selectedIndex"
+        />
       </div>
-      <DifficultyItem :key="difficulty.name" :difficulty="difficulty" />
+      <DifficultyItem
+        :key="difficulty.name"
+        :difficulty="difficulty"
+        @click="emit('selected', index)"
+      />
     </div>
   </div>
 </template>

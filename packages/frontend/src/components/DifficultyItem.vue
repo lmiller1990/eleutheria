@@ -30,7 +30,9 @@ defineProps<{
   font-family: 'Sansation', sans-serif;
   font-weight: bold;
   font-size: 1.5rem;
+  cursor: pointer;
 }
+
 
 .difficulty-label, .level {
   padding: 10px;
@@ -38,6 +40,14 @@ defineProps<{
 
 .basic {
   background: #12C32E;
+
+  &:hover {
+    background: #18F13B;
+
+    .basic-level {
+      background: #12C32E;
+    }
+  }
 }
 
 .basic-level {
@@ -45,7 +55,15 @@ defineProps<{
 }
 
 .standard {
-  background: #FBFD99;
+  background: #FCFF57;
+
+  &:hover {
+    background: #FDFFA1;
+
+    .standard-level {
+      background: #dde042;
+    }
+  }
 }
 
 .standard-level {
@@ -54,6 +72,14 @@ defineProps<{
 
 .expert {
   background: #D91C1C;
+
+  &:hover {
+    background: #FF3434;
+
+    .expert-level {
+      background: #D91C1C;
+    }
+  }
 }
 
 .expert-level {

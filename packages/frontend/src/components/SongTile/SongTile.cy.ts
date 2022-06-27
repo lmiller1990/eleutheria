@@ -4,6 +4,12 @@ import { Props } from "./types";
 
 function mountSongTile(props: Partial<Props> = {}) {
   return cy.mount(SongTile, {
+    style: `
+      body {
+        background: black;
+        margin: 10px;
+      }
+    `,
     props: {
       songTitle: "Azure Sky",
       imgSrc: thumbails[0],

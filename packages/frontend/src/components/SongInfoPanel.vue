@@ -1,14 +1,23 @@
 <script lang="ts" setup>
+import { computed } from "vue";
+import { useSongsStore } from "../stores/songs";
+
 defineProps<{
   noteCount: number;
   duration: string;
   bpm: number;
   personalBest: string;
 }>();
+
+const store = useSongsStore();
+
+const chartDifficulty = computed(() => {
+  return store.selectedChart?.difficulty ?? "";
+});
 </script>
 
 <template>
-  <div class="info-wrapper">
+  <div class="info-wrapper" :class="chartDifficulty">
     <div class="info-panel text-white">
       <div>Notes</div>
       <div>{{ noteCount }}</div>
@@ -31,9 +40,14 @@ defineProps<{
 </style>
 
 <style scoped lang="scss">
+@import "../shared.scss";
+
+$border: 3px;
+
 .info-wrapper {
   display: flex;
   justify-content: center;
+  border: $border solid transparent;
 }
 
 .info-panel {
@@ -44,5 +58,17 @@ defineProps<{
   background: #373737;
   font-size: 1.5rem;
   padding: 20px;
+}
+
+.basic {
+  border: $border solid $basic;
+}
+
+.standard {
+  border: $border solid $standard;
+}
+
+.expert {
+  border: $border solid $expert;
 }
 </style>

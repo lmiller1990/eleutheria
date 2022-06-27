@@ -7,7 +7,9 @@
           class="w-100"
           :key="song.id"
           :songTitle="song.title"
-        :imgSrc="thumbails[idx]"
+          :selected="song.id === songsStore.selectedSongId"
+          :imgSrc="thumbails[idx]"
+          @click="songsStore.setSelectedSongId(song.id)"
         />
       </div>
     </div>
@@ -15,7 +17,8 @@
     <div class="info-col">
       <DifficultyPanel 
         :difficulties="difficulties"
-        :selectedIndex="0"
+        :selectedIndex="selectedChartIndex"
+        @selected="idx => songsStore.setSelectedChartIdx(idx)"
       />
 
       <SongInfoPanel 
@@ -56,6 +59,14 @@ const difficulties: SongDifficulty[] = [
 ];
 
 const songsStore = useSongsStore();
+
+const selectedChartIndex = computed(() => {
+  if (songsStore.selectedChartIdx === undefined || !songsStore.selectedSongId) {
+    return undefined
+  }
+
+  return songsStore.selectedChartIdx
+})
 
 const selectedSong = computed(() => {
   const belowZeroOrder = songsStore.songs.reduce(
@@ -117,29 +128,7 @@ const durationMs = "50ms";
 // }
 
 function changeSong(event: KeyboardEvent) {
-  if (["KeyJ", "KeyK"].includes(event.code)) {
-    songsStore.setSelectedChartIdx(0);
-    // bounceFocusedSong();
-
-    if (event.code === "KeyK") {
-      prevSong();
-    } else if (event.code === "KeyJ") {
-      nextSong();
-    }
-  }
-
-  if (event.code === "KeyH") {
-    if (songsStore.selectedChartIdx > 0) {
-      songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
-    }
-  } else if (event.code === "KeyL") {
-    if (!selectedSong.value) {
-      return;
-    }
-    if (songsStore.selectedChartIdx < selectedSong.value.charts.length - 1) {
-      songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
-    }
-  } else if (event.code === "Enter") {
+  if (event.code === "Enter") {
     songsStore.setSelectedSongId(selectedSong.value.id);
     router.push({
       path: "game",
@@ -191,7 +180,7 @@ songsStore.fetchSongs();
   row-gap: 50px;
   grid-auto-rows: 200px;
   column-gap: 50px;
-  overflow: scroll;
+  // overflow: scroll;
 }
 
 .info-col {

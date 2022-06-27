@@ -104,7 +104,6 @@ function goNext() {
 
 #screen-summary {
   font-family: "Comfortaa", cursive;
-  background: $pattern-bg;
 }
 
 .ascii-icon {

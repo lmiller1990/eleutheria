@@ -151,6 +151,7 @@ export class Game {
 
     gameState.inputManager.setOrigin(gameState.t0);
 
+    return
     this.#lifecycle.onStart?.(gameState);
     this.gameLoop(gameState);
 
