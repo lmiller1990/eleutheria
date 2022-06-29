@@ -4,7 +4,6 @@ import { getGameDataUrl } from "../screens/gameplay/env";
 import type { Chart, Song } from "../types";
 
 interface SongsState {
-  originalSongs: BaseSong[];
   songs: Song[];
   selectedSongId: string | undefined;
   selectedChartIdx: number;
@@ -13,9 +12,8 @@ interface SongsState {
 export const useSongsStore = defineStore("songs", {
   state: (): SongsState => {
     return {
-      selectedSongId: undefined,
+      selectedSongId: 'rave',
       selectedChartIdx: 0,
-      originalSongs: [],
       songs: [],
     };
   },
@@ -33,21 +31,12 @@ export const useSongsStore = defineStore("songs", {
       const res = await window.fetch(getGameDataUrl("/songs"));
       const data = (await res.json()) as BaseSong[];
 
-      let _songs: Song[] = [];
-      this.originalSongs = data;
-
-      for (let i = 0; i < data.length; i++) {
-        const s = data[i % data.length];
-        _songs.push({
-          ...s,
-          order: i,
-        });
-      }
-
-      for (let i = 0; i < 3; i++) {
-        _songs.push({..._songs[i], id: i.toString(), order: _songs[i].order + 1 })
-      }
-      this.songs = _songs;
+      this.songs = data.map<Song>((song, idx) => {
+        return {
+          ...song,
+          order: idx,
+        }
+      })
     },
 
     setSelectedChartIdx(selectedChartIdx: number) {

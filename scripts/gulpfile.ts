@@ -123,7 +123,42 @@ async function createPkg() {
   ]);
 }
 
+async function createChart() {
+  const results = await inquirer.prompt<{
+    songName: string;
+    difficultyName: string;
+  }>([
+    {
+      name: "songName",
+      type: "input",
+      message: "What is the song name?",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
+    {
+      name: "difficultyName",
+      type: "input",
+      message: "What is the difficulty name?",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
+  ]);
+
+  const newDir = path.join(__dirname, "..", "packages", "game-data", "songs", results.songName, results.difficultyName);
+  await fs.mkdir(newDir);
+
+  await Promise.all([
+    fs.writeFile(
+      path.join(newDir, `${results.songName}.chart`),
+      ""
+    ),
+    fs.writeFile(
+      path.join(newDir, `${results.songName}.holds.chart`),
+      ""
+    ),
+  ]);
+}
+
 gulp.task("createPkg", createPkg);
+gulp.task("createChart", createChart);
 
 gulp.task(
   "dev",

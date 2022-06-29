@@ -3,10 +3,10 @@ import { computed } from "vue";
 import { useSongsStore } from "../stores/songs";
 
 defineProps<{
-  noteCount: number;
-  duration: string;
-  bpm: number;
-  personalBest: string;
+  noteCount?: number;
+  duration?: string;
+  bpm?: number;
+  personalBest?: string;
 }>();
 
 const store = useSongsStore();
@@ -20,16 +20,16 @@ const chartDifficulty = computed(() => {
   <div class="info-wrapper" :class="chartDifficulty">
     <div class="info-panel text-white">
       <div>Notes</div>
-      <div>{{ noteCount }}</div>
+      <div>{{ noteCount ?? "-" }}</div>
 
       <div>Duration</div>
-      <div>{{ duration }}</div>
+      <div>{{ duration ?? "-" }}</div>
 
       <div>BPM</div>
-      <div>{{ bpm }}</div>
+      <div>{{ bpm ?? "-" }}</div>
 
       <div>Best</div>
-      <div>{{ personalBest }}</div>
+      <div>{{ personalBest ?? "-" }}</div>
     </div>
   </div>
 </template>

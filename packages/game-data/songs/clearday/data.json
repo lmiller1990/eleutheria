@@ -10,6 +10,10 @@
       "level": 2
     },
     {
+      "difficulty": "standard",
+      "level": 3
+    },
+    {
       "difficulty": "expert",
       "level": 5
     }

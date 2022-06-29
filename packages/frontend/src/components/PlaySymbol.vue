@@ -10,6 +10,5 @@
       d="M83.6364 49.5454L32.5 79.069L32.5 20.0218L83.6364 49.5454Z"
       fill="white"
     />
-    <circle cx="50" cy="50" r="47.5" stroke="white" stroke-width="5" />
   </svg>
 </template>
