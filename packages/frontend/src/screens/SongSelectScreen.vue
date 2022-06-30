@@ -1,17 +1,15 @@
 <template>
   <div class="wrapper">
-    <div class="tiles-wrapper flex items-center justify-center">
-      <div class="song-tiles">
-        <SongTile
-          v-for="(song, idx) of songsStore.songs"
-          class="w-100"
-          :key="song.id"
-          :songTitle="song.title"
-          :selected="song.id === songsStore.selectedSongId"
-          :imgSrc="thumbails[idx]"
-          @selected="songsStore.setSelectedSongId(song.id)"
-        />
-      </div>
+    <div class="tiles flex items-center justify-center">
+      <SongTile
+        v-for="(song, idx) of songsStore.songs"
+        class="w-100"
+        :key="song.id"
+        :songTitle="song.title"
+        :selected="song.id === songsStore.selectedSongId"
+        :imgSrc="thumbails[idx]"
+        @selected="songsStore.setSelectedSongId(song.id)"
+      />
     </div>
 
     <div class="info-col">
@@ -48,25 +46,25 @@ const songsStore = useSongsStore();
 
 const difficulties = computed<SongDifficulty[]>(() => {
   if (!songsStore.selectedSong) {
-    return []
+    return [];
   }
 
-  return songsStore.selectedSong.charts.map(chart => {
+  return songsStore.selectedSong.charts.map((chart) => {
     return {
       name: chart.difficulty,
-      level: chart.level
-    }
-  })
+      level: chart.level,
+    };
+  });
 });
 
 const chartSummary = computed<ChartSummary | undefined>(() => {
   if (!songsStore.selectedChart) {
-    return
+    return;
   }
 
   return chartInfo(
     songsStore.selectedChart.parsedTapNoteChart,
-    songsStore.selectedChart.parsedHoldNoteChart,
+    songsStore.selectedChart.parsedHoldNoteChart
   );
 });
 
@@ -108,25 +106,24 @@ songsStore.fetchSongs();
   width: 100%;
   max-width: 1024px;
   column-gap: 80px;
-}
-
-.song-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  row-gap: 50px;
-  grid-auto-rows: 200px;
-  column-gap: 50px;
-  // overflow: scroll;
+  padding: 40px;
 }
 
 .info-col {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  margin-bottom: 100px;
 }
 
 .song-panel {
   margin-top: 20px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  row-gap: 50px;
+  column-gap: 50px;
 }
 </style>

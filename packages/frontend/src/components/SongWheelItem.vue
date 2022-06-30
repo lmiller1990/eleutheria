@@ -76,8 +76,6 @@ const difficulty = computed(() => difficulties[props.levelIndex]);
   outline-offset: -10px;
   padding: 10px;
   width: 550px;
-
-  @include skew;
 }
 
 .top-section {
@@ -155,7 +153,5 @@ const difficulty = computed(() => difficulties[props.levelIndex]);
 
 .song-title-wrapper {
   font-size: 1.2rem;
-
-  @include unskew;
 }
 </style>

@@ -34,8 +34,6 @@ const props = defineProps<{
   outline-offset: -8px;
   padding: 8px;
   width: 350px;
-
-  @include skew;
 }
 
 .item-rect {
@@ -46,7 +44,6 @@ const props = defineProps<{
 .item-title {
   color: white;
   font-size: 1rem;
-  @include unskew;
 }
 
 .item-level {
