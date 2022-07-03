@@ -21,8 +21,10 @@ watchEffect(() => {
 });
 
 function handleSelected() {
+  emit("selected");
+
   if (props.selected) {
-    return
+    return;
   }
 
   window.clearTimeout(timeoutId);
@@ -32,8 +34,6 @@ function handleSelected() {
   timeoutId = window.setTimeout(() => {
     pulseClass.value = "pulse-repeat";
   }, 750);
-
-  emit("selected");
 }
 </script>
 
@@ -48,7 +48,10 @@ function handleSelected() {
       class="relative song-img-wrapper flex justify-center items-center"
       data-cy="image"
     >
-      <img class="song-img relative" :src="imgSrc" />
+      <div
+        class="song-img relative"
+        :style="`background-image: url(${imgSrc})`"
+      />
       <PlaySymbol
         class="play-symbol circle"
         :class="{ 'opacity-1': selected, [pulseClass]: true }"
@@ -158,6 +161,7 @@ $img-height: 75%;
 .song-img {
   height: 100%;
   width: 100%;
+  background-size: 100% 100%;
 }
 
 .opacity-1 {
