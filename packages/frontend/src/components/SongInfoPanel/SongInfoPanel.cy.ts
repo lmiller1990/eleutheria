@@ -23,7 +23,7 @@ function render(_props?: Partial<SongInfoPanelProps>) {
 
 describe("SongInfoPanel", () => {
   it("renders title and slot content", () => {
-    render({ panelTitle: 'Panel title' });
-    cy.contains('Panel title')
+    render({ panelTitle: "Panel title" });
+    cy.contains("Panel title");
   });
 });

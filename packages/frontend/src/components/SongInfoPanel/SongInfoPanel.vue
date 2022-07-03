@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import type { SongInfoPanelProps } from './types'
-import InfoPanel from '../InfoPanel'
+import type { SongInfoPanelProps } from "./types";
+import InfoPanel from "../InfoPanel";
 
 const props = defineProps<SongInfoPanelProps>();
 </script>
 
 <template>
   <InfoPanel panelTitle="Stats" :highlightColor="props.highlightColor">
-
     <div class="info-panel text-white">
       <div>Notes</div>
       <div>{{ props.noteCount ?? "-" }}</div>

@@ -21,15 +21,15 @@ import "./commands";
 
 import { mount } from "cypress/vue";
 
-import { createPinia, setActivePinia } from 'pinia'
-import type { Pinia } from 'pinia'
+import { createPinia, setActivePinia } from "pinia";
+import type { Pinia } from "pinia";
 
-let pinia: Pinia
+let pinia: Pinia;
 
 beforeEach(() => {
-  pinia = createPinia()
-  setActivePinia(pinia)
-})
+  pinia = createPinia();
+  setActivePinia(pinia);
+});
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.

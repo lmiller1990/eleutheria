@@ -102,7 +102,7 @@ function handleSelected(songId: string) {
     // time to play!
 
     if (!chartDifficulty.value) {
-      throw Error(`No difficulty was selected. This should be impossible`)
+      throw Error(`No difficulty was selected. This should be impossible`);
     }
 
     router.push({

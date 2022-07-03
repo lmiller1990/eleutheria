@@ -1,6 +1,6 @@
 import { h } from "vue";
 import DifficultyItem from "./DifficultyItem.vue";
-import { difficulties } from '../constants'
+import { difficulties } from "../constants";
 
 describe("DifficultyItem.cy.ts", () => {
   it("playground", () => {
@@ -13,6 +13,6 @@ describe("DifficultyItem.cy.ts", () => {
         )
       );
 
-    cy.mount(Wrapper)
+    cy.mount(Wrapper);
   });
 });

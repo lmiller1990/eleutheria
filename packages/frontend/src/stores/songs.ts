@@ -12,7 +12,7 @@ interface SongsState {
 export const useSongsStore = defineStore("songs", {
   state: (): SongsState => {
     return {
-      selectedSongId: 'rave',
+      selectedSongId: "rave",
       selectedChartIdx: 0,
       songs: [],
     };
@@ -35,8 +35,8 @@ export const useSongsStore = defineStore("songs", {
         return {
           ...song,
           order: idx,
-        }
-      })
+        };
+      });
     },
 
     setSelectedChartIdx(selectedChartIdx: number) {

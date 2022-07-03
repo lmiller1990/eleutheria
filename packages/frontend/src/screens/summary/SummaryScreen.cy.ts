@@ -47,19 +47,23 @@ function setTestData() {
   });
 }
 
-describe.skip("SummaryScreen", { viewportHeight: 660, viewportWidth: 1000 }, () => {
-  it("displays score", () => {
-    setTestData();
+describe.skip(
+  "SummaryScreen",
+  { viewportHeight: 660, viewportWidth: 1000 },
+  () => {
+    it("displays score", () => {
+      setTestData();
 
-    mount(SummaryScreen, {
-      global: {
-        plugins: [router, pinia],
-      },
-      styles: [
-        style,
-        appStyle,
-        "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
-      ],
+      mount(SummaryScreen, {
+        global: {
+          plugins: [router, pinia],
+        },
+        styles: [
+          style,
+          appStyle,
+          "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
+        ],
+      });
     });
-  });
-});
+  }
+);

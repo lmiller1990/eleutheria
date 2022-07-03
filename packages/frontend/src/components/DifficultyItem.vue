@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-import type { SongDifficulty } from '../types'
+import type { SongDifficulty } from "../types";
 
 defineProps<{
-  difficulty: SongDifficulty
-}>()
+  difficulty: SongDifficulty;
+}>();
 </script>
 
 <template>
-  <div class="difficulty-item w-100 align-center flex space-between" :class="difficulty.name">
+  <div
+    class="difficulty-item w-100 align-center flex space-between"
+    :class="difficulty.name"
+  >
     <div class="difficulty-label">
       {{ difficulty.name }}
     </div>
@@ -27,25 +30,25 @@ defineProps<{
 .difficulty-item {
   padding-left: 30px;
   text-transform: capitalize;
-  font-family: 'Sansation', sans-serif;
+  font-family: "Sansation", sans-serif;
   font-weight: bold;
   font-size: 1.5rem;
   cursor: pointer;
 }
 
-
-.difficulty-label, .level {
+.difficulty-label,
+.level {
   padding: 10px;
 }
 
 .basic {
-  background: #12C32E;
+  background: #12c32e;
 
   &:hover {
-    background: #18F13B;
+    background: #18f13b;
 
     .basic-level {
-      background: #12C32E;
+      background: #12c32e;
     }
   }
 }
@@ -55,10 +58,10 @@ defineProps<{
 }
 
 .standard {
-  background: #FCFF57;
+  background: #fcff57;
 
   &:hover {
-    background: #FDFFA1;
+    background: #fdffa1;
 
     .standard-level {
       background: #dde042;
@@ -67,17 +70,17 @@ defineProps<{
 }
 
 .standard-level {
-  background: #C8CC14;
+  background: #c8cc14;
 }
 
 .expert {
-  background: #D91C1C;
+  background: #d91c1c;
 
   &:hover {
-    background: #FF3434;
+    background: #ff3434;
 
     .expert-level {
-      background: #D91C1C;
+      background: #d91c1c;
     }
   }
 }
@@ -90,4 +93,3 @@ defineProps<{
   width: 60px;
 }
 </style>
-

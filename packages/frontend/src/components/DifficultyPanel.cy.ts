@@ -26,8 +26,8 @@ describe("DifficultyPanel", () => {
       `,
       props: {
         difficulties,
-        selectedIndex: 0
-      }
+        selectedIndex: 0,
+      },
     });
   });
 });
