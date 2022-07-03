@@ -3,7 +3,8 @@ import InfoPanel from "./InfoPanel.vue";
 import { InfoPanelProps } from "./types";
 
 function render(_props?: Partial<InfoPanelProps>) {
-  const props = {
+  const props: InfoPanelProps = {
+    panelTitle: 'Panel Title',
     ..._props,
   };
 

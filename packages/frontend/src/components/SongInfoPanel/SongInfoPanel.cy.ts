@@ -3,7 +3,7 @@ import SongInfoPanel from "./SongInfoPanel.vue";
 import { SongInfoPanelProps } from "./types";
 
 function render(_props?: Partial<SongInfoPanelProps>) {
-  const props = {
+  const props: SongInfoPanelProps = {
     personalBest: "99.50",
     bpm: 155,
     noteCount: 1100,
@@ -23,7 +23,7 @@ function render(_props?: Partial<SongInfoPanelProps>) {
 
 describe("SongInfoPanel", () => {
   it("renders title and slot content", () => {
-    render({ panelTitle: "Panel title" });
+    render();
     cy.contains("Panel title");
   });
 });
