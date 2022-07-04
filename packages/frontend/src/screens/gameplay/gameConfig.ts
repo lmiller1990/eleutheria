@@ -8,22 +8,23 @@ export interface GameplayModifiers {
 export const timingWindows = [
   {
     name: "absolute",
-    windowMs: 15,
-    weight: 3,
-  },
-  {
-    name: "perfect",
-    windowMs: 40,
+    windowMs: 25,
     weight: 2,
   },
   {
-    name: "great",
-    windowMs: 100,
+    name: "perfect",
+    windowMs: 50,
     weight: 1,
   },
+  // {
+  //   name: "great",
+  //   windowMs: 100,
+  //   weight: 1,
+  // },
 ] as const;
 
 export const windows = timingWindows.map((x) => x.name);
+export const windowsWithMiss = [...windows, "miss"] as const;
 
 export const NOTE_WIDTH = parseInt(
   window

@@ -22,9 +22,9 @@ import {
   MULTIPLIER,
   PADDING_MS,
   codeColumnMap,
-  windows,
   timingWindows,
   GameplayModifiers,
+  windowsWithMiss,
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { LoadSongData } from "@packages/game-data";
@@ -214,7 +214,8 @@ export async function fetchData(id: string): Promise<LoadSongData> {
 export async function start(
   $root: HTMLDivElement,
   songCompleted: SongCompleted,
-  gameplayModifiers: GameplayModifiers
+  gameplayModifiers: GameplayModifiers,
+  updateSummaryPanel: (summary: Summary) => void
 ) {
   const { id, difficulty } = getSongId();
   const data = await fetchData(id);
@@ -350,12 +351,7 @@ export async function start(
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
       const summary = summarizeResults(world, timingWindows);
 
-      for (const win of [...windows, "miss"] as const) {
-        // elements.scoreTable[win].textContent =
-        //   summary.timing[win].count.toString();
-      }
-
-      // elements.scoreTable.percent.textContent = `${summary.percent}%`;
+      updateSummaryPanel(summary);
     },
 
     onDebug: (world: World, fps: number) => {

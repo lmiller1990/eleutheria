@@ -1,11 +1,19 @@
 <script lang="ts" setup>
 import type { Summary } from "@packages/engine";
-import { computed, FunctionalComponent, h, onMounted, ref } from "vue";
+import {
+  computed,
+  FunctionalComponent,
+  h,
+  onMounted,
+  reactive,
+  ref,
+} from "vue";
 import { useRouter } from "vue-router";
 import { useSummaryStore } from "../../stores/summary";
 import InfoPanel from "../../components/InfoPanel";
 import SongInfoPanel from "../../components/SongInfoPanel/SongInfoPanel.vue";
 import { TableCell } from "../../components/SongInfoPanel/types";
+import { windowsWithMiss } from "./gameConfig";
 import "../../style.css";
 import { useSongsStore } from "../../stores/songs";
 
@@ -21,23 +29,39 @@ const SideOverlay: FunctionalComponent = (_, { slots }) => {
   );
 };
 
+const timingSummary = reactive<
+  Record<typeof windowsWithMiss[number], number> & { percent: string }
+>({
+  absolute: 0,
+  perfect: 0,
+  miss: 0,
+  percent: "0.00%",
+});
+
+function updateSummary(summary: Summary) {
+  for (const win of windowsWithMiss) {
+    timingSummary[win] = summary.timing[win].count;
+  }
+  timingSummary.percent = summary.percent;
+}
+
 const scoreData = computed<TableCell[]>(() => {
   return [
     {
       title: "Absolute",
-      content: 0,
+      content: timingSummary.absolute,
     },
     {
       title: "Perfect",
-      content: 0,
+      content: timingSummary.perfect,
     },
     {
       title: "Miss",
-      content: 0,
+      content: timingSummary.miss,
     },
     {
       title: "Score",
-      content: "99.50%",
+      content: timingSummary.percent,
     },
   ];
 });
@@ -57,10 +81,15 @@ onMounted(async () => {
 
   const { start } = await import("./gameplay");
 
-  start(root.value, songCompleted, {
-    scroll: "up",
-    speed: 1,
-  });
+  start(
+    root.value,
+    songCompleted,
+    {
+      scroll: "up",
+      speed: 1,
+    },
+    updateSummary
+  );
 });
 
 const songsStore = useSongsStore();
