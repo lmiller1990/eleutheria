@@ -218,6 +218,8 @@ async function createComponent() {
       dedent`
         import ${results.name} from "./${results.name}.vue";
 
+        export * from "./types";
+
         export default ${results.name};
       `
     ),

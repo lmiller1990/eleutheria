@@ -45,5 +45,6 @@ declare global {
 
 Cypress.Commands.add("mount", mount);
 
+import "./style.css";
 // Example use:
 // cy.mount(MyComponent)

@@ -1,10 +1,5 @@
 <template>
-  <div class="flex flex-col outer w-100 items-center">
-    <nav class="screen-name w-100 text-white flex justify-center">
-      <div class="max-1024 screen-title w-100 flex flex-col justify-center">
-        Select Song
-      </div>
-    </nav>
+  <NonGameplayScreen screenTitle="Select Song">
     <div class="wrapper max-1024 h-100">
       <div class="tiles flex items-center justify-center">
         <SongTile
@@ -33,7 +28,7 @@
         />
       </div>
     </div>
-  </div>
+  </NonGameplayScreen>
 </template>
 
 <script setup lang="ts">
@@ -49,6 +44,7 @@ import { ChartSummary } from "@packages/types/src";
 import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../shared";
 import { TableCell } from "../components/SongInfoPanel/types";
+import NonGameplayScreen from "../components/NonGameplayScreen";
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
@@ -176,17 +172,11 @@ songsStore.fetchSongs();
 </style>
 
 <style lang="scss" scoped>
-.max-1024 {
-  max-width: 1024px;
-  padding: 0 40px;
-}
-
 .wrapper {
   display: grid;
   grid-template-columns: 1.8fr 1fr;
   width: 100%;
   column-gap: 80px;
-  padding: 40px;
 }
 
 .info-col {
@@ -207,19 +197,7 @@ songsStore.fetchSongs();
   column-gap: 50px;
 }
 
-.outer {
-  margin: 25px 0;
-}
-
-.screen-name {
-  background: #373737;
-}
-
-.screen-title {
-  text-align: right;
-  height: 54px;
-  font-size: 2rem;
-  text-transform: uppercase;
-  font-weight: bold;
+.max-1024 {
+  max-width: 1024px;
 }
 </style>

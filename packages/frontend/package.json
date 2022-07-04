@@ -23,6 +23,7 @@
     "@cypress/mount-utils": "^1.0.2",
     "@types/lodash": "4.14.182",
     "@vitejs/plugin-vue": "2.2.2",
+    "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.2",
     "cypress": "^10.1.0",
     "cypress-real-events": "^1.7.0",

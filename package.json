@@ -22,7 +22,7 @@
     "dev": "NODE_ENV=development yarn gulp dev",
     "build": "NODE_ENV=production yarn ts-node --esm scripts/build.ts",
     "install": "lerna exec yarn install",
-    "lint": "prettier --write packages",
+    "lint": "prettier --write packages --ignore-path .gitignore",
     "test": "lerna run test",
     "lint:check": "yarn prettier --check packages",
     "check-ts": "lerna run check-ts"

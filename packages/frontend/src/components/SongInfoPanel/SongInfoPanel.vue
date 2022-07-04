@@ -9,7 +9,7 @@ const props = defineProps<SongInfoPanelProps>();
   <InfoPanel panelTitle="Stats" :highlightColor="props.highlightColor">
     <div class="info-panel">
       <template v-for="cell of props.data">
-        <div>{{ cell.title }}</div>
+        <div class="cell-title">{{ cell.title }}</div>
         <div>{{ cell.content ?? "-" }}</div>
       </template>
     </div>
@@ -43,5 +43,9 @@ $border: 3px;
 
 .expert {
   border: $border solid $expert;
+}
+
+.cell-title {
+  text-transform: capitalize;
 }
 </style>
