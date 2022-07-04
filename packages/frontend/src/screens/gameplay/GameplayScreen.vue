@@ -7,6 +7,7 @@ import InfoPanel from "../../components/InfoPanel";
 import SongInfoPanel from "../../components/SongInfoPanel/SongInfoPanel.vue";
 import { TableCell } from "../../components/SongInfoPanel/types";
 import "../../style.css";
+import { useSongsStore } from "../../stores/songs";
 
 const router = useRouter();
 
@@ -61,6 +62,22 @@ onMounted(async () => {
     speed: 1,
   });
 });
+
+const songsStore = useSongsStore();
+
+const selectedSong = computed(() => {
+  if (!songsStore.selectedSong) {
+    throw Error(`songsStore.selectedSong not set!`);
+  }
+  return songsStore.selectedSong;
+});
+
+const selectedChart = computed(() => {
+  if (!songsStore.selectedChart) {
+    throw Error(`songsStore.selectedChart not set!`);
+  }
+  return songsStore.selectedChart;
+});
 </script>
 
 <template>
@@ -68,10 +85,10 @@ onMounted(async () => {
     <SideOverlay id="lhs">
       <InfoPanel panelTitle="Song" class="w-100">
         <div class="flex flex-col">
-          <div>Ascension to Heaven</div>
-          <div>Xi</div>
+          <div>{{ selectedSong.title }}</div>
+          <div>{{ selectedSong.artist }}</div>
           <div class="empty">Empty</div>
-          <div>Expert Lv 9</div>
+          <div class="capitalize">{{ selectedChart.difficulty }} Lv {{ selectedChart.level }}</div>
         </div>
       </InfoPanel>
     </SideOverlay>
@@ -91,5 +108,9 @@ onMounted(async () => {
 
 .empty {
   visibility: hidden;
+}
+
+.capitalize {
+  text-transform: capitalize;
 }
 </style>

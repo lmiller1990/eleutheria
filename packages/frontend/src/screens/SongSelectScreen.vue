@@ -21,7 +21,7 @@
       <div class="info-col">
         <DifficultyPanel
           :difficulties="difficulties"
-          :selectedIndex="selectedChartIndex"
+          :selectedIndex="songsStore.selectedChartIdx"
           @selected="(idx) => songsStore.setSelectedChartIdx(idx)"
         />
 
@@ -52,8 +52,20 @@ import { TableCell } from "../components/SongInfoPanel/types";
 
 
 function handleKeyDown (event: KeyboardEvent) {
-  if (event.key === 'Enter' && songsStore.selectedSongId) {
+  if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
+    return
+  }
+
+  if (event.code === 'Enter') {
     handleSelected(songsStore.selectedSongId)
+  }
+
+  if (event.code === 'KeyJ' && songsStore.selectedChartIdx < 2) {
+    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1)
+  }
+
+  if (event.code === 'KeyK' && songsStore.selectedChartIdx > 0) {
+    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1)
   }
 }
 
@@ -97,14 +109,6 @@ const chartSummary = computed<ChartSummary | undefined>(() => {
     songsStore.selectedChart.parsedTapNoteChart,
     songsStore.selectedChart.parsedHoldNoteChart
   );
-});
-
-const selectedChartIndex = computed(() => {
-  if (songsStore.selectedChartIdx === undefined || !songsStore.selectedSongId) {
-    return undefined;
-  }
-
-  return songsStore.selectedChartIdx;
 });
 
 const tableData = computed<TableCell[]>(() => {
