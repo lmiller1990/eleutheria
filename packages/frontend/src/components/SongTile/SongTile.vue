@@ -85,7 +85,7 @@ $img-height: 75%;
 
 .song-title-banner {
   box-sizing: border-box;
-  font-family: "Sansation", sans-serif;
+  font-family: "Comfortaa", cursive;
   font-size: 1.5rem;
   font-weight: bold;
   border: 5px solid transparent; // match background. TODO: share variable.

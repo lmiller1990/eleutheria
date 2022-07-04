@@ -4,7 +4,7 @@ import { InfoPanelProps } from "./types";
 
 function render(_props?: Partial<InfoPanelProps>) {
   const props: InfoPanelProps = {
-    panelTitle: 'Panel Title',
+    panelTitle: "Panel Title",
     ..._props,
   };
 

@@ -4,4 +4,10 @@ export interface SongInfoPanelProps {
   bpm?: number;
   personalBest?: string;
   highlightColor?: string;
+  data: TableCell[];
+}
+
+export interface TableCell {
+  title: string;
+  content: string | number;
 }

@@ -18,8 +18,9 @@ const props = defineProps<InfoPanelProps>();
       <h4 class="panel-title">{{ panelTitle }}</h4>
       <div class="highlight" :style="highlightStyle" />
     </div>
-
-    <slot />
+    <div class="info-content w-100">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -34,15 +35,20 @@ const props = defineProps<InfoPanelProps>();
 $border: 3px;
 $bg: #373737;
 
+.info-content {
+  padding: 10px 20px 0 50px;
+  font-size: 1.2rem;
+}
+
 .info-wrapper {
   padding: 10px 0 20px 0;
+  color: white;
   background: $bg;
   border: $border solid transparent;
 }
 
 .panel-title {
   background: $bg;
-  color: white;
   font-size: 1.2rem;
   white-space: nowrap;
 }

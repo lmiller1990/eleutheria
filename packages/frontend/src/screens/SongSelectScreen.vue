@@ -28,10 +28,7 @@
         <SongInfoPanel
           class="w-100 song-panel"
           :class="chartDifficulty"
-          personalBest="99.50"
-          :duration="songsStore.selectedSong?.duration"
-          :bpm="songsStore.selectedSong?.bpm"
-          :noteCount="chartSummary?.totalNotes"
+          :data="tableData"
           :highlightColor="highlightColor"
         />
       </div>
@@ -51,6 +48,7 @@ import { SongDifficulty } from "../types";
 import { ChartSummary } from "@packages/types/src";
 import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../shared";
+import { TableCell } from "../components/SongInfoPanel/types";
 
 const songsStore = useSongsStore();
 
@@ -92,6 +90,27 @@ const selectedChartIndex = computed(() => {
   }
 
   return songsStore.selectedChartIdx;
+});
+
+const tableData = computed<TableCell[]>(() => {
+  return [
+    {
+      title: "Notes",
+      content: chartSummary.value?.totalNotes,
+    },
+    {
+      title: "Duration",
+      content: songsStore.selectedSong?.duration,
+    },
+    {
+      title: "BPM",
+      content: songsStore.selectedSong?.bpm,
+    },
+    {
+      title: "Best",
+      content: "99.50",
+    },
+  ];
 });
 
 const router = useRouter();

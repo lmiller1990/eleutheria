@@ -7,18 +7,11 @@ const props = defineProps<SongInfoPanelProps>();
 
 <template>
   <InfoPanel panelTitle="Stats" :highlightColor="props.highlightColor">
-    <div class="info-panel text-white">
-      <div>Notes</div>
-      <div>{{ props.noteCount ?? "-" }}</div>
-
-      <div>Duration</div>
-      <div>{{ props.duration ?? "-" }}</div>
-
-      <div>BPM</div>
-      <div>{{ props.bpm ?? "-" }}</div>
-
-      <div>Best</div>
-      <div>{{ props.personalBest ?? "-" }}</div>
+    <div class="info-panel">
+      <template v-for="cell of props.data">
+        <div>{{ cell.title }}</div>
+        <div>{{ cell.content ?? "-" }}</div>
+      </template>
     </div>
   </InfoPanel>
 </template>
@@ -36,10 +29,8 @@ $border: 3px;
 .info-panel {
   display: grid;
   width: 100%;
-  padding: 10px 20px 0 50px;
   grid-template-columns: 1fr 1fr;
-  font-family: "Sansation", sans-serif;
-  font-size: 1.5rem;
+  font-family: "Comfortaa", cursive;
 }
 
 .basic {

@@ -178,7 +178,7 @@ export class Game {
         (this.#config.dev?.startAtMs ?? 0);
 
     if (this.#dt > 3000) {
-      return;
+      // return;
     }
 
     const world: World = {
