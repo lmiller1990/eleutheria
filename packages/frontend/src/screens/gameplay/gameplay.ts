@@ -98,17 +98,17 @@ function updateHold(
   gameplayModifiers: GameplayModifiers
 ): HTMLDivElement {
   const hold = engineHold[0]!;
-  
+
   const setPos = (px: string) => {
-    $note.style[gameplayModifiers.scroll === 'up' ? 'top' : 'bottom'] = px
-  }
+    $note.style[gameplayModifiers.scroll === "up" ? "top" : "bottom"] = px;
+  };
 
   const initialHeight = calcInitHeightOfHold(engineHold);
   const newHeight = initialHeight + ypos;
 
   if (hold.isHeld) {
     $note.style.filter = "brightness(2.0)";
-    setPos(`0px`)
+    setPos(`0px`);
 
     if (newHeight < 0) {
       $note.style.display = "none";
@@ -123,17 +123,17 @@ function updateHold(
     const adjustedHeight = calcHeightOfDroppedHold(engineHold);
     const diff = initialHeight - adjustedHeight;
     $note.style.opacity = "0.25";
-    setPos(`${ypos + diff}px`)
+    setPos(`${ypos + diff}px`);
     return $note;
   }
 
   if (hold.missed) {
-    setPos(`${ypos}px`)
+    setPos(`${ypos}px`);
     $note.style.opacity = "0.25";
     return $note;
   }
 
-  setPos(`${ypos}px`)
+  setPos(`${ypos}px`);
 
   return $note;
 }
@@ -220,7 +220,9 @@ export async function start(
   const data = await fetchData(id);
   const elements = createElements($root, 6, data.metadata);
 
-  elements.targetLine.style[gameplayModifiers.scroll === 'up' ? 'top' : 'bottom'] = '100px'
+  elements.targetLine.style[
+    gameplayModifiers.scroll === "up" ? "top" : "bottom"
+  ] = "100px";
 
   const chart = data.charts.find((x) => x.difficulty === difficulty);
   if (!chart) {

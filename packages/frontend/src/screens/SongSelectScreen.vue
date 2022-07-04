@@ -50,32 +50,31 @@ import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../shared";
 import { TableCell } from "../components/SongInfoPanel/types";
 
-
-function handleKeyDown (event: KeyboardEvent) {
+function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
-    return
+    return;
   }
 
-  if (event.code === 'Enter') {
-    handleSelected(songsStore.selectedSongId)
+  if (event.code === "Enter") {
+    handleSelected(songsStore.selectedSongId);
   }
 
-  if (event.code === 'KeyJ' && songsStore.selectedChartIdx < 2) {
-    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1)
+  if (event.code === "KeyJ" && songsStore.selectedChartIdx < 2) {
+    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
   }
 
-  if (event.code === 'KeyK' && songsStore.selectedChartIdx > 0) {
-    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1)
+  if (event.code === "KeyK" && songsStore.selectedChartIdx > 0) {
+    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
   }
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', handleKeyDown)
-})
+  window.addEventListener("keydown", handleKeyDown);
+});
 
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeyDown)
-})
+  window.removeEventListener("keydown", handleKeyDown);
+});
 
 const songsStore = useSongsStore();
 

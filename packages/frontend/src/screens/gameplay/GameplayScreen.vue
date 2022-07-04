@@ -88,7 +88,9 @@ const selectedChart = computed(() => {
           <div>{{ selectedSong.title }}</div>
           <div>{{ selectedSong.artist }}</div>
           <div class="empty">Empty</div>
-          <div class="capitalize">{{ selectedChart.difficulty }} Lv {{ selectedChart.level }}</div>
+          <div class="capitalize">
+            {{ selectedChart.difficulty }} Lv {{ selectedChart.level }}
+          </div>
         </div>
       </InfoPanel>
     </SideOverlay>
