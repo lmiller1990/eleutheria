@@ -8,7 +8,7 @@
     "allowJs": true,
     "module": "CommonJS",
     "noImplicitAny": true,
-    "target": "es6",
+    "target": "es2019",
     "moduleResolution": "node"
   },
   "include": [

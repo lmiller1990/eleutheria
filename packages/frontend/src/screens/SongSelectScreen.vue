@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onBeforeUnmount, onMounted } from "vue";
 import SongTile from "../components/SongTile";
 import SongInfoPanel from "../components/SongInfoPanel";
 import DifficultyPanel from "../components/DifficultyPanel.vue";
@@ -49,6 +49,21 @@ import { ChartSummary } from "@packages/types/src";
 import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../shared";
 import { TableCell } from "../components/SongInfoPanel/types";
+
+
+function handleKeyDown (event: KeyboardEvent) {
+  if (event.key === 'Enter' && songsStore.selectedSongId) {
+    handleSelected(songsStore.selectedSongId)
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 
 const songsStore = useSongsStore();
 

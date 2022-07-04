@@ -56,7 +56,10 @@ onMounted(async () => {
 
   const { start } = await import("./gameplay");
 
-  start(root.value, songCompleted);
+  start(root.value, songCompleted, {
+    scroll: "up",
+    speed: 1,
+  });
 });
 </script>
 

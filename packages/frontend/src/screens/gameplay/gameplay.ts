@@ -24,6 +24,7 @@ import {
   codeColumnMap,
   windows,
   timingWindows,
+  GameplayModifiers,
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { LoadSongData } from "@packages/game-data";
@@ -62,13 +63,16 @@ function drawHoldNote(
 //   }
 // }
 
-function shouldRemoveNote($note: HTMLDivElement) {
+function shouldRemoveNote($note: HTMLDivElement, scroll: "up" | "down") {
   const { y, height } = $note.getBoundingClientRect();
 
-  // TODO: Support reverse/sideways scrolling?
-  const isAboveViewport = y + height < 0;
-
-  return isAboveViewport;
+  if (scroll === "up") {
+    // above viewport - remove
+    return y + height < 0;
+  } else {
+    // below viewport - remove
+    return y - height > window.innerHeight;
+  }
 }
 
 function calcInitHeightOfHold(hold: EngineNote[]): number {
@@ -90,16 +94,21 @@ function calcHeightOfDroppedHold(hold: EngineNote[]): number {
 function updateHold(
   engineHold: EngineNote[],
   ypos: number,
-  $note: HTMLDivElement
+  $note: HTMLDivElement,
+  gameplayModifiers: GameplayModifiers
 ): HTMLDivElement {
   const hold = engineHold[0]!;
+  
+  const setPos = (px: string) => {
+    $note.style[gameplayModifiers.scroll === 'up' ? 'top' : 'bottom'] = px
+  }
 
   const initialHeight = calcInitHeightOfHold(engineHold);
   const newHeight = initialHeight + ypos;
 
   if (hold.isHeld) {
     $note.style.filter = "brightness(2.0)";
-    $note.style.top = `0px`;
+    setPos(`0px`)
 
     if (newHeight < 0) {
       $note.style.display = "none";
@@ -114,22 +123,31 @@ function updateHold(
     const adjustedHeight = calcHeightOfDroppedHold(engineHold);
     const diff = initialHeight - adjustedHeight;
     $note.style.opacity = "0.25";
-    $note.style.top = `${ypos + diff}px`;
+    setPos(`${ypos + diff}px`)
     return $note;
   }
 
   if (hold.missed) {
-    $note.style.top = `${ypos}px`;
+    setPos(`${ypos}px`)
     $note.style.opacity = "0.25";
     return $note;
   }
 
-  $note.style.top = `${ypos}px`;
+  setPos(`${ypos}px`)
+
   return $note;
 }
 
-function updateNote($note: HTMLDivElement, ypos: number) {
-  $note.style.top = `${ypos}px`;
+function updateNote(
+  $note: HTMLDivElement,
+  ypos: number,
+  scroll: "up" | "down"
+) {
+  if (scroll === "up") {
+    $note.style.top = `${ypos}px`;
+  } else {
+    $note.style.bottom = `${ypos}px`;
+  }
 }
 
 function updateUI(
@@ -195,11 +213,14 @@ export async function fetchData(id: string): Promise<LoadSongData> {
 
 export async function start(
   $root: HTMLDivElement,
-  songCompleted: SongCompleted
+  songCompleted: SongCompleted,
+  gameplayModifiers: GameplayModifiers
 ) {
   const { id, difficulty } = getSongId();
   const data = await fetchData(id);
   const elements = createElements($root, 6, data.metadata);
+
+  elements.targetLine.style[gameplayModifiers.scroll === 'up' ? 'top' : 'bottom'] = '100px'
 
   const chart = data.charts.find((x) => x.difficulty === difficulty);
   if (!chart) {
@@ -235,8 +256,8 @@ export async function start(
 
   let beeped = new Map<string, boolean>();
 
-  const lifecycle: GameLifecycle = {
-    onUpdate: (world: World, previousFrameMeta: PreviousFrameMeta) => {
+  const lifecycle: GameLifecycle<GameplayModifiers> = {
+    onUpdate: (world, previousFrameMeta, gameplayModifiers) => {
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
         const ypos = calcYPosition(engineNote, world);
@@ -261,12 +282,12 @@ export async function start(
         // We need to update the position, since the note has been drawn
         // and it is in the viewport
         if ($note && inViewport) {
-          updateNote($note, ypos);
+          updateNote($note, ypos, gameplayModifiers.scroll);
         }
 
         // See if the note has scrolled outside the viewport and remove if necessary
         // Another perf. optimization.
-        if ($note && shouldRemoveNote($note)) {
+        if ($note && shouldRemoveNote($note, gameplayModifiers.scroll)) {
           $note.remove();
         }
 
@@ -311,12 +332,12 @@ export async function start(
         // We need to update the position, since the note has been drawn
         // and it is in the viewport
         if ($note && inViewport) {
-          updateHold(hold, ypos, $note);
+          updateHold(hold, ypos, $note, gameplayModifiers);
         }
 
         // if the tail end of the hold is above the top of the viewport
         // remove it!
-        if ($note && shouldRemoveNote($note)) {
+        if ($note && shouldRemoveNote($note, gameplayModifiers.scroll)) {
           $note.remove();
         }
       }
@@ -328,11 +349,11 @@ export async function start(
       const summary = summarizeResults(world, timingWindows);
 
       for (const win of [...windows, "miss"] as const) {
-        elements.scoreTable[win].textContent =
-          summary.timing[win].count.toString();
+        // elements.scoreTable[win].textContent =
+        //   summary.timing[win].count.toString();
       }
 
-      elements.scoreTable.percent.textContent = `${summary.percent}%`;
+      // elements.scoreTable.percent.textContent = `${summary.percent}%`;
     },
 
     onDebug: (world: World, fps: number) => {
@@ -358,7 +379,7 @@ export async function start(
     },
   };
 
-  const game = new Game(gameConfig, lifecycle);
+  const game = new Game(gameConfig, lifecycle, gameplayModifiers);
 
   // let i = 0;
   // window.manualTick = () => {

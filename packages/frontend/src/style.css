@@ -127,7 +127,7 @@ body,
 #target-line {
   height: var(--target-height);
   width: calc(var(--col-width) * 6);
-  top: 100px;
+  /* bottom: 100px; */
   position: absolute;
   display: flex;
 }
