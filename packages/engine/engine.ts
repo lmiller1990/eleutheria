@@ -537,7 +537,11 @@ export function updateGameState(
     }
 
     for (const result of judgementResults) {
-      if (result.noteId === key && !newHoldNote.isHeld) {
+      if (
+        result.timingWindowName !== "miss" &&
+        result.noteId === key &&
+        !newHoldNote.isHeld
+      ) {
         newHoldNote.isHeld = true;
       }
     }

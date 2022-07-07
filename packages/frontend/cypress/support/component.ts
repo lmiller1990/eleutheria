@@ -15,17 +15,36 @@
 
 // Import commands.js using ES2015 syntax:
 import "./commands";
-import { createPinia, Pinia, setActivePinia } from "pinia";
 
-export let pinia: Pinia;
+// Alternatively you can use CommonJS syntax:
+// require('./commands')
+
+import { mount } from "cypress/vue";
+
+import { createPinia, setActivePinia } from "pinia";
+import type { Pinia } from "pinia";
+
+let pinia: Pinia;
 
 beforeEach(() => {
   pinia = createPinia();
   setActivePinia(pinia);
 });
 
-import "./component.css";
+// Augment the Cypress namespace to include type definitions for
+// your custom command.
+// Alternatively, can be defined in cypress/support/component.d.ts
+// with a <reference path="./component" /> at the top of your spec.
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      mount: typeof mount;
+    }
+  }
+}
 
-// import "./component.css";
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+Cypress.Commands.add("mount", mount);
+
+import "./style.css";
+// Example use:
+// cy.mount(MyComponent)

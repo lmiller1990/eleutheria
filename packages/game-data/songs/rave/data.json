@@ -6,6 +6,14 @@
   "banner": "https://dummyimage.com/640x360/gaa/def",
   "charts": [
     {
+      "difficulty": "basic",
+      "level": 1
+    },
+    {
+      "difficulty": "standard",
+      "level": 2
+    },
+    {
       "difficulty": "expert",
       "level": 9
     }

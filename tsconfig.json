@@ -8,12 +8,12 @@
     "allowJs": true,
     "module": "CommonJS",
     "noImplicitAny": true,
-    "target": "esnext",
+    "target": "es2019",
     "moduleResolution": "node"
   },
   "include": [
     "**/*.ts",
     "**/*.js",
     "**/*.vue"
-  ]
+  ],
 }

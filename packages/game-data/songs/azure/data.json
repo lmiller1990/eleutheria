@@ -6,8 +6,16 @@
   "artist": "litmus*",
   "charts": [
     {
+      "difficulty": "basic",
+      "level": 2
+    },
+    {
       "difficulty": "standard",
       "level": 4
+    },
+    {
+      "difficulty": "expert",
+      "level": 7
     }
   ]
 }

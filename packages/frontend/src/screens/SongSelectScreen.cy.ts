@@ -1,6 +1,6 @@
 import { mount } from "cypress/vue";
-import { songs } from "../../cypress/fixtures";
-import SongSelectScreen from "./SongSelectScreen.vue";
+import { testSong } from "../../cypress/fixtures/songs";
+import SongSelectScreen from "./SongSelectScreenOld.vue";
 
 import style from "../../../breeze-css/dist/breeze.css";
 
@@ -10,7 +10,7 @@ describe(
   () => {
     it("renders", () => {
       cy.intercept(`/songs`, {
-        body: songs,
+        body: [testSong],
       });
 
       mount(SongSelectScreen, {

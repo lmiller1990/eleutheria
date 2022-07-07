@@ -1,209 +1,199 @@
 <template>
-  <div class="h-100 w-100 max-w-l">
-    <div
-      class="grid grid-columns-1fr-2fr grid-column-gap-s padding-m h-100 w-100"
-    >
-      <div class="flex flex-col space-between margin-s">
-        <div class="menu-title align-center">Select Song</div>
-        <div>
-          <VerticalPaddedPanel v-if="chartSummary">
-            <SongInfo
-              :chartSummary="chartSummary"
-              :durationSeconds="selectedSong?.duration"
-            />
-          </VerticalPaddedPanel>
-
-          <VerticalPaddedPanel>
-            <SongPersonalBest :personalBest="personalBest" />
-          </VerticalPaddedPanel>
-
-          <VerticalPaddedPanel v-if="charts[songsStore.selectedChartIdx]">
-            <SongDifficulty
-              :charts="charts"
-              :selected="songsStore.selectedChartIdx"
-            />
-          </VerticalPaddedPanel>
-        </div>
+  <NonGameplayScreen screenTitle="Select Song">
+    <div class="wrapper max-1024 h-100">
+      <div class="tiles flex items-center justify-center">
+        <SongTile
+          v-for="(song, idx) of songsStore.songs"
+          :key="song.id"
+          :songTitle="song.title"
+          class="h-100"
+          :imgSrc="thumbails[idx]"
+          :selected="song.id === songsStore.selectedSongId"
+          @selected="handleSelected(song.id)"
+        />
       </div>
 
-      <div class="flex relative justify-center">
-        <div class="relative w-100 overflow-hidden">
-          <div class="absolute w-100 padding-horizontal-l" id="wheel">
-            <TransitionGroup name="items" mode="out-in">
-              <SongItem
-                class="margin-bottom-1rem"
-                :class="{
-                  'h-9rem selected': isSelected(song),
-                  'h-5rem': !isSelected(song),
-                }"
-                v-for="song of songsStore.songs"
-                :key="song.key"
-                :id="song.id"
-                :song="song"
-                :selectedDifficulty="selectedDifficulty"
-              />
-            </TransitionGroup>
-          </div>
-        </div>
+      <div class="info-col">
+        <DifficultyPanel
+          :difficulties="difficulties"
+          :selectedIndex="songsStore.selectedChartIdx"
+          @selected="(idx) => songsStore.setSelectedChartIdx(idx)"
+        />
+
+        <SongInfoPanel
+          class="w-100 song-panel"
+          :class="chartDifficulty"
+          :data="tableData"
+          :highlightColor="highlightColor"
+        />
       </div>
     </div>
-  </div>
+  </NonGameplayScreen>
 </template>
 
 <script setup lang="ts">
-import {
-  computed,
-  FunctionalComponent,
-  h,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watchEffect,
-} from "vue";
+import { computed, onBeforeUnmount, onMounted } from "vue";
+import SongTile from "../components/SongTile";
+import SongInfoPanel from "../components/SongInfoPanel";
+import DifficultyPanel from "../components/DifficultyPanel.vue";
+import { thumbails } from "../thumbnails";
 import { useRouter } from "vue-router";
-import { throttle } from "lodash";
-import type {
-  ChartSummary,
-  Difficulty,
-  PersonalBest,
-} from "@packages/types/src";
-import type { Song } from "../types";
-import SongItem from "../components/SongItem.vue";
-import SongPersonalBest from "../components/SongPersonalBest.vue";
-import SongDifficulty from "../components/SongDifficulty.vue";
-import SongInfo from "../components/SongInfo.vue";
-import Panel from "../components/Panel.vue";
 import { useSongsStore } from "../stores/songs";
+import { SongDifficulty } from "../types";
+import { ChartSummary } from "@packages/types/src";
 import { chartInfo } from "@packages/chart-parser";
-import "../index.css";
+import { colors } from "../shared";
+import { TableCell } from "../components/SongInfoPanel/types";
+import NonGameplayScreen from "../components/NonGameplayScreen";
 
-const VerticalPaddedPanel: FunctionalComponent = (_props, _ctx) =>
-  h(Panel, { class: "margin-vertical-s" }, _ctx.slots["default"]);
-
-const focusSongIndex = 3;
-const scrollSpeed = "0.1s";
-
-const selectedDifficulty = ref<Difficulty>("expert");
-const songsStore = useSongsStore();
-
-function isSelected(song: Song) {
-  return songsStore.songs.indexOf(song) === focusSongIndex;
-}
-
-const selectedSong = computed(() => {
-  return songsStore.songs.at(focusSongIndex);
-});
-
-watchEffect(() => {
-  if (!selectedSong.value) {
+function handleKeyDown(event: KeyboardEvent) {
+  if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
     return;
   }
-  songsStore.setSelectedSongId(selectedSong.value.id);
-});
 
-function nextSong() {
-  let [first, ...rest] = songsStore.songs;
-  songsStore.setSongs([...rest, first]);
-}
+  if (event.code === "Enter") {
+    handleSelected(songsStore.selectedSongId);
+  }
 
-function prevSong() {
-  const last = songsStore.songs.at(-1)!;
-  songsStore.setSongs([last, ...songsStore.songs.slice(0, -1)]);
-}
+  if (event.code === "KeyJ" && songsStore.selectedChartIdx < 2) {
+    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
+  }
 
-const router = useRouter();
-
-function changeSong(event: KeyboardEvent) {
-  if (event.code === "KeyK") {
-    songsStore.setSelectedChartIdx(0);
-    prevSong();
-  } else if (event.code === "KeyJ") {
-    songsStore.setSelectedChartIdx(0);
-    nextSong();
-  } else if (event.code === "KeyH") {
-    if (songsStore.selectedChartIdx > 0) {
-      songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
-    }
-  } else if (event.code === "KeyL") {
-    if (!selectedSong.value) {
-      return;
-    }
-
-    if (songsStore.selectedChartIdx < selectedSong.value.charts.length - 1) {
-      songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
-    }
-  } else if (event.code === "Enter") {
-    const song = songsStore.songs[focusSongIndex];
-    router.push({
-      path: "game",
-      query: {
-        song: song.id,
-        difficulty: songsStore.selectedChart?.difficulty,
-      },
-    });
+  if (event.code === "KeyK" && songsStore.selectedChartIdx > 0) {
+    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
   }
 }
 
-const ms = parseFloat(scrollSpeed.replace("s", ""));
-const handleChangeSong = throttle(changeSong, ms * 1000);
-
 onMounted(() => {
-  window.addEventListener("keydown", handleChangeSong);
+  window.addEventListener("keydown", handleKeyDown);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleChangeSong);
+  window.removeEventListener("keydown", handleKeyDown);
+});
+
+const songsStore = useSongsStore();
+
+const chartDifficulty = computed(() => {
+  return songsStore.selectedChart?.difficulty ?? "";
+});
+
+const highlightColor = computed(() => {
+  return colors[chartDifficulty.value] ?? "yellow";
+});
+
+const difficulties = computed<SongDifficulty[]>(() => {
+  if (!songsStore.selectedSong) {
+    return [];
+  }
+
+  return songsStore.selectedSong.charts.map((chart) => {
+    return {
+      name: chart.difficulty,
+      level: chart.level,
+    };
+  });
 });
 
 const chartSummary = computed<ChartSummary | undefined>(() => {
-  if (!selectedSong.value || !selectedSong.value.charts.length) {
+  if (!songsStore.selectedChart) {
     return;
   }
 
   return chartInfo(
-    selectedSong.value.charts[0].parsedTapNoteChart,
-    selectedSong.value.charts[0].parsedHoldNoteChart
+    songsStore.selectedChart.parsedTapNoteChart,
+    songsStore.selectedChart.parsedHoldNoteChart
   );
 });
 
-const personalBest: PersonalBest = {
-  percent: 95.5,
-  date: "2022-04-06T12:12:11.308Z",
-};
+const tableData = computed<TableCell[]>(() => {
+  return [
+    {
+      title: "Notes",
+      content: chartSummary.value?.totalNotes,
+    },
+    {
+      title: "Duration",
+      content: songsStore.selectedSong?.duration,
+    },
+    {
+      title: "BPM",
+      content: songsStore.selectedSong?.bpm,
+    },
+    {
+      title: "Best",
+      content: "99.50%",
+    },
+  ];
+});
 
-const charts = computed(() => selectedSong.value?.charts ?? []);
+const router = useRouter();
+
+function handleSelected(songId: string) {
+  if (songsStore.selectedSongId === songId) {
+    // they already clicked it once
+    // time to play!
+
+    if (!chartDifficulty.value) {
+      throw Error(`No difficulty was selected. This should be impossible`);
+    }
+
+    router.push({
+      path: "game",
+      query: {
+        song: songId,
+        difficulty: chartDifficulty.value,
+      },
+    });
+  } else {
+    songsStore.setSelectedSongId(songId);
+  }
+}
+
+// function durationToNum(str: string) {
+//   const match = /(\d+).*/.exec(str);
+//   if (!match?.[1]) {
+//     throw Error(`Could not convert ${str} to number`);
+//   }
+//   return parseInt(match[1], 10);
+// }
 
 songsStore.fetchSongs();
 </script>
 
 <style lang="scss">
 @import "../shared.scss";
+@import "../index.css";
+@import "../../../breeze-css/dist/breeze.css";
+</style>
 
-#app,
-[data-cy-root] {
-  background: $pattern-bg;
+<style lang="scss" scoped>
+.wrapper {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  width: 100%;
+  column-gap: 80px;
 }
 
-.items-move {
-  transition: transform v-bind(scrollSpeed);
+.info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
-#wheel {
-  top: calc(16px * 1);
-  color: black;
+.song-panel {
+  margin-top: 20px;
 }
 
-@keyframes pulsate {
-  0% {
-    box-shadow: 0px 0px 10px 3px goldenrod;
-  }
-
-  100% {
-    box-shadow: 0px 0px 10px 8px goldenrod;
-  }
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  row-gap: 50px;
+  column-gap: 50px;
 }
 
-.selected {
-  animation: pulsate 0.5s ease-in-out infinite alternate;
+.max-1024 {
+  max-width: 1024px;
 }
 </style>

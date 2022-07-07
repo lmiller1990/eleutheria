@@ -1,19 +1,17 @@
-import { mount } from "cypress/vue";
 import SummaryScreen from "./SummaryScreen.vue";
 import style from "../../../../breeze-css/dist/breeze.css";
 import appStyle from "../../style.css";
-import { songs } from "../../../cypress/fixtures";
-import { pinia } from "../../../cypress/support/component";
 import { useSongsStore } from "../../stores/songs";
+import { testSong } from "../../../cypress/fixtures/songs";
 import { useSummaryStore } from "../../stores/summary";
-import { createRouter, createWebHistory } from "vue-router";
-
-const router = createRouter({ history: createWebHistory(), routes: [] });
+import { mount } from "../../../cypress/support/mount";
 
 function setTestData() {
   const songsStore = useSongsStore();
   songsStore.$patch((state) => {
-    state.songs = [{ ...songs[0], id: "0", order: 0, key: "0" }];
+    state.songs = [testSong];
+    state.selectedSongId = testSong.id;
+    state.selectedChartIdx = 0;
   });
 
   const summaryStore = useSummaryStore();
@@ -47,14 +45,11 @@ function setTestData() {
   });
 }
 
-describe("SummaryScreen", { viewportHeight: 660, viewportWidth: 1000 }, () => {
+describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
   it("displays score", () => {
     setTestData();
 
     mount(SummaryScreen, {
-      global: {
-        plugins: [router, pinia],
-      },
       styles: [
         style,
         appStyle,

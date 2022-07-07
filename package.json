@@ -16,13 +16,13 @@
     "serve": "^13.0.2",
     "ts-node": "10.7.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.3.2"
+    "typescript": "4.7.4"
   },
   "scripts": {
     "dev": "NODE_ENV=development yarn gulp dev",
     "build": "NODE_ENV=production yarn ts-node --esm scripts/build.ts",
     "install": "lerna exec yarn install",
-    "lint": "prettier --write packages",
+    "lint": "prettier --write packages --ignore-path .gitignore",
     "test": "lerna run test",
     "lint:check": "yarn prettier --check packages",
     "check-ts": "lerna run check-ts"

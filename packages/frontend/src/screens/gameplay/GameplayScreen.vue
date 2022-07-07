@@ -1,18 +1,72 @@
-<template>
-  <div id="game-app" ref="root" class="max-w-l" />
-</template>
-
 <script lang="ts" setup>
 import type { Summary } from "@packages/engine";
-import { onMounted, ref } from "vue";
+import {
+  computed,
+  FunctionalComponent,
+  h,
+  onMounted,
+  reactive,
+  ref,
+} from "vue";
 import { useRouter } from "vue-router";
 import { useSummaryStore } from "../../stores/summary";
+import InfoPanel from "../../components/InfoPanel";
+import SongInfoPanel from "../../components/SongInfoPanel/SongInfoPanel.vue";
+import { TableCell } from "../../components/SongInfoPanel/types";
+import { windowsWithMiss } from "./gameConfig";
 import "../../style.css";
+import { useSongsStore } from "../../stores/songs";
 
 const router = useRouter();
 
+const SideOverlay: FunctionalComponent = (_, { slots }) => {
+  return h(
+    "div",
+    {
+      class: "w-100 side flex align-end justify-center",
+    },
+    slots
+  );
+};
+
+const timingSummary = reactive<
+  Record<typeof windowsWithMiss[number], number> & { percent: string }
+>({
+  absolute: 0,
+  perfect: 0,
+  miss: 0,
+  percent: "0.00",
+});
+
+function updateSummary(summary: Summary) {
+  for (const win of windowsWithMiss) {
+    timingSummary[win] = summary.timing[win].count;
+  }
+  timingSummary.percent = summary.percent;
+}
+
+const scoreData = computed<TableCell[]>(() => {
+  return [
+    {
+      title: "Absolute",
+      content: timingSummary.absolute,
+    },
+    {
+      title: "Perfect",
+      content: timingSummary.perfect,
+    },
+    {
+      title: "Miss",
+      content: timingSummary.miss,
+    },
+    {
+      title: "Score",
+      content: `${timingSummary.percent}%`,
+    },
+  ];
+});
+
 function songCompleted(summary: Summary) {
-  return;
   const summaryStore = useSummaryStore();
   summaryStore.setSummary(summary);
   router.push("/summary");
@@ -22,11 +76,74 @@ const root = ref<HTMLDivElement>();
 
 onMounted(async () => {
   if (!root.value) {
-    throw Error("Could not find root node for game");
+    return;
   }
 
   const { start } = await import("./gameplay");
 
-  start(root.value, songCompleted);
+  start(
+    root.value,
+    songCompleted,
+    {
+      scroll: "up",
+      speed: 1,
+    },
+    updateSummary
+  );
+});
+
+const songsStore = useSongsStore();
+
+// can only happen if directly navigating to this route.
+// In this case, the global `beforeEach` hook will redirect appropriately.
+const selectedSong = computed(() => {
+  if (!songsStore.selectedSong) {
+    return;
+  }
+  return songsStore.selectedSong;
+});
+
+const selectedChart = computed(() => {
+  if (!songsStore.selectedChart) {
+    return;
+  }
+  return songsStore.selectedChart;
 });
 </script>
+
+<template>
+  <div id="game-app" v-if="selectedChart && selectedSong">
+    <SideOverlay id="lhs">
+      <InfoPanel panelTitle="Song" class="w-100">
+        <div class="flex flex-col">
+          <div>{{ selectedSong.title }}</div>
+          <div>{{ selectedSong.artist }}</div>
+          <div class="empty">Empty</div>
+          <div class="capitalize">
+            {{ selectedChart.difficulty }} Lv {{ selectedChart.level }}
+          </div>
+        </div>
+      </InfoPanel>
+    </SideOverlay>
+
+    <div ref="root" class="max-w-l" />
+
+    <SideOverlay id="rhs">
+      <SongInfoPanel panelTitle="Stats" class="w-100" :data="scoreData" />
+    </SideOverlay>
+  </div>
+</template>
+
+<style scoped>
+.side {
+  margin: 40px;
+}
+
+.empty {
+  visibility: hidden;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+</style>

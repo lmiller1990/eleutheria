@@ -1,45 +1,82 @@
 <template>
-  <table>
-    <tr>
-      <td>Tap Notes</td>
-      <td>{{ props.chartSummary.totalNotes }}</td>
-    </tr>
+  <div class="gray-3 border-1 rounded-border-m" id="song-info">
+    <div class="flex" id="song-info-inner">
+      <table>
+        <tr>
+          <th>Notes</th>
+          <td>5000</td>
+        </tr>
+        <tr>
+          <th>BPM</th>
+          <td>185</td>
+        </tr>
+        <tr>
+          <th>Duration</th>
+          <td>4:10</td>
+        </tr>
+      </table>
 
-    <tr>
-      <td>Hold Notes</td>
-      <td>{{ props.chartSummary.holdNotes }}</td>
-    </tr>
+      <div class="flex flex-col items-center justify-center w-100">
+        <div id="best-grade" class="font-3rem">AAA</div>
 
-    <tr>
-      <td>Duration</td>
-      <td>{{ durationSeconds }}</td>
-    </tr>
-
-    <tr>
-      <td>Chords</td>
-      <td />
-    </tr>
-
-    <tr v-for="{ key, num } of keys" :key="key">
-      <td>{{ num }} Notes</td>
-      <td>{{ props.chartSummary.chords[key] }}</td>
-    </tr>
-  </table>
+        <div id="best-score">95.50%</div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script lang="ts" setup>
-import type { ChartSummary } from "@packages/types/src";
+<script lang="ts" setup></script>
 
-const keys = [
-  { key: "twoNoteCount", num: "2" },
-  { key: "threeNoteCount", num: "3" },
-  { key: "fourNoteCount", num: "4" },
-  { key: "fiveNoteCount", num: "5" },
-  { key: "sixNoteCount", num: "6" },
-] as const;
+<style>
+@import "../index.css";
+</style>
 
-const props = defineProps<{
-  chartSummary: ChartSummary;
-  durationSeconds: string;
-}>();
-</script>
+<style scoped lang="scss">
+@import "../../../breeze-css/dist/breeze.css";
+
+#song-info {
+  width: 100%;
+  padding: 5px;
+  font-size: 1.25rem;
+}
+
+#song-info-inner {
+  padding: 5px;
+}
+
+.octogon {
+  clip-path: polygon(
+    5% 0,
+    95% 0,
+    100% 10%,
+    100% 90%,
+    95% 100%,
+    5% 100%,
+    0 90%,
+    0 10%
+  );
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
+th {
+  text-align: left;
+  color: white;
+}
+
+td {
+  text-align: center;
+  background: rgb(37 8 1);
+  color: white;
+  padding: 0 5px;
+  border-radius: 4px;
+}
+
+#best-grade {
+  color: lightgoldenrodyellow;
+  text-shadow: 0px 10px 10px black;
+}
+</style>

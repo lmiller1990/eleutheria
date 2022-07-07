@@ -18,7 +18,7 @@ export interface Summary {
 export function summarizeResults(
   world: World,
   timingWindows: Readonly<TimingWindow[]>
-) {
+): Summary {
   const init: Summary = {
     percent: "0.00",
     achievements: [],

@@ -31,20 +31,12 @@ export const useSongsStore = defineStore("songs", {
       const res = await window.fetch(getGameDataUrl("/songs"));
       const data = (await res.json()) as BaseSong[];
 
-      let _songs: Song[] = [];
-      const _offset = 3;
-
-      for (let i = _offset; i < 20 + _offset; i++) {
-        const s = data[i % data.length];
-        _songs.push({
-          ...s,
-          order: i,
-          title: `#${i}: ${s.title}`,
-          key: i.toString(),
-        });
-      }
-
-      this.songs = _songs;
+      this.songs = data.map<Song>((song, idx) => {
+        return {
+          ...song,
+          order: idx,
+        };
+      });
     },
 
     setSelectedChartIdx(selectedChartIdx: number) {

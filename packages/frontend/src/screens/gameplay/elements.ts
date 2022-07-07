@@ -117,8 +117,9 @@ export function createElements(
   const html = `
     ${debugTable}
 
+    <!--
     <div id="lhs" class="w-100 margin-left-1rem">
-      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s margin-right-2rem">
+      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] gray-6 text-white margin-top-2rem padding-s rounded-border-s margin-right-2rem">
         <table>
           <tr><td>${metadata.title}</td></tr>
           <tr><td>Artist</td></tr>
@@ -127,6 +128,7 @@ export function createElements(
         </table>
       </div>
     </div>
+    -->
 
     <div id="targets" class="w-100 shadow-h-4">
       <div id="target-line">
@@ -139,13 +141,14 @@ export function createElements(
       <div id="combo"></div>
     </div>
 
+    <!--
     <div id="rhs" class="w-100 margin-right-1rem">
-      <!-- score panel -->
-      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] outline-red-1 gray-1 margin-top-2rem padding-s rounded-border-s margin-left-2rem">
+      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] text-white gray-6 margin-top-2rem padding-s rounded-border-s margin-left-2rem">
         ${scorePanelTable}
       </div>
-
     </div>
+
+    -->
   `;
 
   $root.innerHTML = html;
@@ -173,11 +176,11 @@ export function createElements(
     debugLiveNoteCount: $("#debug-live-notes"),
     debugFps: $("#debug-fps"),
     scoreTable: {
-      percent: $("#score-table").querySelector("#timing-percent")!,
-      absolute: $("#score-table").querySelector("#timing-absolute")!,
-      perfect: $("#score-table").querySelector("#timing-perfect")!,
-      great: $("#score-table").querySelector("#timing-great")!,
-      miss: $("#score-table").querySelector("#timing-miss")!,
+      // percent: $("#score-table").querySelector("#timing-percent")!,
+      // absolute: $("#score-table").querySelector("#timing-absolute")!,
+      // perfect: $("#score-table").querySelector("#timing-perfect")!,
+      // great: $("#score-table").querySelector("#timing-great")!,
+      // miss: $("#score-table").querySelector("#timing-miss")!,
     },
   };
 }

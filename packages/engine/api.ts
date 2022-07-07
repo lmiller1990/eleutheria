@@ -62,8 +62,12 @@ export interface GameConfig {
   dev?: DevModeOptions;
 }
 
-export interface GameLifecycle {
-  onUpdate?: (world: World, previousFrameMeta: PreviousFrameMeta) => void;
+export interface GameLifecycle<T> {
+  onUpdate?: (
+    world: World,
+    previousFrameMeta: PreviousFrameMeta,
+    gameplayModifiers: T
+  ) => void;
   onDebug?: (world: World, fps: number) => void;
   onStart?: (world: World) => void;
   onJudgement?: (world: World, judgementResults: JudgementResult[]) => void;
@@ -73,7 +77,7 @@ export interface GameLifecycle {
   ) => void;
 }
 
-export class Game {
+export class Game<T> {
   #fps = 0;
   #dt = 0;
   #lastDebugUpdate = 0;
@@ -81,10 +85,16 @@ export class Game {
   #source?: AudioBufferSourceNode;
   #inputManager?: InputManager;
   #config: GameConfig;
-  #lifecycle: GameLifecycle;
+  #lifecycle: GameLifecycle<T>;
+  #gameplayModifiers: T;
 
-  constructor(config: GameConfig, lifecycle: GameLifecycle) {
+  constructor(
+    config: GameConfig,
+    lifecycle: GameLifecycle<T>,
+    gameplayModifiers: T
+  ) {
     this.#config = config;
+    this.#gameplayModifiers = gameplayModifiers;
     this.#lifecycle = lifecycle;
     this.#timeOfLastNote =
       config.song.tapNotes.reduce(
@@ -193,7 +203,11 @@ export class Game {
       this.#config.engineConfiguration
     );
 
-    this.#lifecycle.onUpdate?.(updatedWorld, previousFrameMeta);
+    this.#lifecycle.onUpdate?.(
+      updatedWorld,
+      previousFrameMeta,
+      this.#gameplayModifiers
+    );
 
     if (
       this.#lifecycle.onJudgement &&

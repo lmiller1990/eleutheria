@@ -1,4 +1,5 @@
 import gulp from "gulp";
+import dedent from "dedent";
 import fs from "fs-extra";
 import chokidar from "chokidar";
 import path from "path";
@@ -62,7 +63,7 @@ async function gameDataServer() {
   let procs: ChildProcess[] = [];
 
   watcherAll.on("change", () => {
-    procs.forEach(p => p.kill())
+    procs.forEach((p) => p.kill());
     console.log("Restarting game data server...");
     procs = start();
   });
@@ -123,7 +124,145 @@ async function createPkg() {
   ]);
 }
 
+async function createChart() {
+  const results = await inquirer.prompt<{
+    songName: string;
+    difficultyName: string;
+  }>([
+    {
+      name: "songName",
+      type: "input",
+      message: "What is the song name?",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
+    {
+      name: "difficultyName",
+      type: "input",
+      message: "What is the difficulty name?",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
+  ]);
+
+  const newDir = path.join(
+    __dirname,
+    "..",
+    "packages",
+    "game-data",
+    "songs",
+    results.songName,
+    results.difficultyName
+  );
+  await fs.mkdir(newDir);
+
+  await Promise.all([
+    fs.writeFile(path.join(newDir, `${results.songName}.chart`), ""),
+    fs.writeFile(path.join(newDir, `${results.songName}.holds.chart`), ""),
+  ]);
+}
+
+async function createComponent() {
+  const results = await inquirer.prompt<{
+    name: string;
+    test: string;
+  }>([
+    {
+      name: "name",
+      type: "input",
+      message: "What is the component name?",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
+    {
+      name: "test",
+      type: "input",
+      message: "Create test file? y/n",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
+  ]);
+
+  const newDir = path.join(
+    __dirname,
+    "..",
+    "packages",
+    "frontend",
+    "src",
+    "components",
+    results.name
+  );
+  await fs.mkdir(newDir);
+
+  await Promise.all([
+    fs.writeFile(path.join(newDir, `${results.name}.vue`), 
+      dedent`
+        <script lang="ts" setup>
+        import type { ${results.name}Props } from "./types";
+
+        const props = defineProps<${results.name}Props>();
+        </script>
+
+        <template>
+        </template>
+
+        <style>
+        @import "../../index.css";
+        @import "../../../../breeze-css/dist/breeze.css";
+        </style>
+
+        <style scoped lang="scss">
+        @import "../../shared.scss";
+        </style>
+      `
+    ),
+
+    fs.writeFile(
+      path.join(newDir, `index.ts`),
+      dedent`
+        import ${results.name} from "./${results.name}.vue";
+
+        export * from "./types";
+
+        export default ${results.name};
+      `
+    ),
+    fs.writeFile(
+      path.join(newDir, `types.ts`),
+      dedent`
+        export interface ${results.name}Props {
+        }
+      `
+    ),
+    results.test.toLowerCase().startsWith("y")
+      ? fs.writeFile(
+          path.join(newDir, `${results.name}.cy.ts`),
+          dedent`
+        import { mount as _mount } from "cypress/vue";
+        import ${results.name} from "./${results.name}.vue";
+        import { ${results.name}Props } from "./types";
+
+        function render(_props: Partial<${results.name}Props>, rest: Parameters<typeof _mount>[1] = {}) {
+          const props = {
+            ..._props,
+          };
+
+          return _mount(${results.name}, {
+            props,
+            ...rest
+          });
+        }
+
+        describe("${results.name}", () => {
+          it("renders", () => {
+            render({});
+          });
+        });
+      `
+        )
+      : Promise.resolve(),
+  ]);
+}
+
 gulp.task("createPkg", createPkg);
+gulp.task("createChart", createChart);
+gulp.task("createComponent", createComponent);
 
 gulp.task(
   "dev",

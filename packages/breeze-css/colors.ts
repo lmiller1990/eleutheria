@@ -23,6 +23,17 @@ const blue = {
   ],
 } as const;
 
+const yellow = {
+  name: "yellow",
+  colors: [
+    "rgb(254, 249, 195)",
+    "rgb(254, 240, 138)",
+    "rgb(253, 224, 71)",
+    "rgb(250, 204, 21)",
+    "rgb(234, 179, 8)",
+  ],
+};
+
 const gray = {
   name: "gray",
   colors: [
@@ -31,6 +42,7 @@ const gray = {
     "rgb(156, 163, 175)",
     "rgb(107, 114, 128)",
     "rgb(75, 85, 99)",
+    "rgb(58, 79, 90)",
   ],
 };
 
@@ -45,7 +57,18 @@ const green = {
   ],
 };
 
-export const allColors = [red, blue, green, gray];
+const indigo = {
+  name: "indigo",
+  colors: [
+    "rgb(225 146 255)",
+    "rgb(176 29 169)",
+    "rgb(170 113 192)",
+    "rgb(149 95 169)",
+    "rgb(126 65 149)",
+  ],
+};
+
+export const allColors = [red, blue, green, gray, yellow, indigo];
 
 const _colors = allColors.map((col) => {
   return joinGroup((output) => {

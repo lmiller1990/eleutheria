@@ -1,0 +1,7 @@
+[data-cy-root],
+#__cy_vue_root,
+[data-v-app],
+body {
+  height: 100%;
+  background: #828282;
+}

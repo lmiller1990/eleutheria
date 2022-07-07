@@ -7,7 +7,6 @@ import type { BaseSong, Difficulty } from "@packages/types/src";
 export interface Song extends BaseSong {
   order: number;
   banner: string;
-  key: string;
 }
 
 export interface Chart {
@@ -15,4 +14,9 @@ export interface Chart {
   level: number;
   parsedTapNoteChart: ParsedTapNoteChart;
   parsedHoldNoteChart: ParsedHoldNoteChart;
+}
+
+export interface SongDifficulty {
+  name: string;
+  level: number;
 }
