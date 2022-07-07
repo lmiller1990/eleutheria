@@ -35,7 +35,7 @@ const props = defineProps<NonGameplayScreenProps>();
 }
 
 .outer {
-  margin: 25px 0;
+  padding: 25px 0;
 }
 
 .screen-name {

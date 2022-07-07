@@ -35,7 +35,7 @@ const timingSummary = reactive<
   absolute: 0,
   perfect: 0,
   miss: 0,
-  percent: "0.00%",
+  percent: "0.00",
 });
 
 function updateSummary(summary: Summary) {
@@ -61,7 +61,7 @@ const scoreData = computed<TableCell[]>(() => {
     },
     {
       title: "Score",
-      content: timingSummary.percent,
+      content: `${timingSummary.percent}%`,
     },
   ];
 });
@@ -76,7 +76,7 @@ const root = ref<HTMLDivElement>();
 
 onMounted(async () => {
   if (!root.value) {
-    throw Error("Could not find root node for game");
+    return;
   }
 
   const { start } = await import("./gameplay");
@@ -94,23 +94,25 @@ onMounted(async () => {
 
 const songsStore = useSongsStore();
 
+// can only happen if directly navigating to this route.
+// In this case, the global `beforeEach` hook will redirect appropriately.
 const selectedSong = computed(() => {
   if (!songsStore.selectedSong) {
-    throw Error(`songsStore.selectedSong not set!`);
+    return;
   }
   return songsStore.selectedSong;
 });
 
 const selectedChart = computed(() => {
   if (!songsStore.selectedChart) {
-    throw Error(`songsStore.selectedChart not set!`);
+    return;
   }
   return songsStore.selectedChart;
 });
 </script>
 
 <template>
-  <div id="game-app">
+  <div id="game-app" v-if="selectedChart && selectedSong">
     <SideOverlay id="lhs">
       <InfoPanel panelTitle="Song" class="w-100">
         <div class="flex flex-col">

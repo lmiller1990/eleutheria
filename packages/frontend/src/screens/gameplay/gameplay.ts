@@ -24,7 +24,6 @@ import {
   codeColumnMap,
   timingWindows,
   GameplayModifiers,
-  windowsWithMiss,
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { LoadSongData } from "@packages/game-data";

@@ -238,13 +238,14 @@ async function createComponent() {
         import ${results.name} from "./${results.name}.vue";
         import { ${results.name}Props } from "./types";
 
-        function render(_props?: Partial<${results.name}Props>) {
+        function render(_props: Partial<${results.name}Props>, rest: Parameters<typeof _mount>[1] = {}) {
           const props = {
             ..._props,
           };
 
           return _mount(${results.name}, {
             props,
+            ...rest
           });
         }
 

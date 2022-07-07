@@ -79,3 +79,11 @@ ul {
 li {
   list-style: none;
 }
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+}

@@ -7,11 +7,13 @@ const props = defineProps<SongInfoPanelProps>();
 
 <template>
   <InfoPanel panelTitle="Stats" :highlightColor="props.highlightColor">
-    <div class="info-panel">
-      <template v-for="cell of props.data">
-        <div class="cell-title">{{ cell.title }}</div>
-        <div>{{ cell.content ?? "-" }}</div>
-      </template>
+    <div class="flex justify-center">
+      <table>
+        <tr v-for="cell of props.data">
+          <td class="cell-title">{{ cell.title }}</td>
+          <td class="cell-data">{{ cell.content ?? "-" }}</td>
+        </tr>
+      </table>
     </div>
   </InfoPanel>
 </template>
@@ -24,14 +26,11 @@ const props = defineProps<SongInfoPanelProps>();
 <style scoped lang="scss">
 @import "../../shared.scss";
 
-$border: 3px;
-
-.info-panel {
-  display: grid;
-  width: 100%;
-  grid-template-columns: 1fr 1fr;
-  font-family: "Comfortaa", cursive;
+table {
+  table-layout: fixed;
 }
+
+$border: 3px;
 
 .basic {
   border: $border solid $basic;
@@ -47,5 +46,11 @@ $border: 3px;
 
 .cell-title {
   text-transform: capitalize;
+  padding-right: 30px;
+}
+
+.cell-data {
+  overflow: hidden;
+  width: 80px;
 }
 </style>

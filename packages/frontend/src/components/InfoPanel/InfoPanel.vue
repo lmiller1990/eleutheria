@@ -33,11 +33,10 @@ const props = defineProps<InfoPanelProps>();
 @import "../../shared.scss";
 
 $border: 3px;
-$bg: #373737;
 
 .info-content {
-  padding: 10px 20px 0 50px;
-  font-size: 1.2rem;
+  padding: 10px 20px; // 0 50px;
+  font-size: 1.5rem;
 }
 
 .info-wrapper {

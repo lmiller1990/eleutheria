@@ -45,7 +45,7 @@ function setTestData() {
   });
 }
 
-describe("SummaryScreen", { viewportHeight: 660, viewportWidth: 1000 }, () => {
+describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
   it("displays score", () => {
     setTestData();
 

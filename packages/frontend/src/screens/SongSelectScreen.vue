@@ -122,7 +122,7 @@ const tableData = computed<TableCell[]>(() => {
     },
     {
       title: "Best",
-      content: "99.50",
+      content: "99.50%",
     },
   ];
 });
@@ -165,10 +165,6 @@ songsStore.fetchSongs();
 @import "../shared.scss";
 @import "../index.css";
 @import "../../../breeze-css/dist/breeze.css";
-
-#app {
-  background: #828282;
-}
 </style>
 
 <style lang="scss" scoped>

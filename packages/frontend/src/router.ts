@@ -4,9 +4,10 @@ import { InputManager } from "@packages/engine";
 import SongSelectScreen from "./screens/SongSelectScreen.vue";
 import GameplayScreen from "./screens/gameplay/GameplayScreen.vue";
 import SummaryScreen from "./screens/summary/SummaryScreen.vue";
+import { useSongsStore } from "./stores/songs";
 
-export const createRouter = () =>
-  _createRouter({
+export const createRouter = () => {
+  const router = _createRouter({
     history: createWebHistory(),
     routes: [
       {
@@ -16,10 +17,16 @@ export const createRouter = () =>
       {
         path: "/game",
         component: GameplayScreen,
+        meta: {
+          requiresSongSelected: true,
+        },
       },
       {
         path: "/summary",
         component: SummaryScreen,
+        meta: {
+          requiresSongSelected: true,
+        },
       },
       {
         path: "/debug",
@@ -35,3 +42,20 @@ export const createRouter = () =>
       },
     ],
   });
+
+  router.beforeEach((to) => {
+    const songsSongs = useSongsStore();
+
+    if (
+      songsSongs.selectedSongId === undefined &&
+      to.meta.requiresSongSelected === true
+    ) {
+      return {
+        path: "/",
+      };
+    }
+    return true;
+  });
+
+  return router;
+};

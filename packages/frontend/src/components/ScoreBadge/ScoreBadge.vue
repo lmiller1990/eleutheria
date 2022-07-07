@@ -21,8 +21,6 @@ const props = defineProps<ScoreBadgeProps>();
 <style scoped lang="scss">
 @import "../../shared.scss";
 
-$radius: 300px;
-
 .score-badge-outer,
 .score-badge {
   border-radius: 50%;
@@ -31,8 +29,8 @@ $radius: 300px;
 }
 
 .score-badge-outer {
-  width: $radius;
-  height: $radius;
+  width: $vanity-badge-radius;
+  height: $vanity-badge-radius;
   box-sizing: content-box;
 
   color: #373737;
@@ -56,11 +54,11 @@ $radius: 300px;
 }
 
 .rank {
-  font-size: 7rem;
+  font-size: 10rem;
 }
 
 .percent {
-  font-size: 3.5rem;
+  font-size: 4rem;
 }
 
 .rank,
