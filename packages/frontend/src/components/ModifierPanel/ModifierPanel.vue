@@ -25,7 +25,7 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
 </script>
 
 <template>
-  <InfoPanel panelTitle="Modifiers">
+  <InfoPanel panelTitle="Modifiers" class="modifier-panel">
     <div class="modifier-wrapper">
       <div>Speed</div>
       <div>{{ currentSpeed }}</div>
@@ -81,12 +81,6 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
   display: grid;
   grid-template-columns: 1fr 1fr 2.5fr;
   grid-template-rows: repeat(4, 60px);
-
-  > div {
-    // border: 1px solid red;
-    display: flex;
-    align-items: center;
-  }
 }
 
 @mixin hover-bright {
@@ -111,5 +105,10 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
 .note {
   @include hover-bright;
   margin: 0 10px 0 0;
+}
+
+.modifier-panel {
+  border: 2px solid white;
+  box-shadow: 0px 4px 4px 4px #00000040;
 }
 </style>

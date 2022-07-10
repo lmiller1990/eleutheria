@@ -25,9 +25,9 @@ import {
   timingWindows,
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
-import { LoadSongData } from "@packages/game-data";
-import { ParamData } from "./fetchData";
-import { GameplayModifiers } from "./types";
+import type { LoadSongData } from "@packages/game-data";
+import type { ParamData } from "./fetchData";
+import type { GameplayModifiers } from "./types";
 
 const noteMap = new Map<string, HTMLDivElement>();
 const holdMap = new Map<string, HTMLDivElement>();
@@ -197,16 +197,20 @@ export interface StartGameArgs {
   paramData: ParamData;
   songCompleted: SongCompleted;
   gameplayModifiers: GameplayModifiers;
-  updateSummaryPanel: (summary: Summary) => void;
+  updateSummary: (summary: Summary) => void;
 }
 
-export function start($root: HTMLDivElement, startGameArgs: StartGameArgs) {
+export function start(
+  $root: HTMLDivElement,
+  startGameArgs: StartGameArgs,
+  __testingDoNotStartSong = false
+) {
   const {
     songData,
     paramData,
     songCompleted,
     gameplayModifiers,
-    updateSummaryPanel,
+    updateSummary,
   } = startGameArgs;
 
   const elements = createElements($root, 6, songData.metadata);
@@ -221,6 +225,10 @@ export function start($root: HTMLDivElement, startGameArgs: StartGameArgs) {
 
   if (!chart) {
     throw Error(`Could not find chart with difficulty ${paramData.difficulty}`);
+  }
+
+  if (__testingDoNotStartSong) {
+    return;
   }
 
   const gameConfig: GameConfig = {
@@ -344,7 +352,7 @@ export function start($root: HTMLDivElement, startGameArgs: StartGameArgs) {
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
       const summary = summarizeResults(world, timingWindows);
 
-      updateSummaryPanel(summary);
+      updateSummary(summary);
     },
 
     onDebug: (world: World, fps: number) => {

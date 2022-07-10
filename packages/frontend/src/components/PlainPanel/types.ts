@@ -1,2 +1,1 @@
-export interface PlainPanelProps {
-}
+export interface PlainPanelProps {}

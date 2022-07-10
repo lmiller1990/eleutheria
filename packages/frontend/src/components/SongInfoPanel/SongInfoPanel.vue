@@ -30,20 +30,6 @@ table {
   table-layout: fixed;
 }
 
-$border: 3px;
-
-.basic {
-  border: $border solid $basic;
-}
-
-.standard {
-  border: $border solid $standard;
-}
-
-.expert {
-  border: $border solid $expert;
-}
-
 .cell-title {
   text-transform: capitalize;
   padding-right: 30px;

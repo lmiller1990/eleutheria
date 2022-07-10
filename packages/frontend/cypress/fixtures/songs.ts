@@ -1,8 +1,9 @@
 import type { Chart, Song } from "../../src/types";
 import { thumbails } from "../../src/thumbnails";
 import { ChartMetadata } from "@packages/chart-parser";
+import { LoadSongData } from "@packages/game-data";
 
-const metadata: ChartMetadata = {
+export const metadata: ChartMetadata = {
   banner: thumbails[0],
   offset: 0,
   title: "Test Song",
@@ -33,4 +34,9 @@ export const testSong: Song = {
   artist: "Some Artist",
   charts: [chart],
   bpm: 120,
+};
+
+export const songData: LoadSongData = {
+  ...testSong,
+  metadata,
 };
