@@ -9,3 +9,17 @@ $expert: #d91c1c;
 $vanity-badge-radius: 400px;
 
 $bg: #373737;
+
+$border: 3px;
+
+.basic {
+  border: $border solid $basic !important;
+}
+
+.standard {
+  border: $border solid $standard !important;
+}
+
+.expert {
+  border: $border solid $expert !important;
+}

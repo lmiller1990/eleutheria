@@ -23,11 +23,11 @@ import {
   PADDING_MS,
   codeColumnMap,
   timingWindows,
-  GameplayModifiers,
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
-import { LoadSongData } from "@packages/game-data";
-import { getGameDataUrl } from "./env";
+import type { LoadSongData } from "@packages/game-data";
+import type { ParamData } from "./fetchData";
+import type { GameplayModifiers } from "./types";
 
 const noteMap = new Map<string, HTMLDivElement>();
 const holdMap = new Map<string, HTMLDivElement>();
@@ -186,47 +186,49 @@ function updateUI(
   elements.combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
 
-type SongCompleted = (summary: Summary) => void;
+export type SongCompleted = (summary: Summary) => void;
 
 function calcYPosition(note: EngineNote, world: World) {
   return (note.ms - world.time) * MULTIPLIER;
 }
 
-function getSongId(): { id: string; difficulty: string } {
-  const url = new URL(window.location.toString());
-  const params = new URLSearchParams(url.search);
-  const id = params.get("song");
-  const difficulty = params.get("difficulty");
-  if (!id || !difficulty) {
-    throw Error(
-      `Expected ${window.location} to have search params ?song=<ID> and ?difficulty=<difficulty>`
-    );
-  }
-  return { id, difficulty };
+export interface StartGameArgs {
+  songData: LoadSongData;
+  paramData: ParamData;
+  songCompleted: SongCompleted;
+  gameplayModifiers: GameplayModifiers;
+  updateSummary: (summary: Summary) => void;
 }
 
-export async function fetchData(id: string): Promise<LoadSongData> {
-  const res = await window.fetch(getGameDataUrl(`/songs/${id}`));
-  return res.json();
-}
-
-export async function start(
+export function start(
   $root: HTMLDivElement,
-  songCompleted: SongCompleted,
-  gameplayModifiers: GameplayModifiers,
-  updateSummaryPanel: (summary: Summary) => void
+  startGameArgs: StartGameArgs,
+  __testingDoNotStartSong = false
 ) {
-  const { id, difficulty } = getSongId();
-  const data = await fetchData(id);
-  const elements = createElements($root, 6, data.metadata);
+  const {
+    songData,
+    paramData,
+    songCompleted,
+    gameplayModifiers,
+    updateSummary,
+  } = startGameArgs;
+
+  const elements = createElements($root, 6, songData.metadata);
 
   elements.targetLine.style[
     gameplayModifiers.scroll === "up" ? "top" : "bottom"
   ] = "100px";
 
-  const chart = data.charts.find((x) => x.difficulty === difficulty);
+  const chart = songData.charts.find(
+    (x) => x.difficulty === paramData.difficulty
+  );
+
   if (!chart) {
-    throw Error(`Could not find chart with difficulty ${difficulty}`);
+    throw Error(`Could not find chart with difficulty ${paramData.difficulty}`);
+  }
+
+  if (__testingDoNotStartSong) {
+    return;
   }
 
   const gameConfig: GameConfig = {
@@ -238,7 +240,7 @@ export async function start(
     song: {
       tapNotes: chart.parsedTapNoteChart.tapNotes,
       holdNotes: chart.parsedHoldNoteChart.holdNotes,
-      metadata: data.metadata,
+      metadata: songData.metadata,
     },
     preSongPadding: PADDING_MS,
     postSongPadding: PADDING_MS,
@@ -350,7 +352,7 @@ export async function start(
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
       const summary = summarizeResults(world, timingWindows);
 
-      updateSummaryPanel(summary);
+      updateSummary(summary);
     },
 
     onDebug: (world: World, fps: number) => {
@@ -383,5 +385,5 @@ export async function start(
   //   game.setTestOnlyDeltaTime((i += 100));
   // };
 
-  await game.start(id, data.metadata);
+  return game.start(paramData.id, songData.metadata);
 }

@@ -35,7 +35,7 @@ const props = defineProps<InfoPanelProps>();
 $border: 3px;
 
 .info-content {
-  padding: 10px 20px; // 0 50px;
+  padding: 10px 20px;
   font-size: 1.5rem;
 }
 
@@ -44,6 +44,7 @@ $border: 3px;
   color: white;
   background: $bg;
   border: $border solid transparent;
+  font-family: "Sansation", sans-serif;
 }
 
 .panel-title {

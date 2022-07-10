@@ -1,10 +1,5 @@
 import type { EngineConfiguration } from "@packages/engine";
 
-export interface GameplayModifiers {
-  speed: number;
-  scroll: "up" | "down";
-}
-
 export const timingWindows = [
   {
     name: "absolute",
