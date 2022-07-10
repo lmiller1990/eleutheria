@@ -1,5 +1,12 @@
 import { padStart } from "@packages/audio-utils";
+import { LoadSongData } from "@packages/game-data";
+import { getGameDataUrl } from "./env";
 import { PADDING_MS } from "./gameConfig";
+
+export interface ParamData {
+  id: string;
+  difficulty: string;
+}
 
 const SONG = {
   // SONG_ID: "rave",
@@ -34,4 +41,22 @@ export async function fetchAudio() {
 
     return { audioContext, source, startTime };
   };
+}
+
+export async function fetchData(id: string): Promise<LoadSongData> {
+  const res = await window.fetch(getGameDataUrl(`/songs/${id}`));
+  return res.json();
+}
+
+export function getSongId(): ParamData {
+  const url = new URL(window.location.toString());
+  const params = new URLSearchParams(url.search);
+  const id = params.get("song");
+  const difficulty = params.get("difficulty");
+  if (!id || !difficulty) {
+    throw Error(
+      `Expected ${window.location} to have search params ?song=<ID> and ?difficulty=<difficulty>`
+    );
+  }
+  return { id, difficulty };
 }

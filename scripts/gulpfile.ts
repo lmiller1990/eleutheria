@@ -1,4 +1,5 @@
 import gulp from "gulp";
+import minimist from "minimist";
 import dedent from "dedent";
 import fs from "fs-extra";
 import chokidar from "chokidar";
@@ -161,6 +162,8 @@ async function createChart() {
 }
 
 async function createComponent() {
+  const args = minimist(process.argv);
+
   const results = await inquirer.prompt<{
     name: string;
     test: string;
@@ -182,12 +185,10 @@ async function createComponent() {
   const newDir = path.join(
     __dirname,
     "..",
-    "packages",
-    "frontend",
-    "src",
-    "components",
+    ...args.path.split("/"),
     results.name
   );
+
   await fs.mkdir(newDir);
 
   await Promise.all([
@@ -239,7 +240,7 @@ async function createComponent() {
         import { ${results.name}Props } from "./types";
 
         function render(_props: Partial<${results.name}Props>, rest: Parameters<typeof _mount>[1] = {}) {
-          const props = {
+          const props: ${results.name}Props = {
             ..._props,
           };
 
