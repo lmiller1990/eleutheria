@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import GameplayScreenContainer from './GameplayScreenContainer.vue';
-
 </script>
 
 <template>
@@ -8,7 +7,6 @@ import GameplayScreenContainer from './GameplayScreenContainer.vue';
     <template #default>
       <GameplayScreenContainer />
     </template>
-
     <template #fallback>
       Loading...
     </template>

@@ -218,6 +218,7 @@ export function start($root: HTMLDivElement, startGameArgs: StartGameArgs) {
   const chart = songData.charts.find(
     (x) => x.difficulty === paramData.difficulty
   );
+
   if (!chart) {
     throw Error(`Could not find chart with difficulty ${paramData.difficulty}`);
   }
