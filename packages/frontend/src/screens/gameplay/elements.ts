@@ -189,7 +189,7 @@ export type Elements = ReturnType<typeof createElements>;
 
 export function $tapNote(classes: string = "", column: number) {
   const d = document.createElement("div");
-  d.className = `note note-${column} rounded-border-m ${classes}`;
+  d.className = `note note-${column} ${classes}`;
   return d;
 }
 

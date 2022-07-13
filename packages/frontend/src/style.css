@@ -1,3 +1,5 @@
+@import "@packages/game-data/styles/global.css";
+
 html,
 body,
 #app {
@@ -5,17 +7,6 @@ body,
   padding: 0;
   /* overflow: hidden; */
   background: #828282;
-}
-
-:root {
-  --note-height: 50px;
-  --col-width: 60px;
-
-  --track-bg: #150d10;
-  --root-bg: #4d4c4a;
-  --target-height: calc(var(--note-height) - 5px);
-
-  --judgment-bounce: 1.15;
 }
 
 #game-app {
@@ -31,23 +22,6 @@ body,
   top: 40px;
   left: 10px;
   font-size: 0.75rem;
-}
-
-.note {
-  height: var(--note-height);
-  width: 95%;
-
-  box-sizing: border-box;
-  position: absolute;
-  font-size: 3rem;
-
-  border: 1px solid #a8bdc7;
-  background: #a8bdc7;
-}
-
-.note-1,
-.note-4 {
-  background: #0a6ed6 !important;
 }
 
 @keyframes target-flash {

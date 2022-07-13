@@ -8,6 +8,8 @@ import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
 import { Summary } from "@packages/engine";
+import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars"
+import { NoteSkin } from "@packages/types/src";
 
 const props = defineProps<GameplayProps>();
 
@@ -24,6 +26,16 @@ if (!songsStore.selectedChart || !songsStore.selectedSong) {
 const selectedChart = songsStore.selectedChart;
 const selectedSong = songsStore.selectedSong;
 const highlightColor = colors[selectedChart.difficulty] ?? "yellow";
+
+const defaultNoteSkin = props.startGameArgs.noteSkinData.find(
+  (x) => x.name === "default"
+);
+
+if (!defaultNoteSkin) {
+  throw Error(`No default note skin found`);
+}
+
+injectNoteSkin(defaultNoteSkin);
 
 const timingSummary = reactive<
   Record<typeof windowsWithMiss[number], number> & { percent: string }
@@ -91,7 +103,7 @@ onMounted(async () => {
         <div class="stats flex flex-col justify-center">
           <div class="stats-wrapper">
             <div class="modifier-wrapper">
-              <ModifierPanel :currentSpeed="1" :notes="[]" />
+              <ModifierPanel :currentSpeed="1" :notes="startGameArgs.noteSkinData" @changeNoteSkin="injectNoteSkin" />
             </div>
             <div class="info-panels flex">
               <InfoPanel

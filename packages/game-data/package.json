@@ -20,7 +20,8 @@
   "scripts": {
     "start": "ts-node index.ts",
     "test": "vitest --run",
-    "build": "yarn build-metadata && tsc && cp -r songs dist && cp songMetadata.json dist",
+    "postinstall": "yarn build",
+    "build": "yarn build-metadata && tsc && cp -r songs dist && cp songMetadata.json dist && yarn build-notes",
     "build-metadata": "ts-node --esm scripts/generateMetadata.ts",
     "build-notes": "ts-node --esm scripts/generateNotes.ts",
     "check-ts": "tsc --noEmit",

@@ -26,3 +26,8 @@ export interface PersonalBest {
   percent: number;
   date: string;
 }
+
+export interface NoteSkin {
+  name: string;
+  css: string;
+}

@@ -1,5 +1,15 @@
-$blue: 'blue';
-
 .note {
-  background-color: $blue;
+  height: var(--note-height);
+  border-radius: 12px;
+
+  box-sizing: border-box;
+  font-size: 3rem;
+
+  border: 1px solid #a8bdc7;
+  background: #a8bdc7;
+}
+
+.note-1,
+.note-4 {
+  background: #0a6ed6 !important;
 }
