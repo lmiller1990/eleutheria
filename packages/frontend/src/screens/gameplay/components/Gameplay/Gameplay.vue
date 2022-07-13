@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import type { GameplayProps } from "./types";
 import ModifierPanel from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
@@ -7,7 +7,7 @@ import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import { Summary } from "@packages/engine";
+import type { GameAPI, Summary } from "@packages/engine";
 import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
 
 const props = defineProps<GameplayProps>();
@@ -73,6 +73,8 @@ function updateSummary(summary: Summary) {
   timingSummary.percent = summary.percent;
 }
 
+let game: GameAPI | undefined;
+
 onMounted(async () => {
   if (!root.value) {
     return;
@@ -80,7 +82,7 @@ onMounted(async () => {
 
   const { start } = await import("../../gameplay");
 
-  start(
+  game = await start(
     root.value,
     {
       ...props.startGameArgs,
@@ -88,6 +90,11 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong
   );
+});
+
+onUnmounted(() => {
+  // stop the game - teardown event manager, stop audio, etc.
+  game?.stop();
 });
 </script>
 

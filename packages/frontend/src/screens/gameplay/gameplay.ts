@@ -7,6 +7,7 @@ import type {
   Summary,
   EngineNote,
   JudgementResult,
+  GameAPI,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import {
@@ -202,11 +203,11 @@ export interface StartGameArgs {
   updateSummary: (summary: Summary) => void;
 }
 
-export function start(
+export async function start(
   $root: HTMLDivElement,
   startGameArgs: StartGameArgs,
   __testingDoNotStartSong = false
-) {
+): Promise<GameAPI | undefined> {
   const {
     songData,
     paramData,
@@ -387,5 +388,7 @@ export function start(
   //   game.setTestOnlyDeltaTime((i += 100));
   // };
 
-  return game.start(paramData.id, songData.metadata);
+  await game.start(paramData.id, songData.metadata);
+
+  return game;
 }
