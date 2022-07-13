@@ -9,7 +9,6 @@ import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
 import { Summary } from "@packages/engine";
 import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars"
-import { NoteSkin } from "@packages/types/src";
 
 const props = defineProps<GameplayProps>();
 

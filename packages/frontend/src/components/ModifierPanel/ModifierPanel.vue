@@ -3,6 +3,7 @@ import { NoteSkin } from "@packages/types/src";
 import { FunctionalComponent, h } from "vue";
 import InfoPanel from "../InfoPanel";
 import type { ModifierPanelProps } from "./types";
+import { getStyleByClass } from "./css"
 
 defineProps<ModifierPanelProps>();
 
@@ -16,31 +17,7 @@ const speedMods = ["-100", "-10", "+10", "+100"] as const;
 const scrollMods = ["up", "down"] as const;
 
 function extractCss(style: string) {
-  // .note {
-  //   height: var(--note-height);
-  //   width: 95%;
-  //   border-radius: 12px;
-  //   box-sizing: border-box;
-  //   font-size: 3rem;
-  //   border: 1px solid #a8bdc7;
-  //   background: #a8bdc7;
-  // }
-  // .note-1,
-  // .note-4 {
-  //   background: #0a6ed6 !important;
-  // }
-  //
-  // Need to extract the CSS into rules.
-  // Eg .note { width: 95% } => width: 95%
-  // For now naive:
-  //   - consume until .note {
-  //   - capture content until }
-  //   - done!
-  let string = style.split(".note {")?.[1].split("}")?.[0];
-  if (!string) {
-    throw Error(`Could not get style for note from ${style}`);
-  }
-  return string;
+  return getStyleByClass(style, ".note")
 }
 
 const ModButton: FunctionalComponent = (_props, { slots }) => {
