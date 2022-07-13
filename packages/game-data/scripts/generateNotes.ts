@@ -11,9 +11,7 @@ export function compileSkins(): NoteSkin[] {
 
   return skins.map((name) => {
     return {
-      css: sass.compile(path.join(notesDir, name, "index.scss"), {
-        
-      }).css,
+      css: sass.compile(path.join(notesDir, name, "index.scss"), {}).css,
       name,
     };
   });

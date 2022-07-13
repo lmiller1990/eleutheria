@@ -8,7 +8,7 @@ import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
 import { Summary } from "@packages/engine";
-import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars"
+import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
 
 const props = defineProps<GameplayProps>();
 
@@ -102,7 +102,11 @@ onMounted(async () => {
         <div class="stats flex flex-col justify-center">
           <div class="stats-wrapper">
             <div class="modifier-wrapper">
-              <ModifierPanel :currentSpeed="1" :notes="startGameArgs.noteSkinData" @changeNoteSkin="injectNoteSkin" />
+              <ModifierPanel
+                :currentSpeed="1"
+                :notes="startGameArgs.noteSkinData"
+                @changeNoteSkin="injectNoteSkin"
+              />
             </div>
             <div class="info-panels flex">
               <InfoPanel

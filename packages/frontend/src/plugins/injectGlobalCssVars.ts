@@ -5,12 +5,12 @@ export function injectStylesheet(style: string, id: string) {
   el?.remove();
   el = document.createElement("style");
   el.id = id;
-  el.innerText = style
+  el.innerText = style;
   document.head.insertAdjacentElement("beforeend", el);
 }
 
 const noteSkinStyleId = "__NOTE_SKIN__";
 
 export function injectNoteSkin(skin: NoteSkin) {
-  return injectStylesheet(skin.css, noteSkinStyleId)
+  return injectStylesheet(skin.css, noteSkinStyleId);
 }

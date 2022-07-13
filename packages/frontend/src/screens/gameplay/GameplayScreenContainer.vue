@@ -17,7 +17,7 @@ function songCompleted(summary: Summary) {
 const paramData = getSongId();
 const [songData, noteSkinData] = await Promise.all([
   fetchData(paramData.id),
-  fetchNoteSkins()
+  fetchNoteSkins(),
 ]);
 
 const startGameArgs: GameplayProps["startGameArgs"] = {

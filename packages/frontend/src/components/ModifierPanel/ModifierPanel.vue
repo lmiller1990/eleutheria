@@ -3,7 +3,7 @@ import { NoteSkin } from "@packages/types/src";
 import { FunctionalComponent, h } from "vue";
 import InfoPanel from "../InfoPanel";
 import type { ModifierPanelProps } from "./types";
-import { getStyleByClass } from "./css"
+import { getStyleByClass } from "./css";
 
 defineProps<ModifierPanelProps>();
 
@@ -17,7 +17,7 @@ const speedMods = ["-100", "-10", "+10", "+100"] as const;
 const scrollMods = ["up", "down"] as const;
 
 function extractCss(style: string) {
-  return getStyleByClass(style, ".note")
+  return getStyleByClass(style, ".note");
 }
 
 const ModButton: FunctionalComponent = (_props, { slots }) => {
