@@ -10,6 +10,7 @@ import {
   parseHoldsChart,
 } from "@packages/chart-parser";
 import type { BaseSong } from "@packages/types/src";
+import { compileSkins } from "./scripts/generateNotes";
 
 const app = express();
 app.use(cors());
@@ -75,6 +76,11 @@ app.get("/songs/:id", async (req, res) => {
   const data = await loadSong(req.params.id);
 
   res.json(data);
+});
+
+app.get("/note-skins", (_req, res) => {
+  const skins = compileSkins();
+  res.json(skins);
 });
 
 app.get("/songs", async (_req, res) => {

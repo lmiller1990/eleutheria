@@ -1,0 +1,26 @@
+.note {
+  border: 1px solid white;
+  transform: rotateY(180deg);
+  background-image: radial-gradient(
+    95.74% 95.74% at 95.71% 2.13%,
+    #ffffff 0%,
+    #a115b8 100%
+  );
+
+  height: var(--note-height);
+
+  box-sizing: border-box;
+}
+
+.note-1,
+.note-4 {
+  border: 1px solid white;
+  transform: rotateY(180deg);
+  background-image: radial-gradient(
+    95.74% 95.74% at 95.71% 2.13%,
+    rgb(255, 255, 255) 0%,
+    rgb(84 169 65) 100%
+  );
+  height: var(--note-height);
+  box-sizing: border-box;
+}

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import type { GameplayProps } from "./types";
 import ModifierPanel from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
@@ -7,7 +7,8 @@ import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import { Summary } from "@packages/engine";
+import type { GameAPI, Summary } from "@packages/engine";
+import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
 
 const props = defineProps<GameplayProps>();
 
@@ -24,6 +25,16 @@ if (!songsStore.selectedChart || !songsStore.selectedSong) {
 const selectedChart = songsStore.selectedChart;
 const selectedSong = songsStore.selectedSong;
 const highlightColor = colors[selectedChart.difficulty] ?? "yellow";
+
+const defaultNoteSkin = props.startGameArgs.noteSkinData.find(
+  (x) => x.name === "default"
+);
+
+if (!defaultNoteSkin) {
+  throw Error(`No default note skin found`);
+}
+
+injectNoteSkin(defaultNoteSkin);
 
 const timingSummary = reactive<
   Record<typeof windowsWithMiss[number], number> & { percent: string }
@@ -62,6 +73,8 @@ function updateSummary(summary: Summary) {
   timingSummary.percent = summary.percent;
 }
 
+let game: GameAPI | undefined;
+
 onMounted(async () => {
   if (!root.value) {
     return;
@@ -69,7 +82,7 @@ onMounted(async () => {
 
   const { start } = await import("../../gameplay");
 
-  start(
+  game = await start(
     root.value,
     {
       ...props.startGameArgs,
@@ -77,6 +90,11 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong
   );
+});
+
+onUnmounted(() => {
+  // stop the game - teardown event manager, stop audio, etc.
+  game?.stop();
 });
 </script>
 
@@ -91,7 +109,11 @@ onMounted(async () => {
         <div class="stats flex flex-col justify-center">
           <div class="stats-wrapper">
             <div class="modifier-wrapper">
-              <ModifierPanel :currentSpeed="1" :notes="[]" />
+              <ModifierPanel
+                :currentSpeed="1"
+                :notes="startGameArgs.noteSkinData"
+                @changeNoteSkin="injectNoteSkin"
+              />
             </div>
             <div class="info-panels flex">
               <InfoPanel

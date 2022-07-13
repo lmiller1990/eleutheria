@@ -1,17 +1,24 @@
 <script lang="ts" setup>
+import { NoteSkin } from "@packages/types/src";
 import { FunctionalComponent, h } from "vue";
 import InfoPanel from "../InfoPanel";
 import type { ModifierPanelProps } from "./types";
+import { getStyleByClass } from "./css";
 
 defineProps<ModifierPanelProps>();
 
 const emit = defineEmits<{
   (event: "changeSpeedMod", mod: typeof speedMods[number]): void;
   (event: "changeScrollMod", mod: typeof scrollMods[number]): void;
+  (event: "changeNoteSkin", noteSkin: NoteSkin): void;
 }>();
 
 const speedMods = ["-100", "-10", "+10", "+100"] as const;
 const scrollMods = ["up", "down"] as const;
+
+function extractCss(style: string) {
+  return getStyleByClass(style, ".note");
+}
 
 const ModButton: FunctionalComponent = (_props, { slots }) => {
   return h(
@@ -22,14 +29,18 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
     slots
   );
 };
+
+const Cell: FunctionalComponent = (_props, { slots }) => {
+  return h("div", { class: "flex flex-col justify-center" }, slots);
+};
 </script>
 
 <template>
   <InfoPanel panelTitle="Modifiers" class="modifier-panel">
     <div class="modifier-wrapper">
-      <div>Speed</div>
-      <div>{{ currentSpeed }}</div>
-      <div>
+      <Cell>Speed</Cell>
+      <Cell>{{ currentSpeed }}</Cell>
+      <Cell>
         <div class="flex">
           <ModButton
             v-for="num of speedMods"
@@ -38,17 +49,23 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
             {{ num }}
           </ModButton>
         </div>
-      </div>
+      </Cell>
 
-      <div>Note</div>
-      <div>660</div>
+      <Cell>Note</Cell>
+      <Cell>660</Cell>
       <div class="flex items-center">
-        <div v-for="note of notes" :style="note" class="note"></div>
+        <div
+          v-for="note of notes"
+          :style="extractCss(note.css)"
+          class="note-mod"
+          :id="`note-${note.name}`"
+          @click="emit('changeNoteSkin', note)"
+        />
       </div>
 
-      <div>Scroll</div>
-      <div>Up</div>
-      <div>
+      <Cell>Scroll</Cell>
+      <Cell>Up</Cell>
+      <Cell>
         <div class="flex">
           <ModButton
             v-for="mod of scrollMods"
@@ -57,11 +74,11 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
             {{ mod }}
           </ModButton>
         </div>
-      </div>
+      </Cell>
 
-      <div>Cover</div>
-      <div>??</div>
-      <div>Options!</div>
+      <Cell>Cover</Cell>
+      <Cell>??</Cell>
+      <Cell>Options!</Cell>
     </div>
   </InfoPanel>
 </template>
@@ -102,8 +119,10 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
   text-transform: capitalize;
 }
 
-.note {
+.note-mod {
   @include hover-bright;
+  width: calc(var(--col-width) * 0.95);
+  height: var(--note-height);
   margin: 0 10px 0 0;
 }
 

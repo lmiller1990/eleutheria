@@ -7,6 +7,7 @@ import type {
   Summary,
   EngineNote,
   JudgementResult,
+  GameAPI,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import {
@@ -28,6 +29,7 @@ import { writeDebugToHtml } from "./debug";
 import type { LoadSongData } from "@packages/game-data";
 import type { ParamData } from "./fetchData";
 import type { GameplayModifiers } from "./types";
+import { NoteSkin } from "@packages/types/src";
 
 const noteMap = new Map<string, HTMLDivElement>();
 const holdMap = new Map<string, HTMLDivElement>();
@@ -35,7 +37,7 @@ const holdMap = new Map<string, HTMLDivElement>();
 let timeoutId: number | undefined;
 
 function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
-  const $note = $tapNote("gray-2 border-gray-5", engineNote.column);
+  const $note = $tapNote("gray-2", engineNote.column);
 
   const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {
@@ -194,17 +196,18 @@ function calcYPosition(note: EngineNote, world: World) {
 
 export interface StartGameArgs {
   songData: LoadSongData;
+  noteSkinData: NoteSkin[];
   paramData: ParamData;
   songCompleted: SongCompleted;
   gameplayModifiers: GameplayModifiers;
   updateSummary: (summary: Summary) => void;
 }
 
-export function start(
+export async function start(
   $root: HTMLDivElement,
   startGameArgs: StartGameArgs,
   __testingDoNotStartSong = false
-) {
+): Promise<GameAPI | undefined> {
   const {
     songData,
     paramData,
@@ -385,5 +388,7 @@ export function start(
   //   game.setTestOnlyDeltaTime((i += 100));
   // };
 
-  return game.start(paramData.id, songData.metadata);
+  await game.start(paramData.id, songData.metadata);
+
+  return game;
 }

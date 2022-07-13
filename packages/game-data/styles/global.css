@@ -1,0 +1,15 @@
+:root {
+  --note-height: 50px;
+  --col-width: 60px;
+
+  --track-bg: #150d10;
+  --root-bg: #4d4c4a;
+  --target-height: calc(var(--note-height) - 5px);
+
+  --judgment-bounce: 1.15;
+}
+
+.note {
+  position: absolute;
+  width: 95%;
+}

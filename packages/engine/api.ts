@@ -77,7 +77,12 @@ export interface GameLifecycle<T> {
   ) => void;
 }
 
-export class Game<T> {
+export interface GameAPI {
+  start(id: string, songData: ChartMetadata): Promise<void>;
+  stop: () => void;
+}
+
+export class Game<T> implements GameAPI {
   #fps = 0;
   #dt = 0;
   #lastDebugUpdate = 0;
@@ -87,6 +92,7 @@ export class Game<T> {
   #config: GameConfig;
   #lifecycle: GameLifecycle<T>;
   #gameplayModifiers: T;
+  #nextAnimationFrame?: number;
 
   constructor(
     config: GameConfig,
@@ -169,6 +175,9 @@ export class Game<T> {
   }
 
   stop() {
+    if (this.#nextAnimationFrame) {
+      window.cancelAnimationFrame(this.#nextAnimationFrame);
+    }
     this.#inputManager?.teardown();
     this.#source?.stop();
   }
@@ -233,6 +242,8 @@ export class Game<T> {
       return;
     }
 
-    window.requestAnimationFrame(() => this.gameLoop(updatedWorld));
+    this.#nextAnimationFrame = window.requestAnimationFrame(() =>
+      this.gameLoop(updatedWorld)
+    );
   }
 }
