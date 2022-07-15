@@ -3,6 +3,7 @@ import { songData, testSong } from "../../../../../cypress/fixtures/songs";
 import Gameplay from "./Gameplay.vue";
 import { GameplayProps } from "./types";
 import appStyle from "../../../../style.css";
+import { noteSkins } from "../../../../../cypress/fixtures/modifiers";
 import { useSongsStore } from "../../../../stores/songs";
 
 function render(
@@ -13,6 +14,7 @@ function render(
     ..._props,
     startGameArgs: {
       songData,
+      noteSkinData: noteSkins,
       paramData: {
         id: testSong.id,
         difficulty: songData.charts[0].difficulty,
