@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc && vite build",
-    "test": "echo 'ok'",
+    "test": "cypress run --component",
     "check-ts": "vue-tsc",
     "cy:open": "cypress open --browser chrome --component",
     "clean": "rm -rf dist"

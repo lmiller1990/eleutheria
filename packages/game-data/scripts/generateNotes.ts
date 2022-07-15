@@ -16,20 +16,3 @@ export function compileSkins(): NoteSkin[] {
     };
   });
 }
-
-function cleanDist() {
-  if (fs.existsSync(outDir)) {
-    fs.rmdirSync(outDir);
-  }
-
-  fs.mkdirSync(outDir, { recursive: true });
-}
-
-export function generateNotes() {
-  cleanDist();
-
-  for (const skin of compileSkins()) {
-    fs.writeFileSync(path.join(outDir, `${skin.name}.css`), skin.css, "utf-8");
-  }
-  console.log("Generated note skins");
-}
