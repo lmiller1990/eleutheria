@@ -28,7 +28,6 @@ export const NOTE_WIDTH = parseInt(
   10
 );
 
-export const MULTIPLIER = 1.5;
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {

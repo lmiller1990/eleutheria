@@ -7,7 +7,6 @@ import type {
   Summary,
   EngineNote,
   JudgementResult,
-  GameAPI,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import {
@@ -20,7 +19,6 @@ import {
 } from "./elements";
 import {
   engineConfiguration,
-  MULTIPLIER,
   PADDING_MS,
   codeColumnMap,
   timingWindows,
@@ -29,6 +27,7 @@ import { writeDebugToHtml } from "./debug";
 import type { LoadSongData } from "@packages/game-data";
 import type { ParamData } from "./fetchData";
 import type { GameplayModifiers } from "./types";
+import { GameplayModifierManager } from "@packages/engine";
 import { NoteSkin } from "@packages/types/src";
 
 let timeoutId: number | undefined;
@@ -47,10 +46,14 @@ function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
 
 function drawHoldNote(
   holdNote: EngineNote[],
-  elements: Elements
+  elements: Elements,
+  gameplayModifierManager: GameplayModifierManager
 ): HTMLDivElement {
   const $note = drawNote(holdNote.at(0)!, elements);
-  $note.style.height = `${calcInitHeightOfHold(holdNote)}px`;
+  $note.style.height = `${calcInitHeightOfHold(
+    holdNote,
+    gameplayModifierManager
+  )}px`;
   return $note;
 }
 
@@ -73,27 +76,40 @@ function shouldRemoveNote($note: HTMLDivElement, scroll: "up" | "down") {
   }
 }
 
-function calcInitHeightOfHold(hold: EngineNote[]): number {
+function calcInitHeightOfHold(
+  hold: EngineNote[],
+  gameplayModifierManager: GameplayModifierManager
+): number {
   const firstNoteOfHold = hold.at(0)!;
   const lastNoteOfHold = hold.at(-1)!;
-  return (lastNoteOfHold.ms - firstNoteOfHold.ms) * MULTIPLIER;
+  return (
+    (lastNoteOfHold.ms - firstNoteOfHold.ms) *
+    gameplayModifierManager.multiplier
+  );
 }
 
-function calcHeightOfDroppedHold(hold: EngineNote[]): number {
+function calcHeightOfDroppedHold(
+  hold: EngineNote[],
+  gameplayModifierManager: GameplayModifierManager
+): number {
   const firstNoteOfHold = hold.at(0)!;
   const lastNoteOfHold = hold.at(-1)!;
   if (!firstNoteOfHold.droppedAt) {
     throw Error("Cannot calc height of dropped hold that was not dropped!");
   }
 
-  return (lastNoteOfHold.ms - firstNoteOfHold.droppedAt) * MULTIPLIER;
+  return (
+    (lastNoteOfHold.ms - firstNoteOfHold.droppedAt) *
+    gameplayModifierManager.multiplier
+  );
 }
 
 function updateHold(
   engineHold: EngineNote[],
   ypos: number,
   $note: HTMLDivElement,
-  gameplayModifiers: GameplayModifiers
+  gameplayModifiers: GameplayModifiers,
+  gameplayModifierManager: GameplayModifierManager
 ): HTMLDivElement {
   const hold = engineHold[0]!;
 
@@ -101,7 +117,10 @@ function updateHold(
     $note.style[gameplayModifiers.scroll === "up" ? "top" : "bottom"] = px;
   };
 
-  const initialHeight = calcInitHeightOfHold(engineHold);
+  const initialHeight = calcInitHeightOfHold(
+    engineHold,
+    gameplayModifierManager
+  );
   const newHeight = initialHeight + ypos;
 
   if (hold.isHeld) {
@@ -118,7 +137,10 @@ function updateHold(
   }
 
   if (hold.droppedAt) {
-    const adjustedHeight = calcHeightOfDroppedHold(engineHold);
+    const adjustedHeight = calcHeightOfDroppedHold(
+      engineHold,
+      gameplayModifierManager
+    );
     const diff = initialHeight - adjustedHeight;
     $note.style.opacity = "0.25";
     setPos(`${ypos + diff}px`);
@@ -187,8 +209,12 @@ function updateUI(
 
 export type SongCompleted = (summary: Summary) => void;
 
-function calcYPosition(note: EngineNote, world: World) {
-  return (note.ms - world.time) * MULTIPLIER;
+function calcYPosition(
+  note: EngineNote,
+  world: World,
+  gameplayModifierManager: GameplayModifierManager
+) {
+  return (note.ms - world.time) * gameplayModifierManager.multiplier;
 }
 
 export interface StartGameArgs {
@@ -200,11 +226,16 @@ export interface StartGameArgs {
   updateSummary: (summary: Summary) => void;
 }
 
-export async function start(
+interface StartGame {
+  game: Game<GameplayModifiers>;
+  start: () => Promise<void> | undefined;
+}
+
+export async function create(
   $root: HTMLDivElement,
   startGameArgs: StartGameArgs,
   __testingDoNotStartSong = false
-): Promise<GameAPI | undefined> {
+): Promise<StartGame | void> {
   const {
     songData,
     paramData,
@@ -263,10 +294,15 @@ export async function start(
   let beeped = new Map<string, boolean>();
 
   const lifecycle: GameLifecycle<GameplayModifiers> = {
-    onUpdate: (world, previousFrameMeta, gameplayModifiers) => {
+    onUpdate: (
+      world,
+      previousFrameMeta,
+      gameplayModifiers,
+      gameplayModifierManager
+    ) => {
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
-        const ypos = calcYPosition(engineNote, world);
+        const ypos = calcYPosition(engineNote, world, gameplayModifierManager);
         let $note = noteMap.get(id);
 
         if (ypos < 0 && !beeped.has(id)) {
@@ -314,7 +350,7 @@ export async function start(
       // handle hold notes!
       for (const [id, hold] of world.chart.holdNotes) {
         const engineNote = hold[0];
-        const ypos = calcYPosition(engineNote, world);
+        const ypos = calcYPosition(engineNote, world, gameplayModifierManager);
         let $note = holdMap.get(engineNote.id);
 
         const inViewport = ypos < window.innerHeight;
@@ -331,14 +367,20 @@ export async function start(
         // we need to draw it - it's the first time we've encountered this note.
 
         if (!$note && !engineNote.hitTiming && inViewport) {
-          $note = drawHoldNote(hold, elements);
+          $note = drawHoldNote(hold, elements, gameplayModifierManager);
           holdMap.set(id, $note);
         }
 
         // We need to update the position, since the note has been drawn
         // and it is in the viewport
         if ($note && inViewport) {
-          updateHold(hold, ypos, $note, gameplayModifiers);
+          updateHold(
+            hold,
+            ypos,
+            $note,
+            gameplayModifiers,
+            gameplayModifierManager
+          );
         }
 
         // if the tail end of the hold is above the top of the viewport
@@ -380,14 +422,22 @@ export async function start(
     },
   };
 
-  const game = new Game(gameConfig, lifecycle, gameplayModifiers);
+  const gameplayModifierManager = new GameplayModifierManager();
+  gameplayModifierManager.setMultipler(0.25);
+  const game = new Game(
+    gameConfig,
+    lifecycle,
+    gameplayModifiers,
+    gameplayModifierManager
+  );
 
   // let i = 0;
   // window.manualTick = () => {
   //   game.setTestOnlyDeltaTime((i += 100));
   // };
 
-  await game.start(paramData.id, songData.metadata);
-
-  return game;
+  return {
+    game,
+    start: () => game.start(paramData.id, songData.metadata),
+  };
 }

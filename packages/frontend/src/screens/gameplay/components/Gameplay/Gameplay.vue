@@ -7,10 +7,12 @@ import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import type { GameAPI, Summary } from "@packages/engine";
+import type { Game, Summary } from "@packages/engine";
 import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
+import { GameplayModifiers } from "../../types";
+import { preferencesManager } from "../../preferences";
 
 const props = defineProps<GameplayProps>();
 
@@ -75,7 +77,7 @@ function updateSummary(summary: Summary) {
   timingSummary.percent = summary.percent;
 }
 
-let game: GameAPI | undefined;
+let game: Game<GameplayModifiers> | undefined;
 
 const router = useRouter();
 
@@ -88,22 +90,64 @@ function stop(event: KeyboardEvent) {
 
 useEventListener("keyup", stop);
 
+const preferences = preferencesManager.getPreferences();
+
+const currentSpeed = ref(preferences.speedModifier ?? 1);
+
 onMounted(async () => {
   if (!root.value) {
     return;
   }
 
-  const { start } = await import("../../gameplay");
+  const { create } = await import("../../gameplay");
 
-  game = await start(
+  const init = await create(
     root.value,
     {
       ...props.startGameArgs,
+      gameplayModifiers: {
+        ...props.startGameArgs.gameplayModifiers,
+        speed:
+          preferences.speedModifier ??
+          props.startGameArgs.gameplayModifiers.speed,
+      },
       updateSummary,
     },
     props.__testingDoNotStartSong
   );
+
+  if (!init) {
+    // Only occurs during testing. We want a way to render this screen w/o starting gameplay.
+    return;
+  }
+
+  game = init.game;
+
+  if (preferences.speedModifier) {
+    currentSpeed.value = preferences.speedModifier;
+    init.game.gameplayModifierManager.setMultipler(preferences.speedModifier);
+  } else {
+    currentSpeed.value = init.game.gameplayModifierManager.multiplier;
+  }
+
+  init.start();
 });
+
+function handleChangeSpeedMod(val: number) {
+  if (!game) {
+    return;
+  }
+
+  const newMod = game.gameplayModifierManager.multiplier + val;
+
+  if (newMod <= 0) {
+    return;
+  }
+
+  game.gameplayModifierManager.setMultipler(newMod);
+  preferencesManager.updatePreferences({ speedModifier: newMod });
+  currentSpeed.value = newMod;
+}
 </script>
 
 <template>
@@ -118,9 +162,10 @@ onMounted(async () => {
           <div class="stats-wrapper">
             <div class="modifier-wrapper">
               <ModifierPanel
-                :currentSpeed="1"
+                :currentSpeed="currentSpeed"
                 :notes="startGameArgs.noteSkinData"
                 @changeNoteSkin="injectNoteSkin"
+                @changeSpeedMod="handleChangeSpeedMod"
               />
             </div>
             <div class="info-panels flex">

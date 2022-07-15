@@ -1,19 +1,19 @@
 <script lang="ts" setup>
 import { NoteSkin } from "@packages/types/src";
-import { FunctionalComponent, h } from "vue";
+import { computed, FunctionalComponent, h } from "vue";
 import InfoPanel from "../InfoPanel";
 import type { ModifierPanelProps } from "./types";
 import { getStyleByClass } from "./css";
 
-defineProps<ModifierPanelProps>();
+const props = defineProps<ModifierPanelProps>();
 
 const emit = defineEmits<{
-  (event: "changeSpeedMod", mod: typeof speedMods[number]): void;
+  (event: "changeSpeedMod", mod: number): void;
   (event: "changeScrollMod", mod: typeof scrollMods[number]): void;
   (event: "changeNoteSkin", noteSkin: NoteSkin): void;
 }>();
 
-const speedMods = ["-100", "-10", "+10", "+100"] as const;
+const speedMods = ["-0.125", "-0.25", "+0.25", "+0.125"] as const;
 const scrollMods = ["up", "down"] as const;
 
 function extractCss(style: string) {
@@ -33,26 +33,41 @@ const ModButton: FunctionalComponent = (_props, { slots }) => {
 const Cell: FunctionalComponent = (_props, { slots }) => {
   return h("div", { class: "flex flex-col justify-center" }, slots);
 };
+
+const NORMALIZER = 400;
+
+const normalizedSpeed = computed(() => {
+  return props.currentSpeed * NORMALIZER;
+});
+
+function handleChangeSpeedMod(val: typeof speedMods[number]) {
+  emit("changeSpeedMod", parseFloat(val));
+}
+
+function normalizeMod(val: typeof speedMods[number]) {
+  const n = parseFloat(val);
+  return `${Math.sign(n) > 0 ? "+" : "-"}${Math.abs(n * NORMALIZER)}`;
+}
 </script>
 
 <template>
   <InfoPanel panelTitle="Modifiers" class="modifier-panel">
     <div class="modifier-wrapper">
       <Cell>Speed</Cell>
-      <Cell>{{ currentSpeed }}</Cell>
+      <Cell>{{ normalizedSpeed }}</Cell>
       <Cell>
         <div class="flex">
           <ModButton
             v-for="num of speedMods"
-            @click="emit('changeSpeedMod', num)"
+            @click="handleChangeSpeedMod(num)"
           >
-            {{ num }}
+            {{ normalizeMod(num) }}
           </ModButton>
         </div>
       </Cell>
 
       <Cell>Note</Cell>
-      <Cell>660</Cell>
+      <Cell>??</Cell>
       <div class="flex items-center">
         <div
           v-for="note of notes"
