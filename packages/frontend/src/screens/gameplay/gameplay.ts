@@ -31,9 +31,6 @@ import type { ParamData } from "./fetchData";
 import type { GameplayModifiers } from "./types";
 import { NoteSkin } from "@packages/types/src";
 
-const noteMap = new Map<string, HTMLDivElement>();
-const holdMap = new Map<string, HTMLDivElement>();
-
 let timeoutId: number | undefined;
 
 function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
@@ -261,6 +258,8 @@ export async function start(
     },
   };
 
+  const noteMap = new Map<string, HTMLDivElement>();
+  const holdMap = new Map<string, HTMLDivElement>();
   let beeped = new Map<string, boolean>();
 
   const lifecycle: GameLifecycle<GameplayModifiers> = {

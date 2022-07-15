@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import type { GameplayProps } from "./types";
 import ModifierPanel from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
@@ -9,6 +9,8 @@ import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
 import type { GameAPI, Summary } from "@packages/engine";
 import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
+import { useRouter } from "vue-router";
+import { useEventListener } from "../../../../utils/useEventListener";
 
 const props = defineProps<GameplayProps>();
 
@@ -75,6 +77,17 @@ function updateSummary(summary: Summary) {
 
 let game: GameAPI | undefined;
 
+const router = useRouter();
+
+function stop(event: KeyboardEvent) {
+  if (event.code === "KeyQ") {
+    game?.stop();
+    router.push("/");
+  }
+}
+
+useEventListener("keyup", stop);
+
 onMounted(async () => {
   if (!root.value) {
     return;
@@ -90,11 +103,6 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong
   );
-});
-
-onUnmounted(() => {
-  // stop the game - teardown event manager, stop audio, etc.
-  game?.stop();
 });
 </script>
 
