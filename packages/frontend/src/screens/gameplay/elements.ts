@@ -114,23 +114,13 @@ export function createElements(
     </table>
   `;
 
+  const cover = createElement("div", { id: "lane-cover" });
+
   const html = `
     ${debugTable}
 
-    <!--
-    <div id="lhs" class="w-100 margin-left-1rem">
-      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] gray-6 text-white margin-top-2rem padding-s rounded-border-s margin-right-2rem">
-        <table>
-          <tr><td>${metadata.title}</td></tr>
-          <tr><td>Artist</td></tr>
-          <tr><td>${metadata.bpm} BPM</td></tr>
-          <tr><td>Visualized by XXXX</td></tr>
-        </table>
-      </div>
-    </div>
-    -->
-
     <div id="targets" class="w-100 shadow-h-4">
+      ${cover}
       <div id="target-line">
         ${targetCols}
       </div>
@@ -140,15 +130,6 @@ export function createElements(
       <div id="timing"></div>
       <div id="combo"></div>
     </div>
-
-    <!--
-    <div id="rhs" class="w-100 margin-right-1rem">
-      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] text-white gray-6 margin-top-2rem padding-s rounded-border-s margin-left-2rem">
-        ${scorePanelTable}
-      </div>
-    </div>
-
-    -->
   `;
 
   $root.innerHTML = html;

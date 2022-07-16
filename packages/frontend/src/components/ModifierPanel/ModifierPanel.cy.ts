@@ -9,6 +9,7 @@ function render(
 ) {
   const props: ModifierPanelProps = {
     currentSpeed: 6,
+    currentScroll: "up",
     notes: noteSkins,
     ..._props,
   };
