@@ -7,7 +7,7 @@ function render(_props?: Partial<NonGameplayScreenProps>) {
     ..._props,
   };
 
-  return _mount(NonGameplayScreen, {
+  return _mount(NonGameplayScreen as any, {
     props,
   });
 }

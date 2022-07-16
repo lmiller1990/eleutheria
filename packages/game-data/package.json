@@ -20,7 +20,7 @@
   "scripts": {
     "start": "ts-node index.ts",
     "test": "echo 'ok - no tests here yet'",
-    "postinstall": "yarn build",
+    "postinstall": "echo 'ok' # yarn build",
     "build": "yarn build-metadata && tsc && cp -r songs dist && cp songMetadata.json dist && yarn build-notes",
     "build-metadata": "ts-node --esm scripts/generateMetadata.ts",
     "build-notes": "ts-node --esm scripts/generateNotes.ts",

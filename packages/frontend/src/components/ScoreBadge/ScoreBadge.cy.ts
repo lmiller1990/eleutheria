@@ -7,7 +7,8 @@ function render(_props?: Partial<ScoreBadgeProps>) {
     ..._props,
   };
 
-  return _mount(ScoreBadge, {
+  // TODO: why do we need `as any`
+  return _mount(ScoreBadge as any, {
     props,
   });
 }

@@ -1,4 +1,5 @@
 import { SongDifficulty } from "../types";
+import { mount } from "cypress/vue";
 import DifficultyPanel from "./DifficultyPanel.vue";
 
 const difficulties: SongDifficulty[] = [
@@ -18,7 +19,7 @@ const difficulties: SongDifficulty[] = [
 
 describe("DifficultyPanel", () => {
   it("renders", () => {
-    cy.mount(DifficultyPanel, {
+    mount(DifficultyPanel, {
       style: `
         body {
           background: #828282;

@@ -23,7 +23,7 @@ function render(
     },
   };
 
-  return _mount(Gameplay, {
+  return _mount(Gameplay as any, {
     props,
     ...rest,
   });

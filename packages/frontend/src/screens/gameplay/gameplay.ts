@@ -240,7 +240,7 @@ export async function create(
 ): Promise<StartGame | void> {
   const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
 
-  const elements = createElements($root, 6, songData.metadata);
+  const elements = createElements($root, 6);
 
   const chart = songData.charts.find(
     (x) => x.difficulty === paramData.difficulty

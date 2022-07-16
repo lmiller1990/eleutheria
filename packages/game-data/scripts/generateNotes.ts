@@ -4,7 +4,6 @@ import sass from "sass";
 import { NoteSkin } from "@packages/types/src";
 
 const notesDir = path.join(__dirname, "..", "notes");
-const outDir = path.join(__dirname, "..", "dist", "notes");
 
 export function compileSkins(): NoteSkin[] {
   const skins = fs.readdirSync(notesDir);

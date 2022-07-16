@@ -1,4 +1,3 @@
-import type { ChartMetadata } from "@packages/chart-parser";
 import { windows } from "./gameConfig";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
@@ -32,7 +31,6 @@ function createElement(
 export function createElements(
   $root: HTMLDivElement,
   columnCount: number,
-  metadata: ChartMetadata
 ) {
   const targetCols = Array(columnCount)
     .fill(0)
@@ -61,33 +59,6 @@ export function createElements(
       return createElement("div", { id: `col-${idx}`, className: "col" });
     })
     .join("");
-
-  const scoreTableRows = windows
-    .map(
-      (win) => `
-      <tr>
-        <td>${win}</td>
-        <td id="timing-${win}">0</td>
-      </tr>
-    `
-    )
-    .join("");
-
-  const scorePanelTable = `
-      <table id="score-table" class="upcase">
-        <tr>
-          <td>Score</td>
-          <td id="timing-percent">0.00%</td>
-        </tr>
-
-        ${scoreTableRows}
-
-        <tr>
-          <td>Miss</td>
-          <td id="timing-miss">0</td>
-        </tr>
-      </table>
-    `;
 
   const debugging = [
     { name: "Live Notes", id: "debug-live-notes" },

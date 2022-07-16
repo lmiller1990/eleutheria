@@ -14,7 +14,8 @@ function render(
     ..._props,
   };
 
-  return _mount(ModifierPanel, {
+  // TODO: Why do we need `as any`?s
+  return _mount(ModifierPanel as any, {
     props,
     ...rest,
   });
