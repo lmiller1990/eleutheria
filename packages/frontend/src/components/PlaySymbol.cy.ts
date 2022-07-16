@@ -1,5 +1,5 @@
 import { h } from "vue";
-import { mount } from 'cypress/vue'
+import { mount } from "cypress/vue";
 import PlaySymbol from "./PlaySymbol.vue";
 
 describe("PlaySymbol.cy.ts", () => {

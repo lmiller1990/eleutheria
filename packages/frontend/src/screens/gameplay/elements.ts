@@ -28,10 +28,7 @@ function createElement(
     </${tagName}>`;
 }
 
-export function createElements(
-  $root: HTMLDivElement,
-  columnCount: number,
-) {
+export function createElements($root: HTMLDivElement, columnCount: number) {
   const targetCols = Array(columnCount)
     .fill(0)
     .map((_, idx) => {

@@ -260,11 +260,11 @@ export async function create(
 
   modifierManager.on("set:cover", (val) => {
     // Offset by height of window. Height of cover is 100vh. So offset=200 means 200px will be visible.
-    const newOffset = window.innerHeight - val.offset
+    const newOffset = window.innerHeight - val.offset;
 
     // don't allow to go above viewport height. Looks weird since the cover height is 100vh.
     if (newOffset < 0) {
-      return
+      return;
     }
 
     const offset = `${newOffset}px`;

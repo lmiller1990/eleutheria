@@ -79,7 +79,7 @@ function updateSummary(summary: Summary) {
 }
 
 let game: Game | undefined;
-const modifierManager = new ModifierManager()
+const modifierManager = new ModifierManager();
 
 const router = useRouter();
 
@@ -100,15 +100,15 @@ function handleKeydown(event: KeyboardEvent) {
   // lower the cover
   if (heldKeys.has("Space") && event.code === "KeyJ") {
     modifierManager.setCover({
-      offset: modifierManager.cover.offset + 50
-    })
+      offset: modifierManager.cover.offset + 50,
+    });
   }
 
   // raise the cover
   if (heldKeys.has("Space") && event.code === "KeyK") {
     modifierManager.setCover({
-      offset: modifierManager.cover.offset - 50
-    })
+      offset: modifierManager.cover.offset - 50,
+    });
   }
 }
 

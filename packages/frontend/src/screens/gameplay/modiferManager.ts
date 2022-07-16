@@ -1,5 +1,5 @@
-import { EventEmitter } from "events"
-import TypedEmitter from 'typed-emitter';
+import { EventEmitter } from "events";
+import TypedEmitter from "typed-emitter";
 import { ScrollDirection } from "./types";
 
 interface CoverParams {
@@ -12,8 +12,11 @@ interface CoverParams {
 type ModifierManagerEvents = {
   "set:multiplier": (val: number, oldVal: number) => void;
   "set:cover": (val: CoverParams, oldVal: CoverParams) => void;
-  "set:scrollDirection": (val: ScrollDirection, oldVal: ScrollDirection) => void;
-}
+  "set:scrollDirection": (
+    val: ScrollDirection,
+    oldVal: ScrollDirection
+  ) => void;
+};
 
 export class ModifierManager extends (EventEmitter as new () => TypedEmitter<ModifierManagerEvents>) {
   #multiplier = 1;
