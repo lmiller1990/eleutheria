@@ -15,14 +15,14 @@
     "@packages/engine": "0.0.0-development",
     "@packages/types": "0.0.0-development",
     "css": "3.0.0",
-    "lodash": "4.17.21",
+    "events": "3.3.0",
     "pinia": "^2.0.11",
+    "typed-emitter": "2.1.0",
     "vue": "^3.2.30",
     "vue-router": "4.1.1"
   },
   "devDependencies": {
     "@cypress/mount-utils": "^1.0.2",
-    "@types/lodash": "4.14.182",
     "@vitejs/plugin-vue": "2.2.2",
     "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.2",

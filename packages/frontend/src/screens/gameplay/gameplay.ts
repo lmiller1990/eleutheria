@@ -225,6 +225,7 @@ export interface StartGameArgs {
   noteSkinData: NoteSkin[];
   paramData: ParamData;
   songCompleted: SongCompleted;
+  modifierManager?: ModifierManager;
   updateSummary: (summary: Summary) => void;
 }
 
@@ -249,6 +250,27 @@ export async function create(
   if (!chart) {
     throw Error(`Could not find chart with difficulty ${paramData.difficulty}`);
   }
+
+  const modifierManager =
+    startGameArgs.modifierManager ?? new ModifierManager();
+  modifierManager.setMultipler(0.25);
+
+  const offset = `${window.innerHeight - modifierManager.cover.offset}px`;
+  elements.cover.style[modifierManager.cover.location] = offset;
+
+  modifierManager.on("set:cover", (val) => {
+    // Offset by height of window. Height of cover is 100vh. So offset=200 means 200px will be visible.
+    const newOffset = window.innerHeight - val.offset
+
+    // don't allow to go above viewport height. Looks weird since the cover height is 100vh.
+    if (newOffset < 0) {
+      return
+    }
+
+    const offset = `${newOffset}px`;
+
+    elements.cover.style[modifierManager.cover.location] = offset;
+  });
 
   if (__testingDoNotStartSong) {
     return;
@@ -402,9 +424,6 @@ export async function create(
       // ...
     },
   };
-
-  const modifierManager = new ModifierManager();
-  modifierManager.setMultipler(0.25);
 
   // let i = 0;
   // window.manualTick = () => {

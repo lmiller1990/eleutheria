@@ -13,6 +13,7 @@ import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
+import { ModifierManager } from "../../modiferManager";
 
 const props = defineProps<GameplayProps>();
 
@@ -78,17 +79,41 @@ function updateSummary(summary: Summary) {
 }
 
 let game: Game | undefined;
+const modifierManager = new ModifierManager()
 
 const router = useRouter();
 
+const heldKeys = new Set<string>();
+
 function stop(event: KeyboardEvent) {
+  heldKeys.delete(event.code);
+
   if (event.code === "KeyQ") {
     game?.stop();
     router.push("/");
   }
 }
 
+function handleKeydown(event: KeyboardEvent) {
+  heldKeys.add(event.code);
+
+  // lower the cover
+  if (heldKeys.has("Space") && event.code === "KeyJ") {
+    modifierManager.setCover({
+      offset: modifierManager.cover.offset + 50
+    })
+  }
+
+  // raise the cover
+  if (heldKeys.has("Space") && event.code === "KeyK") {
+    modifierManager.setCover({
+      offset: modifierManager.cover.offset - 50
+    })
+  }
+}
+
 useEventListener("keyup", stop);
+useEventListener("keydown", handleKeydown);
 
 const preferences = preferencesManager.getPreferences();
 
@@ -106,6 +131,7 @@ onMounted(async () => {
     root.value,
     {
       ...props.startGameArgs,
+      modifierManager,
       updateSummary,
     },
     props.__testingDoNotStartSong

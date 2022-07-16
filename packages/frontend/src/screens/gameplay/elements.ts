@@ -120,6 +120,7 @@ export function createElements(
   return {
     targetColElements,
     colElements,
+    cover: $("#lane-cover"),
     targets: $("#targets"),
     targetLine: $("#target-line"),
     timing: $("#timing"),
