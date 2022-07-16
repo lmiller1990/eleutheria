@@ -79,7 +79,7 @@ function normalizeMod(val: typeof speedMods[number]) {
       </div>
 
       <Cell>Scroll</Cell>
-      <Cell>Up</Cell>
+      <Cell>{{ currentScroll }}</Cell>
       <Cell>
         <div class="flex">
           <ModButton

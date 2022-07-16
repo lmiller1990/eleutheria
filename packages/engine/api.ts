@@ -10,6 +10,7 @@ import {
   updateGameState,
   World,
 } from ".";
+import { ModifierManager } from "@packages/frontend/src/screens/gameplay/modiferManager";
 import type { EngineNote, JudgementResult } from "./engine";
 
 export async function fetchAudio(
@@ -62,24 +63,11 @@ export interface GameConfig {
   dev?: DevModeOptions;
 }
 
-export class GameplayModifierManager {
-  #multiplier = 1;
-
-  setMultipler(val: number) {
-    this.#multiplier = val;
-  }
-
-  get multiplier() {
-    return this.#multiplier;
-  }
-}
-
-export interface GameLifecycle<GameplayModifiers> {
+export interface GameLifecycle {
   onUpdate?: (
     world: World,
     previousFrameMeta: PreviousFrameMeta,
-    gameplayModifiers: GameplayModifiers,
-    gameplayModifierManager: GameplayModifierManager
+    modifierManager: ModifierManager
   ) => void;
   onDebug?: (world: World, fps: number) => void;
   onStart?: (world: World) => void;
@@ -95,7 +83,7 @@ export interface GameAPI {
   stop: () => void;
 }
 
-export class Game<T> implements GameAPI {
+export class Game implements GameAPI {
   #fps = 0;
   #dt = 0;
   #lastDebugUpdate = 0;
@@ -103,22 +91,18 @@ export class Game<T> implements GameAPI {
   #source?: AudioBufferSourceNode;
   #inputManager?: InputManager;
   #config: GameConfig;
-  #lifecycle: GameLifecycle<T>;
-  #gameplayModifiers: T;
-  #gameplayModifierManager: GameplayModifierManager;
+  #lifecycle: GameLifecycle;
+  #modifierManager: ModifierManager;
   #nextAnimationFrame?: number;
 
   constructor(
     config: GameConfig,
-    lifecycle: GameLifecycle<T>,
-    gameplayModifiers: T,
-    gameplayModifierManager?: GameplayModifierManager
+    lifecycle: GameLifecycle,
+    modifierManager?: ModifierManager
   ) {
     this.#config = config;
-    this.#gameplayModifiers = gameplayModifiers;
     this.#lifecycle = lifecycle;
-    this.#gameplayModifierManager =
-      gameplayModifierManager ?? new GameplayModifierManager();
+    this.#modifierManager = modifierManager ?? new ModifierManager();
     this.#timeOfLastNote =
       config.song.tapNotes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
@@ -129,8 +113,8 @@ export class Game<T> implements GameAPI {
       (this.#config.postSongPadding || 0);
   }
 
-  get gameplayModifierManager() {
-    return this.#gameplayModifierManager;
+  get modifierManager() {
+    return this.#modifierManager;
   }
 
   async start(id: string, songData: ChartMetadata) {
@@ -236,8 +220,7 @@ export class Game<T> implements GameAPI {
     this.#lifecycle.onUpdate?.(
       updatedWorld,
       previousFrameMeta,
-      this.#gameplayModifiers,
-      this.#gameplayModifierManager
+      this.#modifierManager
     );
 
     if (

@@ -11,7 +11,7 @@ import type { Game, Summary } from "@packages/engine";
 import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
-import { GameplayModifiers } from "../../types";
+import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
 
 const props = defineProps<GameplayProps>();
@@ -77,7 +77,7 @@ function updateSummary(summary: Summary) {
   timingSummary.percent = summary.percent;
 }
 
-let game: Game<GameplayModifiers> | undefined;
+let game: Game | undefined;
 
 const router = useRouter();
 
@@ -93,6 +93,7 @@ useEventListener("keyup", stop);
 const preferences = preferencesManager.getPreferences();
 
 const currentSpeed = ref(preferences.speedModifier ?? 1);
+const currentScroll = ref<ScrollDirection>(preferences.scrollDirection ?? "up");
 
 onMounted(async () => {
   if (!root.value) {
@@ -105,12 +106,6 @@ onMounted(async () => {
     root.value,
     {
       ...props.startGameArgs,
-      gameplayModifiers: {
-        ...props.startGameArgs.gameplayModifiers,
-        speed:
-          preferences.speedModifier ??
-          props.startGameArgs.gameplayModifiers.speed,
-      },
       updateSummary,
     },
     props.__testingDoNotStartSong
@@ -125,26 +120,43 @@ onMounted(async () => {
 
   if (preferences.speedModifier) {
     currentSpeed.value = preferences.speedModifier;
-    init.game.gameplayModifierManager.setMultipler(preferences.speedModifier);
+    init.game.modifierManager.setMultipler(preferences.speedModifier);
   } else {
-    currentSpeed.value = init.game.gameplayModifierManager.multiplier;
+    currentSpeed.value = init.game.modifierManager.multiplier;
+  }
+
+  if (preferences.scrollDirection) {
+    currentScroll.value = preferences.scrollDirection;
+    init.game.modifierManager.setScroll(preferences.scrollDirection);
+  } else {
+    currentScroll.value = init.game.modifierManager.scrollDirection;
   }
 
   init.start();
 });
+
+function handleChangeScrollMod(val: ScrollDirection) {
+  if (!game) {
+    return;
+  }
+
+  game.modifierManager.setScroll(val);
+  preferencesManager.updatePreferences({ scrollDirection: val });
+  currentScroll.value = val;
+}
 
 function handleChangeSpeedMod(val: number) {
   if (!game) {
     return;
   }
 
-  const newMod = game.gameplayModifierManager.multiplier + val;
+  const newMod = game.modifierManager.multiplier + val;
 
   if (newMod <= 0) {
     return;
   }
 
-  game.gameplayModifierManager.setMultipler(newMod);
+  game.modifierManager.setMultipler(newMod);
   preferencesManager.updatePreferences({ speedModifier: newMod });
   currentSpeed.value = newMod;
 }
@@ -163,9 +175,11 @@ function handleChangeSpeedMod(val: number) {
             <div class="modifier-wrapper">
               <ModifierPanel
                 :currentSpeed="currentSpeed"
+                :currentScroll="currentScroll"
                 :notes="startGameArgs.noteSkinData"
                 @changeNoteSkin="injectNoteSkin"
                 @changeSpeedMod="handleChangeSpeedMod"
+                @changeScrollMod="handleChangeScrollMod"
               />
             </div>
             <div class="info-panels flex">

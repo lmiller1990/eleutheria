@@ -25,10 +25,6 @@ const startGameArgs: GameplayProps["startGameArgs"] = {
   paramData,
   noteSkinData,
   songCompleted,
-  gameplayModifiers: {
-    scroll: "up",
-    speed: 1,
-  },
 };
 </script>
 

@@ -19,10 +19,6 @@ function render(
         id: testSong.id,
         difficulty: songData.charts[0].difficulty,
       },
-      gameplayModifiers: {
-        scroll: "up",
-        speed: 1,
-      },
       songCompleted: () => {},
     },
   };
