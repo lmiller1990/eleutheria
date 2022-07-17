@@ -22,7 +22,7 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
   #multiplier = 1;
   #scrollDirection: ScrollDirection = "up";
   #cover: CoverParams = {
-    visible: true,
+    visible: false,
     location: "top",
     offset: 200,
     background: "none",

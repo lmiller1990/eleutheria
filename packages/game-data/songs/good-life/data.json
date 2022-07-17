@@ -1,0 +1,21 @@
+{
+  "title": "Good Life",
+  "bpm": 130,
+  "offset": 1975,
+  "banner": "https://dummyimage.com/640x360/gaa/def",
+  "artist": "litmus*",
+  "charts": [
+    {
+      "difficulty": "basic",
+      "level": 0
+    },
+    {
+      "difficulty": "standard",
+      "level": 0
+    },
+    {
+      "difficulty": "expert",
+      "level": 6
+    }
+  ]
+}

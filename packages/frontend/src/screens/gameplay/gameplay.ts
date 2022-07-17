@@ -255,10 +255,15 @@ export async function create(
     startGameArgs.modifierManager ?? new ModifierManager();
   modifierManager.setMultipler(0.25);
 
-  const offset = `${window.innerHeight - modifierManager.cover.offset}px`;
-  elements.cover.style[modifierManager.cover.location] = offset;
+  if (modifierManager.cover.visible) {
+    const offset = `${window.innerHeight - modifierManager.cover.offset}px`;
+    elements.cover.style[modifierManager.cover.location] = offset;
+  }
 
   modifierManager.on("set:cover", (val) => {
+    if (!val.visible) {
+      return;
+    }
     // Offset by height of window. Height of cover is 100vh. So offset=200 means 200px will be visible.
     const newOffset = window.innerHeight - val.offset;
 

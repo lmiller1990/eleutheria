@@ -12,8 +12,8 @@ interface SongsState {
 export const useSongsStore = defineStore("songs", {
   state: (): SongsState => {
     return {
-      selectedSongId: undefined,
-      selectedChartIdx: 0,
+      selectedSongId: "good-life",
+      selectedChartIdx: 2,
       songs: [],
     };
   },
