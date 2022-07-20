@@ -9,5 +9,4 @@ export interface ModifierPanelProps {
   notes: NoteSkin[];
 }
 
-
-export type ModCoverParams = Pick<CoverParams, "id" | "style" | "visible">
+export type ModCoverParams = Pick<CoverParams, "id" | "style" | "visible">;

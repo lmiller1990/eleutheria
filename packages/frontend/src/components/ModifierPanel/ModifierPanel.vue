@@ -17,11 +17,11 @@ const emit = defineEmits<{
 const speedMods = ["-0.125", "-0.25", "+0.25", "+0.125"] as const;
 const scrollMods = ["up", "down"] as const;
 const coverMods: Array<ModCoverParams> = [
-  { id: 'default', style: 'background: gray;', visible: true },
-  { id: 'pink', style: 'background: pink;', visible: true },
-  { id: 'lightblue', style: 'background: lightblue;', visible: true },
-  { id: 'violet', style: 'background: violet;', visible: true },
-  { id: 'none', style: 'background: transparent;', visible: false },
+  { id: "default", style: "background: gray;", visible: true },
+  { id: "pink", style: "background: pink;", visible: true },
+  { id: "lightblue", style: "background: lightblue;", visible: true },
+  { id: "violet", style: "background: violet;", visible: true },
+  { id: "none", style: "background: transparent;", visible: false },
 ];
 
 function extractCss(style: string) {
@@ -103,10 +103,7 @@ function normalizeMod(val: typeof speedMods[number]) {
       <Cell>??</Cell>
       <Cell>
         <div class="flex">
-          <ModButton
-            v-for="mod of coverMods"
-            @click="emit('changeCover', mod)"
-          >
+          <ModButton v-for="mod of coverMods" @click="emit('changeCover', mod)">
             {{ mod.id }}
           </ModButton>
         </div>

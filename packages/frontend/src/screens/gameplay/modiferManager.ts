@@ -27,7 +27,7 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
     visible: true,
     location: "top",
     offset: 200,
-    style: "background: blue;"
+    style: "background: blue;",
   };
 
   setMultipler(val: number) {
@@ -38,6 +38,10 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
   setCover(val: Partial<CoverParams>) {
     this.emit("set:cover", { ...this.#cover, ...val }, this.#cover);
     this.#cover = { ...this.#cover, ...val };
+  }
+
+  setOffset(val: number) {
+    this.#cover.offset = val;
   }
 
   setScroll(val: "up" | "down") {

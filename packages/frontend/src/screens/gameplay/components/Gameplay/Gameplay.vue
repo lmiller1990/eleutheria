@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import type { GameplayProps } from "./types";
-import ModifierPanel, { ModCoverParams } from "../../../../components/ModifierPanel";
+import ModifierPanel, {
+  ModCoverParams,
+} from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { useSongsStore } from "../../../../stores/songs";
@@ -159,6 +161,13 @@ onMounted(async () => {
     currentScroll.value = init.game.modifierManager.scrollDirection;
   }
 
+  if (preferences.cover) {
+    currentCover.value = preferences.cover?.id ?? "default";
+    init.game.modifierManager.setCover(preferences.cover);
+  } else {
+    currentCover.value = "default";
+  }
+
   init.start();
 });
 
@@ -172,7 +181,7 @@ function handleChangeScrollMod(val: ScrollDirection) {
   currentScroll.value = val;
 }
 
-function handleChangeCover (val: ModCoverParams) {
+function handleChangeCover(val: ModCoverParams) {
   if (!game) {
     return;
   }

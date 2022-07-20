@@ -28,6 +28,7 @@ import type { LoadSongData } from "@packages/game-data";
 import type { ParamData } from "./fetchData";
 import { ModifierManager } from "./modiferManager";
 import { NoteSkin } from "@packages/types/src";
+import { preferencesManager } from "./preferences";
 
 let timeoutId: number | undefined;
 
@@ -255,11 +256,13 @@ export async function create(
     startGameArgs.modifierManager ?? new ModifierManager();
   modifierManager.setMultipler(0.25);
 
-  elements.cover.style.display = modifierManager.cover.visible ? "block" : "none";
+  elements.cover.style.display = modifierManager.cover.visible
+    ? "block"
+    : "none";
 
   if (modifierManager.cover.visible) {
     const offset = `${window.innerHeight - modifierManager.cover.offset}px`;
-    elements.cover.setAttribute('style', modifierManager.cover.style)
+    elements.cover.setAttribute("style", modifierManager.cover.style);
     elements.cover.style[modifierManager.cover.location] = offset;
   }
 
@@ -270,6 +273,10 @@ export async function create(
       return;
     }
 
+    // need to update these manually, since these modifiers
+    // are not added via the ModifierPanel UI.
+    modifierManager.setOffset(val.offset);
+    preferencesManager.updatePreferences({ cover: val });
 
     // Offset by height of window. Height of cover is 100vh. So offset=200 means 200px will be visible.
     const newOffset = window.innerHeight - val.offset;
@@ -281,7 +288,7 @@ export async function create(
 
     const offset = `${newOffset}px`;
 
-    elements.cover.setAttribute('style', val.style)
+    elements.cover.setAttribute("style", val.style);
     elements.cover.style[modifierManager.cover.location] = offset;
   });
 
