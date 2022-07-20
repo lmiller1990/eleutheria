@@ -1,10 +1,12 @@
+import { CoverParams } from "./modiferManager";
 import { ScrollDirection } from "./types";
 
-const validPreferences = ["speedModifier", "scrollDirection"] as const;
+const validPreferences = ["speedModifier", "scrollDirection", "cover"] as const;
 
 interface Preferences {
   scrollDirection: ScrollDirection;
   speedModifier: number;
+  cover: Partial<CoverParams>;
 }
 
 const PREFERENCES_KEY = "rhythm";

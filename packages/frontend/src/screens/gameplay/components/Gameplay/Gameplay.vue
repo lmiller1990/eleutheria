@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import type { GameplayProps } from "./types";
-import ModifierPanel from "../../../../components/ModifierPanel";
+import ModifierPanel, { ModCoverParams } from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { useSongsStore } from "../../../../stores/songs";
@@ -119,6 +119,7 @@ const preferences = preferencesManager.getPreferences();
 
 const currentSpeed = ref(preferences.speedModifier ?? 1);
 const currentScroll = ref<ScrollDirection>(preferences.scrollDirection ?? "up");
+const currentCover = ref<string>(preferences.cover?.id ?? "default");
 
 onMounted(async () => {
   if (!root.value) {
@@ -171,6 +172,16 @@ function handleChangeScrollMod(val: ScrollDirection) {
   currentScroll.value = val;
 }
 
+function handleChangeCover (val: ModCoverParams) {
+  if (!game) {
+    return;
+  }
+
+  game.modifierManager.setCover(val);
+  preferencesManager.updatePreferences({ cover: val });
+  currentCover.value = val.id;
+}
+
 function handleChangeSpeedMod(val: number) {
   if (!game) {
     return;
@@ -206,6 +217,7 @@ function handleChangeSpeedMod(val: number) {
                 @changeNoteSkin="injectNoteSkin"
                 @changeSpeedMod="handleChangeSpeedMod"
                 @changeScrollMod="handleChangeScrollMod"
+                @changeCover="handleChangeCover"
               />
             </div>
             <div class="info-panels flex">
@@ -251,6 +263,7 @@ function handleChangeSpeedMod(val: number) {
 .gameplay-content {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
+  column-gap: 40px;
 }
 
 .stats-wrapper {
@@ -267,7 +280,7 @@ function handleChangeSpeedMod(val: number) {
   column-gap: 10px;
 }
 
-.modifier-wrapper {
-  margin: 0 30px;
-}
+// .modifier-wrapper {
+//   margin: 0 30px;
+// }
 </style>

@@ -151,9 +151,5 @@ body,
   width: 100%;
   position: absolute;
   z-index: 10;
-
-  background: gray;
   height: 100vh;
-
-  display: none;
 }

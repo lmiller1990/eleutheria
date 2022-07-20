@@ -2,11 +2,12 @@ import { EventEmitter } from "events";
 import TypedEmitter from "typed-emitter";
 import { ScrollDirection } from "./types";
 
-interface CoverParams {
+export interface CoverParams {
+  id: string;
   visible: boolean;
   offset: number;
   location: "top" | "bottom";
-  background: string;
+  style: string;
 }
 
 type ModifierManagerEvents = {
@@ -22,10 +23,11 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
   #multiplier = 1;
   #scrollDirection: ScrollDirection = "up";
   #cover: CoverParams = {
-    visible: false,
+    id: "default",
+    visible: true,
     location: "top",
     offset: 200,
-    background: "none",
+    style: "background: blue;"
   };
 
   setMultipler(val: number) {
