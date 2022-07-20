@@ -1,8 +1,6 @@
-import { padStart } from "@packages/audio-utils";
 import { LoadSongData } from "@packages/game-data";
 import { NoteSkin } from "@packages/types/src";
 import { getGameDataUrl } from "./env";
-import { PADDING_MS } from "./gameConfig";
 
 export interface ParamData {
   id: string;
