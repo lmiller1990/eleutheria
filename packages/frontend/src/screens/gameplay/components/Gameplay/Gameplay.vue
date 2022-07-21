@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import type { GameplayProps } from "./types";
-import ModifierPanel from "../../../../components/ModifierPanel";
+import ModifierPanel, {
+  ModCoverParams,
+} from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { useSongsStore } from "../../../../stores/songs";
@@ -13,6 +15,7 @@ import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
+import { ModifierManager } from "../../modiferManager";
 
 const props = defineProps<GameplayProps>();
 
@@ -78,22 +81,47 @@ function updateSummary(summary: Summary) {
 }
 
 let game: Game | undefined;
+const modifierManager = new ModifierManager();
 
 const router = useRouter();
 
+const heldKeys = new Set<string>();
+
 function stop(event: KeyboardEvent) {
+  heldKeys.delete(event.code);
+
   if (event.code === "KeyQ") {
     game?.stop();
     router.push("/");
   }
 }
 
+function handleKeydown(event: KeyboardEvent) {
+  heldKeys.add(event.code);
+
+  // lower the cover
+  if (heldKeys.has("Space") && event.code === "KeyJ") {
+    modifierManager.setCover({
+      offset: modifierManager.cover.offset + 50,
+    });
+  }
+
+  // raise the cover
+  if (heldKeys.has("Space") && event.code === "KeyK") {
+    modifierManager.setCover({
+      offset: modifierManager.cover.offset - 50,
+    });
+  }
+}
+
 useEventListener("keyup", stop);
+useEventListener("keydown", handleKeydown);
 
 const preferences = preferencesManager.getPreferences();
 
 const currentSpeed = ref(preferences.speedModifier ?? 1);
 const currentScroll = ref<ScrollDirection>(preferences.scrollDirection ?? "up");
+const currentCover = ref<string>(preferences.cover?.id ?? "default");
 
 onMounted(async () => {
   if (!root.value) {
@@ -106,6 +134,7 @@ onMounted(async () => {
     root.value,
     {
       ...props.startGameArgs,
+      modifierManager,
       updateSummary,
     },
     props.__testingDoNotStartSong
@@ -132,6 +161,13 @@ onMounted(async () => {
     currentScroll.value = init.game.modifierManager.scrollDirection;
   }
 
+  if (preferences.cover) {
+    currentCover.value = preferences.cover?.id ?? "default";
+    init.game.modifierManager.setCover(preferences.cover);
+  } else {
+    currentCover.value = "default";
+  }
+
   init.start();
 });
 
@@ -143,6 +179,16 @@ function handleChangeScrollMod(val: ScrollDirection) {
   game.modifierManager.setScroll(val);
   preferencesManager.updatePreferences({ scrollDirection: val });
   currentScroll.value = val;
+}
+
+function handleChangeCover(val: ModCoverParams) {
+  if (!game) {
+    return;
+  }
+
+  game.modifierManager.setCover(val);
+  preferencesManager.updatePreferences({ cover: val });
+  currentCover.value = val.id;
 }
 
 function handleChangeSpeedMod(val: number) {
@@ -180,6 +226,7 @@ function handleChangeSpeedMod(val: number) {
                 @changeNoteSkin="injectNoteSkin"
                 @changeSpeedMod="handleChangeSpeedMod"
                 @changeScrollMod="handleChangeScrollMod"
+                @changeCover="handleChangeCover"
               />
             </div>
             <div class="info-panels flex">
@@ -225,6 +272,7 @@ function handleChangeSpeedMod(val: number) {
 .gameplay-content {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
+  column-gap: 40px;
 }
 
 .stats-wrapper {
@@ -241,7 +289,7 @@ function handleChangeSpeedMod(val: number) {
   column-gap: 10px;
 }
 
-.modifier-wrapper {
-  margin: 0 30px;
-}
+// .modifier-wrapper {
+//   margin: 0 30px;
+// }
 </style>

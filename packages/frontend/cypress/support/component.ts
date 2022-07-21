@@ -20,6 +20,7 @@ import "./commands";
 // require('./commands')
 
 import { mount } from "cypress/vue";
+import "@packages/game-data/styles/global.css";
 
 import { createPinia, setActivePinia } from "pinia";
 import type { Pinia } from "pinia";

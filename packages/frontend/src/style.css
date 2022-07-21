@@ -146,3 +146,10 @@ body,
 .timing-great {
   color: lightgreen;
 }
+
+#lane-cover {
+  width: 100%;
+  position: absolute;
+  z-index: 10;
+  height: 100vh;
+}

@@ -1,10 +1,12 @@
+import { CoverParams } from "./modiferManager";
 import { ScrollDirection } from "./types";
 
-const validPreferences = ["speedModifier", "scrollDirection"] as const;
+const validPreferences = ["speedModifier", "scrollDirection", "cover"] as const;
 
-interface Preferences {
+export interface Preferences {
   scrollDirection: ScrollDirection;
   speedModifier: number;
+  cover: Partial<CoverParams>;
 }
 
 const PREFERENCES_KEY = "rhythm";
@@ -15,9 +17,10 @@ function getPreferences() {
   return JSON.parse(existingPrefs) as Partial<Preferences>;
 }
 
-function updatePreferences(preferences: Partial<Preferences>) {
-  const existingPrefs = getPreferences();
-
+export function mergePreferences(
+  existingPreferences: Partial<Preferences>,
+  preferences: Partial<Preferences>
+) {
   for (const [pref, val] of Object.entries(preferences)) {
     const p = pref as typeof validPreferences[number];
 
@@ -30,10 +33,25 @@ function updatePreferences(preferences: Partial<Preferences>) {
     }
 
     // Do we need runtime validation?
-    existingPrefs[p] = val as any;
+    if (typeof val === "object") {
+      (existingPreferences[p] as object) = {
+        ...(existingPreferences[p] as object),
+        ...val,
+      };
+    } else {
+      existingPreferences[p] = val as any;
+    }
   }
 
-  window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(existingPrefs));
+  return existingPreferences;
+}
+
+function updatePreferences(preferences: Partial<Preferences>) {
+  const existingPrefs = getPreferences();
+
+  const merged = mergePreferences(existingPrefs, preferences);
+
+  window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(merged));
 }
 
 export const preferencesManager = { getPreferences, updatePreferences };

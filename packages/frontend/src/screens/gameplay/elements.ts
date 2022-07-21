@@ -1,4 +1,3 @@
-import type { ChartMetadata } from "@packages/chart-parser";
 import { windows } from "./gameConfig";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
@@ -29,11 +28,7 @@ function createElement(
     </${tagName}>`;
 }
 
-export function createElements(
-  $root: HTMLDivElement,
-  columnCount: number,
-  metadata: ChartMetadata
-) {
+export function createElements($root: HTMLDivElement, columnCount: number) {
   const targetCols = Array(columnCount)
     .fill(0)
     .map((_, idx) => {
@@ -62,33 +57,6 @@ export function createElements(
     })
     .join("");
 
-  const scoreTableRows = windows
-    .map(
-      (win) => `
-      <tr>
-        <td>${win}</td>
-        <td id="timing-${win}">0</td>
-      </tr>
-    `
-    )
-    .join("");
-
-  const scorePanelTable = `
-      <table id="score-table" class="upcase">
-        <tr>
-          <td>Score</td>
-          <td id="timing-percent">0.00%</td>
-        </tr>
-
-        ${scoreTableRows}
-
-        <tr>
-          <td>Miss</td>
-          <td id="timing-miss">0</td>
-        </tr>
-      </table>
-    `;
-
   const debugging = [
     { name: "Live Notes", id: "debug-live-notes" },
     {
@@ -114,23 +82,13 @@ export function createElements(
     </table>
   `;
 
+  const cover = createElement("div", { id: "lane-cover" });
+
   const html = `
     ${debugTable}
 
-    <!--
-    <div id="lhs" class="w-100 margin-left-1rem">
-      <div id="lhs-panel" class="outline-2px outline-offset-[-5px] gray-6 text-white margin-top-2rem padding-s rounded-border-s margin-right-2rem">
-        <table>
-          <tr><td>${metadata.title}</td></tr>
-          <tr><td>Artist</td></tr>
-          <tr><td>${metadata.bpm} BPM</td></tr>
-          <tr><td>Visualized by XXXX</td></tr>
-        </table>
-      </div>
-    </div>
-    -->
-
     <div id="targets" class="w-100 shadow-h-4">
+      ${cover}
       <div id="target-line">
         ${targetCols}
       </div>
@@ -140,15 +98,6 @@ export function createElements(
       <div id="timing"></div>
       <div id="combo"></div>
     </div>
-
-    <!--
-    <div id="rhs" class="w-100 margin-right-1rem">
-      <div id="rhs-panel" class="outline-2px outline-offset-[-5px] text-white gray-6 margin-top-2rem padding-s rounded-border-s margin-left-2rem">
-        ${scorePanelTable}
-      </div>
-    </div>
-
-    -->
   `;
 
   $root.innerHTML = html;
@@ -168,6 +117,7 @@ export function createElements(
   return {
     targetColElements,
     colElements,
+    cover: $("#lane-cover"),
     targets: $("#targets"),
     targetLine: $("#target-line"),
     timing: $("#timing"),

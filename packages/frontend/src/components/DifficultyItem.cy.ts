@@ -13,6 +13,7 @@ describe("DifficultyItem.cy.ts", () => {
         )
       );
 
+    // @ts-ignore
     cy.mount(Wrapper);
   });
 });

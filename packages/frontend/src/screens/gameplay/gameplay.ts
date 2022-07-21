@@ -28,6 +28,7 @@ import type { LoadSongData } from "@packages/game-data";
 import type { ParamData } from "./fetchData";
 import { ModifierManager } from "./modiferManager";
 import { NoteSkin } from "@packages/types/src";
+import { preferencesManager } from "./preferences";
 
 let timeoutId: number | undefined;
 
@@ -225,6 +226,7 @@ export interface StartGameArgs {
   noteSkinData: NoteSkin[];
   paramData: ParamData;
   songCompleted: SongCompleted;
+  modifierManager?: ModifierManager;
   updateSummary: (summary: Summary) => void;
 }
 
@@ -240,7 +242,7 @@ export async function create(
 ): Promise<StartGame | void> {
   const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
 
-  const elements = createElements($root, 6, songData.metadata);
+  const elements = createElements($root, 6);
 
   const chart = songData.charts.find(
     (x) => x.difficulty === paramData.difficulty
@@ -249,6 +251,46 @@ export async function create(
   if (!chart) {
     throw Error(`Could not find chart with difficulty ${paramData.difficulty}`);
   }
+
+  const modifierManager =
+    startGameArgs.modifierManager ?? new ModifierManager();
+  modifierManager.setMultipler(0.25);
+
+  elements.cover.style.display = modifierManager.cover.visible
+    ? "block"
+    : "none";
+
+  if (modifierManager.cover.visible) {
+    const offset = `${window.innerHeight - modifierManager.cover.offset}px`;
+    elements.cover.setAttribute("style", modifierManager.cover.style);
+    elements.cover.style[modifierManager.cover.location] = offset;
+  }
+
+  modifierManager.on("set:cover", (val) => {
+    elements.cover.style.display = val.visible ? "block" : "none";
+
+    if (!val.visible) {
+      return;
+    }
+
+    // need to update these manually, since these modifiers
+    // are not added via the ModifierPanel UI.
+    modifierManager.setOffset(val.offset);
+    preferencesManager.updatePreferences({ cover: val });
+
+    // Offset by height of window. Height of cover is 100vh. So offset=200 means 200px will be visible.
+    const newOffset = window.innerHeight - val.offset;
+
+    // don't allow to go above viewport height. Looks weird since the cover height is 100vh.
+    if (newOffset < 0) {
+      return;
+    }
+
+    const offset = `${newOffset}px`;
+
+    elements.cover.setAttribute("style", val.style);
+    elements.cover.style[modifierManager.cover.location] = offset;
+  });
 
   if (__testingDoNotStartSong) {
     return;
@@ -402,9 +444,6 @@ export async function create(
       // ...
     },
   };
-
-  const modifierManager = new ModifierManager();
-  modifierManager.setMultipler(0.25);
 
   // let i = 0;
   // window.manualTick = () => {

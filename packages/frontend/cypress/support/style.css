@@ -4,4 +4,5 @@
 body {
   height: 100%;
   background: #828282;
+  overflow: hidden;
 }

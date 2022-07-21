@@ -2,7 +2,7 @@
 import { NoteSkin } from "@packages/types/src";
 import { computed, FunctionalComponent, h } from "vue";
 import InfoPanel from "../InfoPanel";
-import type { ModifierPanelProps } from "./types";
+import type { ModifierPanelProps, ModCoverParams } from "./types";
 import { getStyleByClass } from "./css";
 
 const props = defineProps<ModifierPanelProps>();
@@ -11,10 +11,18 @@ const emit = defineEmits<{
   (event: "changeSpeedMod", mod: number): void;
   (event: "changeScrollMod", mod: typeof scrollMods[number]): void;
   (event: "changeNoteSkin", noteSkin: NoteSkin): void;
+  (event: "changeCover", params: ModCoverParams): void;
 }>();
 
 const speedMods = ["-0.125", "-0.25", "+0.25", "+0.125"] as const;
 const scrollMods = ["up", "down"] as const;
+const coverMods: Array<ModCoverParams> = [
+  { id: "default", style: "background: gray;", visible: true },
+  { id: "pink", style: "background: pink;", visible: true },
+  { id: "lightblue", style: "background: lightblue;", visible: true },
+  { id: "violet", style: "background: violet;", visible: true },
+  { id: "none", style: "background: transparent;", visible: false },
+];
 
 function extractCss(style: string) {
   return getStyleByClass(style, ".note");
@@ -93,7 +101,13 @@ function normalizeMod(val: typeof speedMods[number]) {
 
       <Cell>Cover</Cell>
       <Cell>??</Cell>
-      <Cell>Options!</Cell>
+      <Cell>
+        <div class="flex">
+          <ModButton v-for="mod of coverMods" @click="emit('changeCover', mod)">
+            {{ mod.id }}
+          </ModButton>
+        </div>
+      </Cell>
     </div>
   </InfoPanel>
 </template>

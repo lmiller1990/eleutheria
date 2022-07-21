@@ -1,4 +1,5 @@
 import { h } from "vue";
+import { mount } from "cypress/vue";
 import PlaySymbol from "./PlaySymbol.vue";
 
 describe("PlaySymbol.cy.ts", () => {
@@ -8,6 +9,6 @@ describe("PlaySymbol.cy.ts", () => {
       { style: `height: 150px; width: 220px; background: black;` },
       h(PlaySymbol)
     );
-    cy.mount(() => Parent);
+    mount(() => Parent);
   });
 });

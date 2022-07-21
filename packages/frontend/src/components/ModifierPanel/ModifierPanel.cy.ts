@@ -9,11 +9,13 @@ function render(
 ) {
   const props: ModifierPanelProps = {
     currentSpeed: 6,
+    currentScroll: "up",
     notes: noteSkins,
     ..._props,
   };
 
-  return _mount(ModifierPanel, {
+  // TODO: Why do we need `as any`?s
+  return _mount(ModifierPanel as any, {
     props,
     ...rest,
   });
