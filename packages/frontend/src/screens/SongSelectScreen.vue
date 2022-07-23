@@ -45,6 +45,7 @@ import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../shared";
 import { TableCell } from "../components/SongInfoPanel/types";
 import NonGameplayScreen from "../components/NonGameplayScreen";
+import { useHeldKeys } from "../utils/useHeldKeys";
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
@@ -129,6 +130,9 @@ const tableData = computed<TableCell[]>(() => {
 
 const router = useRouter();
 
+const heldKeys = useHeldKeys();
+console.log("ok")
+
 function handleSelected(songId: string) {
   if (songsStore.selectedSongId === songId) {
     // they already clicked it once
@@ -138,8 +142,9 @@ function handleSelected(songId: string) {
       throw Error(`No difficulty was selected. This should be impossible`);
     }
 
+    const route = heldKeys.value.has('KeyE') ? 'editor' : 'game'
     router.push({
-      path: "game",
+      path: route,
       query: {
         song: songId,
         difficulty: chartDifficulty.value,
