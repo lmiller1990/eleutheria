@@ -191,13 +191,15 @@ async function createComponent() {
 
   await fs.mkdir(newDir);
 
+  const propsInterface = `${results.name}Props`
+
   await Promise.all([
     fs.writeFile(path.join(newDir, `${results.name}.vue`), 
       dedent`
         <script lang="ts" setup>
-        import type { ${results.name}Props } from "./types";
+        import type { ${propsInterface} from "./types";
 
-        const props = defineProps<${results.name}Props>();
+        const props = defineProps<${propsInterface}>();
         </script>
 
         <template>
@@ -213,7 +215,6 @@ async function createComponent() {
         </style>
       `
     ),
-
     fs.writeFile(
       path.join(newDir, `index.ts`),
       dedent`
@@ -227,7 +228,7 @@ async function createComponent() {
     fs.writeFile(
       path.join(newDir, `types.ts`),
       dedent`
-        export interface ${results.name}Props {
+        export interface ${propsInterface} {
         }
       `
     ),
@@ -235,24 +236,17 @@ async function createComponent() {
       ? fs.writeFile(
           path.join(newDir, `${results.name}.cy.ts`),
           dedent`
-        import { mount as _mount } from "cypress/vue";
+        import { mount } from "../../../../../cypress/support/component";
         import ${results.name} from "./${results.name}.vue";
-        import { ${results.name}Props } from "./types";
-
-        function render(_props: Partial<${results.name}Props>, rest: Parameters<typeof _mount>[1] = {}) {
-          const props: ${results.name}Props = {
-            ..._props,
-          };
-
-          return _mount(${results.name}, {
-            props,
-            ...rest
-          });
-        }
+        import type { ${propsInterface} } from "./types";
 
         describe("${results.name}", () => {
           it("renders", () => {
-            render({});
+            mount<${propsInterface}>(${results.name}, {
+              props: {
+
+              },
+            });
           });
         });
       `
