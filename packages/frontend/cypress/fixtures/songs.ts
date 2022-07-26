@@ -21,7 +21,14 @@ const chart: Chart = {
   },
   parsedTapNoteChart: {
     metadata,
-    tapNotes: [],
+    tapNotes: [
+      {
+        id: "1",
+        char: "1",
+        column: 1,
+        ms: 100,
+      },
+    ],
   },
 };
 

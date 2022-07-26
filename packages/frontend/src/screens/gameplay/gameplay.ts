@@ -1,5 +1,5 @@
 import { playBeep } from "@packages/audio-utils";
-import type {
+import {
   World,
   PreviousFrameMeta,
   GameConfig,
@@ -7,6 +7,7 @@ import type {
   Summary,
   EngineNote,
   JudgementResult,
+  AudioProvider,
 } from "@packages/engine";
 import { summarizeResults, Game } from "@packages/engine";
 import {
@@ -227,6 +228,7 @@ export interface StartGameArgs {
   paramData: ParamData;
   songCompleted: SongCompleted;
   modifierManager?: ModifierManager;
+  audioProvider?: AudioProvider;
   updateSummary: (summary: Summary) => void;
 }
 
@@ -239,7 +241,8 @@ interface StartGame {
 export async function create(
   $root: HTMLDivElement,
   startGameArgs: StartGameArgs,
-  __testingDoNotStartSong = false
+  __testingDoNotStartSong = false,
+  __testingManualMode = false
 ): Promise<StartGame | void> {
   const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
 
@@ -299,7 +302,7 @@ export async function create(
 
   const gameConfig: GameConfig = {
     dev: {
-      manualMode: false,
+      manualMode: __testingManualMode,
       // startAtMs: 3000,
     },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
@@ -453,12 +456,18 @@ export async function create(
     },
   };
 
-  // let i = 0;
-  // window.manualTick = () => {
-  //   game.setTestOnlyDeltaTime((i += 100));
-  // };
+  if (__testingManualMode) {
+    window.manualTick = (ms: number) => {
+      game.setTestOnlyDeltaTime(ms);
+    };
+  }
 
-  const game = new Game(gameConfig, lifecycle, modifierManager);
+  const game = new Game(
+    gameConfig,
+    lifecycle,
+    startGameArgs.audioProvider,
+    modifierManager
+  );
 
   return {
     game,

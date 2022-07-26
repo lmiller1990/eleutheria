@@ -26,6 +26,10 @@ beforeEach(() => {
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
 declare global {
+  interface Window {
+    manualTick: (ms: number) => void
+  }
+
   namespace Cypress {
     interface Chainable {
       mount: typeof _mount;
