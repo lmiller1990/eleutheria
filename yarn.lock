@@ -8530,6 +8530,11 @@ vue-demi@*:
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.12.1.tgz#f7e18efbecffd11ab069d1472d7a06e319b4174c"
   integrity sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==
 
+vue-router-mock@0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/vue-router-mock/-/vue-router-mock-0.1.8.tgz#fdc2175a0fc0c0a2dccbbe64e8a291ada9e5a037"
+  integrity sha512-3pcC3WwGFTHLkC78D5IZTxMXNaSXDJdCmed51hWVIwB4dsZyC2HEtiBuE/6BzviqDUh1LMX+tCu3zhH8ZcATZw==
+
 vue-router@4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.1.1.tgz#90cc533efafdcf90d157bdc20a376760cdb59c10"

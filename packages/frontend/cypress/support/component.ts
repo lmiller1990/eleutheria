@@ -5,6 +5,7 @@ import "./commands";
 import "@packages/game-data/styles/global.css";
 import { useSongsStore } from "../../src/stores/songs";
 import { testSong } from "../fixtures/songs";
+import { createRouterMock } from 'vue-router-mock'
 import "./style.css";
 
 let pinia: Pinia;
@@ -45,7 +46,12 @@ export function mount<T>(comp: any, payload: MountingOptions<T> = {}) {
     ...payload,
     props: _props,
     global: {
-      plugins: [pinia]
+      plugins: [pinia, createRouterMock({ 
+        spy: {
+          create: cy.spy,
+          reset: () => {}
+        }
+      })]
     }
   });
 }
