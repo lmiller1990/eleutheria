@@ -25,7 +25,7 @@
     "clean": "find . -name 'dist' -type d -prune -exec rm -rf '{}' +",
     "install": "lerna exec yarn install",
     "lint": "prettier --write packages --ignore-path .gitignore",
-    "test": "lerna run test",
+    "test": "lerna run test --stream",
     "lint:check": "yarn prettier --check packages",
     "check-ts": "lerna run check-ts"
   },

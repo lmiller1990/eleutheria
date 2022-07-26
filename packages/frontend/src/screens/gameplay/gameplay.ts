@@ -233,6 +233,7 @@ export interface StartGameArgs {
 interface StartGame {
   game: Game;
   start: () => Promise<void> | undefined;
+  stop: () => void;
 }
 
 export async function create(
@@ -299,7 +300,7 @@ export async function create(
   const gameConfig: GameConfig = {
     dev: {
       manualMode: false,
-      // startAtMs: 125000,
+      // startAtMs: 3000,
     },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
@@ -326,6 +327,15 @@ export async function create(
   const noteMap = new Map<string, HTMLDivElement>();
   const holdMap = new Map<string, HTMLDivElement>();
   let beeped = new Map<string, boolean>();
+
+  const teardown = () => {
+    noteMap.forEach((note) => note.remove());
+    holdMap.forEach((note) => note.remove());
+    noteMap.clear();
+    holdMap.clear();
+    timeoutId = undefined;
+    $root.innerHTML = "";
+  };
 
   const lifecycle: GameLifecycle = {
     onUpdate: (world, previousFrameMeta, modifierManager) => {
@@ -427,9 +437,7 @@ export async function create(
     },
 
     onSongCompleted: (_world: World) => {
-      noteMap.clear();
-      holdMap.clear();
-      timeoutId = undefined;
+      teardown();
 
       const summary = summarizeResults(
         _world,
@@ -456,8 +464,11 @@ export async function create(
     game,
     start: () => {
       redrawTargets(elements, modifierManager);
-
       return game.start(paramData.id, songData.metadata);
+    },
+    stop: () => {
+      teardown();
+      return game.stop();
     },
   };
 }
