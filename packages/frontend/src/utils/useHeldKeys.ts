@@ -11,9 +11,9 @@ function keydown(event: KeyboardEvent) {
   heldKeys.value.add(event.code);
 }
 
-export function useHeldKeys () {
+export function useHeldKeys() {
   useEventListener("keyup", keyup);
   useEventListener("keydown", keydown);
-  
-  return heldKeys
+
+  return heldKeys;
 }

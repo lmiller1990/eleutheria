@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import type { GameplayProps } from "../gameplay/components/Gameplay/types"
+import type { GameplayProps } from "../gameplay/components/Gameplay/types";
 import { useSongsStore } from "../../stores/songs";
 import { injectNoteSkin } from "../../plugins/injectGlobalCssVars";
 
@@ -33,23 +33,33 @@ onMounted(async () => {
 
   const { create } = await import("../gameplay/gameplay");
 
-  const init = await create(
-    root.value,
-    {
-      ...props.startGameArgs,
-      updateSummary: () => {}
-    },
-    props.__testingDoNotStartSong
-  );
+  const bootstrap = async ($root: HTMLDivElement) => {
+    const game = await create(
+      $root,
+      {
+        ...props.startGameArgs,
+        updateSummary: () => {},
+      },
+      props.__testingDoNotStartSong
+    );
 
-  if (!init) {
-    // Only occurs during testing. We want a way to render this screen w/o starting gameplay.
-    return;
-  }
+    if (!game) {
+      throw Error(`Game was not returned, this should not happen`);
+    }
+
+    return game;
+  };
+
+  let init = await bootstrap(root.value);
 
   init.start();
-});
 
+  window.setInterval(async () => {
+    init.stop();
+    init = await bootstrap(root.value!);
+    init.start();
+  }, 2000);
+});
 </script>
 
 <template>

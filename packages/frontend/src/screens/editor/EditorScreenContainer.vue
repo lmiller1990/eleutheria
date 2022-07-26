@@ -2,9 +2,9 @@
 import { useRouter } from "vue-router";
 import type { Summary } from "@packages/engine";
 import { useSummaryStore } from "../../stores/summary";
-import { fetchData, getSongId, fetchNoteSkins } from "../gameplay/fetchData"
+import { fetchData, getSongId, fetchNoteSkins } from "../gameplay/fetchData";
 import Editor from "./Editor.vue";
-import { GameplayProps } from '../gameplay/components/Gameplay'
+import { GameplayProps } from "../gameplay/components/Gameplay";
 import "../../style.css";
 
 const router = useRouter();

@@ -3,6 +3,7 @@ const { spawn } = require("child_process");
 function run(cmd) {
   const proc = spawn("yarn", cmd, { shell: true, stdio: "inherit" });
   proc.on("exit", (code) => process.exit(code || 0));
+  proc.on("message", console.log)
   proc.on("error", console.error);
 }
 
