@@ -6,7 +6,7 @@ describe("Input", () => {
   it("renders", () => {
     mount<InputProps>(Input, {
       props: {
-        modelValue: '0:00'
+        modelValue: "0:00",
       },
     });
   });

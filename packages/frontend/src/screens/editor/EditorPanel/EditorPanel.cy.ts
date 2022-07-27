@@ -7,7 +7,7 @@ describe("EditorPanel", () => {
     mount<EditorPanelProps>(EditorPanel, {
       props: {
         defaultRepeatInterval: 0,
-        defaultStartTime: 0
+        defaultStartTime: 0,
       },
     });
   });
