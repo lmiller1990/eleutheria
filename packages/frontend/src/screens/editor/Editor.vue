@@ -3,6 +3,8 @@ import { onMounted, ref } from "vue";
 import type { GameplayProps } from "../gameplay/components/Gameplay/types";
 import { useSongsStore } from "../../stores/songs";
 import { injectNoteSkin } from "../../plugins/injectGlobalCssVars";
+import EditorPanel from "./EditorPanel";
+import type { StartGame } from "../gameplay/gameplay";
 
 const props = defineProps<GameplayProps>();
 
@@ -26,7 +28,18 @@ if (!defaultNoteSkin) {
 
 injectNoteSkin(defaultNoteSkin);
 
-onMounted(async () => {
+let interval: number;
+let init: StartGame;
+
+let startAtSeconds = 0;
+let repeatIntervalSeconds = 0;
+
+async function run() {
+  console.log(
+    `Executing. Start: ${startAtSeconds} Repeat ${repeatIntervalSeconds}.`
+  );
+  window.clearInterval(interval);
+
   if (!root.value) {
     return;
   }
@@ -40,7 +53,9 @@ onMounted(async () => {
         ...props.startGameArgs,
         updateSummary: () => {},
       },
-      props.__testingDoNotStartSong
+      props.__testingDoNotStartSong,
+      false,
+      startAtSeconds * 1000
     );
 
     if (!game) {
@@ -50,27 +65,52 @@ onMounted(async () => {
     return game;
   };
 
-  let init = await bootstrap(root.value);
+  if (init) {
+    init.stop();
+  }
+
+  init = await bootstrap(root.value);
 
   init.start();
 
-  window.setInterval(async () => {
+  if (repeatIntervalSeconds === 0) {
+    return;
+  }
+
+  interval = window.setInterval(async () => {
+    console.log("Interval Ms: ", repeatIntervalSeconds * 1000);
     init.stop();
     init = await bootstrap(root.value!);
     init.start();
-  }, 2000);
+  }, repeatIntervalSeconds * 1000);
+}
+
+onMounted(() => {
+  run();
 });
+
+function handleUpdateStartTime(seconds: number) {
+  startAtSeconds = seconds;
+  run();
+}
+
+function handleUpdateRepeatInterval(seconds: number) {
+  repeatIntervalSeconds = seconds;
+  run();
+}
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <div class="max-w-l">
-      <div class="gameplay-content">
-        <div class="gameplay" v-once>
-          <div ref="root" class="max-w-l" v-once />
-        </div>
-      </div>
+  <div class="editor-content">
+    <div class="editor" v-once>
+      <div ref="root" class="max-w-l" v-once />
     </div>
+    <EditorPanel
+      :default-repeat-interval="repeatIntervalSeconds"
+      :default-start-time="repeatIntervalSeconds"
+      @updateStartTime="handleUpdateStartTime"
+      @updateRepeatInterval="handleUpdateRepeatInterval"
+    />
   </div>
 </template>
 
@@ -82,10 +122,10 @@ onMounted(async () => {
 <style scoped lang="scss">
 @import "../../shared.scss";
 
-.gameplay-content {
+.editor-content {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  column-gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 50px;
 }
 
 .stats-wrapper {

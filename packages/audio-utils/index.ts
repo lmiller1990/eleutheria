@@ -43,13 +43,11 @@ export function padStart(
   return updatedBuffer;
 }
 
-const a = new AudioContext();
-
 // from stack overflow
 function k(w: number, x: number, y: number) {
-  console.log("Gain:" + w, "Hz:" + x, "ms:" + y);
-  let v = a.createOscillator();
-  let u = a.createGain();
+  const a = new AudioContext();
+  const v = a.createOscillator();
+  const u = a.createGain();
   v.connect(u);
   v.frequency.value = x;
   v.type = "square";

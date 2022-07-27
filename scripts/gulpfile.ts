@@ -197,7 +197,7 @@ async function createComponent() {
     fs.writeFile(path.join(newDir, `${results.name}.vue`), 
       dedent`
         <script lang="ts" setup>
-        import type { ${propsInterface} from "./types";
+        import type { ${propsInterface} } from "./types";
 
         const props = defineProps<${propsInterface}>();
         </script>

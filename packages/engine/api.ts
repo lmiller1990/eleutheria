@@ -229,6 +229,7 @@ export class Game implements GameAPI {
         gameState.t0 +
         (this.#config.dev?.startAtMs ?? 0);
 
+    console.log(this.#dt);
     if (this.#dt > 3000) {
       // return;
     }
