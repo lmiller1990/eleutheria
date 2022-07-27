@@ -1,3 +1,5 @@
+/// <reference types="cypress-real-events" />
+
 import SongTile from "./SongTile.vue";
 import { thumbails } from "../../thumbnails";
 import { Props } from "./types";

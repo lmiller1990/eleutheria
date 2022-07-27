@@ -1,1 +1,2 @@
 dist
+packages/frontend/cypress/support/component.ts

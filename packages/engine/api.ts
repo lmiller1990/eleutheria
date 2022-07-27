@@ -13,12 +13,25 @@ import {
 import { ModifierManager } from "@packages/frontend/src/screens/gameplay/modiferManager";
 import type { EngineNote, JudgementResult } from "./engine";
 
-export async function fetchAudio(
+export type AudioProvider = (
+  id: string,
+  songUrl: string,
+  paddingMs: number,
+  startAtMs?: number
+) => Promise<() => AudioProviderResult>;
+
+interface AudioProviderResult {
+  audioContext: AudioContext;
+  source: AudioBufferSourceNode;
+  startTime: number;
+}
+
+export const fetchAudio: AudioProvider = async (
   id: string,
   songUrl: string,
   paddingMs: number,
   startAtMs: number = 0
-) {
+) => {
   const audioContext = new AudioContext();
 
   const res = await window.fetch(`${songUrl}/${id}.mp3`);
@@ -41,7 +54,7 @@ export async function fetchAudio(
 
     return { audioContext, source, startTime };
   };
-}
+};
 
 export interface DevModeOptions {
   manualMode?: boolean;
@@ -93,16 +106,23 @@ export class Game implements GameAPI {
   #config: GameConfig;
   #lifecycle: GameLifecycle;
   #modifierManager: ModifierManager;
+  #audioProvider: AudioProvider;
   #nextAnimationFrame?: number;
+
+  #__dev: {
+    initialGameState?: World;
+  } = {};
 
   constructor(
     config: GameConfig,
     lifecycle: GameLifecycle,
-    modifierManager?: ModifierManager
+    audioProvider: AudioProvider = fetchAudio,
+    modifierManager: ModifierManager = new ModifierManager()
   ) {
     this.#config = config;
     this.#lifecycle = lifecycle;
-    this.#modifierManager = modifierManager ?? new ModifierManager();
+    this.#modifierManager = modifierManager;
+    this.#audioProvider = audioProvider;
     this.#timeOfLastNote =
       config.song.tapNotes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
@@ -144,7 +164,7 @@ export class Game implements GameAPI {
 
     inputManager.listen();
 
-    const play = await fetchAudio(
+    const play = await this.#audioProvider(
       id,
       this.#config.songUrl,
       this.#config.preSongPadding || 0,
@@ -170,6 +190,8 @@ export class Game implements GameAPI {
       time: 0,
     };
 
+    this.#__dev.initialGameState = gameState;
+
     gameState.inputManager.setOrigin(gameState.t0);
 
     this.#lifecycle.onStart?.(gameState);
@@ -188,8 +210,14 @@ export class Game implements GameAPI {
   }
 
   setTestOnlyDeltaTime(dt: number) {
+    if (!this.#__dev.initialGameState) {
+      throw Error(
+        "Make sure you call start before attempting to increment the game loop"
+      );
+    }
     this.#dt = dt;
     this.#inputManager?.setTestOnlyDeltaTime(dt);
+    this.gameLoop({ ...this.#__dev.initialGameState, time: dt });
   }
 
   gameLoop(gameState: World) {
@@ -244,6 +272,10 @@ export class Game implements GameAPI {
     if (this.#dt > this.#timeOfLastNote) {
       this.stop();
       this.#lifecycle.onSongCompleted?.(updatedWorld, previousFrameMeta);
+      return;
+    }
+
+    if (this.#config.dev?.manualMode) {
       return;
     }
 

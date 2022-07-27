@@ -137,7 +137,8 @@ onMounted(async () => {
       modifierManager,
       updateSummary,
     },
-    props.__testingDoNotStartSong
+    props.__testingDoNotStartSong,
+    props.__testingManualMode
   );
 
   if (!init) {
