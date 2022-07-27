@@ -7,7 +7,6 @@
     "test": "echo 'ok'",
     "check-ts": "tsc --noEmit"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/dedent": "0.7.0",
     "dedent": "0.7.0",
