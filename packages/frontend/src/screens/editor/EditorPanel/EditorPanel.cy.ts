@@ -5,7 +5,10 @@ import type { EditorPanelProps } from "./types";
 describe("EditorPanel", () => {
   it("renders", () => {
     mount<EditorPanelProps>(EditorPanel, {
-      props: {},
+      props: {
+        defaultRepeatInterval: 0,
+        defaultStartTime: 0
+      },
     });
   });
 });

@@ -5,7 +5,9 @@ import type { InputProps } from "./types";
 describe("Input", () => {
   it("renders", () => {
     mount<InputProps>(Input, {
-      props: {},
+      props: {
+        modelValue: '0:00'
+      },
     });
   });
 });
