@@ -26,6 +26,23 @@ interface AudioProviderResult {
   startTime: number;
 }
 
+const audioCache = new Map<string, AudioBuffer>();
+
+async function getAudioData(
+  url: string,
+  audioContext: AudioContext
+): Promise<AudioBuffer> {
+  if (audioCache.get(url)) {
+    return audioCache.get(url)!;
+  }
+
+  const res = await window.fetch(url);
+  const buf = await res.arrayBuffer();
+  const decoded = await audioContext.decodeAudioData(buf);
+  audioCache.set(url, decoded);
+  return decoded;
+}
+
 export const fetchAudio: AudioProvider = async (
   id: string,
   songUrl: string,
@@ -34,9 +51,7 @@ export const fetchAudio: AudioProvider = async (
 ) => {
   const audioContext = new AudioContext();
 
-  const res = await window.fetch(`${songUrl}/${id}.mp3`);
-  const buf = await res.arrayBuffer();
-  let buffer = await audioContext.decodeAudioData(buf);
+  let buffer = await getAudioData(`${songUrl}/${id}.mp3`, audioContext);
   buffer = padStart(audioContext, buffer, paddingMs);
 
   var gainNode = audioContext.createGain();
@@ -229,7 +244,6 @@ export class Game implements GameAPI {
         gameState.t0 +
         (this.#config.dev?.startAtMs ?? 0);
 
-    console.log(this.#dt);
     if (this.#dt > 3000) {
       // return;
     }

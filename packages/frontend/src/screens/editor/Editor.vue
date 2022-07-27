@@ -5,6 +5,7 @@ import { useSongsStore } from "../../stores/songs";
 import { injectNoteSkin } from "../../plugins/injectGlobalCssVars";
 import EditorPanel from "./EditorPanel";
 import type { StartGame } from "../gameplay/gameplay";
+import { create } from "../gameplay/gameplay";
 
 const props = defineProps<GameplayProps>();
 
@@ -33,37 +34,41 @@ let init: StartGame;
 
 let startAtSeconds = 0;
 let repeatIntervalSeconds = 0;
+let loading = false;
+
+const bootstrap = async ($root: HTMLDivElement) => {
+  const game = await create(
+    $root,
+    {
+      ...props.startGameArgs,
+      songCompleted: () => {},
+      updateSummary: () => {},
+    },
+    props.__testingDoNotStartSong,
+    false,
+    startAtSeconds * 1000
+  );
+
+  if (!game) {
+    throw Error(`Game was not returned, this should not happen`);
+  }
+
+  return game;
+};
 
 async function run() {
-  console.log(
-    `Executing. Start: ${startAtSeconds} Repeat ${repeatIntervalSeconds}.`
-  );
+  if (loading) {
+    return;
+  }
+
+  loading = true;
+
+  console.log(`Executing`);
   window.clearInterval(interval);
 
   if (!root.value) {
     return;
   }
-
-  const { create } = await import("../gameplay/gameplay");
-
-  const bootstrap = async ($root: HTMLDivElement) => {
-    const game = await create(
-      $root,
-      {
-        ...props.startGameArgs,
-        updateSummary: () => {},
-      },
-      props.__testingDoNotStartSong,
-      false,
-      startAtSeconds * 1000
-    );
-
-    if (!game) {
-      throw Error(`Game was not returned, this should not happen`);
-    }
-
-    return game;
-  };
 
   if (init) {
     init.stop();
@@ -71,23 +76,29 @@ async function run() {
 
   init = await bootstrap(root.value);
 
-  init.start();
+  await init.start();
+
+  loading = false;
 
   if (repeatIntervalSeconds === 0) {
     return;
   }
 
-  interval = window.setInterval(async () => {
-    console.log("Interval Ms: ", repeatIntervalSeconds * 1000);
-    init.stop();
-    init = await bootstrap(root.value!);
-    init.start();
-  }, repeatIntervalSeconds * 1000);
+  // interval = window.setInterval(async () => {
+  //   console.log("Interval Ms: ", repeatIntervalSeconds * 1000);
+  //   init.stop();
+  //   init = await bootstrap(root.value!);
+  //   init.start();
+  // }, repeatIntervalSeconds * 1000);
 }
 
 onMounted(() => {
   run();
 });
+
+function go() {
+  run();
+}
 
 function handleUpdateStartTime(seconds: number) {
   startAtSeconds = seconds;
@@ -105,12 +116,15 @@ function handleUpdateRepeatInterval(seconds: number) {
     <div class="editor" v-once>
       <div ref="root" class="max-w-l" v-once />
     </div>
-    <EditorPanel
-      :default-repeat-interval="repeatIntervalSeconds"
-      :default-start-time="repeatIntervalSeconds"
-      @updateStartTime="handleUpdateStartTime"
-      @updateRepeatInterval="handleUpdateRepeatInterval"
-    />
+    <div>
+      <EditorPanel
+        :default-repeat-interval="repeatIntervalSeconds"
+        :default-start-time="repeatIntervalSeconds"
+        @updateStartTime="handleUpdateStartTime"
+        @updateRepeatInterval="handleUpdateRepeatInterval"
+      />
+      <button @click="go">Go</button>
+    </div>
   </div>
 </template>
 
