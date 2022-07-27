@@ -1,4 +1,4 @@
-import { mount } from "../../../../../cypress/support/component";
+import { mount } from "../../../cypress/support/component";
 import Input from "./Input.vue";
 import type { InputProps } from "./types";
 
