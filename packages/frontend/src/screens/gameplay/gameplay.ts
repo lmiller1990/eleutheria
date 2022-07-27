@@ -232,7 +232,7 @@ export interface StartGameArgs {
   updateSummary: (summary: Summary) => void;
 }
 
-interface StartGame {
+export interface StartGame {
   game: Game;
   start: () => Promise<void> | undefined;
   stop: () => void;
@@ -242,7 +242,8 @@ export async function create(
   $root: HTMLDivElement,
   startGameArgs: StartGameArgs,
   __testingDoNotStartSong = false,
-  __testingManualMode = false
+  __testingManualMode = false,
+  __startAtMs: number = 0
 ): Promise<StartGame | void> {
   const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
 
@@ -303,7 +304,7 @@ export async function create(
   const gameConfig: GameConfig = {
     dev: {
       manualMode: __testingManualMode,
-      // startAtMs: 3000,
+      startAtMs: __startAtMs,
     },
     songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
