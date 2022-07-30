@@ -29,85 +29,83 @@ if (!defaultNoteSkin) {
 
 injectNoteSkin(defaultNoteSkin);
 
-let interval: number;
-let init: StartGame;
+let startAtSeconds = 4;
+let repeatIntervalSeconds = 2;
+let init: StartGame | undefined;
 
-let startAtSeconds = 0;
-let repeatIntervalSeconds = 0;
-let loading = false;
+function createGame() {
+  if (!root.value) {
+    throw Error("Root node not found!");
+  }
 
-const bootstrap = async ($root: HTMLDivElement) => {
-  const game = await create(
-    $root,
+  const init = create(
+    root.value,
     {
       ...props.startGameArgs,
       songCompleted: () => {},
       updateSummary: () => {},
     },
-    props.__testingDoNotStartSong,
+    false,
     false,
     startAtSeconds * 1000
   );
 
-  if (!game) {
+  if (!init || !init.game) {
     throw Error(`Game was not returned, this should not happen`);
   }
 
-  return game;
-};
+  return init;
+}
 
-async function run() {
-  if (loading) {
-    return;
-  }
-
-  loading = true;
-
-  console.log(`Executing`);
-  window.clearInterval(interval);
-
-  if (!root.value) {
-    return;
-  }
-
-  if (init) {
-    init.stop();
-  }
-
-  init = await bootstrap(root.value);
-
-  await init.start();
-
-  loading = false;
-
+const start = async () => {
   if (repeatIntervalSeconds === 0) {
     return;
   }
 
-  // interval = window.setInterval(async () => {
-  //   console.log("Interval Ms: ", repeatIntervalSeconds * 1000);
-  //   init.stop();
-  //   init = await bootstrap(root.value!);
-  //   init.start();
-  // }, repeatIntervalSeconds * 1000);
-}
+  init = createGame();
+
+  if (!init.game) {
+    throw Error(
+      "Game should be undefined. Did you incorrect pass __testingDoNotStartSong?"
+    );
+  }
+
+  init.game.editorRepeat = {
+    emitAfterMs: repeatIntervalSeconds * 1000,
+    emitAfterMsCallback: () => {
+      init?.stop();
+      start();
+    },
+  };
+
+  init.start();
+};
 
 onMounted(() => {
-  run();
+  start();
 });
 
+function stop() {
+  if (!init) {
+    throw Error(`Don't stop without starting first!`);
+  }
+  init.stop();
+  init = undefined;
+}
+
 function go() {
-  run();
+  if (init) {
+    init.stop();
+  }
+  start();
 }
 
 function handleUpdateStartTime(seconds: number) {
   startAtSeconds = seconds;
-  run();
 }
 
 function handleUpdateRepeatInterval(seconds: number) {
   repeatIntervalSeconds = seconds;
-  run();
 }
 </script>
 
@@ -124,6 +122,7 @@ function handleUpdateRepeatInterval(seconds: number) {
         @updateRepeatInterval="handleUpdateRepeatInterval"
       />
       <button @click="go">Go</button>
+      <button @click="stop">Stop</button>
     </div>
   </div>
 </template>
@@ -155,8 +154,4 @@ function handleUpdateRepeatInterval(seconds: number) {
   grid-template-rows: 1fr;
   column-gap: 10px;
 }
-
-// .modifier-wrapper {
-//   margin: 0 30px;
-// }
 </style>

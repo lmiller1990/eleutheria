@@ -26,20 +26,14 @@ interface AudioProviderResult {
   startTime: number;
 }
 
-const audioCache = new Map<string, AudioBuffer>();
-
 async function getAudioData(
   url: string,
   audioContext: AudioContext
 ): Promise<AudioBuffer> {
-  if (audioCache.get(url)) {
-    return audioCache.get(url)!;
-  }
-
   const res = await window.fetch(url);
   const buf = await res.arrayBuffer();
   const decoded = await audioContext.decodeAudioData(buf);
-  audioCache.set(url, decoded);
+  // audioCache.set(url, decoded);
   return decoded;
 }
 
@@ -117,12 +111,21 @@ export class Game implements GameAPI {
   #lastDebugUpdate = 0;
   #timeOfLastNote: number;
   #source?: AudioBufferSourceNode;
+  #audioContext?: AudioContext;
   #inputManager?: InputManager;
   #config: GameConfig;
   #lifecycle: GameLifecycle;
   #modifierManager: ModifierManager;
   #audioProvider: AudioProvider;
   #nextAnimationFrame?: number;
+  /**
+   * Used for repeating a (period) of song many times over.
+   * This is exclusively used for Edit Mode.
+   */
+  editorRepeat?: {
+    emitAfterMs: number;
+    emitAfterMsCallback: () => void;
+  };
 
   #__dev: {
     initialGameState?: World;
@@ -214,14 +217,22 @@ export class Game implements GameAPI {
 
     this.#inputManager = inputManager;
     this.#source = source;
+    this.#audioContext = audioContext;
   }
 
   stop() {
     if (this.#nextAnimationFrame) {
       window.cancelAnimationFrame(this.#nextAnimationFrame);
     }
-    this.#inputManager?.teardown();
-    this.#source?.stop();
+
+    if (!this.#inputManager || !this.#source || !this.#audioContext) {
+      throw Error("inputManager or source not defined when calling stop.");
+    }
+
+    this.#inputManager.teardown();
+    this.#source.stop();
+    this.#audioContext.close().then(() => console.log("closed!"));
+    this.#__dev.initialGameState = undefined;
   }
 
   setTestOnlyDeltaTime(dt: number) {
@@ -237,6 +248,16 @@ export class Game implements GameAPI {
 
   gameLoop(gameState: World) {
     this.#fps += 1;
+
+    if (this.editorRepeat) {
+      const playbackDt =
+        gameState.audioContext.getOutputTimestamp().performanceTime! -
+        gameState.t0;
+      if (this.editorRepeat.emitAfterMs < playbackDt) {
+        this.editorRepeat.emitAfterMsCallback();
+        return;
+      }
+    }
 
     this.#dt = this.#config.dev?.manualMode
       ? this.#dt

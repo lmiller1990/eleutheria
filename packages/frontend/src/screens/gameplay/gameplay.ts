@@ -1,4 +1,4 @@
-import { playBeep } from "@packages/audio-utils";
+// import { playBeep } from "@packages/audio-utils";
 import {
   World,
   PreviousFrameMeta,
@@ -233,18 +233,18 @@ export interface StartGameArgs {
 }
 
 export interface StartGame {
-  game: Game;
+  game: Game | undefined;
   start: () => Promise<void> | undefined;
   stop: () => void;
 }
 
-export async function create(
+export function create(
   $root: HTMLDivElement,
   startGameArgs: StartGameArgs,
   __testingDoNotStartSong = false,
   __testingManualMode = false,
   __startAtMs: number = 0
-): Promise<StartGame | void> {
+): StartGame | void {
   const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
 
   const elements = createElements($root, 6);
@@ -350,7 +350,7 @@ export async function create(
 
         if (ypos < 0 && !beeped.has(id)) {
           beeped.set(id, true);
-          playBeep();
+          // playBeep();
         }
 
         const inViewport = ypos < window.innerHeight;
@@ -400,7 +400,7 @@ export async function create(
 
         if (ypos < 0 && !beeped.has(id)) {
           beeped.set(id, true);
-          playBeep();
+          // playBeep();
         }
 
         // If:
@@ -478,7 +478,7 @@ export async function create(
     },
     stop: () => {
       teardown();
-      return game.stop();
+      game.stop();
     },
   };
 }

@@ -141,7 +141,7 @@ onMounted(async () => {
     props.__testingManualMode
   );
 
-  if (!init) {
+  if (!init || !init.game) {
     // Only occurs during testing. We want a way to render this screen w/o starting gameplay.
     return;
   }
