@@ -6,8 +6,27 @@ import { injectNoteSkin } from "../../plugins/injectGlobalCssVars";
 import EditorPanel from "./EditorPanel";
 import type { StartGame } from "../gameplay/gameplay";
 import { create } from "../gameplay/gameplay";
+import { getSongId } from "../gameplay/fetchData";
+import type { WebSocketEmitData } from "@packages/game-data"
 
 const props = defineProps<GameplayProps>();
+
+const ws = new window.WebSocket(`ws://localhost:8000`);
+
+ws.addEventListener("open", () => {
+  const data = getSongId();
+
+  ws.send(JSON.stringify({
+    type: 'editor:start',
+    data
+  }))
+
+});
+
+ws.addEventListener("message", (msg) => {
+  console.log(msg);
+});
+
 
 const root = ref<HTMLDivElement>();
 
