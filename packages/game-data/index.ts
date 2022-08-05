@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import http from "http";
 import chokidar from "chokidar";
-import type { ParamData } from '@packages/frontend/src/screens/gameplay/fetchData'
+import type { ParamData } from "@packages/frontend/src/screens/gameplay/fetchData";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
@@ -33,40 +33,46 @@ const wss = new WebSocketServer({
 });
 
 interface WebSocketEditorStartMessage {
-  type: 'editor:start',
-  data: ParamData
+  type: "editor:start";
+  data: ParamData;
 }
 
-type WebSocketPayload = WebSocketEditorStartMessage
+type WebSocketPayload = WebSocketEditorStartMessage;
 
-let watchers = new Map<string, chokidar.FSWatcher>()
+let watchers = new Map<string, chokidar.FSWatcher>();
 
 interface WebSocketChartUpdatedMessage {
-  type: "editor:chart:updated"
-  data: LoadSongData
+  type: "editor:chart:updated";
+  data: LoadSongData;
 }
 
-export type WebSocketEmitData = WebSocketChartUpdatedMessage
+export type WebSocketEmitData = WebSocketChartUpdatedMessage;
 
 wss.on("connection", (ws) => {
   ws.on("message", (buffer) => {
-    const msg = JSON.parse(buffer.toString()) as WebSocketPayload
+    const msg = JSON.parse(buffer.toString()) as WebSocketPayload;
 
-    if (msg.type === 'editor:start') {
+    if (msg.type === "editor:start") {
       if (!watchers.has(msg.data.id)) {
-        const chartPath = path.join(songsDir, msg.data.id, msg.data.difficulty, `${msg.data.id}.chart`);
-        const watcher = chokidar.watch(chartPath)
-        
+        const chartPath = path.join(
+          songsDir,
+          msg.data.id,
+          msg.data.difficulty,
+          `${msg.data.id}.chart`
+        );
+        const watcher = chokidar.watch(chartPath);
+
         watchers.set(`${msg.data.id}-${msg.data.difficulty}`, watcher);
 
         watcher.on("change", async () => {
-          const newData = await loadSong(msg.data.id)
-          console.log('Emit')
-          ws.send(JSON.stringify({ type: "editor:chart:updated", data: newData }))
-        })
+          const newData = await loadSong(msg.data.id);
+          ws.send(
+            JSON.stringify({ type: "editor:chart:updated", data: newData })
+          );
+        });
       }
     }
-  })
+  });
 });
 
 export interface LoadSongData {

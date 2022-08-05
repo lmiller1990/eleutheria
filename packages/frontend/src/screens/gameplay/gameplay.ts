@@ -1,4 +1,4 @@
-// import { playBeep } from "@packages/audio-utils";
+import { playBeep } from "@packages/audio-utils";
 import {
   World,
   PreviousFrameMeta,
@@ -260,6 +260,8 @@ export function create(
   const modifierManager =
     startGameArgs.modifierManager ?? new ModifierManager();
   modifierManager.setMultipler(0.25);
+  // modifierManager.setMultipler(1);
+  // modifierManager.setCover({ visible: false });
 
   elements.cover.style.display = modifierManager.cover.visible
     ? "block"
@@ -350,7 +352,7 @@ export function create(
 
         if (ypos < 0 && !beeped.has(id)) {
           beeped.set(id, true);
-          // playBeep();
+          playBeep();
         }
 
         const inViewport = ypos < window.innerHeight;
@@ -400,7 +402,7 @@ export function create(
 
         if (ypos < 0 && !beeped.has(id)) {
           beeped.set(id, true);
-          // playBeep();
+          playBeep();
         }
 
         // If:

@@ -7,7 +7,7 @@ import EditorPanel from "./EditorPanel";
 import type { StartGame } from "../gameplay/gameplay";
 import { create } from "../gameplay/gameplay";
 import { getSongId } from "../gameplay/fetchData";
-import type { WebSocketEmitData } from "@packages/game-data"
+import type { LoadSongData, WebSocketEmitData } from "@packages/game-data";
 
 const props = defineProps<GameplayProps>();
 
@@ -16,17 +16,22 @@ const ws = new window.WebSocket(`ws://localhost:8000`);
 ws.addEventListener("open", () => {
   const data = getSongId();
 
-  ws.send(JSON.stringify({
-    type: 'editor:start',
-    data
-  }))
-
+  ws.send(
+    JSON.stringify({
+      type: "editor:start",
+      data,
+    })
+  );
 });
 
 ws.addEventListener("message", (msg) => {
-  console.log(msg);
-});
+  const payload = JSON.parse(msg.data) as WebSocketEmitData;
 
+  if (payload.type === "editor:chart:updated") {
+    stop();
+    start(payload.data);
+  }
+});
 
 const root = ref<HTMLDivElement>();
 
@@ -52,7 +57,7 @@ let startAtSeconds = 4;
 let repeatIntervalSeconds = 2;
 let init: StartGame | undefined;
 
-function createGame() {
+function createGame(songData?: LoadSongData) {
   if (!root.value) {
     throw Error("Root node not found!");
   }
@@ -61,6 +66,7 @@ function createGame() {
     root.value,
     {
       ...props.startGameArgs,
+      songData: songData ?? props.startGameArgs.songData,
       songCompleted: () => {},
       updateSummary: () => {},
     },
@@ -76,12 +82,12 @@ function createGame() {
   return init;
 }
 
-const start = async () => {
+const start = async (songData?: LoadSongData) => {
   if (repeatIntervalSeconds === 0) {
     return;
   }
 
-  init = createGame();
+  init = createGame(songData);
 
   if (!init.game) {
     throw Error(
@@ -93,7 +99,7 @@ const start = async () => {
     emitAfterMs: repeatIntervalSeconds * 1000,
     emitAfterMsCallback: () => {
       init?.stop();
-      start();
+      start(songData);
     },
   };
 

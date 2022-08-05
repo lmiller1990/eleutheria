@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   server: {
-    // hmr: false,
+    hmr: false,
     fs: {
       strict: false,
     },
