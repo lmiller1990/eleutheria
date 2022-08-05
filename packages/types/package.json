@@ -2,9 +2,13 @@
   "version": "0.0.0-development",
   "name": "@packages/types",
   "private": true,
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo 'ok'",
     "check-ts": "tsc --noEmit"
+  },
+  "exports": {
+    "import": "./src/index.ts",
+    "default": "./src/index.ts"
   }
 }

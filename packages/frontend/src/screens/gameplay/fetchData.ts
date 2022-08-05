@@ -1,11 +1,6 @@
 import { LoadSongData } from "@packages/game-data";
-import { NoteSkin } from "@packages/types/src";
+import type { NoteSkin, ParamData } from "@packages/types/src";
 import { getGameDataUrl } from "./env";
-
-export interface ParamData {
-  id: string;
-  difficulty: string;
-}
 
 export async function fetchNoteSkins(): Promise<NoteSkin[]> {
   const res = await window.fetch(getGameDataUrl(`/note-skins`));

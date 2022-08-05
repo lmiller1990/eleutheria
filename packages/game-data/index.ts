@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import http from "http";
 import chokidar from "chokidar";
-import type { ParamData } from "@packages/frontend/src/screens/gameplay/fetchData";
+import type { ParamData } from "@packages/types";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
