@@ -26,9 +26,8 @@ import {
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import type { LoadSongData } from "@packages/game-data";
-import type { ParamData } from "./fetchData";
 import { ModifierManager } from "./modiferManager";
-import { NoteSkin } from "@packages/types/src";
+import type { NoteSkin, ParamData } from "@packages/types/src";
 import { preferencesManager } from "./preferences";
 
 let timeoutId: number | undefined;
