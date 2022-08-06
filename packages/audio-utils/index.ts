@@ -43,9 +43,10 @@ export function padStart(
   return updatedBuffer;
 }
 
+const a = new AudioContext();
+
 // from stack overflow
 function k(w: number, x: number, y: number) {
-  const a = new AudioContext();
   const v = a.createOscillator();
   const u = a.createGain();
   v.connect(u);

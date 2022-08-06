@@ -9,12 +9,14 @@
     "cors": "^2.8.5",
     "express": "^4.17.2",
     "fs-extra": "^10.0.0",
-    "music-metadata": "^7.12.3"
+    "music-metadata": "^7.12.3",
+    "ws": "8.8.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/fs-extra": "^9.0.13",
+    "@types/ws": "8.5.3",
     "vitest": "0.1.24"
   },
   "scripts": {

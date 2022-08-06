@@ -31,3 +31,8 @@ export interface NoteSkin {
   name: string;
   css: string;
 }
+
+export interface ParamData {
+  id: string;
+  difficulty: string;
+}
