@@ -32,7 +32,7 @@ export interface ParsedHoldNoteChart {
 
 export type ValidQuantization = typeof validQuantizations[number];
 
-export const validQuantizations = [4, 8, 12, 16, 24] as const;
+export const validQuantizations = [4, 8, 12, 16, 24, 32] as const;
 
 interface GetQuantization {
   quantization: ValidQuantization;
@@ -48,6 +48,7 @@ export function getQuantizationMs(
   const _12th = _4th / 3;
   const _16th = _8th / 2;
   const _24th = _12th / 2;
+  const _32nd = _16th / 2;
   const measureMs = _4th * 4;
 
   const qMap = new Map<ValidQuantization, number>([
@@ -56,6 +57,7 @@ export function getQuantizationMs(
     [12, _12th],
     [16, _16th],
     [24, _24th],
+    [32, _32nd],
   ]);
 
   const q = qMap.get(measure.length as ValidQuantization);

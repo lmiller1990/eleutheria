@@ -40,7 +40,7 @@ import { thumbails } from "../thumbnails";
 import { useRouter } from "vue-router";
 import { useSongsStore } from "../stores/songs";
 import { SongDifficulty } from "../types";
-import { ChartSummary } from "@packages/types/src";
+import type { ChartSummary } from "@packages/types";
 import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../shared";
 import { TableCell } from "../components/SongInfoPanel/types";

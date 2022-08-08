@@ -1,4 +1,4 @@
-import { ChartSummary } from "@packages/types/src";
+import { ChartSummary } from "@packages/types";
 import type { ParsedHoldNoteChart, ParsedTapNoteChart } from "./parser";
 
 export function chartInfo(

@@ -1,4 +1,4 @@
-import { NoteSkin } from "@packages/types/src";
+import { NoteSkin } from "@packages/types";
 import dedent from "dedent";
 
 const dim = dedent`

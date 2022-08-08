@@ -1,4 +1,4 @@
-import type { BaseSong } from "@packages/types/src";
+import type { BaseSong } from "@packages/types";
 import { defineStore } from "pinia";
 import { getGameDataUrl } from "../screens/gameplay/env";
 import type { Chart, Song } from "../types";

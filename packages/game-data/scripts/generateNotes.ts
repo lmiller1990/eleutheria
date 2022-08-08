@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs-extra";
 import sass from "sass";
-import { NoteSkin } from "@packages/types/src";
+import { NoteSkin } from "@packages/types";
 
 const notesDir = path.join(__dirname, "..", "notes");
 

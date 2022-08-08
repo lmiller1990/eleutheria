@@ -1,4 +1,4 @@
-import { NoteSkin } from "@packages/types/src";
+import { NoteSkin } from "@packages/types";
 
 export function injectStylesheet(style: string, id: string) {
   let el = document.querySelector<HTMLStyleElement>(`#${id}`);
