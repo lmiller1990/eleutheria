@@ -19,7 +19,7 @@ const viteConfig = defineVite({
 export default defineConfig({
   projectId: "vgqrwp",
   component: {
-  experimentalSingleTabRunMode: true,
+    experimentalSingleTabRunMode: true,
     devServer: {
       framework: "vue",
       bundler: "vite",
