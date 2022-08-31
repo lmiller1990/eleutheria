@@ -24,6 +24,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+
+    - name: Debugging with ssh
+      uses: lhotari/action-upterm@v1
+
     - run: yarn install
     - run: cd packages/breeze-css && yarn build && cd ../..
     - run: yarn lint:check
