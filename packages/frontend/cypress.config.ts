@@ -18,12 +18,19 @@ const viteConfig = defineVite({
 
 export default defineConfig({
   projectId: "vgqrwp",
+
   component: {
     experimentalSingleTabRunMode: true,
     devServer: {
       framework: "vue",
       bundler: "vite",
       viteConfig,
+    },
+  },
+
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
     },
   },
 });
