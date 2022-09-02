@@ -25,6 +25,7 @@ const chart: Chart = {
       {
         id: "1",
         char: "1",
+        measureNumber: 0,
         column: 1,
         ms: 100,
       },

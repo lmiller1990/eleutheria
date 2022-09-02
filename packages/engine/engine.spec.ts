@@ -71,6 +71,7 @@ function makeTapNote(note: Partial<EngineNote>): EngineNote {
     id: "???",
     column: 0,
     ms: 0,
+    measureNumber: 0,
     missed: false,
     canHit: true,
     ...note,
@@ -908,7 +909,7 @@ describe("updateGameState", () => {
 
     const actual = updateGameState(world, engineConfiguration);
 
-    expect(actual.world.chart.holdNotes.get("h1")!).toEqual([
+    expect(actual.world.chart.holdNotes.get("h1")!).toEqual<EngineNote[]>([
       {
         canHit: false,
         column: 1,
@@ -920,6 +921,7 @@ describe("updateGameState", () => {
         ms: 1000,
         isHeld: true,
         timingWindowName: undefined,
+        measureNumber: 0,
       },
       {
         canHit: true,
@@ -929,6 +931,7 @@ describe("updateGameState", () => {
         missed: false,
         ms: 1100,
         timingWindowName: undefined,
+        measureNumber: 0,
       },
     ]);
   });
