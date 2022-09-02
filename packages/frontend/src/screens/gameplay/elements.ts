@@ -125,13 +125,6 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
     debug: $("#debug"),
     debugLiveNoteCount: $("#debug-live-notes"),
     debugFps: $("#debug-fps"),
-    scoreTable: {
-      // percent: $("#score-table").querySelector("#timing-percent")!,
-      // absolute: $("#score-table").querySelector("#timing-absolute")!,
-      // perfect: $("#score-table").querySelector("#timing-perfect")!,
-      // great: $("#score-table").querySelector("#timing-great")!,
-      // miss: $("#score-table").querySelector("#timing-miss")!,
-    },
   };
 }
 
@@ -140,11 +133,11 @@ export type Elements = ReturnType<typeof createElements>;
 export function $tapNote(
   classes: string = "",
   column: number,
-  textContent?: string
+  textContent: string = ""
 ) {
   const d = document.createElement("div");
   d.className = `note note-${column} ${classes}`;
-  d.textContent = textContent ?? "";
+  // d.textContent = textContent ?? "";
   return d;
 }
 
