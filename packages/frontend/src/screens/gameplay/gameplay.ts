@@ -27,13 +27,17 @@ import {
 import { writeDebugToHtml } from "./debug";
 import type { LoadSongData } from "@packages/game-data";
 import { ModifierManager } from "./modiferManager";
-import type { NoteSkin, ParamData } from "@packages/types/src";
+import type { NoteSkin, ParamData } from "@packages/types";
 import { preferencesManager } from "./preferences";
 
 let timeoutId: number | undefined;
 
 function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
-  const $note = $tapNote("gray-2", engineNote.column);
+  const $note = $tapNote(
+    "gray-2",
+    engineNote.column,
+    engineNote.measureNumber.toString()
+  );
 
   const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {
@@ -258,9 +262,9 @@ export function create(
 
   const modifierManager =
     startGameArgs.modifierManager ?? new ModifierManager();
-  modifierManager.setMultipler(0.25);
-  // modifierManager.setMultipler(1);
-  // modifierManager.setCover({ visible: false });
+  // modifierManager.setMultipler(0.25);
+  modifierManager.setMultipler(1);
+  modifierManager.setCover({ visible: false });
 
   elements.cover.style.display = modifierManager.cover.visible
     ? "block"

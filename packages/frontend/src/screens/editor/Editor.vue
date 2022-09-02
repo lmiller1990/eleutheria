@@ -24,10 +24,13 @@ ws.addEventListener("open", () => {
   );
 });
 
+let newSongData: LoadSongData;
+
 ws.addEventListener("message", (msg) => {
   const payload = JSON.parse(msg.data) as WebSocketEmitData;
 
   if (payload.type === "editor:chart:updated") {
+    newSongData = payload.data;
     stop();
     start(payload.data);
   }
@@ -122,7 +125,7 @@ function go() {
   if (init) {
     init.stop();
   }
-  start();
+  start(newSongData);
 }
 
 function handleUpdateStartTime(seconds: number) {

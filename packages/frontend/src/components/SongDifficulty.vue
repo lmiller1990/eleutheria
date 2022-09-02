@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { Difficulty } from "@packages/types/src";
+import { Difficulty } from "@packages/types";
 import { difficulties } from "../shared";
 import type { Chart } from "../types";
 

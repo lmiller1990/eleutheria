@@ -54,7 +54,7 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
   }
 
   get multiplier() {
-    return this.#multiplier;
+    return this.#multiplier; //  * 1.25;
   }
 
   get scrollDirection() {

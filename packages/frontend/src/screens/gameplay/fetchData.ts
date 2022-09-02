@@ -1,5 +1,5 @@
 import { LoadSongData } from "@packages/game-data";
-import type { NoteSkin, ParamData } from "@packages/types/src";
+import type { NoteSkin, ParamData } from "@packages/types";
 import { getGameDataUrl } from "./env";
 
 export async function fetchNoteSkins(): Promise<NoteSkin[]> {

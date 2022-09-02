@@ -35,6 +35,7 @@ const createNote = (
   hitAt,
   canHit: false,
   column: 0,
+  measureNumber: 0,
   missed,
   ...rest,
 });

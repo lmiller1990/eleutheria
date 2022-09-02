@@ -1,4 +1,4 @@
-import type { NoteSkin } from "@packages/types/src";
+import type { NoteSkin } from "@packages/types";
 import { CoverParams } from "../../screens/gameplay/modiferManager";
 import type { ScrollDirection } from "../../screens/gameplay/types";
 

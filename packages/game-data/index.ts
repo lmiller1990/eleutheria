@@ -13,7 +13,7 @@ import {
   ParsedHoldNoteChart,
   parseHoldsChart,
 } from "@packages/chart-parser";
-import type { BaseSong } from "@packages/types/src";
+import type { BaseSong } from "@packages/types";
 import { compileSkins } from "./scripts/generateNotes";
 
 const PORT = 8000;
@@ -65,10 +65,14 @@ wss.on("connection", (ws) => {
         watchers.set(`${msg.data.id}-${msg.data.difficulty}`, watcher);
 
         watcher.on("change", async () => {
-          const newData = await loadSong(msg.data.id);
-          ws.send(
-            JSON.stringify({ type: "editor:chart:updated", data: newData })
-          );
+          try {
+            const newData = await loadSong(msg.data.id);
+            ws.send(
+              JSON.stringify({ type: "editor:chart:updated", data: newData })
+            );
+          } catch (e) {
+            //
+          }
         });
       }
     }
