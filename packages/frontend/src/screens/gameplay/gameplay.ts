@@ -270,11 +270,8 @@ export function create(
     ? "block"
     : "none";
 
-  if (modifierManager.cover.visible) {
-    const offset = `${window.innerHeight - modifierManager.cover.offset}px`;
-    elements.cover.setAttribute("style", modifierManager.cover.style);
-    elements.cover.style[modifierManager.cover.location] = offset;
-  }
+  const offset = window.innerHeight - modifierManager.cover.offset;
+  elements.cover.style[modifierManager.cover.location] = `${offset}px`;
 
   modifierManager.on("set:cover", (val) => {
     elements.cover.style.display = val.visible ? "block" : "none";
@@ -288,18 +285,22 @@ export function create(
     modifierManager.setOffset(val.offset);
     preferencesManager.updatePreferences({ cover: val });
 
-    // Offset by height of window. Height of cover is 100vh. So offset=200 means 200px will be visible.
-    const newOffset = window.innerHeight - val.offset;
+    let position: string | undefined;
 
-    // don't allow to go above viewport height. Looks weird since the cover height is 100vh.
-    if (newOffset < 0) {
-      return;
+    if (val.location === "top") {
+      position = `calc(-100vh + ${val.offset}px)`;
     }
 
-    const offset = `${newOffset}px`;
+    if (val.location === "bottom") {
+      position = `calc(-100vh + ${val.offset}px)`;
+    }
+
+    if (!position) {
+      throw Error(`Expected position to be assigned`);
+    }
 
     elements.cover.setAttribute("style", val.style);
-    elements.cover.style[modifierManager.cover.location] = offset;
+    elements.cover.style[val.location] = position;
   });
 
   if (__testingDoNotStartSong) {

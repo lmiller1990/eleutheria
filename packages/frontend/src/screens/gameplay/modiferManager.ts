@@ -46,6 +46,7 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
 
   setScroll(val: "up" | "down") {
     this.emit("set:scrollDirection", val, this.#scrollDirection);
+    this.setCover({ location: val === "up" ? "bottom" : "top" });
     this.#scrollDirection = val;
   }
 
