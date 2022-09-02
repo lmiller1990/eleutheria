@@ -33,7 +33,11 @@ import { preferencesManager } from "./preferences";
 let timeoutId: number | undefined;
 
 function drawNote(engineNote: EngineNote, elements: Elements): HTMLDivElement {
-  const $note = $tapNote("gray-2", engineNote.column, engineNote.measureNumber.toString());
+  const $note = $tapNote(
+    "gray-2",
+    engineNote.column,
+    engineNote.measureNumber.toString()
+  );
 
   const colTarget = elements.targetColElements.get(engineNote.column);
   if (!colTarget) {

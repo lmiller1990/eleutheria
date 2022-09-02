@@ -137,7 +137,11 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
 
 export type Elements = ReturnType<typeof createElements>;
 
-export function $tapNote(classes: string = "", column: number, textContent?: string) {
+export function $tapNote(
+  classes: string = "",
+  column: number,
+  textContent?: string
+) {
   const d = document.createElement("div");
   d.className = `note note-${column} ${classes}`;
   d.textContent = textContent ?? "";
