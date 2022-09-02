@@ -3,6 +3,7 @@ export interface BaseNote {
   column: number;
   char: string;
   ms: number;
+  measureNumber: number;
 }
 
 export interface ChartMetadata {
@@ -151,6 +152,7 @@ export function parseChart(
                 id: incId(),
                 char: col,
                 column: i,
+                measureNumber: acc.measureCount,
                 ms: (acc.measureCount * measureMs + quantization * idx) * 1000,
               });
             }

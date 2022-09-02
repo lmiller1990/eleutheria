@@ -76,6 +76,11 @@ export interface EngineNote {
    * it was previously held and is now released.
    */
   droppedAt?: number;
+
+  /**
+   * Measure number the note falls in.
+   */
+  measureNumber: number;
 }
 
 /**
