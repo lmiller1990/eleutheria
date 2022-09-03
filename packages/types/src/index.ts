@@ -36,3 +36,8 @@ export interface ParamData {
   id: string;
   difficulty: string;
 }
+
+export interface UserScripts {
+  css: string;
+  js: string;
+}

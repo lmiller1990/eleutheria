@@ -2,7 +2,7 @@
 import { useRouter } from "vue-router";
 import type { Summary } from "@packages/engine";
 import { useSummaryStore } from "../../stores/summary";
-import { fetchData, getSongId, fetchNoteSkins } from "./fetchData";
+import { fetchData, getSongId, fetchNoteSkins, fetchUser } from "./fetchData";
 import Gameplay, { GameplayProps } from "./components/Gameplay";
 import "../../style.css";
 
@@ -15,15 +15,17 @@ function songCompleted(summary: Summary) {
 }
 
 const paramData = getSongId();
-const [songData, noteSkinData] = await Promise.all([
+const [songData, noteSkinData, userData] = await Promise.all([
   fetchData(paramData.id),
   fetchNoteSkins(),
+  fetchUser(),
 ]);
 
 const startGameArgs: GameplayProps["startGameArgs"] = {
   songData,
   paramData,
   noteSkinData,
+  userData,
   songCompleted,
 };
 </script>

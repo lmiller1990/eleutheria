@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import http from "http";
 import chokidar from "chokidar";
-import type { ParamData } from "@packages/types";
+import type { ParamData, UserScripts } from "@packages/types";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
@@ -14,7 +14,11 @@ import {
   parseHoldsChart,
 } from "@packages/chart-parser";
 import type { BaseSong } from "@packages/types";
-import { compileSkins } from "./scripts/generateNotes";
+import {
+  compileSkins,
+  compileUserStyle,
+  readUserJavaScript,
+} from "./scripts/generateNotes";
 
 const PORT = 8000;
 
@@ -145,6 +149,20 @@ app.get("/songs/:id", async (req, res) => {
 app.get("/note-skins", (_req, res) => {
   const skins = compileSkins();
   res.json(skins);
+});
+
+app.get("/user", async (_req, res) => {
+  const [css, js] = await Promise.all([
+    await compileUserStyle(),
+    await readUserJavaScript(),
+  ]);
+
+  const data: UserScripts = {
+    js,
+    css,
+  };
+
+  res.json(data);
 });
 
 app.get("/songs", async (_req, res) => {

@@ -4,6 +4,27 @@ import sass from "sass";
 import { NoteSkin } from "@packages/types";
 
 const notesDir = path.join(__dirname, "..", "notes");
+const userDir = path.join(__dirname, "..", "user");
+
+export async function readUserJavaScript(): Promise<string> {
+  const p = path.join(userDir, "index.scss");
+
+  if (!(await fs.pathExists(p))) {
+    return "/* No user JavaScript */";
+  }
+
+  return fs.readFile(p, "utf8");
+}
+
+export async function compileUserStyle(): Promise<string> {
+  const p = path.join("userDir", "index.scss");
+
+  if (!(await fs.pathExists(p))) {
+    return "/* No user stylesheet */";
+  }
+
+  return sass.compile(p).css;
+}
 
 export function compileSkins(): NoteSkin[] {
   const skins = fs.readdirSync(notesDir);

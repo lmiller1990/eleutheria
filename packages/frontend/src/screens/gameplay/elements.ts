@@ -137,7 +137,9 @@ export function $tapNote(
 ) {
   const d = document.createElement("div");
   d.className = `note note-${column} ${classes}`;
-  // d.textContent = textContent ?? "";
+  if (textContent) {
+    d.textContent = textContent;
+  }
   return d;
 }
 

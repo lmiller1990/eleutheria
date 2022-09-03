@@ -23,6 +23,10 @@ const [songData, noteSkinData] = await Promise.all([
 
 const startGameArgs: GameplayProps["startGameArgs"] = {
   songData,
+  userData: {
+    css: "",
+    js: "",
+  },
   paramData,
   noteSkinData,
   songCompleted,
