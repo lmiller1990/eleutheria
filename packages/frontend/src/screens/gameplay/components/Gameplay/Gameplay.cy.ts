@@ -45,6 +45,10 @@ describe("Gameplay", () => {
         __testingManualMode: true,
         startGameArgs: {
           songData,
+          userData: {
+            js: "",
+            css: "",
+          },
           noteSkinData: noteSkins,
           audioProvider,
           paramData: {

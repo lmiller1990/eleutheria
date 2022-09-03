@@ -27,7 +27,7 @@ import {
 import { writeDebugToHtml } from "./debug";
 import type { LoadSongData } from "@packages/game-data";
 import { ModifierManager } from "./modiferManager";
-import type { NoteSkin, ParamData } from "@packages/types";
+import type { NoteSkin, ParamData, UserScripts } from "@packages/types";
 import { preferencesManager } from "./preferences";
 
 let timeoutId: number | undefined;
@@ -229,6 +229,7 @@ export interface StartGameArgs {
   songData: LoadSongData;
   noteSkinData: NoteSkin[];
   paramData: ParamData;
+  userData: UserScripts;
   songCompleted: SongCompleted;
   modifierManager?: ModifierManager;
   audioProvider?: AudioProvider;
@@ -272,6 +273,22 @@ export function create(
 
   const offset = window.innerHeight - modifierManager.cover.offset;
   elements.cover.style[modifierManager.cover.location] = `${offset}px`;
+
+  modifierManager.on("set:scrollDirection", (val) => {
+    if (val === "up") {
+      elements.timing.style.top = "400px";
+      elements.combo.style.top = "450px";
+      elements.timing.style.bottom = "unset";
+      elements.combo.style.bottom = "unset";
+    }
+
+    if (val === "down") {
+      elements.timing.style.bottom = "450px";
+      elements.combo.style.bottom = "400px";
+      elements.timing.style.top = "unset";
+      elements.combo.style.top = "unset";
+    }
+  });
 
   modifierManager.on("set:cover", (val) => {
     elements.cover.style.display = val.visible ? "block" : "none";

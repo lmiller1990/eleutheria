@@ -10,7 +10,10 @@ import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
 import type { Game, Summary } from "@packages/engine";
-import { injectNoteSkin } from "../../../../plugins/injectGlobalCssVars";
+import {
+  injectNoteSkin,
+  injectStylesheet,
+} from "../../../../plugins/injectGlobalCssVars";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
@@ -42,6 +45,7 @@ if (!defaultNoteSkin) {
 }
 
 injectNoteSkin(defaultNoteSkin);
+injectStylesheet(props.startGameArgs.userData.css, "user-css");
 
 const timingSummary = reactive<
   Record<typeof windowsWithMiss[number], number> & { percent: string }
