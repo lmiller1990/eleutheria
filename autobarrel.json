@@ -1,0 +1,9 @@
+{
+  "prefix": "/* eslint-disable padding-line-between-statements */",
+  "paths": [
+    "packages/game-data/src/graphql/**/*"
+  ],
+  "ignore": [
+    "packages/game-data/src/graphql/gen"
+]
+}

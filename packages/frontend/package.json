@@ -8,13 +8,15 @@
     "test:unit": "vitest --run",
     "check-ts": "vue-tsc --types cypress-real-events",
     "cy:open": "cypress open --browser chrome --component",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "codegen": "graphql-codegen --config ${PWD}/graphql-codegen.yml"
   },
   "dependencies": {
     "@packages/audio-utils": "0.0.0-development",
     "@packages/chart-parser": "0.0.0-development",
     "@packages/engine": "0.0.0-development",
     "@packages/types": "0.0.0-development",
+    "@urql/vue": "^1.0.2",
     "css": "3.0.0",
     "events": "3.3.0",
     "pinia": "^2.0.11",
@@ -24,6 +26,12 @@
   },
   "devDependencies": {
     "@cypress/mount-utils": "^1.0.2",
+    "@graphql-codegen/add": "^3.2.1",
+    "@graphql-codegen/cli": "^2.12.0",
+    "@graphql-codegen/typed-document-node": "^2.3.3",
+    "@graphql-codegen/typescript": "^2.7.3",
+    "@graphql-codegen/typescript-operations": "^2.5.3",
+    "@graphql-typed-document-node/core": "^3.1.1",
     "@vitejs/plugin-vue": "2.2.2",
     "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.2",

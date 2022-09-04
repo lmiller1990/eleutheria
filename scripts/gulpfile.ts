@@ -14,6 +14,34 @@ async function serverDev() {
   });
 }
 
+async function autobarrel() {
+  spawn("yarn", ["autobarrel", "--watch"], {
+    stdio: "inherit",
+    cwd: path.join(__dirname, ".."),
+  });
+}
+
+function startAndWatch(loc: string, fn: () => void): chokidar.FSWatcher {
+  const watcher = chokidar.watch(loc);
+  watcher.on("change", fn);
+  fn();
+  return watcher;
+}
+
+async function graphqlCodegen() {
+  startAndWatch(
+    path.join(__dirname, "..", "packages", "frontend", "**/*.vue"),
+    () => {
+      spawn("yarn", ["codegen"], {
+        stdio: "inherit",
+        cwd: "packages/frontend",
+      }).on("exit", () => {
+        console.log("✅ graphqlCodegen");
+      });
+    }
+  );
+}
+
 async function assetsServer() {
   spawn("yarn", ["server"], {
     stdio: "inherit",
@@ -22,24 +50,17 @@ async function assetsServer() {
 }
 
 async function breezeCss() {
-  const watcher = chokidar.watch(
-    path.join(__dirname, "..", "packages", "breeze-css", "**/*.ts")
+  startAndWatch(
+    path.join(__dirname, "..", "packages", "breeze-css", "**/*.ts"),
+    () => {
+      spawn("yarn", ["build"], {
+        stdio: "inherit",
+        cwd: "packages/breeze-css",
+      }).on("exit", () => {
+        console.log("Generated latest breeze.css assets!");
+      });
+    }
   );
-
-  function build() {
-    spawn("yarn", ["build"], {
-      stdio: "inherit",
-      cwd: "packages/breeze-css",
-    }).on("exit", () => {
-      console.log("Generated latest breeze.css assets!");
-    });
-  }
-
-  watcher.on("change", () => {
-    build();
-  });
-
-  build();
 }
 
 async function gameDataServer() {
@@ -191,10 +212,11 @@ async function createComponent() {
 
   await fs.mkdir(newDir);
 
-  const propsInterface = `${results.name}Props`
+  const propsInterface = `${results.name}Props`;
 
   await Promise.all([
-    fs.writeFile(path.join(newDir, `${results.name}.vue`), 
+    fs.writeFile(
+      path.join(newDir, `${results.name}.vue`),
       dedent`
         <script lang="ts" setup>
         import type { ${propsInterface} } from "./types";
@@ -261,5 +283,11 @@ gulp.task("createComponent", createComponent);
 
 gulp.task(
   "dev",
-  gulp.series(serverDev, assetsServer, gameDataServer, breezeCss)
+  gulp.series(
+    gulp.parallel(breezeCss, autobarrel),
+    graphqlCodegen,
+    serverDev,
+    assetsServer,
+    gameDataServer
+  )
 );

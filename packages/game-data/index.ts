@@ -19,6 +19,7 @@ import {
   compileUserStyle,
   readUserJavaScript,
 } from "./scripts/generateNotes";
+import { createGraphQL } from "./src/graphql";
 
 const PORT = 8000;
 
@@ -150,6 +151,8 @@ app.get("/note-skins", (_req, res) => {
   const skins = compileSkins();
   res.json(skins);
 });
+
+app.use("/graphql", createGraphQL());
 
 app.get("/user", async (_req, res) => {
   const [css, js] = await Promise.all([
