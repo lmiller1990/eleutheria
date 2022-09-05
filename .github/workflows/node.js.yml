@@ -26,7 +26,7 @@ jobs:
         cache: 'npm'
     - run: yarn install
     - run: cd packages/game-data && yarn build-schema && cd ../..
-    - run: cd packages/frontend && yarn codegen && yarn tailwind && cd ../..
+    - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
     - run: yarn lint:check
     - run: yarn check-ts
     - run: yarn test

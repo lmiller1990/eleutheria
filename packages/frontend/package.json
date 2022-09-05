@@ -10,7 +10,8 @@
     "cy:open": "cypress open --browser chrome --component",
     "clean": "rm -rf dist",
     "codegen": "graphql-codegen --config ${PWD}/graphql-codegen.yml",
-    "tailwind": "tailwindcss -i src/index.css -o ./src/output.css --watch"
+    "tailwind": "tailwindcss -i src/index.css -o ./src/output.css --watch",
+    "tailwind:build": "tailwindcss -i src/index.css -o ./src/output.css"
   },
   "dependencies": {
     "@packages/audio-utils": "0.0.0-development",
