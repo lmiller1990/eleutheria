@@ -1,3 +1,5 @@
+@import "../../src/index.css";
+
 [data-cy-root],
 #__cy_vue_root,
 [data-v-app],

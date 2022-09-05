@@ -1,0 +1,13 @@
+{
+  "name": "@packages/db",
+  "version": "0.0.0-development",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo 'ok'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "knex": "^2.3.0",
+    "typescript": "4.5.4"
+  }
+}

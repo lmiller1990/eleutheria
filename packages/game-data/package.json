@@ -6,6 +6,7 @@
   "dependencies": {
     "@packages/chart-parser": "0.0.0-development",
     "@packages/types": "0.0.0-development",
+    "@supabase/supabase-js": "^1.35.6",
     "autobarrel": "^1.2.0",
     "cors": "^2.8.5",
     "express": "^4.18.1",

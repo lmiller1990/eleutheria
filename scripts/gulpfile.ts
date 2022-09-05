@@ -28,18 +28,23 @@ function startAndWatch(loc: string, fn: () => void): chokidar.FSWatcher {
   return watcher;
 }
 
-async function graphqlCodegen() {
-  startAndWatch(
-    path.join(__dirname, "..", "packages", "frontend", "**/*.vue"),
-    () => {
-      spawn("yarn", ["codegen"], {
-        stdio: "inherit",
-        cwd: "packages/frontend",
-      }).on("exit", () => {
-        console.log("✅ graphqlCodegen");
-      });
-    }
-  );
+async function graphqlCodegen(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    startAndWatch(
+      path.join(__dirname, "..", "packages", "frontend", "**/*.vue"),
+      () => {
+        spawn("yarn", ["codegen"], {
+          stdio: "inherit",
+          cwd: "packages/frontend",
+        })
+          .on("exit", () => {
+            console.log("✅ graphqlCodegen");
+            resolve();
+          })
+          .on("error", reject);
+      }
+    );
+  });
 }
 
 async function assetsServer() {
@@ -188,6 +193,7 @@ async function createComponent() {
   const results = await inquirer.prompt<{
     name: string;
     test: string;
+    loc: string;
   }>([
     {
       name: "name",
@@ -201,12 +207,18 @@ async function createComponent() {
       message: "Create test file? y/n",
       validate: (val: string) => /[A-z\-]+/.test(val),
     },
+    {
+      name: "loc",
+      type: "input",
+      message: "Path to create (relative to monorepo root)?",
+      validate: (val: string) => /[A-z\-]+/.test(val),
+    },
   ]);
 
   const newDir = path.join(
     __dirname,
     "..",
-    ...args.path.split("/"),
+    results.loc,
     results.name
   );
 
