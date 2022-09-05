@@ -1,2 +1,6 @@
 dist
 packages/frontend/cypress/support/component.ts
+packages/frontend/src/generated/graphql.ts
+packages/game-data/songMetadata.json
+packages/game-data/src/graphql/gen/nxs.gen.ts
+packages/game-data/src/graphql/schema.graphql
