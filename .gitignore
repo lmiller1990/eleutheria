@@ -7,3 +7,6 @@ assets
 .DS_Store
 screenshots
 videos
+packages/frontend/src/generated/graphql.ts
+packages/game-data/src/graphql/gen/nxs.gen.ts
+packages/game-data/src/graphql/schema.graphql
