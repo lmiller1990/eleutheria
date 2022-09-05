@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 red-1 padding-s rounded-border-s" id="select-song">
+  <div class="w-full red-1 padding-s rounded-border-s" id="select-song">
     Select Song
   </div>
 </template>

@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    class="difficulty-item w-100 align-center flex space-between"
+    class="difficulty-item w-full align-center flex space-between"
     :class="difficulty.name"
   >
     <div class="difficulty-label">
@@ -20,11 +20,6 @@ defineProps<{
     </div>
   </div>
 </template>
-
-<style>
-@import "../index.css";
-@import "../../../breeze-css/dist/breeze.css";
-</style>
 
 <style scoped lang="scss">
 .difficulty-item {

@@ -88,14 +88,7 @@ const Cell: FunctionalComponent = (_props, { slots }) => {
   </InfoPanel>
 </template>
 
-<style>
-@import "../../../index.css";
-@import "../../../../../breeze-css/dist/breeze.css";
-</style>
-
 <style scoped lang="scss">
-@import "../../../shared.scss";
-
 .editor-wrapper {
   font-family: "Sansation", sans-serif;
   font-weight: bold;

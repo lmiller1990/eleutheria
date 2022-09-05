@@ -155,14 +155,7 @@ function handleUpdateRepeatInterval(seconds: number) {
   </div>
 </template>
 
-<style>
-@import "../../index.css";
-@import "../../../../breeze-css/dist/breeze.css";
-</style>
-
 <style scoped lang="scss">
-@import "../../shared.scss";
-
 .editor-content {
   display: grid;
   grid-template-columns: 1fr 1fr;

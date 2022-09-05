@@ -33,11 +33,6 @@ const emit = defineEmits<{
   </div>
 </template>
 
-<style>
-@import "../index.css";
-@import "../../../breeze-css/dist/breeze.css";
-</style>
-
 <style scoped lang="scss">
 .difficulty-panel {
   display: grid;

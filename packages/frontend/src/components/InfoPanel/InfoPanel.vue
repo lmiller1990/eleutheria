@@ -13,21 +13,16 @@ const props = defineProps<InfoPanelProps>();
 
 <template>
   <div class="info-wrapper flex flex-col items-center">
-    <div class="flex w-100 items-center">
+    <div class="flex w-full items-center">
       <div class="highlight highlight-left" :style="highlightStyle" />
       <h4 class="panel-title">{{ panelTitle }}</h4>
       <div class="highlight" :style="highlightStyle" />
     </div>
-    <div class="info-content w-100">
+    <div class="info-content w-full">
       <slot />
     </div>
   </div>
 </template>
-
-<style>
-@import "../../index.css";
-@import "../../../../breeze-css/dist/breeze.css";
-</style>
 
 <style scoped lang="scss">
 @import "../../shared.scss";

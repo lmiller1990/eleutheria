@@ -1,6 +1,4 @@
 import SummaryScreen from "./SummaryScreen.vue";
-import style from "../../../../breeze-css/dist/breeze.css";
-import appStyle from "../../style.css";
 import { useSongsStore } from "../../stores/songs";
 import { testSong } from "../../../cypress/fixtures/songs";
 import { useSummaryStore } from "../../stores/summary";
@@ -51,8 +49,6 @@ describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
 
     mount(SummaryScreen, {
       styles: [
-        style,
-        appStyle,
         "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
       ],
     });

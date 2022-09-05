@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100 flex items-center justify-center">
+  <div class="h-full flex items-center justify-center">
     <img class="rounded-border-m" :src="banner" />
   </div>
 </template>
