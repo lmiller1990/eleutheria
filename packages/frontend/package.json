@@ -32,6 +32,7 @@
     "@graphql-codegen/typescript": "^2.7.3",
     "@graphql-codegen/typescript-operations": "^2.5.3",
     "@graphql-typed-document-node/core": "^3.1.1",
+    "@types/dedent": "0.7.0",
     "@vitejs/plugin-vue": "2.2.2",
     "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.2",
