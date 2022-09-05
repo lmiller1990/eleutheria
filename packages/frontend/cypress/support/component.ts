@@ -7,7 +7,7 @@ import { useSongsStore } from "../../src/stores/songs";
 import { testSong } from "../fixtures/songs";
 import { createRouterMock } from 'vue-router-mock'
 import "./style.css";
-import "../../src/index.css";
+import "../../src/output.css";
 
 let pinia: Pinia;
 

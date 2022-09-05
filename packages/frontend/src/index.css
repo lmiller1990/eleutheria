@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: "Sansation", sans-serif;
+  text-transform: uppercase;
+  outline: none;
+}

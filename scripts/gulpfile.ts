@@ -14,6 +14,13 @@ async function serverDev() {
   });
 }
 
+async function tailwind() {
+  spawn("yarn", ["tailwind"], {
+    stdio: "inherit",
+    cwd: "packages/frontend",
+  });
+}
+
 async function autobarrel() {
   spawn("yarn", ["autobarrel", "--watch"], {
     stdio: "inherit",
@@ -265,6 +272,7 @@ gulp.task("createComponent", createComponent);
 gulp.task(
   "dev",
   gulp.series(
+    tailwind,
     autobarrel,
     graphqlCodegen,
     serverDev,
