@@ -39,7 +39,7 @@ function handleSelected() {
 
 <template>
   <div
-    class="h-100 w-100 align-center song-title-banner"
+    class="h-full w-full items-center song-title-banner"
     :class="{ selected }"
     data-cy="song-tile"
     @click="handleSelected"
@@ -65,11 +65,6 @@ function handleSelected() {
   </div>
 </template>
 
-<style>
-@import "../../index.css";
-@import "../../../../breeze-css/dist/breeze.css";
-</style>
-
 <style scoped lang="scss">
 $img-height: 75%;
 
@@ -85,12 +80,14 @@ $img-height: 75%;
 
 .song-title-banner {
   box-sizing: border-box;
-  font-family: "Comfortaa", cursive;
   font-size: 1.5rem;
   font-weight: bold;
   border: 5px solid transparent; // match background. TODO: share variable.
   clip-path: inset(0px 0px 0px 0px);
   position: relative;
+
+  height: 100%;
+  width: 100%;
 }
 
 .selected {

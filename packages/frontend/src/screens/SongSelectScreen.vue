@@ -1,12 +1,12 @@
 <template>
   <NonGameplayScreen screenTitle="Select Song">
-    <div class="wrapper max-1024 h-100">
+    <div class="wrapper max-w-screen-lg h-full">
       <div class="tiles flex items-center justify-center">
         <SongTile
           v-for="(song, idx) of songsStore.songs"
           :key="song.id"
           :songTitle="song.title"
-          class="h-100"
+          class="h-full"
           :imgSrc="thumbails[idx]"
           :selected="song.id === songsStore.selectedSongId"
           @selected="handleSelected(song.id)"
@@ -21,7 +21,7 @@
         />
 
         <SongInfoPanel
-          class="w-100 song-panel"
+          class="w-full song-panel"
           :class="chartDifficulty"
           :data="tableData"
           :highlightColor="highlightColor"
@@ -164,12 +164,6 @@ function handleSelected(songId: string) {
 
 songsStore.fetchSongs();
 </script>
-
-<style lang="scss">
-@import "../shared.scss";
-@import "../index.css";
-@import "../../../breeze-css/dist/breeze.css";
-</style>
 
 <style lang="scss" scoped>
 .wrapper {

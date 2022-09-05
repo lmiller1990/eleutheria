@@ -1,5 +1,5 @@
 <template>
-  <div class="gray-3 border-1 rounded-border-m" id="song-info">
+  <div class="gray-3 border-1 rounded-xl" id="song-info">
     <div class="flex" id="song-info-inner">
       <table>
         <tr>
@@ -16,7 +16,7 @@
         </tr>
       </table>
 
-      <div class="flex flex-col items-center justify-center w-100">
+      <div class="flex flex-col items-center justify-center w-full">
         <div id="best-grade" class="font-3rem">AAA</div>
 
         <div id="best-score">95.50%</div>
@@ -27,13 +27,7 @@
 
 <script lang="ts" setup></script>
 
-<style>
-@import "../index.css";
-</style>
-
 <style scoped lang="scss">
-@import "../../../breeze-css/dist/breeze.css";
-
 #song-info {
   width: 100%;
   padding: 5px;

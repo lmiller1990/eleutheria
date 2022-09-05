@@ -18,11 +18,6 @@ const props = defineProps<SongInfoPanelProps>();
   </InfoPanel>
 </template>
 
-<style>
-@import "../../index.css";
-@import "../../../../breeze-css/dist/breeze.css";
-</style>
-
 <style scoped lang="scss">
 @import "../../shared.scss";
 

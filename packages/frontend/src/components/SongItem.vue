@@ -1,6 +1,6 @@
 <template>
   <div
-    class="outer w-100 rounded-border-s flex items-center padding-horizontal-s"
+    class="outer w-full rounded-border-s flex items-center padding-horizontal-s"
   >
     <div>
       {{ props.song.title }}

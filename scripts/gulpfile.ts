@@ -49,20 +49,6 @@ async function assetsServer() {
   });
 }
 
-async function breezeCss() {
-  startAndWatch(
-    path.join(__dirname, "..", "packages", "breeze-css", "**/*.ts"),
-    () => {
-      spawn("yarn", ["build"], {
-        stdio: "inherit",
-        cwd: "packages/breeze-css",
-      }).on("exit", () => {
-        console.log("Generated latest breeze.css assets!");
-      });
-    }
-  );
-}
-
 async function gameDataServer() {
   const start = () => {
     return [
@@ -227,13 +213,8 @@ async function createComponent() {
         <template>
         </template>
 
-        <style>
-        @import "../../index.css";
-        @import "../../../../breeze-css/dist/breeze.css";
-        </style>
-
         <style scoped lang="scss">
-        @import "../../shared.scss";
+        /* Styles */
         </style>
       `
     ),
@@ -284,7 +265,7 @@ gulp.task("createComponent", createComponent);
 gulp.task(
   "dev",
   gulp.series(
-    gulp.parallel(breezeCss, autobarrel),
+    autobarrel,
     graphqlCodegen,
     serverDev,
     assetsServer,

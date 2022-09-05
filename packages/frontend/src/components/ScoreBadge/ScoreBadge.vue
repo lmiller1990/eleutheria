@@ -5,18 +5,13 @@ const props = defineProps<ScoreBadgeProps>();
 </script>
 
 <template>
-  <div class="score-badge-outer w-100">
-    <div class="score-badge w-100 flex flex-col items-center justify-center">
+  <div class="score-badge-outer w-full">
+    <div class="score-badge w-full flex flex-col items-center justify-center">
       <div class="rank">{{ props.rank }}</div>
       <div class="percent">{{ props.percent }}%</div>
     </div>
   </div>
 </template>
-
-<style>
-@import "../../index.css";
-@import "../../../../breeze-css/dist/breeze.css";
-</style>
 
 <style scoped lang="scss">
 @import "../../shared.scss";

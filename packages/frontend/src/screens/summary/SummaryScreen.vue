@@ -41,22 +41,18 @@ const difficulty = computed(() => {
 </script>
 
 <template>
-  <div
-    style="background-image: url('/static/thumb-1.webp')"
-    id="song-banner"
-  ></div>
   <NonGameplayScreen screenTitle="Evaluation">
-    <div class="flex justify-center h-100 w-100">
-      <div class="wrapper h-100 max-1024 flex items-center w-100">
+    <div class="flex justify-center h-full w-full">
+      <div class="wrapper h-full max-1024 flex items-center w-full">
         <div class="vanity flex justify-center flex-col items-center">
           <ScoreBadge :percent="summaryStore.summary?.percent ?? ''" rank="A" />
         </div>
 
-        <div class="flex flex-col items-center w-100">
-          <div class="lhs-col h-100 w-100">
+        <div class="flex flex-col items-center w-full">
+          <div class="lhs-col h-full w-full">
             <SongInfoPanel :data="scoreData" />
             <DifficultyItem v-if="difficulty" :difficulty="difficulty" />
-            <PlainPanel class="w-100 mods-panel h-100">
+            <PlainPanel class="w-full mods-panel h-full">
               <div class="flex">2x upscroll NOTE HERE</div>
             </PlainPanel>
 
@@ -117,24 +113,6 @@ const difficulty = computed(() => {
 .vanity {
   justify-content: center;
   height: 100%;
-}
-
-#song-banner {
-  position: absolute;
-  z-index: -1;
-
-  background-size: 100% 100%;
-  width: 100vw;
-  height: 100vh;
-  max-width: calc(100vh * 1.7777);
-
-  top: 0px;
-  left: 0px;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-
-  filter: brightness(0.9);
 }
 
 .button {

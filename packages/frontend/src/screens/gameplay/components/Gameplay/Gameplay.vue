@@ -215,10 +215,10 @@ function handleChangeSpeedMod(val: number) {
 
 <template>
   <div class="flex justify-center">
-    <div class="max-w-l">
+    <div class="max-w-screen-lg">
       <div class="gameplay-content">
         <div class="gameplay" v-once>
-          <div ref="root" class="max-w-l" v-once />
+          <div ref="root" class="max-w-screen-log" v-once />
         </div>
 
         <div class="stats flex flex-col justify-center">
@@ -237,7 +237,7 @@ function handleChangeSpeedMod(val: number) {
             <div class="info-panels flex">
               <InfoPanel
                 panelTitle="Song"
-                class="w-100"
+                class="w-full"
                 :class="selectedChart.difficulty"
                 :highlightColor="highlightColor"
               >
@@ -253,7 +253,7 @@ function handleChangeSpeedMod(val: number) {
 
               <SongInfoPanel
                 panelTitle="Stats"
-                class="w-100"
+                class="w-full"
                 :class="selectedChart.difficulty"
                 :data="scoreData"
                 :highlightColor="highlightColor"
@@ -266,14 +266,7 @@ function handleChangeSpeedMod(val: number) {
   </div>
 </template>
 
-<style>
-@import "../../../../index.css";
-@import "../../../../../../breeze-css/dist/breeze.css";
-</style>
-
 <style scoped lang="scss">
-@import "../../../../shared.scss";
-
 .gameplay-content {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -293,8 +286,4 @@ function handleChangeSpeedMod(val: number) {
   grid-template-rows: 1fr;
   column-gap: 10px;
 }
-
-// .modifier-wrapper {
-//   margin: 0 30px;
-// }
 </style>

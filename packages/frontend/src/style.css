@@ -89,6 +89,7 @@ body,
   width: calc(var(--col-width) * 6);
   z-index: 10;
   height: 100vh;
+  box-shadow: 0px 0px 10px 12px black;
 }
 
 #target-line {

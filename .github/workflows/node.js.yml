@@ -25,7 +25,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: yarn install
-    - run: cd packages/breeze-css && yarn build && cd ../..
     - run: cd packages/game-data && yarn build-schema && cd ../..
     - run: cd packages/frontend && yarn codegen && cd ../..
     - run: yarn lint:check
