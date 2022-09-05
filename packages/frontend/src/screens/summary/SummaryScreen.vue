@@ -41,10 +41,6 @@ const difficulty = computed(() => {
 </script>
 
 <template>
-  <div
-    style="background-image: url('/static/thumb-1.webp')"
-    id="song-banner"
-  ></div>
   <NonGameplayScreen screenTitle="Evaluation">
     <div class="flex justify-center h-full w-full">
       <div class="wrapper h-full max-1024 flex items-center w-full">
@@ -117,24 +113,6 @@ const difficulty = computed(() => {
 .vanity {
   justify-content: center;
   height: 100%;
-}
-
-#song-banner {
-  position: absolute;
-  z-index: -1;
-
-  background-size: 100% 100%;
-  width: 100vw;
-  height: 100vh;
-  max-width: calc(100vh * 1.7777);
-
-  top: 0px;
-  left: 0px;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-
-  filter: brightness(0.9);
 }
 
 .button {

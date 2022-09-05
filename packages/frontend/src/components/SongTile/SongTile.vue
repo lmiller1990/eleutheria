@@ -85,7 +85,7 @@ $img-height: 75%;
   border: 5px solid transparent; // match background. TODO: share variable.
   clip-path: inset(0px 0px 0px 0px);
   position: relative;
-  
+
   height: 100%;
   width: 100%;
 }

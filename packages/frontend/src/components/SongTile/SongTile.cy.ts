@@ -5,6 +5,7 @@ import { thumbails } from "../../thumbnails";
 import { Props } from "./types";
 
 function mountSongTile(props: Partial<Props> = {}) {
+  // @ts-ignore
   return cy.mount(SongTile, {
     style: `
       [data-v-app] {

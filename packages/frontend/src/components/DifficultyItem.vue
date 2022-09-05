@@ -15,7 +15,10 @@ defineProps<{
       {{ difficulty.name }}
     </div>
 
-    <div class="level flex items-center justify-center" :class="`${difficulty.name}-level`">
+    <div
+      class="level flex items-center justify-center"
+      :class="`${difficulty.name}-level`"
+    >
       {{ difficulty.level }}
     </div>
   </div>

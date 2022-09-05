@@ -15,7 +15,9 @@ provideClient(client);
 </template>
 
 <style>
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   @apply h-screen;
 }
