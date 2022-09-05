@@ -34,14 +34,14 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
     .map((_, idx) => {
       const outlineEl = createElement("div", {
         id: `target-col-el-${idx}`,
-        className: "target-col-el rounded-border-m border-red-3 w-full h-full",
+        className: "target-col-el rounded-xl w-full h-full",
       });
 
       const targetEl = createElement(
         "div",
         {
           id: `target-col-${idx}`,
-          className: "target-col rounded-border-m",
+          className: "target-col rounded-xl",
         },
         [outlineEl]
       );
@@ -87,7 +87,7 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
   const html = `
     ${debugTable}
 
-    <div id="targets" class="w-full shadow-h-4">
+    <div id="targets" class="w-full">
       ${cover}
       <div id="target-line">
         ${targetCols}

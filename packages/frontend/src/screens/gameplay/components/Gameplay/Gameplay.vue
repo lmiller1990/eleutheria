@@ -215,10 +215,10 @@ function handleChangeSpeedMod(val: number) {
 
 <template>
   <div class="flex justify-center">
-    <div class="max-w-l">
+    <div class="max-w-screen-lg">
       <div class="gameplay-content">
         <div class="gameplay" v-once>
-          <div ref="root" class="max-w-l" v-once />
+          <div ref="root" class="max-w-screen-log" v-once />
         </div>
 
         <div class="stats flex flex-col justify-center">

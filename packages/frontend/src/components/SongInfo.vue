@@ -1,5 +1,5 @@
 <template>
-  <div class="gray-3 border-1 rounded-border-m" id="song-info">
+  <div class="gray-3 border-1 rounded-xl" id="song-info">
     <div class="flex" id="song-info-inner">
       <table>
         <tr>

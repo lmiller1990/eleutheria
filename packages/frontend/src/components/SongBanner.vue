@@ -1,6 +1,6 @@
 <template>
   <div class="h-full flex items-center justify-center">
-    <img class="rounded-border-m" :src="banner" />
+    <img class="rounded-xl" :src="banner" />
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { createClient, provideClient } from "@urql/vue";
-import Query from "./Query.vue";
+// import Query from "./Query.vue";
 
 const client = createClient({
   url: "http://localhost:8000/graphql",
@@ -11,7 +11,7 @@ provideClient(client);
 
 <template>
   <RouterView />
-  <Query />
+  <!-- <Query /> -->
 </template>
 
 <style>

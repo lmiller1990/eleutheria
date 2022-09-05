@@ -8,14 +8,14 @@ defineProps<{
 
 <template>
   <div
-    class="difficulty-item w-full align-center flex space-between"
+    class="difficulty-item w-full items-center flex justify-between"
     :class="difficulty.name"
   >
     <div class="difficulty-label">
       {{ difficulty.name }}
     </div>
 
-    <div class="level" :class="`${difficulty.name}-level`">
+    <div class="level flex items-center justify-center" :class="`${difficulty.name}-level`">
       {{ difficulty.level }}
     </div>
   </div>
