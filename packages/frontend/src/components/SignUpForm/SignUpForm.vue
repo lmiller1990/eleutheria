@@ -1,10 +1,21 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
 import type { SignUpFormProps } from "./types";
 import ValidationInput from "../ValidationInput.vue";
 import { min, max, alphanumeric } from "../../validation";
+import Button from "../Button.vue";
+import { } from "../../generated/graphql"
+import { gql } from "@urql/vue";
+
+gql`
+  mutation SignUp ($email: String!, $password: String!) {
+    signUp(email: $email, password: $password)
+  }
+`
 
 defineProps<SignUpFormProps>();
+
+// const signUp = useMutation(SignUp)
 
 const username = reactive({
   value: "",
@@ -16,11 +27,18 @@ const password = reactive({
   valid: false,
 });
 
-// const valid = computed(() => username.valid && password.valid);
+const valid = computed(() => username.valid && password.valid);
+
+function handleSubmit () {
+
+}
 </script>
 
 <template>
-  <form class="form text-white h-full">
+  <form
+    class="form text-white h-full flex flex-col items-center p-8"
+    @submit.prevent="handleSubmit"
+  >
     <ValidationInput
       v-model="username.value"
       :rules="[min(5), max(10), alphanumeric()]"
@@ -35,6 +53,8 @@ const password = reactive({
       type="password"
       @validate="(result) => (password.valid = result.valid)"
     />
+
+    <Button type="submit" :disabled="!valid">Submit</Button>
   </form>
 </template>
 
