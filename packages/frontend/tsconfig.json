@@ -19,5 +19,5 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "types": ["cypress", "cypress-real-events"]
+  "types": ["cypress", "cypress-real-events"],
 }

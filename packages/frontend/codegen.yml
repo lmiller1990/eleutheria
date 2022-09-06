@@ -1,0 +1,9 @@
+overwrite: true
+schema: "../game-data/src/graphql/schema.graphql"
+documents: "src/**/*.vue"
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-document-nodes"

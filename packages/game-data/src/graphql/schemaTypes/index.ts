@@ -3,4 +3,5 @@
 
 export * from './gql-App'
 export * from './gql-Book'
+export * from './gql-Mutation'
 export * from './gql-Query'
