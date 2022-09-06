@@ -41,5 +41,6 @@ const password = reactive({
 <style scoped lang="scss">
 .form {
   background: #373737;
+  @apply max-w-3xl max-h-96;
 }
 </style>

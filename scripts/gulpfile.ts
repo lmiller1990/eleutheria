@@ -43,7 +43,7 @@ async function graphqlCodegen() {
         stdio: "inherit",
         cwd: "packages/frontend",
       }).on("exit", () => {
-        console.log("✅ graphqlCodegen");
+        console.log("✔ graphqlCodegen");
       });
     }
   );

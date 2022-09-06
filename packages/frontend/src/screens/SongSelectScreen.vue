@@ -1,5 +1,8 @@
 <template>
   <NonGameplayScreen screenTitle="Select Song">
+    <div class="flex justify-end">
+      <button @click="handleSettings">Settings</button>
+    </div>
     <div class="wrapper max-w-screen-lg h-full">
       <div class="tiles flex items-center justify-center">
         <SongTile
@@ -46,6 +49,12 @@ import { colors } from "../shared";
 import { TableCell } from "../components/SongInfoPanel/types";
 import NonGameplayScreen from "../components/NonGameplayScreen";
 import { useHeldKeys } from "../utils/useHeldKeys";
+import { useModal } from "../composables/modal";
+
+function handleSettings () {
+  const modal = useModal()
+  modal.showModal('signUp')
+}
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
