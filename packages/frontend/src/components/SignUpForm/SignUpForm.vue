@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import type { SignUpFormProps } from "./types";
 import ValidationInput from "../ValidationInput.vue";
-import { min, max, alphanumeric } from "../../validation";
+import { min, max, email as emailRule } from "../../validation";
 import Button from "../Button.vue";
-import { } from "../../generated/graphql"
-import { gql } from "@urql/vue";
+import { SignUpDocument } from "../../generated/graphql"
+import { gql, useMutation } from "@urql/vue";
 
 gql`
   mutation SignUp ($email: String!, $password: String!) {
@@ -15,9 +15,9 @@ gql`
 
 defineProps<SignUpFormProps>();
 
-// const signUp = useMutation(SignUp)
+const signUp = useMutation(SignUpDocument)
 
-const username = reactive({
+const email = reactive({
   value: "",
   valid: false,
 });
@@ -27,23 +27,36 @@ const password = reactive({
   valid: false,
 });
 
-const valid = computed(() => username.valid && password.valid);
+const valid = computed(() => email.valid && password.valid);
 
-function handleSubmit () {
+const submitting = ref(false)
 
+async function handleSubmit () {
+  if (submitting.value) {
+    return
+  }
+
+  submitting.value = true
+
+  await signUp.executeMutation({
+    email: email.value,
+    password: password.value,
+  })
+
+  submitting.value = false
 }
 </script>
 
 <template>
   <form
-    class="form text-white h-full flex flex-col items-center p-8"
+    class="w-full form text-white h-full flex flex-col items-center p-8"
     @submit.prevent="handleSubmit"
   >
     <ValidationInput
-      v-model="username.value"
-      :rules="[min(5), max(10), alphanumeric()]"
-      label="username"
-      @validate="(result) => (username.valid = result.valid)"
+      v-model="email.value"
+      :rules="[emailRule()]"
+      label="email"
+      @validate="(result) => (email.valid = result.valid)"
     />
 
     <ValidationInput
@@ -54,7 +67,7 @@ function handleSubmit () {
       @validate="(result) => (password.valid = result.valid)"
     />
 
-    <Button type="submit" :disabled="!valid">Submit</Button>
+    <Button type="submit" :disabled="!valid || submitting">Submit</Button>
   </form>
 </template>
 

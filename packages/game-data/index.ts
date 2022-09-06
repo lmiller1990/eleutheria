@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import http from "http";
@@ -20,6 +20,10 @@ import {
   readUserJavaScript,
 } from "./scripts/generateNotes";
 import { createGraphQL } from "./src/graphql";
+import { graphqlHTTP } from "express-graphql";
+import { graphqlSchema } from "./src/graphql/schema";
+import { Context } from "./src/graphql/context";
+import { createSupabaseClient, JWT_COOKIE } from "./src/graphql/schemaTypes";
 
 const PORT = 8000;
 
@@ -152,7 +156,22 @@ app.get("/note-skins", (_req, res) => {
   res.json(skins);
 });
 
-app.use("/graphql", createGraphQL());
+function authenticationMiddleware (req: Request, res: Response, next: NextFunction) {
+  const supabase = createSupabaseClient()
+  supabase.auth.session()
+  const token = req.cookies[JWT_COOKIE];
+}
+
+export const client = createSupabaseClient()
+
+app.use("/graphql", graphqlHTTP((req, res) => {
+    console.log('user is', client.auth.user()?.email)
+    return {
+      schema: graphqlSchema,
+      graphiql: true,
+      context: new Context(req as Request, res as Response),
+    };
+  }));
 
 app.get("/user", async (_req, res) => {
   const [css, js] = await Promise.all([

@@ -76,4 +76,23 @@ export const alphanumeric = (): ValidatorFn => {
   };
 };
 
-export type Rule = typeof min | typeof max | typeof alphanumeric;
+const EMAIL_RE =
+  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/;
+
+export const email = (): ValidatorFn => {
+  return function (actual: string): Status {
+    if (EMAIL_RE.test(actual)) {
+      return {
+        label: `Email`,
+        valid: true,
+      };
+    }
+
+    return {
+      label: `Email`,
+      valid: false,
+    };
+  };
+};
+
+export type Rule = typeof min | typeof max | typeof alphanumeric | typeof email;

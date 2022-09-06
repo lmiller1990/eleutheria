@@ -1,0 +1,15 @@
+diff --git a/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js b/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js
+index cd92f33..c4f3c66 100644
+--- a/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js
++++ b/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js
+@@ -3628,8 +3628,8 @@ function compileScript(sfc, options) {
+             propsTypeDeclRaw = node.typeParameters.params[0];
+             propsTypeDecl = resolveQualifiedType(propsTypeDeclRaw, node => node.type === 'TSTypeLiteral');
+             if (!propsTypeDecl) {
+-                error(`type argument passed to ${DEFINE_PROPS}() must be a literal type, ` +
+-                    `or a reference to an interface or literal type.`, propsTypeDeclRaw);
++                // error(`type argument passed to ${DEFINE_PROPS}() must be a literal type, ` +
++                //     `or a reference to an interface or literal type.`, propsTypeDeclRaw);
+             }
+         }
+         if (declId) {
