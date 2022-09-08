@@ -6,6 +6,54 @@ import chokidar from "chokidar";
 import path from "path";
 import inquirer from "inquirer";
 import { ChildProcess, spawn } from "child_process";
+import http from "http";
+
+function waitForServer(hostname: string, port: number) {
+  const INTERVAL = 1000
+  const TRY_COUNT = 10
+
+  return new Promise<void>((resolve, reject) => {
+    let i = 0;
+
+    let interval = setInterval(() => {
+      console.log(`Waiting for ${hostname}:${port}...`);
+      i++;
+      if (i > TRY_COUNT) {
+        console.log(
+          `Waited for  for ${
+            TRY_COUNT * (INTERVAL / 1000)
+          }${hostname}:${port} but did not get response.`
+        );
+        reject();
+      }
+
+      const req = http.get(
+        {
+          hostname,
+          path: "/health-check",
+          port,
+          headers: {
+            'X-NO-SESSION': 'TRUE'
+          }
+        },
+        (res) => {
+          res.on("data", (data: Buffer) => {
+            console.log("data!", data.toString());
+            clearInterval(interval);
+            resolve();
+            req.end();
+          });
+        }
+      );
+
+      req.on("error", () => {
+        //
+      });
+
+      req.end();
+    }, INTERVAL);
+  });
+}
 
 async function serverDev() {
   spawn("yarn", ["dev"], {
@@ -56,7 +104,7 @@ async function assetsServer() {
   });
 }
 
-async function gameDataServer() {
+async function gameDataServer(): Promise<void> {
   const start = () => {
     return [
       spawn("yarn", ["start"], {
@@ -77,13 +125,15 @@ async function gameDataServer() {
 
   let procs: ChildProcess[] = [];
 
-  watcherAll.on("change", () => {
+  watcherAll.on("change", async () => {
     procs.forEach((p) => p.kill());
     console.log("Restarting game data server...");
     procs = start();
   });
 
   procs = start();
+
+  return waitForServer("localhost", 5566);
 }
 
 async function createPkg() {
@@ -268,6 +318,7 @@ async function createComponent() {
 gulp.task("createPkg", createPkg);
 gulp.task("createChart", createChart);
 gulp.task("createComponent", createComponent);
+gulp.task("gameDataServer", gameDataServer);
 
 gulp.task(
   "dev",
@@ -275,8 +326,8 @@ gulp.task(
     tailwind,
     autobarrel,
     graphqlCodegen,
+    gameDataServer,
     serverDev,
-    assetsServer,
-    gameDataServer
+    assetsServer
   )
 );

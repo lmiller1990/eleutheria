@@ -1,7 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import path from "path";
-import http from "http";
+import path from "node:path";
+import http from "node:http";
+import bodyParser from "body-parser";
 import chokidar from "chokidar";
 import type { ParamData, UserScripts } from "@packages/types";
 import { WebSocketServer } from "ws";
@@ -19,21 +20,51 @@ import {
   compileUserStyle,
   readUserJavaScript,
 } from "./scripts/generateNotes";
-import { createGraphQL } from "./src/graphql";
 import { graphqlHTTP } from "express-graphql";
 import { graphqlSchema } from "./src/graphql/schema";
 import { Context } from "./src/graphql/context";
-import { createSupabaseClient, JWT_COOKIE } from "./src/graphql/schemaTypes";
+import { knex } from "./src/knex";
+import cookieParser from "cookie-parser";
+import { sessionMiddleware } from "./src/session/middleware";
+import pg from "pg";
 
-const PORT = 8000;
+const pgClient = new pg.Client({
+  user: "lachlan",
+  database: "rhythm",
+});
+
+export const COOKIE = "rhythm-cookie";
+
+console.log("Starting game server...");
+
+export declare namespace DB {
+  interface User {
+    id: string;
+    email: string;
+    password: string;
+  }
+}
+
+const PORT = 5566;
 
 const app = express();
 
+const SECRET = "keyboard cat";
+
 app.use(cors());
+app.use(cookieParser(SECRET));
+app.use(bodyParser.json());
+
+app.use(sessionMiddleware);
 
 const server = http.createServer(app);
 
-server.listen(PORT, () => {
+app.get("/health-check", (_req, res) => {
+  res.json({ msg: "ok" });
+});
+
+server.listen(PORT, async () => {
+  await pgClient.connect();
   console.log(`Started data server on port ${PORT}`);
 });
 
@@ -156,22 +187,33 @@ app.get("/note-skins", (_req, res) => {
   res.json(skins);
 });
 
-function authenticationMiddleware (req: Request, res: Response, next: NextFunction) {
-  const supabase = createSupabaseClient()
-  supabase.auth.session()
-  const token = req.cookies[JWT_COOKIE];
-}
+app.post<{}, {}, { name: string; password: string }>(
+  "/login",
+  async (req, res) => {
+    const user = await knex<DB.User>("users")
+      .where({ email: req.body.name, password: req.body.password })
+      .first();
 
-export const client = createSupabaseClient()
+    if (user) {
+      await knex("sessions")
+        .where({ id: req.session.id })
+        .update({ user_id: user.id });
+    }
 
-app.use("/graphql", graphqlHTTP((req, res) => {
-    console.log('user is', client.auth.user()?.email)
+    res.json(user);
+  }
+);
+
+app.use(
+  "/graphql",
+  graphqlHTTP((req, res) => {
     return {
       schema: graphqlSchema,
       graphiql: true,
-      context: new Context(req as Request, res as Response),
+      context: new Context(req as Request, res as Response, pgClient),
     };
-  }));
+  })
+);
 
 app.get("/user", async (_req, res) => {
   const [css, js] = await Promise.all([
@@ -187,7 +229,9 @@ app.get("/user", async (_req, res) => {
   res.json(data);
 });
 
-app.get("/songs", async (_req, res) => {
+app.get("/songs", async (req, res) => {
+  console.log(req.cookies);
+  console.log(req.cookies?.[COOKIE]);
   const assets = (await fs.readdir(songsDir)).filter((x) => !x.startsWith("."));
 
   const songs: BaseSong[] = await Promise.all(

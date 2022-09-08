@@ -60,5 +60,3 @@ export function mount<T>(comp: any, payload: MountingOptions<T> = {}) {
     }
   });
 }
-
-

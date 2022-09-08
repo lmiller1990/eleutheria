@@ -6,9 +6,18 @@ export default defineConfig({
   plugins: [vue(), VueTypeImports()],
   base: "./",
   server: {
-    // hmr: false,
     fs: {
       strict: false,
+    },
+    proxy: {
+      "^/api/.*": {
+        target: "http://localhost:5566",
+        changeOrigin: true,
+        rewrite: (path) => {
+          const p = path.replace(/^\/api/, "");
+          return p;
+        },
+      },
     },
   },
 });

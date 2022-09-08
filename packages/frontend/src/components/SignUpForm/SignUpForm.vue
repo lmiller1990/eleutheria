@@ -4,7 +4,7 @@ import type { SignUpFormProps } from "./types";
 import ValidationInput from "../ValidationInput.vue";
 import { min, max, email as emailRule } from "../../validation";
 import Button from "../Button.vue";
-import { SignUpDocument } from "../../generated/graphql"
+// import { SignUpDocument } from "../../generated/graphql"
 import { gql, useMutation } from "@urql/vue";
 
 gql`
@@ -15,7 +15,7 @@ gql`
 
 defineProps<SignUpFormProps>();
 
-const signUp = useMutation(SignUpDocument)
+// const signUp = useMutation(SignUpDocument)
 
 const email = reactive({
   value: "",
@@ -38,10 +38,10 @@ async function handleSubmit () {
 
   submitting.value = true
 
-  await signUp.executeMutation({
-    email: email.value,
-    password: password.value,
-  })
+  // await signUp.executeMutation({
+  //   email: email.value,
+  //   password: password.value,
+  // })
 
   submitting.value = false
 }
