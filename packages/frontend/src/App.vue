@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { createClient, provideClient } from "@urql/vue";
+import { createClient, gql, provideClient, useQuery } from "@urql/vue";
 import { reactive } from "vue";
 import { useModal } from "./composables/modal";
 
 const client = createClient({
-  url: "http://localhost:5566/graphql",
+  url: "/api/graphql",
 });
 
 provideClient(client);
@@ -15,28 +15,6 @@ const user = reactive({
   name: 'lachlan',
   password: '123'
 })
-
-async function createSession () {
-  const res = await window.fetch("/api/set", {
-    method: "GET",
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  console.log(await res.json())
-}
-
-async function handle () {
-  const body = JSON.stringify(user)
-  const res = await window.fetch("api/login", {
-    method: "POST",
-    body,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  console.log(await res.json())
-}
 </script>
 
 <template>
@@ -47,13 +25,6 @@ async function handle () {
   >
     <component class="h-fit" :is="modal.component.value" @click.stop />
   </div>
-
-  <button @click="createSession">Create</button>
-  <form @submit.prevent="handle">
-    <input v-model="user.name" />
-    <input v-model="user.password" />
-    <button>Submit</button>
-  </form>
 
   <RouterView />
   <!-- <Query /> -->

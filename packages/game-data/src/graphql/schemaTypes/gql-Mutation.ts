@@ -4,7 +4,7 @@ export const mutation = mutationType({
   definition(t) {
     t.field('ok', {
       type: "String",
-      resolve: (_, __, ctx) => {
+      resolve: () => {
         return 'OK'
       }
     })
@@ -15,9 +15,11 @@ export const mutation = mutationType({
       args: {
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
+        username: nonNull(stringArg()),
       },
       resolve: async (_, args, ctx) => {
-        return true;
+        await ctx.actions.db.createUser({ email: args.email, password: args.password, username: args.username })
+        return true
       },
     });
 
@@ -28,7 +30,7 @@ export const mutation = mutationType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_, args, ctx) => {
+      resolve: async (_, _args, _ctx) => {
         return true;
       },
     });

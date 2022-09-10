@@ -210,7 +210,7 @@ app.use(
     return {
       schema: graphqlSchema,
       graphiql: true,
-      context: new Context(req as Request, res as Response, pgClient),
+      context: new Context(req as Request, res as Response),
     };
   })
 );

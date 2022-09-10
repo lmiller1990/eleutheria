@@ -1,17 +1,20 @@
 import { Request, Response } from "express";
-import type { Client } from "pg";
 import { knex } from "../knex";
 import { DB } from "../../";
+import { DataActions } from "../actions";
 
 export class Context {
   req: Request;
   res: Response;
-  #db: Client;
+  actions = new DataActions();
 
-  constructor(req: Request, res: Response, db: Client) {
+  constructor(req: Request, res: Response) {
     this.req = req;
     this.res = res;
-    this.#db = db;
+  }
+
+  get knex() {
+    return knex;
   }
 
   async viewer() {

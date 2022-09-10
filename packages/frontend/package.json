@@ -6,7 +6,7 @@
     "build": "tsc && vite build",
     "test": "node ./scripts/runCypress.js",
     "test:unit": "vitest --run",
-    "check-ts": "vue-tsc --types cypress-real-events",
+    "check-ts": "vue-tsc --noEmit --project .",
     "cy:open": "cypress open --browser chrome --component",
     "clean": "rm -rf dist",
     "codegen": "graphql-codegen --config codegen.yml",

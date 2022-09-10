@@ -1,7 +1,7 @@
 <template>
   <NonGameplayScreen screenTitle="Select Song">
-    <div class="flex justify-end">
-      <button @click="handleSettings">Settings</button>
+    <div class="flex justify-end mb-4">
+      <Username />
     </div>
     <div class="wrapper max-w-screen-lg h-full">
       <div class="tiles flex items-center justify-center">
@@ -36,20 +36,21 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from "vue";
-import SongTile from "../components/SongTile";
-import SongInfoPanel from "../components/SongInfoPanel";
-import DifficultyPanel from "../components/DifficultyPanel.vue";
-import { thumbails } from "../thumbnails";
+import SongTile from "../../components/SongTile";
+import SongInfoPanel from "../../components/SongInfoPanel";
+import DifficultyPanel from "../../components/DifficultyPanel.vue";
+import { thumbails } from "../../thumbnails";
 import { useRouter } from "vue-router";
-import { useSongsStore } from "../stores/songs";
-import { SongDifficulty } from "../types";
+import { useSongsStore } from "../../stores/songs";
+import { SongDifficulty } from "../../types";
 import type { ChartSummary } from "@packages/types";
 import { chartInfo } from "@packages/chart-parser";
-import { colors } from "../shared";
-import { TableCell } from "../components/SongInfoPanel/types";
-import NonGameplayScreen from "../components/NonGameplayScreen";
-import { useHeldKeys } from "../utils/useHeldKeys";
-import { useModal } from "../composables/modal";
+import { colors } from "../../shared";
+import { TableCell } from "../../components/SongInfoPanel/types";
+import NonGameplayScreen from "../../components/NonGameplayScreen";
+import { useHeldKeys } from "../../utils/useHeldKeys";
+import { useModal } from "../../composables/modal";
+import Username from "./Username.vue";
 
 function handleSettings () {
   const modal = useModal()
