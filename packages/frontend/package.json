@@ -2,7 +2,7 @@
   "name": "@packages/frontend",
   "version": "0.0.0-development",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite",
     "build": "tsc && vite build",
     "test": "node ./scripts/runCypress.js",
     "test:unit": "vitest --run",

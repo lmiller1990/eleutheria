@@ -6,7 +6,7 @@ import { DataActions } from "../actions";
 export class Context {
   req: Request;
   res: Response;
-  actions = new DataActions();
+  actions = new DataActions(this);
 
   constructor(req: Request, res: Response) {
     this.req = req;
@@ -18,7 +18,6 @@ export class Context {
   }
 
   async viewer() {
-    console.log(this.req.session.id);
     const user = await knex("sessions")
       .where({ "sessions.id": this.req.session.id })
       .join("users", "users.id", "=", "sessions.user_id")

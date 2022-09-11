@@ -27,7 +27,10 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="w-full flex p-8 text-2xl justify-center" :data-cy="`${props.label}`">
+  <div
+    class="w-full flex p-8 text-2xl justify-center"
+    :data-cy="`${props.label}`"
+  >
     <label class="w-32 mr-12" :for="props.label">{{ props.label }}</label>
     <div class="flex flex-grow flex-col">
       <input

@@ -1,20 +1,14 @@
 <script lang="ts" setup>
-import { createClient, gql, provideClient, useQuery } from "@urql/vue";
-import { reactive } from "vue";
+import { createClient, provideClient } from "@urql/vue";
 import { useModal } from "./composables/modal";
 
 const client = createClient({
-  url: "/api/graphql",
+  url: "/graphql",
 });
 
 provideClient(client);
 
 const modal = useModal();
-
-const user = reactive({
-  name: 'lachlan',
-  password: '123'
-})
 </script>
 
 <template>

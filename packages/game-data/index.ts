@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import path from "node:path";
 import http from "node:http";
@@ -176,6 +176,16 @@ async function loadSong(id: string): Promise<LoadSongData> {
   return data;
 }
 
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
+});
+
+app.get("/static/:asset", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "..", "frontend", "static", req.params.asset)
+  );
+});
+
 app.get("/songs/:id", async (req, res) => {
   const data = await loadSong(req.params.id);
 
@@ -229,9 +239,7 @@ app.get("/user", async (_req, res) => {
   res.json(data);
 });
 
-app.get("/songs", async (req, res) => {
-  console.log(req.cookies);
-  console.log(req.cookies?.[COOKIE]);
+app.get("/songs", async (_req, res) => {
   const assets = (await fs.readdir(songsDir)).filter((x) => !x.startsWith("."));
 
   const songs: BaseSong[] = await Promise.all(

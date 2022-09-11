@@ -2,12 +2,12 @@ import { mutationType, nonNull, stringArg } from "nexus";
 
 export const mutation = mutationType({
   definition(t) {
-    t.field('ok', {
+    t.field("ok", {
       type: "String",
       resolve: () => {
-        return 'OK'
-      }
-    })
+        return "OK";
+      },
+    });
 
     t.field("signUp", {
       type: "Boolean",
@@ -18,8 +18,12 @@ export const mutation = mutationType({
         username: nonNull(stringArg()),
       },
       resolve: async (_, args, ctx) => {
-        await ctx.actions.db.createUser({ email: args.email, password: args.password, username: args.username })
-        return true
+        await ctx.actions.db.createUser({
+          email: args.email,
+          password: args.password,
+          username: args.username,
+        });
+        return true;
       },
     });
 
@@ -30,7 +34,8 @@ export const mutation = mutationType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_, _args, _ctx) => {
+      resolve: async (_, args, _ctx) => {
+        await _ctx.actions.db.signIn(args.email, args.password);
         return true;
       },
     });

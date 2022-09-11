@@ -39,6 +39,8 @@ describe("Gameplay", () => {
   });
 
   it("renders", () => {
+    // TODO: Fix in Cypress?
+    // @ts-ignore
     mount<GameplayProps>(Gameplay, {
       props: {
         __testingDoNotStartSong: false,

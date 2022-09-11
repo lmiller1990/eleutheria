@@ -12,6 +12,7 @@ gql`
     signUp(email: $email, password: $password, username: $username)
   }
 `;
+
 defineProps<SignUpFormProps>();
 
 const signUp = useMutation(SignUpDocument);

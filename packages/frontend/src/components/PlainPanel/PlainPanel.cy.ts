@@ -11,6 +11,8 @@ function render(
     ..._props,
   };
 
+  // TODO: Fix in Cypress?
+  // @ts-ignore
   return _mount(PlainPanel, {
     props,
     ...rest,

@@ -1,3 +1,3 @@
-import SongSelectScreen from "./SongSelectScreen.vue"
+import SongSelectScreen from "./SongSelectScreen.vue";
 
-export default SongSelectScreen 
+export default SongSelectScreen;

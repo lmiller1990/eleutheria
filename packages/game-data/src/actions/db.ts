@@ -1,11 +1,17 @@
 import { DB } from "../..";
-// import debugLib from "debug";
+import { debug } from "../../util/debug";
+import { Context } from "../graphql/context";
 import { knex } from "../knex";
 
-// const debug = debugLib("rhythm:game-data:actions:db");
+const log = debug(`game-data:db`);
 
 export class DbActions {
-  //
+  #ctx: Context;
+
+  constructor(ctx: Context) {
+    this.#ctx = ctx;
+  }
+
   async createUser({
     username,
     email,
@@ -14,13 +20,42 @@ export class DbActions {
     email: string;
     username: string;
     password: string;
-  }) {
+  }): Promise<DB.User | undefined> {
     try {
-      const user = await knex("users").insert<DB.User>({ username, email, password });
-      console.log("created user %o", user);
-      return user
+      const user = await knex("users").insert<DB.User>({
+        username,
+        email,
+        password,
+      });
+      log("created user", user);
+      return user;
     } catch (e) {
-      console.log("error creating user %o", e);
+      log("error creating user", e);
     }
+
+    return;
+  }
+
+  async findUserByEmail(email: string) {
+    const user = await knex("users").where<DB.User>("email", email).first();
+    return user;
+  }
+
+  async signIn(email: string, password: string) {
+    log(this.#ctx.req.session.id);
+
+    const user = await this.findUserByEmail(email);
+
+    if (!user) {
+      return;
+    }
+
+    if (user.password === password) {
+      await knex("sessions")
+        .where({ id: this.#ctx.req.session.id })
+        .update({ user_id: user.id });
+    }
+
+    return user;
   }
 }

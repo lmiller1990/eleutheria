@@ -49,13 +49,7 @@ import { colors } from "../../shared";
 import { TableCell } from "../../components/SongInfoPanel/types";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
-import { useModal } from "../../composables/modal";
 import Username from "./Username.vue";
-
-function handleSettings () {
-  const modal = useModal()
-  modal.showModal('signUp')
-}
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {

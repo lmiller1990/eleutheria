@@ -1,7 +1,7 @@
 overwrite: true
 schema: "../game-data/src/graphql/schema.graphql"
 documents: "./src/**/*.vue"
-config:   
+config:
   immutableTypes: true
   useTypeImports: true
   preResolveTypes: true
@@ -12,5 +12,5 @@ generates:
     plugins:
       - "typescript"
       - "typescript-operations"
-      - 'typed-document-node'
+      - "typed-document-node"
       - "typescript-document-nodes"
