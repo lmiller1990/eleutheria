@@ -41,10 +41,8 @@ export async function sessionMiddleware(
     .where("id", sessionId)
     .first();
 
-  log(`sessionId from cookie is ${sessionId} from ${req.url}`);
-
   if (sessionId && session) {
-    log(`updating req.session with id ${sessionId}`);
+    log(`updating req.session with id ${sessionId}. req: ${req.url}`);
     req.session = { id: sessionId };
     return next();
   }

@@ -5,5 +5,6 @@ export const Viewer = objectType({
   definition(t) {
     t.string("id");
     t.string("email");
+    t.string("username");
   },
 });

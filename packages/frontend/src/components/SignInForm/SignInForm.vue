@@ -18,7 +18,7 @@ defineProps<SignInFormProps>();
 
 const form = reactive({
   email: {
-    value: "a@b.com",
+    value: "a@b.c",
     valid: false,
   },
   password: {

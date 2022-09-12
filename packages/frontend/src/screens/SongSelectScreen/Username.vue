@@ -16,8 +16,6 @@ gql`
 
 const viewerQuery = useQuery({ query: Username_ViewerDocument });
 
-// viewerQuery.executeQuery()
-
 const viewer = computed(() => {
   return viewerQuery.data?.value?.viewer ?? null;
 });
@@ -27,12 +25,19 @@ const modal = useModal();
 function handleAuthenticate() {
   modal.showModal("signIn");
 }
+
+function handleSignOut() {
+  modal.showModal("signOut");
+}
 </script>
 
 <template>
   <button class="button" v-if="viewerQuery.fetching.value">-</button>
+  <button class="button" v-else-if="viewer?.email" @click="handleSignOut">
+    {{ viewer.email }}
+  </button>
   <button class="button" v-else @click="handleAuthenticate">
-    {{ viewer?.email ?? "Guest" }}
+    {{ "Guest" }}
   </button>
 </template>
 

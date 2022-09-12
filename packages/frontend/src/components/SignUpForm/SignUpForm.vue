@@ -61,7 +61,7 @@ async function handleSubmit() {
 
 <template>
   <form
-    class="w-full form text-white h-full flex flex-col items-center p-8"
+    class="w-full form text-white h-full flex flex-col items-center"
     @submit.prevent="handleSubmit"
   >
     <ValidationInput

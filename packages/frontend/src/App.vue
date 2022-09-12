@@ -17,7 +17,7 @@ const modal = useModal();
     class="modal absolute h-screen w-screen flex items-center justify-center z-40"
     @click="modal.hideModal"
   >
-    <component class="h-fit" :is="modal.component.value" @click.stop />
+    <component class="h-fit p-8" :is="modal.component.value" @click.stop />
   </div>
 
   <RouterView />

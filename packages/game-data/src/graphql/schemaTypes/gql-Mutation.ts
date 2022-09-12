@@ -39,5 +39,14 @@ export const mutation = mutationType({
         return true;
       },
     });
+
+    t.field("signOut", {
+      type: "Boolean",
+      description: "Sign out current user",
+      resolve: async (_, _args, _ctx) => {
+        await _ctx.actions.db.signOut();
+        return true;
+      },
+    });
   },
 });
