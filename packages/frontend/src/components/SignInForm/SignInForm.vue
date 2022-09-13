@@ -10,7 +10,12 @@ import { SignInForm_SignInDocument } from "../../generated/graphql";
 
 gql`
   mutation SignInForm_SignIn($email: String!, $password: String!) {
-    signIn(email: $email, password: $password)
+    signIn(email: $email, password: $password) {
+      viewer {
+        username
+        id
+      }
+    }
   }
 `;
 

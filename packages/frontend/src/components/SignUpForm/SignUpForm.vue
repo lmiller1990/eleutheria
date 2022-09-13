@@ -9,7 +9,12 @@ import { gql, useMutation } from "@urql/vue";
 
 gql`
   mutation SignUp($email: String!, $password: String!, $username: String!) {
-    signUp(email: $email, password: $password, username: $username)
+    signUp(email: $email, password: $password, username: $username) {
+      viewer {
+        id
+        username
+      }
+    }
   }
 `;
 

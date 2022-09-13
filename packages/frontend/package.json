@@ -19,6 +19,7 @@
     "@packages/engine": "0.0.0-development",
     "@packages/types": "0.0.0-development",
     "@urql/core": "3.0.3",
+    "@urql/exchange-graphcache": "^5.0.1",
     "@urql/vue": "1.0.2",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",

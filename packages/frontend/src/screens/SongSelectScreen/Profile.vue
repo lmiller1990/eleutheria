@@ -18,7 +18,12 @@ gql`
 
 gql`
   mutation Profile_SignOut {
-    signOut
+    signOut {
+      viewer {
+        id
+        username
+      }
+    }
   }
 `;
 

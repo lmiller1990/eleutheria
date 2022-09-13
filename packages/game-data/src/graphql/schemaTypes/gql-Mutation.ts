@@ -1,4 +1,5 @@
 import { mutationType, nonNull, stringArg } from "nexus";
+import { Query } from "./gql-Query";
 
 export const mutation = mutationType({
   definition(t) {
@@ -10,7 +11,7 @@ export const mutation = mutationType({
     });
 
     t.field("signUp", {
-      type: "Boolean",
+      type: Query,
       description: "Sign up using email and password",
       args: {
         email: nonNull(stringArg()),
@@ -23,12 +24,12 @@ export const mutation = mutationType({
           password: args.password,
           username: args.username,
         });
-        return true;
+        return ctx;
       },
     });
 
     t.field("signIn", {
-      type: "Boolean",
+      type: Query,
       description: "Sign in using email and password",
       args: {
         email: nonNull(stringArg()),
@@ -36,16 +37,16 @@ export const mutation = mutationType({
       },
       resolve: async (_, args, _ctx) => {
         await _ctx.actions.db.signIn(args.email, args.password);
-        return true;
+        return _ctx;
       },
     });
 
     t.field("signOut", {
-      type: "Boolean",
+      type: Query,
       description: "Sign out current user",
       resolve: async (_, _args, _ctx) => {
         await _ctx.actions.db.signOut();
-        return true;
+        return _ctx;
       },
     });
   },

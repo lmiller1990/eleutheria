@@ -1,9 +1,24 @@
 <script lang="ts" setup>
-import { createClient, provideClient } from "@urql/vue";
+import {
+  createClient,
+  provideClient,
+  dedupExchange,
+  fetchExchange,
+} from "@urql/vue";
+import { cacheExchange } from "@urql/exchange-graphcache";
 import { useModal } from "./composables/modal";
 
 const client = createClient({
   url: "/graphql",
+  exchanges: [
+    dedupExchange,
+    cacheExchange({
+      keys: {
+        Viewer: (data) => data.__typename,
+      },
+    }),
+    fetchExchange,
+  ],
 });
 
 provideClient(client);
