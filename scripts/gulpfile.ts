@@ -97,13 +97,6 @@ async function graphqlCodegen() {
   );
 }
 
-async function assetsServer() {
-  spawn("yarn", ["server"], {
-    stdio: "inherit",
-    cwd: "packages/static",
-  });
-}
-
 async function gameDataServer(): Promise<void> {
   const start = () => {
     return [
@@ -328,6 +321,5 @@ gulp.task(
     graphqlCodegen,
     gameDataServer,
     serverDev,
-    assetsServer
   )
 );

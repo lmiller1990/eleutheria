@@ -15,7 +15,6 @@ import type { EngineNote, JudgementResult } from "./engine";
 
 export type AudioProvider = (
   id: string,
-  songUrl: string,
   paddingMs: number,
   startAtMs?: number
 ) => Promise<() => AudioProviderResult>;
@@ -39,13 +38,12 @@ async function getAudioData(
 
 export const fetchAudio: AudioProvider = async (
   id: string,
-  songUrl: string,
   paddingMs: number,
   startAtMs: number = 0
 ) => {
   const audioContext = new AudioContext();
 
-  let buffer = await getAudioData(`${songUrl}/${id}.mp3`, audioContext);
+  let buffer = await getAudioData(`/static/${id}.mp3`, audioContext);
   buffer = padStart(audioContext, buffer, paddingMs);
 
   var gainNode = audioContext.createGain();
@@ -78,7 +76,6 @@ export interface GameConfig {
   };
   preSongPadding?: number;
   postSongPadding?: number;
-  songUrl: string;
   engineConfiguration: EngineConfiguration;
   codeColumns: Map<string, number>;
   inputManagerConfig: Partial<InputManagerConfig>;
@@ -184,7 +181,6 @@ export class Game implements GameAPI {
 
     const play = await this.#audioProvider(
       id,
-      this.#config.songUrl,
       this.#config.preSongPadding || 0,
       this.#config.dev?.startAtMs
     );

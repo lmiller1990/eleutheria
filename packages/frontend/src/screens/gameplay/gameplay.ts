@@ -329,7 +329,6 @@ export function create(
       manualMode: __testingManualMode,
       startAtMs: __startAtMs,
     },
-    songUrl: import.meta.env.VITE_SONG_DATA_URL,
     song: {
       tapNotes: chart.parsedTapNoteChart.tapNotes,
       holdNotes: chart.parsedHoldNoteChart.holdNotes,
