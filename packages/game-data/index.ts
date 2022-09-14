@@ -30,7 +30,6 @@ import { sessionMiddleware } from "./src/middleware/session";
 import pg from "pg";
 import { debug } from "./util/debug";
 import { contextMiddleware } from "./src/middleware/context";
-import { send } from "node:process";
 
 const log = debug("game-data:index");
 
