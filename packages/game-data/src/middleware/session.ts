@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { randomUUID } from "node:crypto";
-import { COOKIE } from "../../";
+import { COOKIE } from "../..";
 import { knex } from "../knex";
 import { debug } from "../../util/debug";
 
