@@ -3,7 +3,7 @@ import path from "path";
 
 const packages = path.join(__dirname, "..", "packages");
 
-async function build(pkg: "frontend" | "game-data") {
+async function build(pkg: string) {
   console.log(`Building ${pkg}`);
   return execa("yarn", ["build"], {
     cwd: path.join(packages, pkg),
@@ -15,7 +15,8 @@ async function main() {
   // 1. we build front-end first, because game-data needs the manifest
   // that is generated
   try {
-    // await build("frontend");
+    await build("chart-parser");
+    await build("frontend");
 
     // 2. game-data (the backend)
     await build("game-data");

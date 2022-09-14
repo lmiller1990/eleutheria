@@ -4,14 +4,14 @@ import path from "node:path";
 import http from "node:http";
 import bodyParser from "body-parser";
 import chokidar from "chokidar";
-import type { ParamData, UserScripts, BaseSong, LoadSongData } from "@packages/types/src";
+import type { ParamData, UserScripts, BaseSong, LoadSongData } from "@packages/types";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
   ChartMetadata,
   parseChart,
   parseHoldsChart,
-} from "@packages/chart-parser/src";
+} from "@packages/chart-parser";
 import {
   compileSkins,
   compileUserStyle,
