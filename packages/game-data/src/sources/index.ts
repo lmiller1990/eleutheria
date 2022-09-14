@@ -1,5 +1,5 @@
 import { Context } from "../graphql/context";
-import { HtmlDataSource } from "./HtmlDataSource";
+import { HtmlDataSource } from "./htmlDataSource";
 
 export class DataSources {
   #ctx: Context;
