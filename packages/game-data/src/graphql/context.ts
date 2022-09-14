@@ -8,7 +8,7 @@ export class Context {
   req: Request;
   res: Response;
   actions = new DataActions(this);
-  sources = new DataSources(this)
+  sources = new DataSources(this);
 
   constructor(req: Request, res: Response) {
     this.req = req;

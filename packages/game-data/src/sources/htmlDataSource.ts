@@ -13,8 +13,8 @@ export class HtmlDataSource {
     this.#ctx = ctx;
   }
 
-  async prodModeIndexHtml () {
-    const fe = path.join(__dirname, "..", "..", "..", "frontend");
+  async prodModeIndexHtml() {
+    const fe = path.join(__dirname, "..", "..", "..", "..", "frontend");
     const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
 
     const moduleFile = manifest["src/main.ts"].file;
@@ -41,7 +41,7 @@ export class HtmlDataSource {
           <div id="app" class="h-full flex justify-center"></div>
           <script type="module" src="${moduleFile}"></script>
         </body>
-      </html>`
+      </html>`;
   }
 
   get devModeIndexHtml() {

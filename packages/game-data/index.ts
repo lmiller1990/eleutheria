@@ -168,8 +168,8 @@ async function loadSong(id: string): Promise<LoadSongData> {
 
 app.get("/", async (req, res) => {
   if (process.env.NODE_ENV === "production") {
-    res.send(await req.ctx.sources.html.prodModeIndexHtml())
-    return
+    res.send(await req.ctx.sources.html.prodModeIndexHtml());
+    return;
   }
 
   res.send(req.ctx.sources.html.devModeIndexHtml);
@@ -245,11 +245,11 @@ app.post<{}, {}, { name: string; password: string }>(
 app.use(
   "/graphql",
   graphqlHTTP((_req, res) => {
-    const req = _req as unknown as Express.Request
+    const req = _req as unknown as Express.Request;
     return {
       schema: graphqlSchema,
       graphiql: true,
-      context: req.ctx
+      context: req.ctx,
     };
   })
 );
