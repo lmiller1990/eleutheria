@@ -1,20 +1,27 @@
-import path from "path";
 import execa from "execa";
+import path from "path";
 
-const root = path.join(__dirname, "..");
-const pkg = path.join(root, "packages");
+const packages = path.join(__dirname, "..", "packages");
 
-async function build() {
-  await execa("yarn", ["lerna", "run", "build"], {
-    cwd: root
-  });
-  await execa("yarn", ["build"], {
-    cwd: path.join(pkg, "game-data"),
-  });
-
-  await execa("yarn", ["build"], {
-    cwd: path.join(pkg, "chart-parser"),
+async function build(pkg: "frontend" | "game-data") {
+  console.log(`Building ${pkg}`);
+  return execa("yarn", ["build"], {
+    cwd: path.join(packages, pkg),
+    shell: true,
+    stderr: "pipe",
   });
 }
+async function main() {
+  // 1. we build front-end first, because game-data needs the manifest
+  // that is generated
+  try {
+    // await build("frontend");
 
-build();
+    // 2. game-data (the backend)
+    await build("game-data");
+  } catch (e) {
+    console.log("Error building", e);
+  }
+}
+
+main();

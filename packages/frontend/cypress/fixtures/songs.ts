@@ -1,7 +1,7 @@
 import type { Chart, Song } from "../../src/types";
 import { thumbails } from "../../src/thumbnails";
 import { ChartMetadata } from "@packages/chart-parser";
-import { LoadSongData } from "@packages/game-data";
+import { LoadSongData } from "@packages/types/src";
 
 export const metadata: ChartMetadata = {
   banner: thumbails[0],

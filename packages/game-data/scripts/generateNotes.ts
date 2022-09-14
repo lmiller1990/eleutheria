@@ -3,7 +3,6 @@ import fs from "fs-extra";
 import sass from "sass";
 import { NoteSkin } from "@packages/types";
 
-const notesDir = path.join(__dirname, "..", "notes");
 const userDir = path.join(__dirname, "..", "user");
 
 export async function readUserJavaScript(): Promise<string> {
@@ -17,7 +16,7 @@ export async function readUserJavaScript(): Promise<string> {
 }
 
 export async function compileUserStyle(): Promise<string> {
-  const p = path.join("userDir", "index.scss");
+  const p = path.join(userDir, "index.scss");
 
   if (!(await fs.pathExists(p))) {
     return "/* No user stylesheet */";
@@ -26,12 +25,12 @@ export async function compileUserStyle(): Promise<string> {
   return sass.compile(p).css;
 }
 
-export function compileSkins(): NoteSkin[] {
+export function compileSkins(notesDir: string, ext: string): NoteSkin[] {
   const skins = fs.readdirSync(notesDir);
 
   return skins.map((name) => {
     return {
-      css: sass.compile(path.join(notesDir, name, "index.scss"), {}).css,
+      css: sass.compile(path.join(notesDir, name, `index.${ext}`), {}).css,
       name,
     };
   });

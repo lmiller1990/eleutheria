@@ -1,9 +1,30 @@
-import type { ChartMetadata } from "@packages/chart-parser";
+import type {
+  ChartMetadata,
+  ParsedHoldNoteChart,
+  ParsedTapNoteChart,
+} from "@packages/chart-parser";
 import type { Chart } from "@packages/frontend/src/types";
 
 export const difficulties = ["basic", "standard", "expert"] as const;
 
 export type Difficulty = typeof difficulties[number];
+
+interface WebSocketChartUpdatedMessage {
+  type: "editor:chart:updated";
+  data: LoadSongData;
+}
+
+export type WebSocketEmitData = WebSocketChartUpdatedMessage;
+
+export interface LoadSongData {
+  charts: Array<{
+    difficulty: string;
+    level: number;
+    parsedTapNoteChart: ParsedTapNoteChart;
+    parsedHoldNoteChart: ParsedHoldNoteChart;
+  }>;
+  metadata: ChartMetadata;
+}
 
 export interface BaseSong extends ChartMetadata {
   id: string;

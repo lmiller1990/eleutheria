@@ -1,5 +1,4 @@
-import { LoadSongData } from "@packages/game-data";
-import type { NoteSkin, ParamData, UserScripts } from "@packages/types";
+import type { NoteSkin, ParamData, UserScripts, LoadSongData } from "@packages/types";
 
 export async function fetchNoteSkins(): Promise<NoteSkin[]> {
   const res = await window.fetch(`/note-skins`);
