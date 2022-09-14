@@ -1,19 +1,18 @@
 import { LoadSongData } from "@packages/game-data";
 import type { NoteSkin, ParamData, UserScripts } from "@packages/types";
-import { getGameDataUrl } from "./env";
 
 export async function fetchNoteSkins(): Promise<NoteSkin[]> {
-  const res = await window.fetch(getGameDataUrl(`/note-skins`));
+  const res = await window.fetch(`/note-skins`);
   return res.json();
 }
 
 export async function fetchUser(): Promise<UserScripts> {
-  const res = await window.fetch(getGameDataUrl(`/user`));
+  const res = await window.fetch(`/user`);
   return res.json();
 }
 
 export async function fetchData(id: string): Promise<LoadSongData> {
-  const res = await window.fetch(getGameDataUrl(`/songs/${id}`));
+  const res = await window.fetch(`/songs/${id}`);
   return res.json();
 }
 

@@ -1,7 +1,8 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import path from "path";
-import http from "http";
+import path from "node:path";
+import http from "node:http";
+import bodyParser from "body-parser";
 import chokidar from "chokidar";
 import type { ParamData, UserScripts } from "@packages/types";
 import { WebSocketServer } from "ws";
@@ -19,17 +20,51 @@ import {
   compileUserStyle,
   readUserJavaScript,
 } from "./scripts/generateNotes";
-import { createGraphQL } from "./src/graphql";
+import { graphqlHTTP } from "express-graphql";
+import { graphqlSchema } from "./src/graphql/schema";
+import { Context } from "./src/graphql/context";
+import { knex } from "./src/knex";
+import cookieParser from "cookie-parser";
+import { sessionMiddleware } from "./src/session/middleware";
+import pg from "pg";
 
-const PORT = 8000;
+const pgClient = new pg.Client({
+  user: "lachlan",
+  database: "rhythm",
+});
+
+export const COOKIE = "rhythm-cookie";
+
+console.log("Starting game server...");
+
+export declare namespace DB {
+  interface User {
+    id: string;
+    email: string;
+    password: string;
+  }
+}
+
+const PORT = 5566;
 
 const app = express();
 
+const SECRET = "keyboard cat";
+
 app.use(cors());
+app.use(cookieParser(SECRET));
+app.use(bodyParser.json());
+
+app.use(sessionMiddleware);
 
 const server = http.createServer(app);
 
-server.listen(PORT, () => {
+app.get("/health-check", (_req, res) => {
+  res.json({ msg: "ok" });
+});
+
+server.listen(PORT, async () => {
+  await pgClient.connect();
   console.log(`Started data server on port ${PORT}`);
 });
 
@@ -141,6 +176,16 @@ async function loadSong(id: string): Promise<LoadSongData> {
   return data;
 }
 
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
+});
+
+app.get("/static/:asset", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "..", "frontend", "static", req.params.asset)
+  );
+});
+
 app.get("/songs/:id", async (req, res) => {
   const data = await loadSong(req.params.id);
 
@@ -152,7 +197,33 @@ app.get("/note-skins", (_req, res) => {
   res.json(skins);
 });
 
-app.use("/graphql", createGraphQL());
+app.post<{}, {}, { name: string; password: string }>(
+  "/login",
+  async (req, res) => {
+    const user = await knex<DB.User>("users")
+      .where({ email: req.body.name, password: req.body.password })
+      .first();
+
+    if (user) {
+      await knex("sessions")
+        .where({ id: req.session.id })
+        .update({ user_id: user.id });
+    }
+
+    res.json(user);
+  }
+);
+
+app.use(
+  "/graphql",
+  graphqlHTTP((req, res) => {
+    return {
+      schema: graphqlSchema,
+      graphiql: true,
+      context: new Context(req as Request, res as Response),
+    };
+  })
+);
 
 app.get("/user", async (_req, res) => {
   const [css, js] = await Promise.all([

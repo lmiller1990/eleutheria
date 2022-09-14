@@ -51,7 +51,6 @@ watch(
   debounce((time) => {
     const split = time.split(":");
 
-    console.log(split);
     if (
       split.length !== 2 ||
       isNaN(parseInt(split[0], 10)) ||

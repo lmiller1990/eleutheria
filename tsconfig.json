@@ -3,7 +3,7 @@
     "sourceMap": true,
     "jsx": "preserve",
     "strict": true,
-    "lib": ["esnext"],
+    "lib": ["esnext", "DOM"],
     "esModuleInterop": true,
     "allowJs": true,
     "module": "CommonJS",
@@ -15,5 +15,5 @@
     "**/*.ts",
     "**/*.js",
     "**/*.vue"
-  ],
+  ]
 }

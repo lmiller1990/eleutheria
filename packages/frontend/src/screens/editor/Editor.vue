@@ -11,7 +11,7 @@ import type { LoadSongData, WebSocketEmitData } from "@packages/game-data";
 
 const props = defineProps<GameplayProps>();
 
-const ws = new window.WebSocket(`ws://localhost:8000`);
+const ws = new window.WebSocket(`ws://localhost:5566`);
 
 ws.addEventListener("open", () => {
   const data = getSongId();

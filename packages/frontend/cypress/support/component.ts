@@ -41,8 +41,9 @@ declare global {
 Cypress.Commands.add("mount", _mount);
 
 type MountingOptions<T> = Parameters<typeof _mount<T>>[1]
+type Comp = Parameters<typeof _mount>[0]
 
-export function mount<T>(comp: any, payload: MountingOptions<T> = {}) {
+export function mount<T>(comp: Comp, payload: MountingOptions<T> = {}) {
   const _props: T = {
     ...payload.props,
   } as any;
@@ -60,5 +61,3 @@ export function mount<T>(comp: any, payload: MountingOptions<T> = {}) {
     }
   });
 }
-
-

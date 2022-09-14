@@ -1,4 +1,6 @@
 import { createApp } from "vue";
+// https://vitejs.dev/guide/backend-integration.html
+import "vite/modulepreload-polyfill";
 import App from "./App.vue";
 import { createPinia } from "pinia";
 import { createRouter } from "./router";

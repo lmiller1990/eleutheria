@@ -8,6 +8,7 @@ function render(_props?: Partial<InfoPanelProps>) {
     ..._props,
   };
 
+  // @ts-ignore
   return _mount(InfoPanel, {
     props,
   });

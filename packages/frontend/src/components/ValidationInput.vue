@@ -27,8 +27,11 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="flex p-12 text-4xl justify-center" :data-cy="`${props.label}`">
-    <label class="upcase mr-12" :for="props.label">{{ props.label }}</label>
+  <div
+    class="w-full flex p-8 text-2xl justify-center"
+    :data-cy="`${props.label}`"
+  >
+    <label class="w-32 mr-12" :for="props.label">{{ props.label }}</label>
     <div class="flex flex-grow flex-col">
       <input
         class="input bg-transparent border-b-2 border-white"
@@ -38,7 +41,7 @@ watchEffect(() => {
         :type="type ?? 'text'"
         @input="e => emit('update:modelValue', (e.target as HTMLInputElement).value)"
       />
-      <div class="flex justify-end text-lg">
+      <div class="flex justify-end text-base">
         <div class="validation flex">
           <div
             v-for="rule of status.validations"
