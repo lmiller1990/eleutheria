@@ -169,8 +169,6 @@ app.get("/", async (_req, res) => {
     const fe = path.join(__dirname, "..", "..", "frontend");
     const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
 
-    console.log(manifest);
-
     const moduleFile = manifest["src/main.ts"].file;
     const mainCss = manifest["src/main.css"].file;
 

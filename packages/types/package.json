@@ -7,6 +7,7 @@
     "test": "echo 'ok'",
     "check-ts": "tsc --noEmit"
   },
+  "types": "./src/index.ts",
   "exports": {
     "import": "./src/index.ts",
     "default": "./src/index.ts"

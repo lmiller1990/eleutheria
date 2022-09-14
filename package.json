@@ -24,7 +24,6 @@
     "dev": "NODE_ENV=development yarn gulp dev",
     "build": "NODE_ENV=production ts-node --esm --transpileOnly scripts/build.ts",
     "clean": "find . -name 'dist' -type d -prune -exec rm -rf '{}' +",
-    "install": "lerna exec yarn install",
     "lint": "prettier --write packages",
     "test": "lerna run test --stream",
     "lint:check": "yarn prettier --check packages",

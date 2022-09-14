@@ -30,3 +30,4 @@ jobs:
     - run: yarn lint:check
     - run: yarn check-ts
     - run: yarn test
+    - run: yarn build # make sure prod build is working
