@@ -5,7 +5,7 @@ import {
   dedupExchange,
   fetchExchange,
 } from "@urql/vue";
-import { devtoolsExchange } from '@urql/devtools';
+import { devtoolsExchange } from "@urql/devtools";
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { useModal } from "./composables/modal";
 
@@ -17,7 +17,7 @@ const client = createClient({
     cacheExchange({
       keys: {
         Viewer: () => null,
-        App: () => null
+        App: () => null,
       },
     }),
     fetchExchange,
