@@ -232,14 +232,20 @@ app.get("/assets/:asset", (req, res) => {
 });
 
 app.get("/static/:asset", (req, res) => {
-  const p = path.join(
-    __dirname,
-    "..",
-    "..",
-    "frontend",
-    "static",
-    req.params.asset
-  );
+  if (process.env.NODE_ENV === "production") {
+    const p = path.join(
+      __dirname,
+      "..",
+      "..",
+      "frontend",
+      "static",
+      req.params.asset
+    );
+    log(`serving static asset ${req.params.asset} from path ${p}`);
+    res.sendFile(p);
+    return;
+  }
+  const p = path.join(__dirname, "..", "frontend", "static", req.params.asset);
   log(`serving static asset ${req.params.asset} from path ${p}`);
   res.sendFile(p);
 });
@@ -256,7 +262,7 @@ app.get("/note-skins", (_req, res) => {
     res.json(skins);
   }
 
-  const notesDir = path.join(__dirname, "..", "notes");
+  const notesDir = path.join(__dirname, "notes");
   const skins = compileSkins(notesDir, "scss");
   res.json(skins);
 });
