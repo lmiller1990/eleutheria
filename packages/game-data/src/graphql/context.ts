@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import { knex } from "../knex";
 import { DB } from "../../";
 import { DataActions } from "../actions";
+import { DataSources } from "../sources";
 
 export class Context {
   req: Request;
   res: Response;
   actions = new DataActions(this);
+  sources = new DataSources(this);
 
   constructor(req: Request, res: Response) {
     this.req = req;

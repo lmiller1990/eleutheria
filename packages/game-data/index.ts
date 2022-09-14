@@ -24,12 +24,12 @@ import {
 } from "./scripts/generateNotes";
 import { graphqlHTTP } from "express-graphql";
 import { graphqlSchema } from "./src/graphql/schema";
-import { Context } from "./src/graphql/context";
 import { knex } from "./src/knex";
 import cookieParser from "cookie-parser";
-import { sessionMiddleware } from "./src/session/middleware";
+import { sessionMiddleware } from "./src/middleware/session";
 import pg from "pg";
 import { debug } from "./util/debug";
+import { contextMiddleware } from "./src/middleware/context";
 
 const log = debug("game-data:index");
 
@@ -61,6 +61,7 @@ app.use(cookieParser(SECRET));
 app.use(bodyParser.json());
 
 app.use(sessionMiddleware);
+app.use(contextMiddleware);
 
 const server = http.createServer(app);
 
@@ -164,55 +165,13 @@ async function loadSong(id: string): Promise<LoadSongData> {
   return data;
 }
 
-app.get("/", async (_req, res) => {
+app.get("/", async (req, res) => {
   if (process.env.NODE_ENV === "production") {
-    const fe = path.join(__dirname, "..", "..", "frontend");
-    const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
-
-    const moduleFile = manifest["src/main.ts"].file;
-    const mainCss = manifest["src/main.css"].file;
-
-    res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <link rel="stylesheet" href="${mainCss}" />
-        <title>Vite App</title>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap"
-          rel="stylesheet"
-        />
-        <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
-      </head>
-
-      <body>
-        <div id="app" class="h-full flex justify-center"></div>
-        <script type="module" src="${moduleFile}"></script>
-      </body>
-    </html>
-
-    `);
+    res.send(await req.ctx.sources.html.prodModeIndexHtml());
     return;
   }
 
-  const indexHtml = (
-    await fs.readFile(
-      path.join(__dirname, "..", "frontend", "index.html"),
-      "utf-8"
-    )
-  ).replace(
-    "<!-- __DEV_PLACEHOLDER__ -->",
-    `
-    <script type="module" src="http://localhost:5173/@vite/client"></script>
-    <script type="module" src="http://localhost:5173/src/main.ts"></script>
-  `
-  );
-
-  res.send(indexHtml);
+  res.send(req.ctx.sources.html.devModeIndexHtml);
 });
 
 app.get("/assets/:asset", (req, res) => {
@@ -284,11 +243,12 @@ app.post<{}, {}, { name: string; password: string }>(
 
 app.use(
   "/graphql",
-  graphqlHTTP((req, res) => {
+  graphqlHTTP((_req, res) => {
+    const req = _req as unknown as Express.Request;
     return {
       schema: graphqlSchema,
       graphiql: true,
-      context: new Context(req as Request, res as Response),
+      context: req.ctx,
     };
   })
 );
