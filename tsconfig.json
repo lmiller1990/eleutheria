@@ -9,7 +9,8 @@
     "module": "CommonJS",
     "noImplicitAny": true,
     "target": "es2019",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",

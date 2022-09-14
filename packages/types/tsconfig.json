@@ -1,7 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["**/*.ts"],
-  "compilerOptions": {
-    "skipLibCheck": true
-  }
+  "include": ["**/*.ts"]
 }
