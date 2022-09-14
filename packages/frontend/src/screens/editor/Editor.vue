@@ -7,7 +7,7 @@ import EditorPanel from "./EditorPanel";
 import type { StartGame } from "../gameplay/gameplay";
 import { create } from "../gameplay/gameplay";
 import { getSongId } from "../gameplay/fetchData";
-import type { LoadSongData, WebSocketEmitData } from "@packages/game-data";
+import type { LoadSongData, WebSocketEmitData } from "@packages/types/src";
 
 const props = defineProps<GameplayProps>();
 

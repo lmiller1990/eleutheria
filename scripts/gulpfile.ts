@@ -9,8 +9,8 @@ import { ChildProcess, spawn } from "child_process";
 import http from "http";
 
 function waitForServer(hostname: string, port: number) {
-  const INTERVAL = 1000
-  const TRY_COUNT = 10
+  const INTERVAL = 1000;
+  const TRY_COUNT = 10;
 
   return new Promise<void>((resolve, reject) => {
     let i = 0;
@@ -33,8 +33,8 @@ function waitForServer(hostname: string, port: number) {
           path: "/health-check",
           port,
           headers: {
-            'X-NO-SESSION': 'TRUE'
-          }
+            "X-NO-SESSION": "TRUE",
+          },
         },
         (res) => {
           res.on("data", (data: Buffer) => {
@@ -104,7 +104,7 @@ async function gameDataServer(): Promise<void> {
         stdio: "inherit",
         cwd: "packages/game-data",
       }),
-      spawn("yarn", ["build-metadata"], {
+      spawn("yarn", ["genProdData"], {
         stdio: "inherit",
         cwd: "packages/game-data",
       }),
@@ -315,11 +315,5 @@ gulp.task("gameDataServer", gameDataServer);
 
 gulp.task(
   "dev",
-  gulp.series(
-    tailwind,
-    autobarrel,
-    graphqlCodegen,
-    gameDataServer,
-    serverDev,
-  )
+  gulp.series(tailwind, autobarrel, graphqlCodegen, gameDataServer, serverDev)
 );

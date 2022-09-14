@@ -10,7 +10,9 @@
     "noImplicitAny": true,
     "target": "es2019",
     "moduleResolution": "node",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "resolveJsonModule": true
   },
   "include": [
     "**/*.ts",

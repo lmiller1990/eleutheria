@@ -4,17 +4,19 @@ import path from "node:path";
 import http from "node:http";
 import bodyParser from "body-parser";
 import chokidar from "chokidar";
-import type { ParamData, UserScripts } from "@packages/types";
+import type {
+  ParamData,
+  UserScripts,
+  BaseSong,
+  LoadSongData,
+} from "@packages/types";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
   ChartMetadata,
   parseChart,
-  ParsedTapNoteChart,
-  ParsedHoldNoteChart,
   parseHoldsChart,
 } from "@packages/chart-parser";
-import type { BaseSong } from "@packages/types";
 import {
   compileSkins,
   compileUserStyle,
@@ -27,6 +29,9 @@ import { knex } from "./src/knex";
 import cookieParser from "cookie-parser";
 import { sessionMiddleware } from "./src/session/middleware";
 import pg from "pg";
+import { debug } from "./util/debug";
+
+const log = debug("game-data:index");
 
 const pgClient = new pg.Client({
   user: "lachlan",
@@ -81,13 +86,6 @@ type WebSocketPayload = WebSocketEditorStartMessage;
 
 let watchers = new Map<string, chokidar.FSWatcher>();
 
-interface WebSocketChartUpdatedMessage {
-  type: "editor:chart:updated";
-  data: LoadSongData;
-}
-
-export type WebSocketEmitData = WebSocketChartUpdatedMessage;
-
 wss.on("connection", (ws) => {
   ws.on("message", (buffer) => {
     const msg = JSON.parse(buffer.toString()) as WebSocketPayload;
@@ -118,16 +116,6 @@ wss.on("connection", (ws) => {
     }
   });
 });
-
-export interface LoadSongData {
-  charts: Array<{
-    difficulty: string;
-    level: number;
-    parsedTapNoteChart: ParsedTapNoteChart;
-    parsedHoldNoteChart: ParsedHoldNoteChart;
-  }>;
-  metadata: ChartMetadata;
-}
 
 const songMetadata = fs.readJsonSync("./songMetadata.json");
 
@@ -176,14 +164,88 @@ async function loadSong(id: string): Promise<LoadSongData> {
   return data;
 }
 
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
+app.get("/", async (_req, res) => {
+  if (process.env.NODE_ENV === "production") {
+    const fe = path.join(__dirname, "..", "..", "frontend");
+    const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
+
+    const moduleFile = manifest["src/main.ts"].file;
+    const mainCss = manifest["src/main.css"].file;
+
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="${mainCss}" />
+        <title>Vite App</title>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap"
+          rel="stylesheet"
+        />
+        <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
+      </head>
+
+      <body>
+        <div id="app" class="h-full flex justify-center"></div>
+        <script type="module" src="${moduleFile}"></script>
+      </body>
+    </html>
+
+    `);
+    return;
+  }
+
+  const indexHtml = (
+    await fs.readFile(
+      path.join(__dirname, "..", "frontend", "index.html"),
+      "utf-8"
+    )
+  ).replace(
+    "<!-- __DEV_PLACEHOLDER__ -->",
+    `
+    <script type="module" src="http://localhost:5173/@vite/client"></script>
+    <script type="module" src="http://localhost:5173/src/main.ts"></script>
+  `
+  );
+
+  res.send(indexHtml);
+});
+
+app.get("/assets/:asset", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "..",
+      "..",
+      "frontend",
+      "dist",
+      "assets",
+      req.params.asset
+    )
+  );
 });
 
 app.get("/static/:asset", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "..", "frontend", "static", req.params.asset)
-  );
+  if (process.env.NODE_ENV === "production") {
+    const p = path.join(
+      __dirname,
+      "..",
+      "..",
+      "frontend",
+      "static",
+      req.params.asset
+    );
+    log(`serving static asset ${req.params.asset} from path ${p}`);
+    res.sendFile(p);
+    return;
+  }
+  const p = path.join(__dirname, "..", "frontend", "static", req.params.asset);
+  log(`serving static asset ${req.params.asset} from path ${p}`);
+  res.sendFile(p);
 });
 
 app.get("/songs/:id", async (req, res) => {
@@ -193,7 +255,13 @@ app.get("/songs/:id", async (req, res) => {
 });
 
 app.get("/note-skins", (_req, res) => {
-  const skins = compileSkins();
+  if (process.env.NODE_ENV === "production") {
+    const skins = compileSkins(path.join(__dirname, "notes"), "css");
+    res.json(skins);
+  }
+
+  const notesDir = path.join(__dirname, "notes");
+  const skins = compileSkins(notesDir, "scss");
   res.json(skins);
 });
 

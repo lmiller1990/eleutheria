@@ -4,7 +4,6 @@
   "private": true,
   "main": "index.ts",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "express-graphql": "^0.12.0",
@@ -13,7 +12,9 @@
     "knex": "^2.3.0",
     "music-metadata": "^7.12.3",
     "pg": "^8.8.0",
-    "ws": "8.8.1"
+    "ws": "8.8.1",
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6"
   },
   "devDependencies": {
     "@packages/chart-parser": "0.0.0-development",
@@ -32,9 +33,8 @@
     "start": "ts-node index.ts",
     "test": "echo 'ok - no tests here yet'",
     "postinstall": "echo 'ok' # yarn build",
-    "build": "yarn build-metadata && tsc && cp -r songs dist && cp songMetadata.json dist && yarn build-notes",
-    "build-metadata": "ts-node --esm scripts/generateMetadata.ts",
-    "build-notes": "ts-node --esm scripts/generateNotes.ts",
+    "build": "tsc && yarn genProdData && cp -r songs dist && cp songMetadata.json dist",
+    "genProdData": "ts-node --esm ./scripts/generateDataForProd.ts",
     "check-ts": "tsc --noEmit",
     "clean": "rm -rf dist",
     "build-schema": "ts-node --transpile-only src/graphql/buildSchema.ts"
