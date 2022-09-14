@@ -4,7 +4,12 @@ import path from "node:path";
 import http from "node:http";
 import bodyParser from "body-parser";
 import chokidar from "chokidar";
-import type { ParamData, UserScripts, BaseSong, LoadSongData } from "@packages/types";
+import type {
+  ParamData,
+  UserScripts,
+  BaseSong,
+  LoadSongData,
+} from "@packages/types";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
@@ -161,7 +166,7 @@ async function loadSong(id: string): Promise<LoadSongData> {
 
 app.get("/", async (_req, res) => {
   if (process.env.NODE_ENV === "production") {
-    const fe = path.join(__dirname, "..", "..", "frontend")
+    const fe = path.join(__dirname, "..", "..", "frontend");
     const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
 
     console.log(manifest);
@@ -227,7 +232,14 @@ app.get("/assets/:asset", (req, res) => {
 });
 
 app.get("/static/:asset", (req, res) => {
-  const p = path.join(__dirname, "..", "..", "frontend", "static", req.params.asset);
+  const p = path.join(
+    __dirname,
+    "..",
+    "..",
+    "frontend",
+    "static",
+    req.params.asset
+  );
   log(`serving static asset ${req.params.asset} from path ${p}`);
   res.sendFile(p);
 });

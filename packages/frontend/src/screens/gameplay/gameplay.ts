@@ -26,7 +26,12 @@ import {
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
-import type { NoteSkin, ParamData, UserScripts, LoadSongData } from "@packages/types";
+import type {
+  NoteSkin,
+  ParamData,
+  UserScripts,
+  LoadSongData,
+} from "@packages/types";
 import { preferencesManager } from "./preferences";
 
 let timeoutId: number | undefined;

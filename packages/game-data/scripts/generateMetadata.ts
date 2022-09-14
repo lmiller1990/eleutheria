@@ -17,9 +17,7 @@ export async function generate() {
   const songsWithLength = await Promise.all(
     mp3s.map<Promise<[string, AudioMetadata]>>(async (id) => [
       id,
-      await mm.parseFile(
-        path.join(songsDir, `${id}.mp3`)
-      ),
+      await mm.parseFile(path.join(songsDir, `${id}.mp3`)),
     ])
   );
 
