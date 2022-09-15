@@ -63,7 +63,9 @@ export class DbActions {
   }
 
   async signOut() {
-    await knexTable("sessions").where({ id: this.#ctx.req.session.id }).delete();
+    await knexTable("sessions")
+      .where({ id: this.#ctx.req.session.id })
+      .delete();
 
     log(`deleted session with id ${this.#ctx.req.session.id}`);
   }
