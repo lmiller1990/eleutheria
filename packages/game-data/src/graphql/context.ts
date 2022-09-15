@@ -24,7 +24,7 @@ export class Context {
       .where({ "sessions.id": this.req.session.id })
       .join("users", "users.id", "=", "sessions.user_id")
       .first<Users>();
-    return user;
+    return { ...user, id: user.id.toString() };
   }
 
   get app() {
