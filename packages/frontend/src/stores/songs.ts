@@ -29,6 +29,7 @@ export const useSongsStore = defineStore("songs", {
     async fetchSongs() {
       const res = await window.fetch("/songs");
       const data = (await res.json()) as BaseSong[];
+      console.log(data);
 
       this.songs = data.map<Song>((song, idx) => {
         return {

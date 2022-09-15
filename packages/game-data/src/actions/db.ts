@@ -57,7 +57,7 @@ export class DbActions {
     return user;
   }
 
-  async queryForSongs() {
+  async queryForSongs(): Promise<Songs[]> {
     const songs = await knexTable<Songs>("songs").select();
     return songs;
   }

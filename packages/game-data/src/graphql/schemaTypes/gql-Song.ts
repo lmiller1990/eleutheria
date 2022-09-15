@@ -7,6 +7,7 @@ export const Song = objectType({
     t.nonNull.string("title");
     t.nonNull.string("imgSrc");
     t.nonNull.string("duration");
+    t.nonNull.string("artist");
     t.nonNull.float("bpm");
     t.float("best");
   },

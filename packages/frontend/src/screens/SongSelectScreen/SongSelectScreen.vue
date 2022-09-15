@@ -6,7 +6,7 @@
     <div class="wrapper max-w-screen-lg h-full">
       <div class="tiles flex items-center justify-center">
         <SongTile
-          v-for="(song, idx) of songsStore.songs"
+          v-for="(song, idx) of songsQuery.data?.value?.songs"
           :key="song.id"
           :songTitle="song.title"
           class="h-full"
@@ -50,6 +50,25 @@ import { TableCell } from "../../components/SongInfoPanel/types";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
 import Username from "./Username.vue";
+import { gql, useQuery } from "@urql/vue";
+import { SongSelectScreen_SongsDocument } from "../../generated/graphql";
+
+gql`
+  query SongSelectScreen_Songs {
+    songs {
+      id
+      title
+      imgSrc
+      duration
+      artist
+      bpm
+    }
+  }
+`;
+
+const songsQuery = useQuery({
+  query: SongSelectScreen_SongsDocument,
+});
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {

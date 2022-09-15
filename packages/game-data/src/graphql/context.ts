@@ -17,9 +17,14 @@ export class Context {
 
   async viewer() {
     const user = await knexTable("sessions")
-      .where({ "sessions.id": this.req.session.id })
+      .where({ "sessions.id": this.req.session?.id })
       .join("users", "users.id", "=", "sessions.user_id")
       .first<Users>();
+
+    if (!user) {
+      return null;
+    }
+
     return { ...user, id: user.id.toString() };
   }
 

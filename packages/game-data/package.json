@@ -31,7 +31,7 @@
     "vitest": "0.1.24"
   },
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node --transpileOnly index.ts",
     "test": "echo 'ok - no tests here yet'",
     "postinstall": "echo 'ok' # yarn build",
     "build": "tsc && yarn genProdData && cp -r songs dist && cp songMetadata.json dist",
