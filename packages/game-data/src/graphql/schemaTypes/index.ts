@@ -5,4 +5,5 @@ export * from "./gql-App";
 export * from "./gql-Book";
 export * from "./gql-Mutation";
 export * from "./gql-Query";
+export * from "./gql-Song";
 export * from "./gql-Viewer";

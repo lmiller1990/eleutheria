@@ -31,14 +31,17 @@ const modal = useModal();
 
 <template>
   <div
-    v-if="modal.show.value"
-    class="modal absolute h-screen w-screen flex items-center justify-center z-40"
+    class="modal absolute h-screen w-screen flex items-center justify-center"
+    :class="{
+      'modal-show': modal.show.value,
+      'modal-hide': !modal.show.value,
+    }"
     @click="modal.hideModal"
   >
     <component class="h-fit p-8" :is="modal.component.value" @click.stop />
   </div>
 
-  <RouterView />
+  <RouterView class="main-view" :class="{ 'zoom-out': modal.show.value }" />
   <!-- <Query /> -->
 </template>
 
@@ -52,5 +55,24 @@ body,
 
 .modal {
   background: rgba(86, 88, 105, 0.5);
+}
+
+.modal-show {
+  @apply opacity-100 z-50 scale-100;
+  transform: scale(1);
+}
+
+.modal-hide {
+  @apply opacity-0 -z-50 scale-90;
+}
+
+.modal,
+.main-view {
+  transition: all 0.1s ease;
+}
+
+.zoom-out {
+  filter: blur(5px) grayscale(50%);
+  transform: scale(0.98);
 }
 </style>

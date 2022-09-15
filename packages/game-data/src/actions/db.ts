@@ -1,4 +1,4 @@
-import { DB } from "../..";
+import { Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
 import { knex } from "../knex";
@@ -20,9 +20,9 @@ export class DbActions {
     email: string;
     username: string;
     password: string;
-  }): Promise<DB.User | undefined> {
+  }): Promise<Users | undefined> {
     try {
-      const user = await knex("users").insert<DB.User>({
+      const user = await knex("users").insert<Users>({
         username,
         email,
         password,
@@ -37,7 +37,7 @@ export class DbActions {
   }
 
   async findUserByEmail(email: string) {
-    const user = await knex("users").where<DB.User>("email", email).first();
+    const user = await knex("users").where<Users>("email", email).first();
     return user;
   }
 
@@ -46,18 +46,18 @@ export class DbActions {
 
     const user = await this.findUserByEmail(email);
 
-    if (!user) {
-      return;
+    if (!user || user.password !== password) {
+      throw Error("Credentials do not match.");
     }
 
-    if (user.password === password) {
-      await knex("sessions")
-        .where({ id: this.#ctx.req.session.id })
-        .update({ user_id: user.id });
-    }
+    await knex("sessions")
+      .where({ id: this.#ctx.req.session.id })
+      .update({ user_id: user.id });
 
     return user;
   }
+
+  async queryForSongs() {}
 
   async signOut() {
     await knex("sessions").where({ id: this.#ctx.req.session.id }).delete();

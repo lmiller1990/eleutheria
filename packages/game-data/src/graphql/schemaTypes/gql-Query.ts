@@ -1,5 +1,6 @@
 import { objectType } from "nexus";
 import { App } from "./gql-App";
+import { Song } from "./gql-Song";
 import { Viewer } from "./gql-Viewer";
 
 export const Query = objectType({
@@ -11,6 +12,13 @@ export const Query = objectType({
       type: Viewer,
       resolve: (_root, _args, ctx) => {
         return ctx.viewer();
+      },
+    });
+
+    t.nonNull.list.nonNull.field("songs", {
+      type: Song,
+      resolve: (_root, _args, ctx) => {
+        return ctx.actions.db.queryForSongs();
       },
     });
 

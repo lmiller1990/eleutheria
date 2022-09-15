@@ -1,0 +1,4 @@
+{
+  "conn": "postgres://user@localhost:5432/postgres",
+  "output": "/tmp/cli-pg-to-ts-json.ts"
+}

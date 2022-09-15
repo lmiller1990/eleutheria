@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { knex } from "../knex";
-import { DB } from "../../";
 import { DataActions } from "../actions";
 import { DataSources } from "../sources";
+import { Users } from "../../ dbschema";
 
 export class Context {
   req: Request;
@@ -23,7 +23,7 @@ export class Context {
     const user = await knex("sessions")
       .where({ "sessions.id": this.req.session.id })
       .join("users", "users.id", "=", "sessions.user_id")
-      .first<DB.User>();
+      .first<Users>();
     return user;
   }
 

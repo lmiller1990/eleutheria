@@ -7,6 +7,7 @@ import ValidationInput from "../ValidationInput.vue";
 import { gql } from "@urql/core";
 import { useMutation } from "@urql/vue";
 import { SignInForm_SignInDocument } from "../../generated/graphql";
+import { useModal } from "../../composables/modal";
 
 gql`
   mutation SignInForm_SignIn($email: String!, $password: String!) {
@@ -20,6 +21,8 @@ gql`
 `;
 
 defineProps<SignInFormProps>();
+
+const modal = useModal();
 
 const form = reactive({
   email: {
@@ -35,15 +38,24 @@ const form = reactive({
 const valid = computed(
   () => form.email.value.length && form.password.value.length
 );
+
 const submitting = ref(false);
+
+const error = ref<string | undefined>();
 
 const signIn = useMutation(SignInForm_SignInDocument);
 
-function handleSubmit() {
-  signIn.executeMutation({
+async function handleSubmit() {
+  const res = await signIn.executeMutation({
     email: form.email.value,
     password: form.password.value,
   });
+
+  if (res.error?.graphQLErrors?.[0]) {
+    error.value = res.error?.graphQLErrors?.[0].message;
+  } else {
+    modal.hideModal();
+  }
 }
 </script>
 
@@ -68,6 +80,8 @@ function handleSubmit() {
     />
 
     <Button type="submit" :disabled="!valid || submitting">Submit</Button>
+
+    <div v-if="error" class="pt-5 text-red-300">{{ error }}</div>
   </form>
 </template>
 

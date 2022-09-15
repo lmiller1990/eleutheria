@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import path from "node:path";
 import http from "node:http";
@@ -30,6 +30,7 @@ import { sessionMiddleware } from "./src/middleware/session";
 import pg from "pg";
 import { debug } from "./util/debug";
 import { contextMiddleware } from "./src/middleware/context";
+import type { Users } from "./ dbschema";
 
 const log = debug("game-data:index");
 
@@ -41,14 +42,6 @@ const pgClient = new pg.Client({
 export const COOKIE = "rhythm-cookie";
 
 console.log("Starting game server...");
-
-export declare namespace DB {
-  interface User {
-    id: string;
-    email: string;
-    password: string;
-  }
-}
 
 const PORT = 5566;
 
@@ -227,7 +220,7 @@ app.get("/note-skins", (_req, res) => {
 app.post<{}, {}, { name: string; password: string }>(
   "/login",
   async (req, res) => {
-    const user = await knex<DB.User>("users")
+    const user = await knex<Users>("users")
       .where({ email: req.body.name, password: req.body.password })
       .first();
 
