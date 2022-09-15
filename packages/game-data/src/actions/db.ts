@@ -1,4 +1,4 @@
-import { Users } from "../../ dbschema";
+import { Songs, Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
 import { knexTable } from "../knex";
@@ -58,7 +58,8 @@ export class DbActions {
   }
 
   async queryForSongs() {
-    await knexTable("songs")
+    const songs = await knexTable<Songs>("songs").select();
+    return songs;
   }
 
   async signOut() {

@@ -17,8 +17,9 @@ export const Query = objectType({
 
     t.nonNull.list.nonNull.field("songs", {
       type: Song,
-      resolve: (_root, _args, ctx) => {
-        return ctx.actions.db.queryForSongs();
+      resolve: async (_root, _args, ctx) => {
+        const data = await ctx.actions.db.queryForSongs();
+        return data.map((song) => ({ ...song, imgSrc: "" }));
       },
     });
 
