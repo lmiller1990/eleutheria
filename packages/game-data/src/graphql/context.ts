@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { knex } from "../knex";
+import { knex, knexTable } from "../knex";
 import { DataActions } from "../actions";
 import { DataSources } from "../sources";
 import { Users } from "../../ dbschema";
@@ -15,12 +15,8 @@ export class Context {
     this.res = res;
   }
 
-  get knex() {
-    return knex;
-  }
-
   async viewer() {
-    const user = await knex("sessions")
+    const user = await knexTable("sessions")
       .where({ "sessions.id": this.req.session.id })
       .join("users", "users.id", "=", "sessions.user_id")
       .first<Users>();

@@ -1,7 +1,7 @@
 import { Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { knex } from "../knex";
+import { knexTable } from "../knex";
 
 const log = debug(`game-data:db`);
 
@@ -22,7 +22,7 @@ export class DbActions {
     password: string;
   }): Promise<Users | undefined> {
     try {
-      const user = await knex("users").insert<Users>({
+      const user = await knexTable("users").insert<Users>({
         username,
         email,
         password,
@@ -37,7 +37,7 @@ export class DbActions {
   }
 
   async findUserByEmail(email: string) {
-    const user = await knex("users").where<Users>("email", email).first();
+    const user = await knexTable("users").where<Users>("email", email).first();
     return user;
   }
 
@@ -50,17 +50,19 @@ export class DbActions {
       throw Error("Credentials do not match.");
     }
 
-    await knex("sessions")
+    await knexTable("sessions")
       .where({ id: this.#ctx.req.session.id })
       .update({ user_id: user.id });
 
     return user;
   }
 
-  async queryForSongs() {}
+  async queryForSongs() {
+    await knexTable("songs")
+  }
 
   async signOut() {
-    await knex("sessions").where({ id: this.#ctx.req.session.id }).delete();
+    await knexTable("sessions").where({ id: this.#ctx.req.session.id }).delete();
 
     log(`deleted session with id ${this.#ctx.req.session.id}`);
   }

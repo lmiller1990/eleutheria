@@ -24,7 +24,7 @@ import {
 } from "./scripts/generateNotes";
 import { graphqlHTTP } from "express-graphql";
 import { graphqlSchema } from "./src/graphql/schema";
-import { knex } from "./src/knex";
+import { knexTable } from "./src/knex";
 import cookieParser from "cookie-parser";
 import { sessionMiddleware } from "./src/middleware/session";
 import pg from "pg";
@@ -220,12 +220,12 @@ app.get("/note-skins", (_req, res) => {
 app.post<{}, {}, { name: string; password: string }>(
   "/login",
   async (req, res) => {
-    const user = await knex<Users>("users")
+    const user = await knexTable<Users>("users")
       .where({ email: req.body.name, password: req.body.password })
       .first();
 
     if (user) {
-      await knex("sessions")
+      await knexTable("sessions")
         .where({ id: req.session.id })
         .update({ user_id: user.id });
     }
