@@ -1,7 +1,8 @@
-import { Songs, Users } from "../../ dbschema";
+import { Charts, Songs, SongsInput, Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
 import { knexTable } from "../knex";
+import { SongDataSource } from "../sources/songDataSource";
 
 const log = debug(`game-data:db`);
 
@@ -57,9 +58,26 @@ export class DbActions {
     return user;
   }
 
-  async queryForSongs(): Promise<Songs[]> {
+  async queryForSongs(): Promise<SongDataSource[]> {
     const songs = await knexTable<Songs>("songs").select();
-    return songs;
+    return songs.map(song => {
+      return new SongDataSource(this.#ctx, {
+        ...song,
+        imgSrc: "",
+      })
+    })
+  }
+
+  async getChartsForSong(songId: number): Promise<Charts[]> {
+    const charts = await knexTable("charts").where<Charts[]>("song_id", songId);
+
+    return charts.map((chart) => ({
+      id: chart.id,
+      song_id: chart.song_id,
+      difficulty: chart.difficulty,
+      level: chart.level,
+      notes: chart.notes,
+    }));
   }
 
   async signOut() {

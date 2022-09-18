@@ -2,7 +2,7 @@ import { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("songs", (table) => {
-    table.text("id").notNullable().unique();
+    table.increments("id")
     table.text("title").notNullable();
     table.text("duration").notNullable();
     table.text("artist").notNullable();

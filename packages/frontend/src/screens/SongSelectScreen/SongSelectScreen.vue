@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, } from "vue";
 import SongTile from "../../components/SongTile";
 import SongInfoPanel from "../../components/SongInfoPanel";
 import DifficultyPanel from "../../components/DifficultyPanel.vue";
@@ -51,7 +51,7 @@ import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
 import Username from "./Username.vue";
 import { gql, useQuery } from "@urql/vue";
-import { SongSelectScreen_SongsDocument } from "../../generated/graphql";
+import { SongSelectScreen_SongsDocument, SongSelectScreen_ChartDocument } from "../../generated/graphql";
 
 gql`
   query SongSelectScreen_Songs {
@@ -66,9 +66,32 @@ gql`
   }
 `;
 
+gql`
+  query SongSelectScreen_Chart($songId: Int!) {
+    charts (songId: $songId) {
+      id
+      difficulty
+      level
+    }
+  }
+`
+
+const songsStore = useSongsStore();
+
+const selectedSongId = ref<number>()
+
 const songsQuery = useQuery({
   query: SongSelectScreen_SongsDocument,
 });
+
+const chartQuery = useQuery({
+  query: SongSelectScreen_ChartDocument,
+  variables: {
+    // @ts-ignore
+    songId: selectedSongId
+  },
+  pause: computed(() => !selectedSongId.value)
+})
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
@@ -96,8 +119,6 @@ onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
 
-const songsStore = useSongsStore();
-
 const chartDifficulty = computed(() => {
   return songsStore.selectedChart?.difficulty ?? "";
 });
@@ -107,11 +128,11 @@ const highlightColor = computed(() => {
 });
 
 const difficulties = computed<SongDifficulty[]>(() => {
-  if (!songsStore.selectedSong) {
+  if (!chartQuery.data.value?.charts) {
     return [];
   }
 
-  return songsStore.selectedSong.charts.map((chart) => {
+  return chartQuery.data.value.charts.map((chart) => {
     return {
       name: chart.difficulty,
       level: chart.level,
@@ -155,7 +176,9 @@ const router = useRouter();
 
 const heldKeys = useHeldKeys();
 
-function handleSelected(songId: string) {
+function handleSelected(songId: number) {
+  selectedSongId.value = songId
+  return
   if (songsStore.selectedSongId === songId) {
     // they already clicked it once
     // time to play!

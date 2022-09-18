@@ -1,5 +1,6 @@
-import { objectType } from "nexus";
+import { intArg, nonNull, objectType } from "nexus";
 import { App } from "./gql-App";
+import { Chart } from "./gql-Chart";
 import { Song } from "./gql-Song";
 import { Viewer } from "./gql-Viewer";
 
@@ -17,11 +18,20 @@ export const Query = objectType({
 
     t.nonNull.list.nonNull.field("songs", {
       type: Song,
-      resolve: async (_root, _args, ctx) => {
-        const d = await ctx.actions.db.queryForSongs();
-        return d.map((song) => ({ ...song, imgSrc: "" }));
+      resolve: (_root, _args, ctx) => {
+        return ctx.actions.db.queryForSongs();
       },
     });
+
+    t.nonNull.list.nonNull.field("charts", {
+      type: Chart,
+      args: {
+        songId: nonNull(intArg()),
+      },
+      resolve: async (source, args, ctx) => {
+        return ctx.actions.db.getChartsForSong(args.songId);
+      },
+    })
 
     t.nonNull.field("app", {
       type: App,

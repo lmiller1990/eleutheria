@@ -4,21 +4,21 @@ import type { Chart, Song } from "../types";
 
 interface SongsState {
   songs: Song[];
-  selectedSongId: string | undefined;
+  selectedSongId: number | undefined;
   selectedChartIdx: number;
 }
 
 export const useSongsStore = defineStore("songs", {
   state: (): SongsState => {
     return {
-      selectedSongId: "good-life",
+      selectedSongId: undefined,
       selectedChartIdx: 2,
       songs: [],
     };
   },
 
   actions: {
-    setSelectedSongId(selectedSongId: string) {
+    setSelectedSongId(selectedSongId: number | undefined) {
       this.selectedSongId = selectedSongId;
     },
 
