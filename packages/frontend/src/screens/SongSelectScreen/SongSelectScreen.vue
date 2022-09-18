@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import SongTile from "../../components/SongTile";
 import SongInfoPanel from "../../components/SongInfoPanel";
 import DifficultyPanel from "../../components/DifficultyPanel.vue";
@@ -43,15 +43,16 @@ import { thumbails } from "../../thumbnails";
 import { useRouter } from "vue-router";
 import { useSongsStore } from "../../stores/songs";
 import { SongDifficulty } from "../../types";
-import type { ChartSummary } from "@packages/types";
-import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../../shared";
 import { TableCell } from "../../components/SongInfoPanel/types";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
 import Username from "./Username.vue";
 import { gql, useQuery } from "@urql/vue";
-import { SongSelectScreen_SongsDocument, SongSelectScreen_ChartDocument } from "../../generated/graphql";
+import {
+  SongSelectScreen_SongsDocument,
+  SongSelectScreen_ChartDocument,
+} from "../../generated/graphql";
 
 gql`
   query SongSelectScreen_Songs {
@@ -68,17 +69,18 @@ gql`
 
 gql`
   query SongSelectScreen_Chart($songId: Int!) {
-    charts (songId: $songId) {
+    charts(songId: $songId) {
       id
       difficulty
       level
+      tapNoteCount
     }
   }
-`
+`;
 
 const songsStore = useSongsStore();
 
-const selectedSongId = ref<number>()
+const selectedSongId = ref<number>();
 
 const songsQuery = useQuery({
   query: SongSelectScreen_SongsDocument,
@@ -88,10 +90,10 @@ const chartQuery = useQuery({
   query: SongSelectScreen_ChartDocument,
   variables: {
     // @ts-ignore
-    songId: selectedSongId
+    songId: selectedSongId,
   },
-  pause: computed(() => !selectedSongId.value)
-})
+  pause: computed(() => !selectedSongId.value),
+});
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
@@ -140,30 +142,31 @@ const difficulties = computed<SongDifficulty[]>(() => {
   });
 });
 
-const chartSummary = computed<ChartSummary | undefined>(() => {
-  if (!songsStore.selectedChart) {
-    return;
-  }
+const selectedChart = computed(
+  () => chartQuery.data.value?.charts?.[songsStore.selectedChartIdx]
+);
 
-  return chartInfo(
-    songsStore.selectedChart.parsedTapNoteChart,
-    songsStore.selectedChart.parsedHoldNoteChart
-  );
-});
+const selectedSong = computed(() =>
+  songsQuery.data.value?.songs?.find((x) => x.id === selectedSongId.value)
+);
 
 const tableData = computed<TableCell[]>(() => {
+  if (!selectedChart.value || !selectedSong.value) {
+    return ["Notes", "Duration", "BPM", "Best"].map(title => ({ title, content: "-"}))
+  }
+
   return [
     {
       title: "Notes",
-      content: chartSummary.value?.totalNotes,
+      content: selectedChart.value.tapNoteCount ?? "-",
     },
     {
       title: "Duration",
-      content: songsStore.selectedSong?.duration,
+      content: selectedSong?.value.duration ?? "-",
     },
     {
       title: "BPM",
-      content: songsStore.selectedSong?.bpm,
+      content: selectedSong?.value.bpm ?? "-",
     },
     {
       title: "Best",
@@ -177,8 +180,9 @@ const router = useRouter();
 const heldKeys = useHeldKeys();
 
 function handleSelected(songId: number) {
-  selectedSongId.value = songId
-  return
+  selectedSongId.value = songId;
+  songsStore.setSelectedChartIdx(0)
+  return;
   if (songsStore.selectedSongId === songId) {
     // they already clicked it once
     // time to play!

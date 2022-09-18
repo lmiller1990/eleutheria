@@ -10,23 +10,24 @@ export const Song = objectType({
     export: "SongDataSource",
   },
   definition(t) {
-    t.nonNull.int("id")
+    t.nonNull.int("id");
     t.nonNull.string("title");
     t.nonNull.string("imgSrc");
     t.nonNull.string("duration");
     t.nonNull.string("artist");
     t.nonNull.float("bpm");
     t.float("best");
+
     t.nonNull.list.nonNull.field("charts", {
       type: Chart,
       resolve: async (source, args, ctx) => {
-        return (await ctx.actions.db.getChartsForSong(source.id)).map(c => {
+        return (await ctx.actions.db.getChartsForSong(source.id)).map((c) => {
           return new ChartDataSource(ctx, {
             ...c,
             bpm: source.bpm,
           });
-        })
-      }
+        });
+      },
     });
   },
 });

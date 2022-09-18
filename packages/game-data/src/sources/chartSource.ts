@@ -37,10 +37,12 @@ export class ChartDataSource {
     return this.data.bpm;
   }
 
-  get parsedTapNoteChart () {
+  get tapNoteCount() {
+    return this.parsedTapNoteChart.length;
+  }
+
+  get parsedTapNoteChart() {
     // @ts-ignore
-    const chart = parseChart({ bpm: this.data.bpm }, this.data.notes);
-    console.log(chart);
-    return chart.tapNotes;
+    return parseChart({ bpm: this.data.bpm }, this.data.notes).tapNotes;
   }
 }

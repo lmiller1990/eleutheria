@@ -7,7 +7,7 @@ const tempChart = `001000
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("charts", (table) => {
-    table.increments("id")
+    table.increments("id");
     table.text("difficulty").notNullable();
     table.integer("level").notNullable();
     table.text("notes").notNullable().defaultTo(tempChart);

@@ -7,6 +7,7 @@ export const Chart = objectType({
     t.nonNull.int("id");
     t.nonNull.string("difficulty");
     t.nonNull.int("level");
+    t.nonNull.int("tapNoteCount");
     t.nonNull.list.field("parsedTapNoteChart", {
       type: BaseNote,
     });

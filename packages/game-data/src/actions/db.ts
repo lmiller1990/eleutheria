@@ -58,14 +58,25 @@ export class DbActions {
     return user;
   }
 
+  async queryForSong(songId: number): Promise<SongDataSource | undefined> {
+    const song = await knexTable<Songs>("songs").where("id", songId).first();
+    if (!song) {
+      return;
+    }
+    return new SongDataSource(this.#ctx, {
+      ...song,
+      imgSrc: "",
+    });
+  }
+
   async queryForSongs(): Promise<SongDataSource[]> {
     const songs = await knexTable<Songs>("songs").select();
-    return songs.map(song => {
+    return songs.map((song) => {
       return new SongDataSource(this.#ctx, {
         ...song,
         imgSrc: "",
-      })
-    })
+      });
+    });
   }
 
   async getChartsForSong(songId: number): Promise<Charts[]> {

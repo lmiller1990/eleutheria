@@ -17,33 +17,33 @@ export class SongDataSource {
   data: SongDataDefinition;
 
   constructor(ctx: Context, data: SongDataDefinition) {
-    console.log("new song data source")
+    console.log("new song data source");
     this.#ctx = ctx;
     this.data = data;
   }
 
-  get id () {
-    return this.data.id
+  get id() {
+    return this.data.id;
   }
 
-  get title () {
-    return this.data.title
+  get title() {
+    return this.data.title;
   }
 
-  get imgSrc () {
-    return this.data.imgSrc
+  get imgSrc() {
+    return this.data.imgSrc;
   }
 
-  get duration () {
-    return this.data.duration
+  get duration() {
+    return this.data.duration;
   }
 
-  get artist () {
-    return this.data.artist
+  get artist() {
+    return this.data.artist;
   }
 
-  get bpm () {
-    return this.data.bpm
+  get bpm() {
+    return this.data.bpm;
   }
 
   charts() {

@@ -1,4 +1,5 @@
 import { intArg, nonNull, objectType } from "nexus";
+import { ChartDataSource } from "../../sources/chartSource";
 import { App } from "./gql-App";
 import { Chart } from "./gql-Chart";
 import { Song } from "./gql-Song";
@@ -29,9 +30,20 @@ export const Query = objectType({
         songId: nonNull(intArg()),
       },
       resolve: async (source, args, ctx) => {
-        return ctx.actions.db.getChartsForSong(args.songId);
+        const song = await ctx.actions.db.queryForSong(args.songId);
+
+        if (!song) {
+          throw Error(`Song with id ${args.songId} not found.`);
+        }
+
+        return (await ctx.actions.db.getChartsForSong(args.songId)).map((x) => {
+          return new ChartDataSource(ctx, {
+            ...x,
+            bpm: song.bpm,
+          });
+        });
       },
-    })
+    });
 
     t.nonNull.field("app", {
       type: App,
