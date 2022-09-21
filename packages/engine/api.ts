@@ -1,5 +1,5 @@
 import { padStart } from "@packages/audio-utils";
-import type { BaseNote, ChartMetadata, HoldNote } from "@packages/chart-parser";
+import type { BaseNote, HoldNote } from "@packages/chart-parser";
 import {
   createChart,
   EngineConfiguration,
@@ -69,10 +69,10 @@ export interface DevModeOptions {
 }
 
 export interface GameConfig {
-  song: {
-    metadata: ChartMetadata;
+  chart: {
     tapNotes: BaseNote[];
     holdNotes: HoldNote[];
+    offset: number;
   };
   preSongPadding?: number;
   postSongPadding?: number;
@@ -98,7 +98,7 @@ export interface GameLifecycle {
 }
 
 export interface GameAPI {
-  start(id: string, songData: ChartMetadata): Promise<void>;
+  start(id: string): Promise<void>;
   stop: () => void;
 }
 
@@ -139,12 +139,12 @@ export class Game implements GameAPI {
     this.#modifierManager = modifierManager;
     this.#audioProvider = audioProvider;
     this.#timeOfLastNote =
-      config.song.tapNotes.reduce(
+      config.chart.tapNotes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
         0
       ) +
       (this.#config.preSongPadding || 0) +
-      this.#config.song.metadata.offset +
+      this.#config.chart.offset +
       (this.#config.postSongPadding || 0);
   }
 
@@ -152,22 +152,21 @@ export class Game implements GameAPI {
     return this.#modifierManager;
   }
 
-  async start(id: string, songData: ChartMetadata) {
+  async start(id: string) {
     const chart = createChart({
-      tapNotes: this.#config.song.tapNotes.map((x) => ({
+      tapNotes: this.#config.chart.tapNotes.map((x) => ({
         ...x,
         missed: false,
         canHit: true,
       })),
-      holdNotes: this.#config.song.holdNotes.map<EngineNote[]>((notes) => {
+      holdNotes: this.#config.chart.holdNotes.map<EngineNote[]>((notes) => {
         return notes.map((note) => ({
           ...note,
           missed: false,
           canHit: true,
         }));
       }),
-      offset:
-        (this.#config.preSongPadding || 0) + this.#config.song.metadata.offset,
+      offset: (this.#config.preSongPadding || 0) + this.#config.chart.offset,
     });
 
     const gs = initGameState(chart);
@@ -193,7 +192,6 @@ export class Game implements GameAPI {
       source,
       combo: 0,
       t0: startTime,
-      songData,
       inputManager,
       chart: {
         tapNotes: gs.tapNotes,

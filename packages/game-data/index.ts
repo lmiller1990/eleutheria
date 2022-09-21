@@ -85,20 +85,20 @@ wss.on("connection", (ws) => {
     const msg = JSON.parse(buffer.toString()) as WebSocketPayload;
 
     if (msg.type === "editor:start") {
-      if (!watchers.has(msg.data.id)) {
+      if (!watchers.has(msg.data.songId)) {
         const chartPath = path.join(
           songsDir,
-          msg.data.id,
+          msg.data.songId,
           msg.data.difficulty,
-          `${msg.data.id}.chart`
+          `${msg.data.songId}.chart`
         );
         const watcher = chokidar.watch(chartPath);
 
-        watchers.set(`${msg.data.id}-${msg.data.difficulty}`, watcher);
+        watchers.set(`${msg.data.songId}-${msg.data.difficulty}`, watcher);
 
         watcher.on("change", async () => {
           try {
-            const newData = await loadSong(msg.data.id);
+            const newData = await loadSong(msg.data.songId);
             ws.send(
               JSON.stringify({ type: "editor:chart:updated", data: newData })
             );

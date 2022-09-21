@@ -49,6 +49,7 @@ const modal = useModal();
 html,
 body,
 #app {
+  background: #828282;
   height: 100%;
   @apply h-screen;
 }

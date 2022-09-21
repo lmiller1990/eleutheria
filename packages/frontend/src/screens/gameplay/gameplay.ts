@@ -18,21 +18,17 @@ import {
   judgementFlash,
   Elements,
 } from "./elements";
-import {
-  engineConfiguration,
-  PADDING_MS,
-  codeColumnMap,
-  timingWindows,
-} from "./gameConfig";
+import { engineConfiguration, PADDING_MS, codeColumnMap } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
-import type {
+import {
   NoteSkin,
   ParamData,
+  timingWindows,
   UserScripts,
-  LoadSongData,
 } from "@packages/types";
 import { preferencesManager } from "./preferences";
+import { ParsedTapNoteChart } from "@packages/chart-parser";
 
 let timeoutId: number | undefined;
 
@@ -219,8 +215,6 @@ function updateUI(
   elements.combo.innerText = state.combo > 0 ? `${state.combo} combo` : ``;
 }
 
-export type SongCompleted = (summary: Summary) => void;
-
 function calcYPosition(
   note: EngineNote,
   world: World,
@@ -230,13 +224,18 @@ function calcYPosition(
 }
 
 export interface StartGameArgs {
-  songData: LoadSongData;
+  songData: {
+    chart: {
+      parsedTapNoteChart: ParsedTapNoteChart;
+      offset: number;
+    };
+  };
   noteSkinData: NoteSkin[];
   paramData: ParamData;
   userData: UserScripts;
-  songCompleted: SongCompleted;
   modifierManager?: ModifierManager;
   audioProvider?: AudioProvider;
+  songCompleted: (world: World) => void;
   updateSummary: (summary: Summary) => void;
 }
 
@@ -256,14 +255,6 @@ export function create(
   const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
 
   const elements = createElements($root, 6);
-
-  const chart = songData.charts.find(
-    (x) => x.difficulty === paramData.difficulty
-  );
-
-  if (!chart) {
-    throw Error(`Could not find chart with difficulty ${paramData.difficulty}`);
-  }
 
   const modifierManager =
     startGameArgs.modifierManager ?? new ModifierManager();
@@ -333,10 +324,10 @@ export function create(
       manualMode: __testingManualMode,
       startAtMs: __startAtMs,
     },
-    song: {
-      tapNotes: chart.parsedTapNoteChart.tapNotes,
-      holdNotes: chart.parsedHoldNoteChart.holdNotes,
-      metadata: songData.metadata,
+    chart: {
+      tapNotes: songData.chart.parsedTapNoteChart.tapNotes,
+      holdNotes: [], // songData.chart.parsedTapNoteChart.holdNotes,
+      offset: songData.chart.offset,
     },
     preSongPadding: PADDING_MS,
     postSongPadding: PADDING_MS,
@@ -364,7 +355,7 @@ export function create(
     noteMap.clear();
     holdMap.clear();
     timeoutId = undefined;
-    $root.innerHTML = "";
+    // $root.innerHTML = "";
   };
 
   const lifecycle: GameLifecycle = {
@@ -457,7 +448,13 @@ export function create(
     },
 
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
-      const summary = summarizeResults(world, timingWindows);
+      const summary = summarizeResults(
+        {
+          tapNotes: [...world.chart.tapNotes.values()],
+          holdNotes: [...world.chart.holdNotes.values()],
+        },
+        timingWindows
+      );
 
       updateSummary(summary);
     },
@@ -466,16 +463,10 @@ export function create(
       writeDebugToHtml(world, fps, elements);
     },
 
-    onSongCompleted: (_world: World) => {
+    onSongCompleted: (world: World) => {
       teardown();
-
-      const summary = summarizeResults(
-        _world,
-        engineConfiguration.timingWindows ?? []
-      );
-
       window.clearTimeout(timeoutId);
-      songCompleted(summary);
+      songCompleted(world);
     },
 
     onStart: (_world: World) => {
@@ -500,7 +491,7 @@ export function create(
     game,
     start: () => {
       redrawTargets(elements, modifierManager);
-      return game.start(paramData.id, songData.metadata);
+      return game.start(paramData.songId);
     },
     stop: () => {
       teardown();

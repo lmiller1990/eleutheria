@@ -15,11 +15,15 @@ export class Context {
     this.res = res;
   }
 
-  async viewer() {
-    const user = await knexTable("sessions")
+  queryForCurrentUser(): Promise<Users | undefined> {
+    return knexTable("sessions")
       .where({ "sessions.id": this.req.session?.id })
       .join("users", "users.id", "=", "sessions.user_id")
       .first<Users>();
+  }
+
+  async viewer() {
+    const user = await this.queryForCurrentUser();
 
     if (!user) {
       return null;

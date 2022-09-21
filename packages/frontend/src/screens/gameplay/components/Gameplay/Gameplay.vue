@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import type { GameplayProps } from "./types";
 import ModifierPanel, {
   ModCoverParams,
 } from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
-import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
 import type { Game, Summary } from "@packages/engine";
@@ -19,22 +17,44 @@ import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
 import { ModifierManager } from "../../modiferManager";
+import { gql } from "@urql/vue";
+import type { StartGameArgs } from "../../gameplay";
+import type { GameplayFragment } from "../../../../generated/graphql";
+
+export interface GameplayProps {
+  startGameArgs: Omit<StartGameArgs, "updateSummary">;
+  gql: GameplayFragment;
+  __testingDoNotStartSong?: boolean;
+  __testingManualMode?: boolean;
+}
 
 const props = defineProps<GameplayProps>();
 
 const root = ref<HTMLDivElement>();
 
-const songsStore = useSongsStore();
+gql`
+  fragment Gameplay on Query {
+    song(songId: $songId) {
+      id
+      offset
+      title
+      artist
+      chart(difficulty: $difficulty) {
+        difficulty
+        level
+        parsedTapNoteChart {
+          id
+          ms
+          column
+          measureNumber
+          char
+        }
+      }
+    }
+  }
+`;
 
-if (!songsStore.selectedChart || !songsStore.selectedSong) {
-  throw Error(
-    `Expected selectedChart and selectedSong to exist in songsStore. This should be impossible.`
-  );
-}
-
-const selectedChart = songsStore.selectedChart;
-const selectedSong = songsStore.selectedSong;
-const highlightColor = colors[selectedChart.difficulty] ?? "yellow";
+const highlightColor = colors[props.gql.song.chart.difficulty] ?? "yellow";
 
 const defaultNoteSkin = props.startGameArgs.noteSkinData.find(
   (x) => x.name === "default"
@@ -134,7 +154,7 @@ onMounted(async () => {
 
   const { create } = await import("../../gameplay");
 
-  const init = await create(
+  const init = create(
     root.value,
     {
       ...props.startGameArgs,
@@ -238,15 +258,17 @@ function handleChangeSpeedMod(val: number) {
               <InfoPanel
                 panelTitle="Song"
                 class="w-full"
-                :class="selectedChart.difficulty"
+                :class="props.gql.song.chart.difficulty"
                 :highlightColor="highlightColor"
               >
                 <div class="flex flex-col">
-                  <div>{{ selectedSong.title }}</div>
-                  <div>{{ selectedSong.artist }}</div>
+                  <!-- <div>{{ selectedSong.title }}</div> -->
+                  <div>{{ props.gql.song.title }}</div>
+                  <div>{{ props.gql.song.artist }}</div>
                   <div class="empty">Empty</div>
                   <div class="capitalize">
-                    {{ selectedChart.difficulty }} Lv {{ selectedChart.level }}
+                    {{ props.gql.song.chart.difficulty }} Lv
+                    {{ props.gql.song.chart.level }}
                   </div>
                 </div>
               </InfoPanel>
@@ -254,8 +276,8 @@ function handleChangeSpeedMod(val: number) {
               <SongInfoPanel
                 panelTitle="Stats"
                 class="w-full"
-                :class="selectedChart.difficulty"
                 :data="scoreData"
+                :class="props.gql.song.chart.difficulty"
                 :highlightColor="highlightColor"
               />
             </div>

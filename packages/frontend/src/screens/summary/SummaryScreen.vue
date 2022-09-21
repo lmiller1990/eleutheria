@@ -1,48 +1,49 @@
 <script lang="ts" setup>
+import { computed } from "vue";
 import { useSummaryStore } from "../../stores/summary";
 import { windowsWithMiss } from "../gameplay/gameConfig";
 import { useSongsStore } from "../../stores/songs";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import PlainPanel from "../../components/PlainPanel";
-import { computed } from "vue";
 import DifficultyItem from "../../components/DifficultyItem.vue";
 import SongInfoPanel, { TableCell } from "../../components/SongInfoPanel";
 import ScoreBadge from "../../components/ScoreBadge";
 import Triangle from "../../components/Triangle.vue";
 
-const summaryStore = useSummaryStore();
-const songsStore = useSongsStore();
+// const summaryStore = useSummaryStore();
+// const songsStore = useSongsStore();
 
-const scoreData = computed<TableCell[]>(() => {
-  const timing = windowsWithMiss.map<TableCell>((title) => ({
-    title,
-    content: summaryStore.summary?.timing?.[title]?.count ?? "-",
-  }));
+// const scoreData = computed<TableCell[]>(() => {
+//   const timing = windowsWithMiss.map<TableCell>((title) => ({
+//     title,
+//     content: summaryStore.summary?.timing?.[title]?.count ?? "-",
+//   }));
 
-  return [
-    ...timing,
-    {
-      title: "Holds",
-      content: "25/30",
-    },
-  ];
-});
+//   return [
+//     ...timing,
+//     {
+//       title: "Holds",
+//       content: "25/30",
+//     },
+//   ];
+// });
 
-const difficulty = computed(() => {
-  if (!songsStore.selectedChart) {
-    return;
-  }
+// const difficulty = computed(() => {
+//   if (!songsStore.selectedChart) {
+//     return;
+//   }
 
-  return {
-    name: songsStore.selectedChart.difficulty,
-    level: songsStore.selectedChart.level,
-  };
-});
+//   return {
+//     name: songsStore.selectedChart.difficulty,
+//     level: songsStore.selectedChart.level,
+//   };
+// });
 </script>
 
 <template>
   <NonGameplayScreen screenTitle="Evaluation">
-    <div class="flex justify-center h-full w-full">
+    Great job
+    <!-- <div class="flex justify-center h-full w-full">
       <div class="wrapper h-full max-1024 flex items-center w-full">
         <div class="vanity flex justify-center flex-col items-center">
           <ScoreBadge :percent="summaryStore.summary?.percent ?? ''" rank="A" />
@@ -68,28 +69,16 @@ const difficulty = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </NonGameplayScreen>
-  <!--
-    <span class="ascii-icon font-1rem">▶</span>
-    Next Song
-    <span class="ascii-icon font-2rem">⟲</span>
-    Play Again
-  -->
 </template>
-
-<style>
-#app {
-  background: none;
-}
-</style>
 
 <style scoped lang="scss">
 @import "../../shared.scss";
 
 .wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr; // repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   column-gap: 50px;
 }
 

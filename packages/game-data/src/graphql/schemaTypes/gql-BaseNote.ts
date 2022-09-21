@@ -3,16 +3,10 @@ import { objectType } from "nexus";
 export const BaseNote = objectType({
   name: "BaseNote",
   definition(t) {
-    t.nonNull.id("id");
-    t.nonNull.float("ms");
+    t.nonNull.string("id");
+    t.nonNull.string("char");
     t.nonNull.int("column");
+    t.nonNull.float("ms");
+    t.nonNull.int("measureNumber");
   },
 });
-
-// export interface BaseNote {
-//   id: string;
-//   column: number;
-//   char: string;
-//   ms: number;
-//   measureNumber: number;
-// }

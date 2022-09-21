@@ -20,14 +20,12 @@ export interface ChartMetadata {
 }
 
 export interface ParsedTapNoteChart {
-  metadata: ChartMetadata;
   tapNotes: BaseNote[];
 }
 
 export type HoldNote = BaseNote[];
 
 export interface ParsedHoldNoteChart {
-  metadata: ChartMetadata;
   holdNotes: HoldNote[];
 }
 
@@ -168,14 +166,6 @@ export function parseChart(
   ).tapNotes;
 
   return {
-    metadata: {
-      title: dataJson.title,
-      bpm: dataJson.bpm,
-      banner: dataJson.banner,
-      offset: dataJson.offset,
-      charts: dataJson.charts,
-      artist: dataJson.artist,
-    },
     tapNotes,
   };
 }
@@ -212,7 +202,6 @@ export function parseHoldsChart(
   );
 
   return {
-    ...result,
     holdNotes: holds,
   };
 }

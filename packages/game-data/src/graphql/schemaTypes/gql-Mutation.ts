@@ -1,5 +1,11 @@
+import { SummaryData } from "@packages/engine";
 import { mutationType, nonNull, stringArg } from "nexus";
+import { debug } from "../../../util/debug";
+import { SaveScoreInputType } from "../inputObjectTypes";
 import { Query } from "./gql-Query";
+import { Summary } from "./gql-Summary";
+
+const log = debug("game-data:gql-Mutation");
 
 export const mutation = mutationType({
   definition(t) {
@@ -47,6 +53,25 @@ export const mutation = mutationType({
       resolve: async (_, _args, _ctx) => {
         await _ctx.actions.db.signOut();
         return _ctx;
+      },
+    });
+
+    t.field("saveScore", {
+      type: Summary,
+      args: {
+        data: nonNull(SaveScoreInputType),
+      },
+      resolve: async (_source, args, ctx) => {
+        const data: SummaryData = {
+          tapNotes: args.data.tapNotes,
+          holdNotes: args.data.holdNotes,
+        };
+        const score = await ctx.actions.gameplay.saveScore(
+          data,
+          args.data.chartId
+        );
+        log(`returning`, score);
+        return score;
       },
     });
   },

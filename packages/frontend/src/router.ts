@@ -2,9 +2,6 @@ import { defineComponent, h, onUnmounted } from "vue";
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { InputManager } from "@packages/engine";
 import SongSelectScreen from "./screens/SongSelectScreen";
-import EditorScreen from "./screens/editor/EditorScreen.vue";
-import GameplayScreen from "./screens/gameplay/GameplayScreen.vue";
-import SummaryScreen from "./screens/summary/SummaryScreen.vue";
 import { useSongsStore } from "./stores/songs";
 
 export const createRouter = () => {
@@ -17,21 +14,21 @@ export const createRouter = () => {
       },
       {
         path: "/game",
-        component: GameplayScreen,
+        component: () => import("./screens/gameplay/GameplayScreen.vue"),
         meta: {
           requiresSongSelected: true,
         },
       },
       {
         path: "/editor",
-        component: EditorScreen,
+        component: () => import("./screens/editor/EditorScreen.vue"),
         meta: {
           requiresSongSelected: true,
         },
       },
       {
         path: "/summary",
-        component: SummaryScreen,
+        component: () => import("./screens/summary/SummaryScreen.vue"),
         meta: {
           requiresSongSelected: true,
         },

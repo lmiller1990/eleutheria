@@ -10,8 +10,10 @@ export interface ChartDataDefinition {
   level: number;
   notes: string;
   bpm: number;
+  offset: number;
 }
 
+// TODO: Not a source?
 export class ChartDataSource {
   #ctx: Context;
   data: ChartDataDefinition;
@@ -35,6 +37,10 @@ export class ChartDataSource {
 
   get bpm() {
     return this.data.bpm;
+  }
+
+  get offset() {
+    return this.data.offset;
   }
 
   get tapNoteCount() {

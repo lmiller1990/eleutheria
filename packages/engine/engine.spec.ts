@@ -17,7 +17,7 @@ import { createWorld } from "./test/utils";
 
 const engineConfiguration: EngineConfiguration = {
   maxHitWindow: 100,
-  timingWindows: undefined,
+  timingWindows: [],
 };
 
 const createInput = ({

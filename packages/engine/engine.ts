@@ -1,4 +1,3 @@
-import { ChartMetadata } from "@packages/chart-parser";
 import { InputManager } from "./inputManager";
 
 type HoldNote = EngineNote[];
@@ -40,7 +39,7 @@ export interface EngineNote {
    * has been hit, too. Useful for holds.
    * dependsOn will point to another EngineNote.id.
    */
-  dependsOn?: string;
+  dependsOn?: string | null;
 
   /**
    * Can the note be hit? Some notes cannot be hit,
@@ -53,29 +52,29 @@ export interface EngineNote {
    * Difference in ms between the time the note was supposed
    * to be hit and the actual time it was hit.
    */
-  hitTiming?: number;
+  hitTiming?: number | null;
 
   /**
    * Time the note was hit, in ms, since the start of the song.
    */
-  hitAt?: number;
+  hitAt?: number | null;
 
   /**
    * If the note was hit, the name of the relevant timing window.
    */
-  timingWindowName?: string;
+  timingWindowName?: string | null;
 
   /**
    * If the current note is the leading note of a hold,
    * is it currently been held?
    */
-  isHeld?: boolean;
+  isHeld?: boolean | null;
 
   /**
    * If the current note is the leading note of a hold,
    * it was previously held and is now released.
    */
-  droppedAt?: number;
+  droppedAt?: number | null;
 
   /**
    * Measure number the note falls in.
@@ -106,7 +105,7 @@ export interface Chart {
 
 export interface EngineConfiguration {
   maxHitWindow: number;
-  timingWindows?: Readonly<TimingWindow[]>;
+  timingWindows: Readonly<TimingWindow[]>;
 }
 
 interface CreateChart {
@@ -138,7 +137,7 @@ export function createChart(args: CreateChart): Chart {
           ms: note.ms + args.offset,
           missed: false,
           canHit: true,
-          dependsOn: idx === 0 ? undefined : notes[idx - 1].id,
+          dependsOn: idx === 0 ? null : notes[idx - 1].id,
         };
       });
     }),
@@ -242,8 +241,6 @@ export interface World {
   // is the song over? This is defined as no more remaining notes
   // does not consider if the actual music is finished playback or not.
   readonly songCompleted: boolean;
-
-  songData: ChartMetadata;
 }
 
 export interface JudgementResult {
@@ -257,7 +254,7 @@ export interface JudgementResult {
   time: number;
 
   // scored timing window, if available
-  timingWindowName: string | undefined;
+  timingWindowName?: string | null;
 
   // id of the input(s) used for this judgement
   inputs: string[];
@@ -276,7 +273,7 @@ export interface JudgementResult {
 function getTimingWindow(
   timing: number,
   timingWindows: Readonly<TimingWindow[]>
-): TimingWindow | undefined {
+): TimingWindow | null {
   // to make things nice and fast, we use a heuristic:
   // timingWindows is always sorted from
   // smallest to largest. Ignore windows that are too small
@@ -293,7 +290,7 @@ function getTimingWindow(
     }
   }
 
-  return undefined;
+  return null;
 }
 
 interface JudgeInput {
@@ -324,14 +321,16 @@ export function judgeInput({
 
   if (note && Math.abs(note.ms - input.ms) <= maxWindow) {
     const timing = judge(input, note);
+    const timingWindowName = timingWindows
+      ? getTimingWindow(timing, timingWindows)?.name ?? null
+      : null;
+
     return {
       timing,
       noteId: note.id,
       time: input.ms,
       inputs: input ? [input.id] : [],
-      timingWindowName: timingWindows
-        ? getTimingWindow(timing, timingWindows)?.name
-        : undefined,
+      timingWindowName,
     };
   }
 
@@ -347,7 +346,7 @@ export function initGameState(chart: Chart): GameChart {
   chart.tapNotes.forEach((note) => {
     tapNotes.set(note.id, {
       ...note,
-      timingWindowName: undefined,
+      timingWindowName: null,
       canHit: true,
     });
   });
@@ -359,7 +358,7 @@ export function initGameState(chart: Chart): GameChart {
       notes[0].id,
       notes.map((note) => ({
         ...note,
-        timingWindowName: undefined,
+        timingWindowName: null,
         canHit: true,
       }))
     );
@@ -406,7 +405,7 @@ function processNoteJudgement(
 
   // the note is past the max timing window and can no longer be hit
   // it is considered "miss"
-  if (note.hitAt === undefined && note.ms < time - maxWindowMs) {
+  if (note.hitAt === null && note.ms < time - maxWindowMs) {
     return {
       ...note,
       canHit: false,

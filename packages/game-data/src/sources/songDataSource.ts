@@ -10,6 +10,7 @@ export interface SongDataDefinition {
   duration: string;
   artist: string;
   bpm: number;
+  offset: number;
 }
 
 export class SongDataSource {
@@ -44,6 +45,10 @@ export class SongDataSource {
 
   get bpm() {
     return this.data.bpm;
+  }
+
+  get offset() {
+    return this.data.offset;
   }
 
   charts() {

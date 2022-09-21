@@ -11,7 +11,7 @@
           :songTitle="song.title"
           class="h-full"
           :imgSrc="thumbails[idx]"
-          :selected="song.id === songsStore.selectedSongId"
+          :selected="song.id === selectedSongId"
           @selected="handleSelected(song.id)"
         />
       </div>
@@ -89,7 +89,7 @@ const songsQuery = useQuery({
 const chartQuery = useQuery({
   query: SongSelectScreen_ChartDocument,
   variables: {
-    // @ts-ignore
+    // @ts-expect-error - we only unpause when this is non null
     songId: selectedSongId,
   },
   pause: computed(() => !selectedSongId.value),
@@ -104,7 +104,14 @@ function handleKeyDown(event: KeyboardEvent) {
     handleSelected(songsStore.selectedSongId);
   }
 
-  if (event.code === "KeyJ" && songsStore.selectedChartIdx < 2) {
+  if (!chartQuery.data.value?.charts.length) {
+    return;
+  }
+
+  if (
+    event.code === "KeyJ" &&
+    songsStore.selectedChartIdx < chartQuery.data.value.charts.length
+  ) {
     songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
   }
 
@@ -122,7 +129,7 @@ onBeforeUnmount(() => {
 });
 
 const chartDifficulty = computed(() => {
-  return songsStore.selectedChart?.difficulty ?? "";
+  return selectedChart.value?.difficulty ?? "";
 });
 
 const highlightColor = computed(() => {
@@ -152,7 +159,10 @@ const selectedSong = computed(() =>
 
 const tableData = computed<TableCell[]>(() => {
   if (!selectedChart.value || !selectedSong.value) {
-    return ["Notes", "Duration", "BPM", "Best"].map(title => ({ title, content: "-"}))
+    return ["Notes", "Duration", "BPM", "Best"].map((title) => ({
+      title,
+      content: "-",
+    }));
   }
 
   return [
@@ -176,13 +186,12 @@ const tableData = computed<TableCell[]>(() => {
 });
 
 const router = useRouter();
-
 const heldKeys = useHeldKeys();
 
 function handleSelected(songId: number) {
   selectedSongId.value = songId;
-  songsStore.setSelectedChartIdx(0)
-  return;
+  songsStore.setSelectedChartIdx(0);
+
   if (songsStore.selectedSongId === songId) {
     // they already clicked it once
     // time to play!
@@ -195,7 +204,7 @@ function handleSelected(songId: number) {
     router.push({
       path: route,
       query: {
-        song: songId,
+        songId: songId,
         difficulty: chartDifficulty.value,
       },
     });
@@ -203,16 +212,6 @@ function handleSelected(songId: number) {
     songsStore.setSelectedSongId(songId);
   }
 }
-
-// function durationToNum(str: string) {
-//   const match = /(\d+).*/.exec(str);
-//   if (!match?.[1]) {
-//     throw Error(`Could not convert ${str} to number`);
-//   }
-//   return parseInt(match[1], 10);
-// }
-
-songsStore.fetchSongs();
 </script>
 
 <style lang="scss" scoped>

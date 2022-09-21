@@ -1,29 +1,93 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-import type { Summary } from "@packages/engine";
-import { useSummaryStore } from "../../stores/summary";
-import { fetchData, getSongId, fetchNoteSkins, fetchUser } from "./fetchData";
-import Gameplay, { GameplayProps } from "./components/Gameplay";
+import type { World } from "@packages/engine";
+import { extractNotesFromWorld } from "@packages/engine/utils";
+import { getParams, fetchNoteSkins, fetchUser } from "./fetchData";
+import Gameplay from "./components/Gameplay";
 import "../../style.css";
+import { useQuery, gql, useMutation } from "@urql/vue";
+import {
+  GameplayScreenDocument,
+  GameplayScreen_SummaryDocument,
+} from "../../../src/generated/graphql";
+import { computed } from "vue";
+import { StartGameArgs } from "./gameplay";
 
 const router = useRouter();
 
-function songCompleted(summary: Summary) {
-  const summaryStore = useSummaryStore();
-  summaryStore.setSummary(summary);
-  router.push("/summary");
-}
+gql`
+  query GameplayScreen($songId: Int!, $difficulty: String!) {
+    ...Gameplay
+    song(songId: $songId) {
+      chart(difficulty: $difficulty) {
+        id
+      }
+    }
+  }
+`;
 
-const paramData = getSongId();
-const [songData, noteSkinData, userData] = await Promise.all([
-  fetchData(paramData.id),
+gql`
+  mutation GameplayScreen_Summary(
+    $tapNotes: [SummaryNote!]!
+    $holdNotes: [[SummaryNote!]!]!
+    $chartId: Int!
+  ) {
+    saveScore(
+      data: { tapNotes: $tapNotes, holdNotes: $holdNotes, chartId: $chartId }
+    ) {
+      id
+    }
+  }
+`;
+
+const [noteSkinData, userData] = await Promise.all([
   fetchNoteSkins(),
   fetchUser(),
 ]);
 
-const startGameArgs: GameplayProps["startGameArgs"] = {
-  songData,
-  paramData,
+const { songId, difficulty } = getParams();
+const query = await useQuery({
+  query: GameplayScreenDocument,
+  variables: {
+    songId: parseInt(songId, 10),
+    difficulty,
+  },
+});
+
+const gqlData = computed(() => {
+  if (!query.data.value?.song?.chart.parsedTapNoteChart) {
+    throw Error("uh oh!");
+  }
+  return query.data.value;
+});
+
+const saveScore = useMutation(GameplayScreen_SummaryDocument);
+
+async function songCompleted(world: World) {
+  const summaryData = extractNotesFromWorld(world);
+
+  const res = await saveScore.executeMutation({
+    ...summaryData,
+    chartId: gqlData.value.song.chart.id,
+  });
+
+  if (!res.data?.saveScore?.id) {
+    throw Error(`Expected id to be returned for score`);
+  }
+
+  router.push({ path: "/summary", query: { id: res.data.saveScore.id } });
+}
+
+const startGameArgs: Omit<StartGameArgs, "updateSummary"> = {
+  songData: {
+    chart: {
+      parsedTapNoteChart: {
+        tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+      },
+      offset: 0,
+    },
+  },
+  paramData: { songId, difficulty },
   noteSkinData,
   userData,
   songCompleted,
@@ -32,7 +96,7 @@ const startGameArgs: GameplayProps["startGameArgs"] = {
 
 <template>
   <div id="game-app">
-    <Gameplay :startGameArgs="startGameArgs" />
+    <Gameplay :startGameArgs="startGameArgs" :gql="gqlData" />
   </div>
 </template>
 

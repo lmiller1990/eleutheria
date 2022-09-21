@@ -1,22 +1,5 @@
 import type { EngineConfiguration } from "@packages/engine";
-
-export const timingWindows = [
-  {
-    name: "absolute",
-    windowMs: 25,
-    weight: 2,
-  },
-  {
-    name: "perfect",
-    windowMs: 50,
-    weight: 1,
-  },
-  // {
-  //   name: "great",
-  //   windowMs: 100,
-  //   weight: 1,
-  // },
-] as const;
+import { timingWindows } from "@packages/types";
 
 export const windows = timingWindows.map((x) => x.name);
 export const windowsWithMiss = [...windows, "miss"] as const;

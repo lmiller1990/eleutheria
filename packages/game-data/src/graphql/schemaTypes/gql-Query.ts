@@ -1,5 +1,6 @@
-import { intArg, nonNull, objectType } from "nexus";
+import { intArg, nonNull, objectType, stringArg } from "nexus";
 import { ChartDataSource } from "../../sources/chartSource";
+import { SongDataSource } from "../../sources/songDataSource";
 import { App } from "./gql-App";
 import { Chart } from "./gql-Chart";
 import { Song } from "./gql-Song";
@@ -17,8 +18,27 @@ export const Query = objectType({
       },
     });
 
+    t.nonNull.field("song", {
+      type: Song,
+      args: {
+        songId: nonNull(intArg()),
+      },
+      description: "Look up a song by its ID",
+      resolve: async (_root, args, ctx) => {
+        const song: SongDataSource | undefined =
+          await ctx.actions.db.queryForSong(args.songId);
+
+        if (!song) {
+          throw Error(`Song with id ${args.songId} not found`);
+        }
+
+        return song;
+      },
+    });
+
     t.nonNull.list.nonNull.field("songs", {
       type: Song,
+      description: "Get a list of known songs",
       resolve: (_root, _args, ctx) => {
         return ctx.actions.db.queryForSongs();
       },
@@ -30,7 +50,8 @@ export const Query = objectType({
         songId: nonNull(intArg()),
       },
       resolve: async (source, args, ctx) => {
-        const song = await ctx.actions.db.queryForSong(args.songId);
+        const song: SongDataSource | undefined =
+          await ctx.actions.db.queryForSong(args.songId);
 
         if (!song) {
           throw Error(`Song with id ${args.songId} not found.`);
@@ -40,6 +61,7 @@ export const Query = objectType({
           return new ChartDataSource(ctx, {
             ...x,
             bpm: song.bpm,
+            offset: song.offset,
           });
         });
       },
