@@ -1,14 +1,11 @@
 import { parseChart, parseHoldsChart } from "@packages/chart-parser";
+import { Charts } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
 
 const log = debug(`game-data:chartSource`);
 
-export interface ChartDataDefinition {
-  id: number;
-  difficulty: string;
-  level: number;
-  notes: string;
+export interface ChartDataDefinition extends Charts {
   bpm: number;
   offset: number;
 }

@@ -1,6 +1,6 @@
 overwrite: true
 schema: "../game-data/src/graphql/schema.graphql"
-documents: "./src/**/*.vue"
+documents: "./src/**/*.{vue,tsx}"
 config:
   immutableTypes: true
   useTypeImports: true

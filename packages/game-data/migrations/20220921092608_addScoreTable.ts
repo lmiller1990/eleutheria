@@ -5,9 +5,9 @@ export async function up(knex: Knex): Promise<void> {
     table.increments("id");
     table.text("percent").notNullable();
     table.json("timing").notNullable();
-    table.integer("user_id");
+    table.integer("user_id").notNullable();
     table.foreign("user_id").references("id").inTable("users");
-    table.integer("chart_id");
+    table.integer("chart_id").notNullable();
     table.foreign("chart_id").references("id").inTable("charts");
   });
 }

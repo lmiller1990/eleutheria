@@ -35,24 +35,21 @@ export const Song = objectType({
           );
         }
 
-        return new ChartDataSource(ctx, {
-          ...chart,
-          bpm: source.bpm,
-          offset: source.offset,
-        });
+        return chart;
       },
     });
 
     t.nonNull.list.nonNull.field("charts", {
       type: Chart,
-      resolve: async (source, args, ctx) => {
-        return (await ctx.actions.db.getChartsForSong(source.id)).map((c) => {
-          return new ChartDataSource(ctx, {
-            ...c,
-            bpm: source.bpm,
-            offset: source.offset,
-          });
-        });
+      resolve: (source, args, ctx) => {
+        return ctx.actions.db.getChartsForSong(source.id);
+        // return (await ctx.actions.db.getChartsForSong(source.id)).map((c) => {
+        //   return new ChartDataSource(ctx, {
+        //     ...c,
+        //     bpm: source.bpm,
+        //     offset: source.offset,
+        //   });
+        // });
       },
     });
   },

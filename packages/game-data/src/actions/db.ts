@@ -1,7 +1,9 @@
-import { Charts, Songs, SongsInput, Users } from "../../ dbschema";
+import { Charts, Scores, Songs, Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
 import { knexTable } from "../knex";
+import { ChartDataSource } from "../sources/chartSource";
+import { ScoreDataSource } from "../sources/scoreDataSource";
 import { SongDataSource } from "../sources/songDataSource";
 
 const log = debug(`game-data:db`);
@@ -79,16 +81,26 @@ export class DbActions {
     });
   }
 
-  async getChartsForSong(songId: number): Promise<Charts[]> {
-    const charts = await knexTable("charts").where<Charts[]>("song_id", songId);
+  async queryChartById(chartId: number): Promise<ChartDataSource | undefined> {
+    const chart = await knexTable("charts")
+      .join("songs", "songs.id", "=", "charts.song_id")
+      .first()
+      .where<Charts & Songs>("charts.id", chartId);
 
-    return charts.map((chart) => ({
-      id: chart.id,
-      song_id: chart.song_id,
-      difficulty: chart.difficulty,
-      level: chart.level,
-      notes: chart.notes,
-    }));
+    if (!chart) {
+      return;
+    }
+    return new ChartDataSource(this.#ctx, chart);
+  }
+
+  async getChartsForSong(songId: number): Promise<ChartDataSource[]> {
+    const charts = await knexTable("charts")
+      .join("songs", "songs.id", "=", "charts.song_id")
+      .where<Array<Charts & Songs>>("charts.song_id", songId);
+
+    log(`getChartsForSong`, charts);
+
+    return charts.map((data) => new ChartDataSource(this.#ctx, data));
   }
 
   async signOut() {
@@ -97,5 +109,19 @@ export class DbActions {
       .delete();
 
     log(`deleted session with id ${this.#ctx.req.session.id}`);
+  }
+
+  async queryForScore(id: number): Promise<ScoreDataSource | undefined> {
+    const score = await knexTable("scores").where<Scores>("id", id).first();
+    if (!score) {
+      return undefined;
+    }
+
+    log(`got score`, score);
+
+    return new ScoreDataSource(this.#ctx, {
+      ...score,
+      timing: JSON.stringify(score.timing),
+    });
   }
 }

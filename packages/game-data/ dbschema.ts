@@ -85,20 +85,20 @@ export interface Scores {
   id: number;
   percent: string;
   timing: Json;
-  user_id: number | null;
-  chart_id: number | null;
+  user_id: number;
+  chart_id: number;
 }
 export interface ScoresInput {
   id?: number;
   percent: string;
   timing: Json;
-  user_id?: number | null;
-  chart_id?: number | null;
+  user_id: number;
+  chart_id: number;
 }
 const scores = {
   tableName: "scores",
   columns: ["id", "percent", "timing", "user_id", "chart_id"],
-  requiredForInsert: ["percent", "timing"],
+  requiredForInsert: ["percent", "timing", "user_id", "chart_id"],
   primaryKey: "id",
   foreignKeys: {
     user_id: { table: "users", column: "id", $type: null as unknown as Users },
