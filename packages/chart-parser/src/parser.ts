@@ -79,9 +79,10 @@ function measureQuantizationValid(measure: Measure) {
 }
 
 export function parseChart(
-  dataJson: ChartMetadata,
+  dataJson: { offset: number; bpm: number },
   chartRaw: string
 ): ParsedTapNoteChart {
+  console.log(dataJson)
   let i = 0;
 
   function incId() {

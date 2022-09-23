@@ -37,6 +37,7 @@ export class ChartDataSource {
   }
 
   get offset() {
+    console.log('offset is', this.data.offset)
     return this.data.offset;
   }
 
@@ -45,7 +46,6 @@ export class ChartDataSource {
   }
 
   get parsedTapNoteChart() {
-    // @ts-ignore
-    return parseChart({ bpm: this.data.bpm }, this.data.notes).tapNotes;
+    return parseChart({ bpm: this.bpm, offset: this.offset }, this.data.notes).tapNotes;
   }
 }

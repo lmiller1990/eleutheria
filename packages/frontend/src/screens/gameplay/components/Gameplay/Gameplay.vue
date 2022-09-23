@@ -41,6 +41,7 @@ gql`
       artist
       chart(difficulty: $difficulty) {
         difficulty
+        offset
         level
         parsedTapNoteChart {
           id

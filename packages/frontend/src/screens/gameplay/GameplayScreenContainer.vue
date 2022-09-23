@@ -84,7 +84,7 @@ const startGameArgs: Omit<StartGameArgs, "updateSummary"> = {
       parsedTapNoteChart: {
         tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
       },
-      offset: 0,
+      offset: gqlData.value.song.chart.offset,
     },
   },
   paramData: { songId, difficulty },
