@@ -200,12 +200,6 @@ app.get("/static/:asset", (req, res) => {
   res.sendFile(p);
 });
 
-app.get("/songs/:id", async (req, res) => {
-  const data = await loadSong(req.params.id);
-
-  res.json(data);
-});
-
 app.get("/note-skins", (_req, res) => {
   if (process.env.NODE_ENV === "production") {
     const skins = compileSkins(path.join(__dirname, "notes"), "css");
@@ -258,22 +252,4 @@ app.get("/user", async (_req, res) => {
   };
 
   res.json(data);
-});
-
-app.get("/songs", async (_req, res) => {
-  const assets = (await fs.readdir(songsDir)).filter((x) => !x.startsWith("."));
-
-  const songs: BaseSong[] = await Promise.all(
-    assets.map(async (p): Promise<BaseSong> => {
-      const data = await loadSong(p);
-
-      return {
-        ...data.metadata,
-        id: p,
-        charts: data.charts,
-      };
-    })
-  );
-
-  res.json(songs);
 });

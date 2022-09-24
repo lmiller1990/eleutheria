@@ -7,7 +7,7 @@ import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import type { Game, Summary } from "@packages/engine";
+import type { Game, Summary, World } from "@packages/engine";
 import {
   injectNoteSkin,
   injectStylesheet,
@@ -17,13 +17,19 @@ import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
 import { ModifierManager } from "../../modiferManager";
-import { gql } from "@urql/vue";
+import { gql, useMutation, useQuery } from "@urql/vue";
 import type { StartGameArgs } from "../../gameplay";
-import type { GameplayFragment } from "../../../../generated/graphql";
+import {
+  GameplayDocument,
+  Gameplay_SummaryDocument,
+} from "../../../../generated/graphql";
+import { create } from "../../gameplay";
+import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
+import { extractNotesFromWorld } from "@packages/engine/utils";
 
 export interface GameplayProps {
-  startGameArgs: Omit<StartGameArgs, "updateSummary">;
-  gql: GameplayFragment;
+  // startGameArgs: Omit<StartGameArgs, "updateSummary">;
+  // gql: GameplayFragment;
   __testingDoNotStartSong?: boolean;
   __testingManualMode?: boolean;
 }
@@ -33,13 +39,14 @@ const props = defineProps<GameplayProps>();
 const root = ref<HTMLDivElement>();
 
 gql`
-  fragment Gameplay on Query {
+  query Gameplay($songId: Int!, $difficulty: String!) {
     song(songId: $songId) {
       id
       offset
       title
       artist
       chart(difficulty: $difficulty) {
+        id
         difficulty
         offset
         level
@@ -55,18 +62,53 @@ gql`
   }
 `;
 
-const highlightColor = colors[props.gql.song.chart.difficulty] ?? "yellow";
+gql`
+  mutation Gameplay_Summary(
+    $tapNotes: [SummaryNote!]!
+    $holdNotes: [[SummaryNote!]!]!
+    $chartId: Int!
+  ) {
+    saveScore(
+      data: { tapNotes: $tapNotes, holdNotes: $holdNotes, chartId: $chartId }
+    ) {
+      id
+    }
+  }
+`;
 
-const defaultNoteSkin = props.startGameArgs.noteSkinData.find(
-  (x) => x.name === "default"
-);
+const { songId, difficulty } = getParams();
+
+const [noteSkinData, userData, query] = await Promise.all([
+  fetchNoteSkins(),
+  fetchUser(),
+  useQuery({
+    query: GameplayDocument,
+    variables: {
+      songId: parseInt(songId, 10),
+      difficulty,
+    },
+  }),
+]);
+
+const gqlData = computed(() => {
+  if (!query.data.value?.song?.chart.parsedTapNoteChart) {
+    throw Error("uh oh!");
+  }
+  return query.data.value;
+});
+
+const highlightColor = colors[difficulty] ?? "yellow";
+
+const defaultNoteSkin = noteSkinData.find((x) => x.name === "default");
 
 if (!defaultNoteSkin) {
   throw Error(`No default note skin found`);
 }
 
 injectNoteSkin(defaultNoteSkin);
-injectStylesheet(props.startGameArgs.userData.css, "user-css");
+injectStylesheet(userData.css, "user-css");
+
+const saveScore = useMutation(Gameplay_SummaryDocument);
 
 const timingSummary = reactive<
   Record<typeof windowsWithMiss[number], number> & { percent: string }
@@ -76,6 +118,36 @@ const timingSummary = reactive<
   miss: 0,
   percent: "0.00",
 });
+
+async function songCompleted(world: World) {
+  const summaryData = extractNotesFromWorld(world);
+
+  const res = await saveScore.executeMutation({
+    ...summaryData,
+    chartId: gqlData.value.song.chart.id,
+  });
+
+  if (!res.data?.saveScore?.id) {
+    throw Error(`Expected id to be returned for score`);
+  }
+
+  router.push({ path: "/summary", query: { id: res.data.saveScore.id } });
+}
+
+const startGameArgs: Omit<StartGameArgs, "updateSummary"> = {
+  songData: {
+    chart: {
+      parsedTapNoteChart: {
+        tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+      },
+      offset: gqlData.value.song.chart.offset,
+    },
+  },
+  paramData: { songId, difficulty },
+  noteSkinData,
+  userData,
+  songCompleted,
+};
 
 const scoreData = computed<TableCell[]>(() => {
   return [
@@ -124,6 +196,9 @@ function stop(event: KeyboardEvent) {
 function handleKeydown(event: KeyboardEvent) {
   heldKeys.add(event.code);
 
+  if (heldKeys.has("Space") && event.code === "KeyE") {
+  }
+
   // lower the cover
   if (heldKeys.has("Space") && event.code === "KeyJ") {
     modifierManager.setCover({
@@ -153,14 +228,26 @@ onMounted(async () => {
     return;
   }
 
-  const { create } = await import("../../gameplay");
-
   const init = create(
     root.value,
     {
-      ...props.startGameArgs,
       modifierManager,
       updateSummary,
+      songData: {
+        chart: {
+          parsedTapNoteChart: {
+            tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+          },
+          offset: gqlData.value.song.chart.offset,
+        },
+      },
+      noteSkinData: noteSkinData,
+      paramData: {
+        songId,
+        difficulty,
+      },
+      userData,
+      songCompleted,
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode
@@ -192,6 +279,16 @@ onMounted(async () => {
     init.game.modifierManager.setCover(preferences.cover);
   } else {
     currentCover.value = "default";
+  }
+
+  if (true) {
+    init.game.editorRepeat = {
+      emitAfterMs: 8000,
+      emitAfterMsCallback: () => {
+        init.stop();
+        init.start();
+      },
+    };
   }
 
   init.start();
@@ -259,17 +356,17 @@ function handleChangeSpeedMod(val: number) {
               <InfoPanel
                 panelTitle="Song"
                 class="w-full"
-                :class="props.gql.song.chart.difficulty"
+                :class="gqlData.song.chart.difficulty"
                 :highlightColor="highlightColor"
               >
                 <div class="flex flex-col">
                   <!-- <div>{{ selectedSong.title }}</div> -->
-                  <div>{{ props.gql.song.title }}</div>
-                  <div>{{ props.gql.song.artist }}</div>
+                  <div>{{ gqlData.song.title }}</div>
+                  <div>{{ gqlData.song.artist }}</div>
                   <div class="empty">Empty</div>
                   <div class="capitalize">
-                    {{ props.gql.song.chart.difficulty }} Lv
-                    {{ props.gql.song.chart.level }}
+                    {{ gqlData.song.chart.difficulty }} Lv
+                    {{ gqlData.song.chart.level }}
                   </div>
                 </div>
               </InfoPanel>
@@ -278,7 +375,7 @@ function handleChangeSpeedMod(val: number) {
                 panelTitle="Stats"
                 class="w-full"
                 :data="scoreData"
-                :class="props.gql.song.chart.difficulty"
+                :class="gqlData.song.chart.difficulty"
                 :highlightColor="highlightColor"
               />
             </div>
@@ -289,7 +386,7 @@ function handleChangeSpeedMod(val: number) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style>
 .gameplay-content {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -308,5 +405,17 @@ function handleChangeSpeedMod(val: number) {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   column-gap: 10px;
+}
+
+.side {
+  margin: 40px;
+}
+
+.empty {
+  visibility: hidden;
+}
+
+.capitalize {
+  text-transform: capitalize;
 }
 </style>

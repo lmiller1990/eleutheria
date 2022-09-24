@@ -24,4 +24,8 @@ export function useEditor(data: ParamData) {
       // start(payload.data);
     }
   });
+
+  return {
+    ws,
+  };
 }

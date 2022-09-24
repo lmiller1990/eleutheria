@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import GameplayScreenContainer from "./GameplayScreenContainer.vue";
+import Gameplay from "./components/Gameplay/Gameplay.vue";
+import "../../style.css";
 </script>
 
 <template>
   <Suspense>
     <template #default>
-      <GameplayScreenContainer />
+      <div id="game-app">
+        <Gameplay />
+      </div>
     </template>
     <template #fallback> Loading... </template>
   </Suspense>

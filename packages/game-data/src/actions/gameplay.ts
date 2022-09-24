@@ -4,6 +4,7 @@ import { summarizeResults, SummaryData } from "@packages/engine/scoring";
 import { timingWindows } from "@packages/types";
 import { knexTable } from "../knex";
 import { Scores } from "../../ dbschema";
+import { ScoreDataSource } from "../sources/scoreDataSource";
 
 const log = debug(`game-data:actions:gameplay`);
 
@@ -14,7 +15,10 @@ export class GameplayActions {
     this.#ctx = ctx;
   }
 
-  async saveScore(summaryData: SummaryData, chartId: number) {
+  async saveScore(
+    summaryData: SummaryData,
+    chartId: number
+  ): Promise<ScoreDataSource> {
     const user = await this.#ctx.queryForCurrentUser();
 
     if (!user) {
@@ -45,13 +49,14 @@ export class GameplayActions {
 
     log("returning score", inserted);
 
-    return {
-      ...inserted,
-      timing: JSON.stringify(inserted.timing),
-    } as unknown as {
-      id: number;
-      percent: string;
-      timing: string;
-    };
+    return new ScoreDataSource(this.#ctx, inserted);
+    // return {
+    //   ...inserted,
+    //   timing: JSON.stringify(inserted.timing),
+    // } as unknown as {
+    //   id: number;
+    //   percent: string;
+    //   timing: string;
+    // };
   }
 }

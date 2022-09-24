@@ -1,5 +1,11 @@
 import { SummaryData } from "@packages/engine";
-import { mutationType, nonNull, stringArg } from "nexus";
+import {
+  inputObjectType,
+  intArg,
+  mutationType,
+  nonNull,
+  stringArg,
+} from "nexus";
 import { debug } from "../../../util/debug";
 import { SaveScoreInputType } from "../inputObjectTypes";
 import { Query } from "./gql-Query";
@@ -44,6 +50,19 @@ export const mutation = mutationType({
       resolve: async (_, args, _ctx) => {
         await _ctx.actions.db.signIn(args.email, args.password);
         return _ctx;
+      },
+    });
+
+    t.field("startEditing", {
+      type: "String",
+      description:
+        "Set a chart you would like to edit. It will write it to a local text file",
+      args: {
+        chartId: nonNull(intArg()),
+      },
+      resolve: async (_src, args, ctx) => {
+        await ctx.actions.editor.copyChartToFile(args.chartId);
+        return "OK";
       },
     });
 
