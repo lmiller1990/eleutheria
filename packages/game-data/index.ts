@@ -31,6 +31,8 @@ import pg from "pg";
 import { debug } from "./util/debug";
 import { contextMiddleware } from "./src/middleware/context";
 import type { Users } from "./ dbschema";
+import { EditorActions } from "./src/actions/editor";
+import { Context } from "./src/graphql/context";
 
 const log = debug("game-data:index");
 
@@ -78,35 +80,20 @@ interface WebSocketEditorStartMessage {
 
 type WebSocketPayload = WebSocketEditorStartMessage;
 
-let watchers = new Map<string, chokidar.FSWatcher>();
+// @ts-ignore - figure out how we want to handle editing eventually
+// Just need this for the EditorActions
+const ctxSingleton = new Context(null, null);
+
+const watcher = chokidar.watch(EditorActions.editingPath);
 
 wss.on("connection", (ws) => {
-  ws.on("message", (buffer) => {
-    const msg = JSON.parse(buffer.toString()) as WebSocketPayload;
-
-    if (msg.type === "editor:start") {
-      if (!watchers.has(msg.data.songId)) {
-        const chartPath = path.join(
-          songsDir,
-          msg.data.songId,
-          msg.data.difficulty,
-          `${msg.data.songId}.chart`
-        );
-        const watcher = chokidar.watch(chartPath);
-
-        watchers.set(`${msg.data.songId}-${msg.data.difficulty}`, watcher);
-
-        watcher.on("change", async () => {
-          try {
-            const newData = await loadSong(msg.data.songId);
-            ws.send(
-              JSON.stringify({ type: "editor:chart:updated", data: newData })
-            );
-          } catch (e) {
-            //
-          }
-        });
-      }
+  watcher.on("change", async () => {
+    try {
+      const notes = await ctxSingleton.actions.editor.writeChartToDb();
+      console.log('wrote to file. first line is', notes.split('\n')[0])
+      ws.send(JSON.stringify({ type: "editor:chart:updated" }));
+    } catch (e) {
+      //
     }
   });
 });

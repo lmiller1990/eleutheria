@@ -26,6 +26,7 @@ import {
 import { create } from "../../gameplay";
 import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld } from "@packages/engine/utils";
+import { useEditor } from "../../editor";
 
 export interface GameplayProps {
   // startGameArgs: Omit<StartGameArgs, "updateSummary">;
@@ -284,7 +285,8 @@ onMounted(async () => {
   if (true) {
     init.game.editorRepeat = {
       emitAfterMs: 8000,
-      emitAfterMsCallback: () => {
+      emitAfterMsCallback: async () => {
+        await query.executeQuery({ requestPolicy: 'network-only' })
         init.stop();
         init.start();
       },
@@ -293,6 +295,15 @@ onMounted(async () => {
 
   init.start();
 });
+
+const { emitter } = useEditor()
+
+
+emitter.subscribe("editor:chart:updated", () => {
+  query.executeQuery({ requestPolicy: 'network-only'}).then(data => {
+    console.log(data.data.value?.song.chart.parsedTapNoteChart)
+  })
+})
 
 function handleChangeScrollMod(val: ScrollDirection) {
   if (!game) {

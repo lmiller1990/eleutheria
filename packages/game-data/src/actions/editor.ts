@@ -13,11 +13,23 @@ export class EditorActions {
     this.#ctx = ctx;
   }
 
+  static get editingPath () {
+    return path.join(__dirname, "..", "..", "tmp", "editing.txt");
+  }
+
   async copyChartToFile(chartId: number): Promise<void> {
     log("editing chart");
     const chart = await this.#ctx.actions.db.queryChartById(chartId);
     assert(chart, `Could not find chart with id ${chartId}`);
-    const dir = path.join(__dirname, "..", "..", "tmp", "editing.txt");
-    await fs.writeFile(dir, chart.data.notes, "utf8");
+    await fs.writeFile(EditorActions.editingPath, chart.data.notes, "utf8");
+  }
+
+  // TODO: Don't hardcode chartId
+  async writeChartToDb() {
+    const notes = await fs.readFile(EditorActions.editingPath, "utf8") 
+    await this.#ctx.knexTable("charts").where("id", 1).update({
+      notes,
+    });
+    return notes
   }
 }

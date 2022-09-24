@@ -1,16 +1,33 @@
-import type { ParamData, WebSocketEmitData } from "@packages/types";
+import type { WebSocketEmitData } from "@packages/types";
 
 let startAtSeconds = 4;
 let repeatIntervalSeconds = 2;
 
-export function useEditor(data: ParamData) {
+class EE {
+  #events: Map<string, Function[]> = new Map();
+
+  subscribe(name: string, cb: Function) {
+    const t = this.#events.get(name);
+    if (t) {
+      this.#events.set(name, t.concat(cb));
+    } else {
+      this.#events.set(name, [cb]);
+    }
+  }
+
+  emit(name: string, ...args: any[]) {
+    (this.#events.get(name) ?? []).forEach((fn) => fn(...args));
+  }
+}
+
+export function useEditor() {
   const ws = new window.WebSocket(`ws://localhost:5566`);
+  const emitter = new  EE()
 
   ws.addEventListener("open", () => {
     ws.send(
       JSON.stringify({
         type: "editor:start",
-        data,
       })
     );
   });
@@ -19,7 +36,8 @@ export function useEditor(data: ParamData) {
     const payload = JSON.parse(msg.data) as WebSocketEmitData;
 
     if (payload.type === "editor:chart:updated") {
-      console.log("Got", payload.data);
+      emitter.emit("editor:chart:updated")
+      console.log("Updated!");
       // stop();
       // start(payload.data);
     }
@@ -27,5 +45,6 @@ export function useEditor(data: ParamData) {
 
   return {
     ws,
+    emitter
   };
 }

@@ -15,6 +15,14 @@ export class Context {
     this.res = res;
   }
 
+  get knex () {
+    return knex
+  }
+
+  get knexTable () {
+    return knexTable
+  }
+
   queryForCurrentUser(): Promise<Users | undefined> {
     return knexTable("sessions")
       .where({ "sessions.id": this.req.session?.id })
