@@ -20,13 +20,6 @@ export const createRouter = () => {
         },
       },
       {
-        path: "/editor",
-        component: () => import("./screens/editor/EditorScreen.vue"),
-        meta: {
-          requiresSongSelected: true,
-        },
-      },
-      {
         path: "/summary",
         component: () => import("./screens/summary/SummaryScreen.vue"),
         meta: {

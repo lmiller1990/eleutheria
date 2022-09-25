@@ -13,7 +13,7 @@ export class EditorActions {
     this.#ctx = ctx;
   }
 
-  static get editingPath () {
+  static get editingPath() {
     return path.join(__dirname, "..", "..", "tmp", "editing.txt");
   }
 
@@ -26,10 +26,10 @@ export class EditorActions {
 
   // TODO: Don't hardcode chartId
   async writeChartToDb() {
-    const notes = await fs.readFile(EditorActions.editingPath, "utf8") 
+    const notes = await fs.readFile(EditorActions.editingPath, "utf8");
     await this.#ctx.knexTable("charts").where("id", 1).update({
       notes,
     });
-    return notes
+    return notes;
   }
 }

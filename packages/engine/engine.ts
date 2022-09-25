@@ -380,6 +380,10 @@ export interface UpdatedGameState {
   readonly previousFrameMeta: PreviousFrameMeta;
 }
 
+function isFalsy(val: any): boolean {
+  return val === undefined || val === null;
+}
+
 function processNoteJudgement(
   note: EngineNote,
   judgementResults: JudgementResult[],
@@ -405,7 +409,7 @@ function processNoteJudgement(
 
   // the note is past the max timing window and can no longer be hit
   // it is considered "miss"
-  if (note.hitAt === null && note.ms < time - maxWindowMs) {
+  if (isFalsy(note.hitAt) && note.ms < time - maxWindowMs) {
     return {
       ...note,
       canHit: false,

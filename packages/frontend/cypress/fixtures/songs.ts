@@ -16,11 +16,9 @@ const chart: Chart = {
   difficulty: "expert",
   level: 8,
   parsedHoldNoteChart: {
-    metadata,
     holdNotes: [],
   },
   parsedTapNoteChart: {
-    metadata,
     tapNotes: [
       {
         id: "1",

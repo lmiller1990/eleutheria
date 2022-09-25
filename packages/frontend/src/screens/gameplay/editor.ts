@@ -1,7 +1,8 @@
 import type { WebSocketEmitData } from "@packages/types";
 
-let startAtSeconds = 4;
-let repeatIntervalSeconds = 2;
+// TODO: These
+// let startAtSeconds = 4;
+// let repeatIntervalSeconds = 2;
 
 class EE {
   #events: Map<string, Function[]> = new Map();
@@ -22,7 +23,7 @@ class EE {
 
 export function useEditor() {
   const ws = new window.WebSocket(`ws://localhost:5566`);
-  const emitter = new  EE()
+  const emitter = new EE();
 
   ws.addEventListener("open", () => {
     ws.send(
@@ -36,15 +37,12 @@ export function useEditor() {
     const payload = JSON.parse(msg.data) as WebSocketEmitData;
 
     if (payload.type === "editor:chart:updated") {
-      emitter.emit("editor:chart:updated")
-      console.log("Updated!");
-      // stop();
-      // start(payload.data);
+      emitter.emit("editor:chart:updated");
     }
   });
 
   return {
     ws,
-    emitter
+    emitter,
   };
 }

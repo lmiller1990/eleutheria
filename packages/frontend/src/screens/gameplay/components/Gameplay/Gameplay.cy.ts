@@ -1,21 +1,6 @@
 import { mount } from "../../../../../cypress/support/component";
 import Gameplay from "./Gameplay.vue";
-import { GameplayProps } from "./types";
 import appStyle from "../../../../style.css";
-import { noteSkins } from "../../../../../cypress/fixtures/modifiers";
-import { songData, testSong } from "../../../../../cypress/fixtures/songs";
-import { AudioProvider } from "@packages/engine";
-
-const audioProvider: AudioProvider = (..._args) => {
-  return Promise.resolve(() => {
-    const audioContext = new AudioContext();
-    return {
-      audioContext,
-      startTime: 0,
-      source: audioContext.createBufferSource(),
-    };
-  });
-};
 
 function waitFor<T>(win: Window, key: string) {
   let to = win.setTimeout(() => {
@@ -39,26 +24,11 @@ describe("Gameplay", () => {
   });
 
   it("renders", () => {
-    // TODO: Fix in Cypress?
     // @ts-ignore
-    mount<GameplayProps>(Gameplay, {
+    mount(Gameplay, {
       props: {
         __testingDoNotStartSong: false,
         __testingManualMode: true,
-        startGameArgs: {
-          songData,
-          userData: {
-            js: "",
-            css: "",
-          },
-          noteSkinData: noteSkins,
-          audioProvider,
-          paramData: {
-            id: testSong.id,
-            difficulty: songData.charts[0].difficulty,
-          },
-          songCompleted: () => {},
-        },
       },
       styles: [
         appStyle,

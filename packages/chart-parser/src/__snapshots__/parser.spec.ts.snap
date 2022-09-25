@@ -2,14 +2,6 @@
 
 exports[`parseChart > works 1`] = `
 {
-  "metadata": {
-    "artist": undefined,
-    "banner": "https://dummyimage.com/640x360/def/123",
-    "bpm": 120,
-    "charts": undefined,
-    "offset": 0,
-    "title": "Example Song",
-  },
   "tapNotes": [
     {
       "char": "N",
@@ -163,44 +155,6 @@ exports[`parseHoldsChart > supports multiple holds holds-simultaneously 1`] = `
       },
     ],
   ],
-  "metadata": {
-    "artist": undefined,
-    "banner": "https://dummyimage.com/640x360/def/123",
-    "bpm": 120,
-    "charts": undefined,
-    "offset": 0,
-    "title": "Example Song",
-  },
-  "tapNotes": [
-    {
-      "char": "1",
-      "column": 0,
-      "id": "1",
-      "measureNumber": 0,
-      "ms": 0,
-    },
-    {
-      "char": "1",
-      "column": 5,
-      "id": "2",
-      "measureNumber": 0,
-      "ms": 0,
-    },
-    {
-      "char": "2",
-      "column": 0,
-      "id": "3",
-      "measureNumber": 0,
-      "ms": 1000,
-    },
-    {
-      "char": "2",
-      "column": 5,
-      "id": "4",
-      "measureNumber": 0,
-      "ms": 1000,
-    },
-  ],
 }
 `;
 
@@ -255,58 +209,6 @@ exports[`parseHoldsChart > works 1`] = `
         "ms": 3750,
       },
     ],
-  ],
-  "metadata": {
-    "artist": undefined,
-    "banner": "https://dummyimage.com/640x360/def/123",
-    "bpm": 120,
-    "charts": undefined,
-    "offset": 0,
-    "title": "Example Song",
-  },
-  "tapNotes": [
-    {
-      "char": "1",
-      "column": 0,
-      "id": "1",
-      "measureNumber": 0,
-      "ms": 0,
-    },
-    {
-      "char": "2",
-      "column": 0,
-      "id": "2",
-      "measureNumber": 0,
-      "ms": 1500,
-    },
-    {
-      "char": "1",
-      "column": 3,
-      "id": "3",
-      "measureNumber": 1,
-      "ms": 2000,
-    },
-    {
-      "char": "2",
-      "column": 3,
-      "id": "4",
-      "measureNumber": 1,
-      "ms": 2750,
-    },
-    {
-      "char": "1",
-      "column": 3,
-      "id": "5",
-      "measureNumber": 1,
-      "ms": 3000,
-    },
-    {
-      "char": "2",
-      "column": 3,
-      "id": "6",
-      "measureNumber": 1,
-      "ms": 3750,
-    },
   ],
 }
 `;

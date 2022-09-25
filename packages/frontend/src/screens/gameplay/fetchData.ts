@@ -1,9 +1,4 @@
-import type {
-  NoteSkin,
-  ParamData,
-  UserScripts,
-  LoadSongData,
-} from "@packages/types";
+import type { NoteSkin, ParamData, UserScripts } from "@packages/types";
 
 export async function fetchNoteSkins(): Promise<NoteSkin[]> {
   const res = await window.fetch(`/note-skins`);
@@ -16,14 +11,7 @@ export async function fetchUser(): Promise<UserScripts> {
     css: ``,
     js: ``,
   };
-  // const res = await window.fetch(`/user`);
-  // return res.json();
 }
-
-// export async function fetchData(id: string): Promise<LoadSongData> {
-//   const res = await window.fetch(`/songs/${id}`);
-//   return res.json();
-// }
 
 export function getParams(): ParamData {
   const url = new URL(window.location.toString());

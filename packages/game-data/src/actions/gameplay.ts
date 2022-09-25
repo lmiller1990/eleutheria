@@ -45,18 +45,10 @@ export class GameplayActions {
     const inserted = await knexTable("scores")
       .where({ id: insertResult.id })
       .first()
-      .select("id", "percent", "timing");
+      .select();
 
     log("returning score", inserted);
 
     return new ScoreDataSource(this.#ctx, inserted);
-    // return {
-    //   ...inserted,
-    //   timing: JSON.stringify(inserted.timing),
-    // } as unknown as {
-    //   id: number;
-    //   percent: string;
-    //   timing: string;
-    // };
   }
 }

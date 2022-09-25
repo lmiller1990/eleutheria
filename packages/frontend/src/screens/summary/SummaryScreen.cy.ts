@@ -7,8 +7,7 @@ import { mount } from "../../../cypress/support/mount";
 function setTestData() {
   const songsStore = useSongsStore();
   songsStore.$patch((state) => {
-    state.songs = [testSong];
-    state.selectedSongId = testSong.id;
+    state.selectedSongId = Number(testSong.id);
     state.selectedChartIdx = 0;
   });
 

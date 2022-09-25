@@ -16,8 +16,7 @@ beforeEach(() => {
   setActivePinia(pinia);
   const songsStore = useSongsStore();
   songsStore.$patch((state) => {
-    state.songs = [testSong];
-    state.selectedSongId = testSong.id;
+    state.selectedSongId = Number(testSong.id);
     state.selectedChartIdx = 0;
   });
 });
@@ -43,14 +42,9 @@ Cypress.Commands.add("mount", _mount);
 type MountingOptions<T> = Parameters<typeof _mount<T>>[1]
 type Comp = Parameters<typeof _mount>[0]
 
-export function mount<T>(comp: Comp, payload: MountingOptions<T> = {}) {
-  const _props: T = {
-    ...payload.props,
-  } as any;
-
+export function mount(comp: Comp, payload: MountingOptions<any> = {}) {
   return _mount(comp as any, {
     ...payload,
-    props: _props,
     global: {
       plugins: [pinia, createRouterMock({ 
         spy: {

@@ -1,8 +1,15 @@
 import { objectType } from "nexus";
+import path from "path";
 import { Chart } from "./gql-Chart";
 
 export const Summary = objectType({
   name: "Summary",
+  // `sourceType` is needed to ensure async fields on SourceDataSource map up correctly.
+  // If you remove it, gql-Mutation#saveScore gives a TS error (but still works).
+  sourceType: {
+    module: path.join(__dirname, "../../sources/scoreDataSource.ts"),
+    export: "ScoreDataSource",
+  },
   definition(t) {
     t.nonNull.int("id");
 

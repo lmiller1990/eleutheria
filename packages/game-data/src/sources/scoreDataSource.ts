@@ -2,8 +2,7 @@ import assert from "assert";
 import { Scores } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { knexTable } from "../knex";
-import { ChartDataDefinition, ChartDataSource } from "./chartSource";
+import { ChartDataSource } from "./chartSource";
 
 const log = debug(`game-data:ScoreDataSource`);
 
@@ -30,10 +29,11 @@ export class ScoreDataSource {
 
   get timing() {
     // It is JSON data
-    return this.data.timing as string;
+    return JSON.stringify(this.data.timing);
   }
 
   async chart(): Promise<ChartDataSource> {
+    console.log("Query for chart", this.data);
     const chart = await this.#ctx.actions.db.queryChartById(this.data.chart_id);
     log(`got chart for score id: ${this.id}`, chart);
     assert(chart, "score must have a chart");

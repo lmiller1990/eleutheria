@@ -29,8 +29,6 @@ import { extractNotesFromWorld } from "@packages/engine/utils";
 import { useEditor } from "../../editor";
 
 export interface GameplayProps {
-  // startGameArgs: Omit<StartGameArgs, "updateSummary">;
-  // gql: GameplayFragment;
   __testingDoNotStartSong?: boolean;
   __testingManualMode?: boolean;
 }
@@ -286,7 +284,12 @@ onMounted(async () => {
     init.game.editorRepeat = {
       emitAfterMs: 8000,
       emitAfterMsCallback: async () => {
-        await query.executeQuery({ requestPolicy: 'network-only' })
+        // TODO: may only need to do this once
+        await query.executeQuery({ requestPolicy: "network-only" });
+        init.game?.updateChart({
+          tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+          // offset: gqlData.value.song.chart.offset,
+        });
         init.stop();
         init.start();
       },
@@ -296,14 +299,12 @@ onMounted(async () => {
   init.start();
 });
 
-const { emitter } = useEditor()
-
+const { emitter } = useEditor();
 
 emitter.subscribe("editor:chart:updated", () => {
-  query.executeQuery({ requestPolicy: 'network-only'}).then(data => {
-    console.log(data.data.value?.song.chart.parsedTapNoteChart)
-  })
-})
+  // TODO: may only need to do this once
+  query.executeQuery({ requestPolicy: "network-only" });
+});
 
 function handleChangeScrollMod(val: ScrollDirection) {
   if (!game) {

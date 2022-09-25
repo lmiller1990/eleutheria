@@ -214,6 +214,13 @@ export class Game implements GameAPI {
     this.#audioContext = audioContext;
   }
 
+  updateChart(chart: Partial<GameConfig["chart"]>) {
+    this.#config.chart = {
+      ...this.#config.chart,
+      ...chart,
+    };
+  }
+
   stop() {
     if (this.#nextAnimationFrame) {
       window.cancelAnimationFrame(this.#nextAnimationFrame);

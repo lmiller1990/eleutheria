@@ -89,8 +89,7 @@ const watcher = chokidar.watch(EditorActions.editingPath);
 wss.on("connection", (ws) => {
   watcher.on("change", async () => {
     try {
-      const notes = await ctxSingleton.actions.editor.writeChartToDb();
-      console.log('wrote to file. first line is', notes.split('\n')[0])
+      await ctxSingleton.actions.editor.writeChartToDb();
       ws.send(JSON.stringify({ type: "editor:chart:updated" }));
     } catch (e) {
       //

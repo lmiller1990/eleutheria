@@ -82,7 +82,6 @@ export function parseChart(
   dataJson: { offset: number; bpm: number },
   chartRaw: string
 ): ParsedTapNoteChart {
-  console.log(dataJson);
   let i = 0;
 
   function incId() {

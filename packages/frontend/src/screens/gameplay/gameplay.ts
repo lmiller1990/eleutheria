@@ -319,7 +319,6 @@ export function create(
     return;
   }
 
-  console.log("song data", songData);
   const gameConfig: GameConfig = {
     dev: {
       manualMode: __testingManualMode,
