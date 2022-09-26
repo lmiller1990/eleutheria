@@ -1,4 +1,4 @@
-import { GameChart, World } from "..";
+import { GameChart, World } from "../src";
 
 export function createWorld(
   chart: Partial<GameChart> = { tapNotes: new Map() },

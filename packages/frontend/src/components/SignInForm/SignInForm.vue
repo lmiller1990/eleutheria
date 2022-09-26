@@ -42,8 +42,8 @@ const error = ref<string | undefined>();
 
 const signIn = useMutation(SignInForm_SignInDocument);
 
-function handleSignUp () {
-  modal.showModal('signUp')
+function handleSignUp() {
+  modal.showModal("signUp");
 }
 
 async function handleSubmit() {
@@ -85,7 +85,8 @@ async function handleSubmit() {
     <div v-if="error" class="pt-5 text-red-300">{{ error }}</div>
 
     <div class="pt-5">
-      New Here? <button class="underline" @click="handleSignUp">Sign Up</button>.
+      New Here?
+      <button class="underline" @click="handleSignUp">Sign Up</button>.
     </div>
   </form>
 </template>

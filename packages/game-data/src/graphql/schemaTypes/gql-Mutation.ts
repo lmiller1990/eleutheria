@@ -1,11 +1,5 @@
-import { SummaryData } from "@packages/engine";
-import {
-  inputObjectType,
-  intArg,
-  mutationType,
-  nonNull,
-  stringArg,
-} from "nexus";
+import type { SummaryData } from "@packages/engine";
+import { intArg, mutationType, nonNull, stringArg } from "nexus";
 import { debug } from "../../../util/debug";
 import { SaveScoreInputType } from "../inputObjectTypes";
 import { Query } from "./gql-Query";

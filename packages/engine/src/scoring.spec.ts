@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { World, EngineNote, TimingWindow } from "./engine";
-import { createWorld } from "./test/utils";
+import { createWorld } from "../test/utils";
 import { Summary, summarizeResults, SummaryData } from "./scoring";
 import { extractNotesFromWorld } from "./utils";
 

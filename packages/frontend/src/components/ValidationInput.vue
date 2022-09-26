@@ -61,7 +61,8 @@ watchEffect(() => {
 </template>
 
 <style scoped>
-  label, input {
-    @apply uppercase;
-  }
+label,
+input {
+  @apply uppercase;
+}
 </style>

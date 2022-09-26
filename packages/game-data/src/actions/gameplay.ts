@@ -1,6 +1,6 @@
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { summarizeResults, SummaryData } from "@packages/engine/scoring";
+import { summarizeResults, SummaryData } from "./scoringUtils";
 import { timingWindows } from "@packages/types";
 import { knexTable } from "../knex";
 import { Scores } from "../../ dbschema";

@@ -1,9 +1,7 @@
-describe('empty spec', () => {
-  before(() => {
+describe("empty spec", () => {
+  before(() => {});
 
-  })
-
-  it('passes', () => {
-    cy.visit('/')
-  })
-})
+  it("passes", () => {
+    cy.visit("/");
+  });
+});

@@ -12,8 +12,8 @@ import {
   judge,
   GameChart,
   createChart,
-} from "./engine";
-import { createWorld } from "./test/utils";
+} from ".";
+import { createWorld } from "../test/utils";
 
 const engineConfiguration: EngineConfiguration = {
   maxHitWindow: 100,

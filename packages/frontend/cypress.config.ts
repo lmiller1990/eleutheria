@@ -32,11 +32,11 @@ export default defineConfig({
     baseUrl: "http://localhost:5566",
     setupNodeEvents(on, config) {
       on("task", {
-        'start:server': () => {
-          return null
-        }
-      })
+        "start:server": () => {
+          return null;
+        },
+      });
       // implement node event listeners here
-    }
+    },
   },
 });
