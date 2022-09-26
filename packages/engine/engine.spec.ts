@@ -17,7 +17,7 @@ import { createWorld } from "./test/utils";
 
 const engineConfiguration: EngineConfiguration = {
   maxHitWindow: 100,
-  timingWindows: undefined,
+  timingWindows: [],
 };
 
 const createInput = ({
@@ -44,7 +44,7 @@ function makeHoldNote(options: {
     ms: 0,
     column: 0,
     canHit: true,
-    timingWindowName: undefined,
+    timingWindowName: null,
   });
 
   const n1 = {
@@ -52,7 +52,7 @@ function makeHoldNote(options: {
     column: 1,
     id: "h1",
     ms: options.startMs,
-    dependsOn: undefined,
+    dependsOn: null,
   };
 
   const n2 = {
@@ -122,7 +122,7 @@ describe("nearestScorableNote", () => {
       chart
     );
 
-    expect(actual).toBe(undefined);
+    expect(actual).toBeFalsy();
   });
 
   it("handles chart with no valid tapNotes", () => {
@@ -135,7 +135,7 @@ describe("nearestScorableNote", () => {
       chart
     );
 
-    expect(actual).toBe(undefined);
+    expect(actual).toBeFalsy();
   });
 
   it("ignores notes that have been hit already", () => {
@@ -175,7 +175,7 @@ describe("judgeInput", () => {
       inputs: ["100"],
       time: 100,
       timing: -100,
-      timingWindowName: undefined,
+      timingWindowName: null,
     });
   });
 
@@ -193,7 +193,7 @@ describe("judgeInput", () => {
       timingWindows: undefined,
     });
 
-    expect(actual).toBe(undefined);
+    expect(actual).toBeFalsy();
   });
 
   it("considers timing windows when note is inside smallest window", () => {
@@ -324,7 +324,7 @@ describe("judgeInput", () => {
       timing: 50,
       noteId: note.id,
       time: 150,
-      timingWindowName: undefined,
+      timingWindowName: null,
       inputs: ["150"],
     });
   });
@@ -360,7 +360,7 @@ describe("updateGameState", () => {
     ms: 0,
     column: 0,
     canHit: true,
-    timingWindowName: undefined,
+    timingWindowName: null,
   });
 
   it("updates the world given relative to given millseconds", () => {
@@ -561,8 +561,8 @@ describe("updateGameState", () => {
             time: 940,
             timing: -60,
             // no timing windows are specified, so we are just using default maxHit
-            // this means the timing window is undefined.
-            timingWindowName: undefined,
+            // this means the timing window is null.
+            timingWindowName: null,
             inputs: ["940"],
           },
         ],
@@ -650,7 +650,7 @@ describe("updateGameState", () => {
             time: 950,
             timing: -50,
             // no timing windows passed in config.
-            timingWindowName: undefined,
+            timingWindowName: null,
             inputs: ["950"],
           },
         ],
@@ -783,14 +783,14 @@ describe("updateGameState", () => {
             noteId: "1",
             time: 100,
             timing: 0,
-            timingWindowName: undefined,
+            timingWindowName: null,
             inputs: ["100"],
           },
           {
             noteId: "2",
             time: 100,
             timing: 0,
-            timingWindowName: undefined,
+            timingWindowName: null,
             inputs: ["100"],
           },
         ],
@@ -805,7 +805,7 @@ describe("updateGameState", () => {
   it("updates the world consider holds notes", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     const h1: EngineNote[] = [
-      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
       { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
     ];
     holdNotes.set("h1", h1);
@@ -850,7 +850,7 @@ describe("updateGameState", () => {
             noteId: "h1",
             time: 1000,
             timing: 0,
-            timingWindowName: undefined,
+            timingWindowName: null,
           },
         ],
         comboBroken: false,
@@ -865,7 +865,7 @@ describe("updateGameState", () => {
   it("does not hit hold outside timing window", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     holdNotes.set("h1", [
-      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
       { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
     ]);
 
@@ -890,7 +890,7 @@ describe("updateGameState", () => {
   it("does hit hold inside timing window", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     holdNotes.set("h1", [
-      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
       { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
     ]);
 
@@ -913,14 +913,14 @@ describe("updateGameState", () => {
       {
         canHit: false,
         column: 1,
-        dependsOn: undefined,
+        dependsOn: null,
         hitAt: 1000,
         hitTiming: 0,
         id: "h1",
         missed: false,
         ms: 1000,
         isHeld: true,
-        timingWindowName: undefined,
+        timingWindowName: null,
         measureNumber: 0,
       },
       {
@@ -930,7 +930,7 @@ describe("updateGameState", () => {
         id: "h2",
         missed: false,
         ms: 1100,
-        timingWindowName: undefined,
+        timingWindowName: null,
         measureNumber: 0,
       },
     ]);
@@ -939,7 +939,7 @@ describe("updateGameState", () => {
   it("drops hold if not consistenly held", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     holdNotes.set("h1", [
-      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: undefined },
+      { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
       { ...baseNote, column: 1, id: "h2", ms: 1100, dependsOn: "h1" },
     ]);
 
@@ -1016,7 +1016,7 @@ describe("createChart", () => {
             id: "hold-1",
             ms: 1100,
             column: 1,
-            dependsOn: undefined,
+            dependsOn: null,
           }),
           makeTapNote({
             id: "hold-2",

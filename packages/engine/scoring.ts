@@ -1,5 +1,5 @@
-import { EngineNote } from ".";
-import type { TimingWindow, World } from "./engine";
+import type { EngineNote } from ".";
+import type { TimingWindow } from "./engine";
 
 export interface TimingTypeSummary {
   count: number;
@@ -15,8 +15,28 @@ export interface Summary {
   };
 }
 
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+
+const summaryKeys = [
+  "id",
+  "missed",
+  "timingWindowName",
+  "hitAt",
+  "droppedAt",
+  "ms",
+] as const;
+
+export type SummaryNote = Pick<EngineNote, typeof summaryKeys[number]>;
+
+export interface SummaryData {
+  holdNotes: SummaryNote[][];
+  tapNotes: SummaryNote[];
+}
+
 export function summarizeResults(
-  world: World,
+  data: SummaryData,
   timingWindows: Readonly<TimingWindow[]>
 ): Summary {
   const init: Summary = {
@@ -36,7 +56,7 @@ export function summarizeResults(
     return acc + (curr.weight > 0 ? curr.weight : 0);
   }, 0);
 
-  const totalNotes = world.chart.holdNotes.size + world.chart.tapNotes.size;
+  const totalNotes = data.holdNotes.length + data.tapNotes.length;
   const bestWindow = timingWindows.reduce(
     (acc, curr) => (curr.weight > acc.weight ? curr : acc),
     timingWindows[0]
@@ -70,15 +90,11 @@ export function summarizeResults(
 
   let percent = 0;
 
-  const allNotes: Array<[string, EngineNote]> = [];
-  for (const [id, note] of world.chart.tapNotes) {
-    allNotes.push([id, note]);
-  }
-  for (const [id, note] of world.chart.holdNotes) {
-    allNotes.push([id, note[0]]);
-  }
+  const allNotes: SummaryNote[] = data.tapNotes.concat(
+    data.holdNotes.map((x) => x[0])
+  );
 
-  for (const [_id, note] of allNotes) {
+  for (const note of allNotes) {
     if (note.missed) {
       summary.timing.miss.count += 1;
     }
@@ -96,7 +112,7 @@ export function summarizeResults(
       }
 
       // hit note - find correct timing window.
-      if (note.hitAt !== undefined) {
+      if (note.hitAt) {
         // always increase count
         summary.timing[note.timingWindowName].count += 1;
 

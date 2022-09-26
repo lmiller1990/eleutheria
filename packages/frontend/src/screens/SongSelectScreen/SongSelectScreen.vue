@@ -6,12 +6,12 @@
     <div class="wrapper max-w-screen-lg h-full">
       <div class="tiles flex items-center justify-center">
         <SongTile
-          v-for="(song, idx) of songsStore.songs"
+          v-for="(song, idx) of songsQuery.data?.value?.songs"
           :key="song.id"
           :songTitle="song.title"
           class="h-full"
           :imgSrc="thumbails[idx]"
-          :selected="song.id === songsStore.selectedSongId"
+          :selected="song.id === selectedSongId"
           @selected="handleSelected(song.id)"
         />
       </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import SongTile from "../../components/SongTile";
 import SongInfoPanel from "../../components/SongInfoPanel";
 import DifficultyPanel from "../../components/DifficultyPanel.vue";
@@ -43,13 +43,57 @@ import { thumbails } from "../../thumbnails";
 import { useRouter } from "vue-router";
 import { useSongsStore } from "../../stores/songs";
 import { SongDifficulty } from "../../types";
-import type { ChartSummary } from "@packages/types";
-import { chartInfo } from "@packages/chart-parser";
 import { colors } from "../../shared";
 import { TableCell } from "../../components/SongInfoPanel/types";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
 import Username from "./Username.vue";
+import { gql, useQuery } from "@urql/vue";
+import {
+  SongSelectScreen_SongsDocument,
+  SongSelectScreen_ChartDocument,
+} from "../../generated/graphql";
+
+gql`
+  query SongSelectScreen_Songs {
+    songs {
+      id
+      title
+      imgSrc
+      duration
+      artist
+      bpm
+    }
+  }
+`;
+
+gql`
+  query SongSelectScreen_Chart($songId: Int!) {
+    charts(songId: $songId) {
+      id
+      difficulty
+      level
+      tapNoteCount
+    }
+  }
+`;
+
+const songsStore = useSongsStore();
+
+const selectedSongId = ref<number>();
+
+const songsQuery = useQuery({
+  query: SongSelectScreen_SongsDocument,
+});
+
+const chartQuery = useQuery({
+  query: SongSelectScreen_ChartDocument,
+  variables: {
+    // @ts-expect-error - we only unpause when this is non null
+    songId: selectedSongId,
+  },
+  pause: computed(() => !selectedSongId.value),
+});
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
@@ -60,7 +104,14 @@ function handleKeyDown(event: KeyboardEvent) {
     handleSelected(songsStore.selectedSongId);
   }
 
-  if (event.code === "KeyJ" && songsStore.selectedChartIdx < 2) {
+  if (!chartQuery.data.value?.charts.length) {
+    return;
+  }
+
+  if (
+    event.code === "KeyJ" &&
+    songsStore.selectedChartIdx < chartQuery.data.value.charts.length
+  ) {
     songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
   }
 
@@ -77,10 +128,8 @@ onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
 
-const songsStore = useSongsStore();
-
 const chartDifficulty = computed(() => {
-  return songsStore.selectedChart?.difficulty ?? "";
+  return selectedChart.value?.difficulty ?? "";
 });
 
 const highlightColor = computed(() => {
@@ -88,11 +137,11 @@ const highlightColor = computed(() => {
 });
 
 const difficulties = computed<SongDifficulty[]>(() => {
-  if (!songsStore.selectedSong) {
+  if (!chartQuery.data.value?.charts) {
     return [];
   }
 
-  return songsStore.selectedSong.charts.map((chart) => {
+  return chartQuery.data.value.charts.map((chart) => {
     return {
       name: chart.difficulty,
       level: chart.level,
@@ -100,30 +149,34 @@ const difficulties = computed<SongDifficulty[]>(() => {
   });
 });
 
-const chartSummary = computed<ChartSummary | undefined>(() => {
-  if (!songsStore.selectedChart) {
-    return;
-  }
+const selectedChart = computed(
+  () => chartQuery.data.value?.charts?.[songsStore.selectedChartIdx]
+);
 
-  return chartInfo(
-    songsStore.selectedChart.parsedTapNoteChart,
-    songsStore.selectedChart.parsedHoldNoteChart
-  );
-});
+const selectedSong = computed(() =>
+  songsQuery.data.value?.songs?.find((x) => x.id === selectedSongId.value)
+);
 
 const tableData = computed<TableCell[]>(() => {
+  if (!selectedChart.value || !selectedSong.value) {
+    return ["Notes", "Duration", "BPM", "Best"].map((title) => ({
+      title,
+      content: "-",
+    }));
+  }
+
   return [
     {
       title: "Notes",
-      content: chartSummary.value?.totalNotes,
+      content: selectedChart.value.tapNoteCount ?? "-",
     },
     {
       title: "Duration",
-      content: songsStore.selectedSong?.duration,
+      content: selectedSong?.value.duration ?? "-",
     },
     {
       title: "BPM",
-      content: songsStore.selectedSong?.bpm,
+      content: selectedSong?.value.bpm ?? "-",
     },
     {
       title: "Best",
@@ -133,10 +186,12 @@ const tableData = computed<TableCell[]>(() => {
 });
 
 const router = useRouter();
-
 const heldKeys = useHeldKeys();
 
-function handleSelected(songId: string) {
+function handleSelected(songId: number) {
+  selectedSongId.value = songId;
+  songsStore.setSelectedChartIdx(0);
+
   if (songsStore.selectedSongId === songId) {
     // they already clicked it once
     // time to play!
@@ -149,7 +204,7 @@ function handleSelected(songId: string) {
     router.push({
       path: route,
       query: {
-        song: songId,
+        songId: songId,
         difficulty: chartDifficulty.value,
       },
     });
@@ -157,16 +212,6 @@ function handleSelected(songId: string) {
     songsStore.setSelectedSongId(songId);
   }
 }
-
-// function durationToNum(str: string) {
-//   const match = /(\d+).*/.exec(str);
-//   if (!match?.[1]) {
-//     throw Error(`Could not convert ${str} to number`);
-//   }
-//   return parseInt(match[1], 10);
-// }
-
-songsStore.fetchSongs();
 </script>
 
 <style lang="scss" scoped>

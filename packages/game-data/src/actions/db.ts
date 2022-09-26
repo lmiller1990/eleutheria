@@ -1,7 +1,10 @@
-import { DB } from "../..";
+import { Charts, Scores, Songs, Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { knex } from "../knex";
+import { knexTable } from "../knex";
+import { ChartDataSource } from "../sources/chartSource";
+import { ScoreDataSource } from "../sources/scoreDataSource";
+import { SongDataSource } from "../sources/songDataSource";
 
 const log = debug(`game-data:db`);
 
@@ -20,9 +23,9 @@ export class DbActions {
     email: string;
     username: string;
     password: string;
-  }): Promise<DB.User | undefined> {
+  }): Promise<Users | undefined> {
     try {
-      const user = await knex("users").insert<DB.User>({
+      const user = await knexTable("users").insert<Users>({
         username,
         email,
         password,
@@ -37,7 +40,7 @@ export class DbActions {
   }
 
   async findUserByEmail(email: string) {
-    const user = await knex("users").where<DB.User>("email", email).first();
+    const user = await knexTable("users").where<Users>("email", email).first();
     return user;
   }
 
@@ -46,22 +49,79 @@ export class DbActions {
 
     const user = await this.findUserByEmail(email);
 
-    if (!user) {
-      return;
+    if (!user || user.password !== password) {
+      throw Error("Credentials do not match.");
     }
 
-    if (user.password === password) {
-      await knex("sessions")
-        .where({ id: this.#ctx.req.session.id })
-        .update({ user_id: user.id });
-    }
+    await knexTable("sessions")
+      .where({ id: this.#ctx.req.session.id })
+      .update({ user_id: user.id });
 
     return user;
   }
 
+  async queryForSong(songId: number): Promise<SongDataSource | undefined> {
+    const song = await knexTable<Songs>("songs").where("id", songId).first();
+    if (!song) {
+      return;
+    }
+    return new SongDataSource(this.#ctx, {
+      ...song,
+      imgSrc: "",
+    });
+  }
+
+  async queryForSongs(): Promise<SongDataSource[]> {
+    const songs = await knexTable<Songs>("songs").select();
+    return songs.map((song) => {
+      return new SongDataSource(this.#ctx, {
+        ...song,
+        imgSrc: "",
+      });
+    });
+  }
+
+  async queryChartById(chartId: number): Promise<ChartDataSource | undefined> {
+    const chart = await knexTable("charts")
+      .join("songs", "songs.id", "=", "charts.song_id")
+      .first()
+      .where<Charts & Songs>("charts.id", chartId);
+
+    if (!chart) {
+      return;
+    }
+    return new ChartDataSource(this.#ctx, chart);
+  }
+
+  async getChartsForSong(songId: number): Promise<ChartDataSource[]> {
+    const charts = await knexTable("charts")
+      .join("songs", "songs.id", "=", "charts.song_id")
+      .where<Array<Charts & Songs>>("charts.song_id", songId);
+
+    log(`getChartsForSong`, charts);
+
+    return charts.map((data) => new ChartDataSource(this.#ctx, data));
+  }
+
   async signOut() {
-    await knex("sessions").where({ id: this.#ctx.req.session.id }).delete();
+    await knexTable("sessions")
+      .where({ id: this.#ctx.req.session.id })
+      .delete();
 
     log(`deleted session with id ${this.#ctx.req.session.id}`);
+  }
+
+  async queryForScore(id: number): Promise<ScoreDataSource | undefined> {
+    const score = await knexTable("scores").where<Scores>("id", id).first();
+    if (!score) {
+      return undefined;
+    }
+
+    log(`got score`, score);
+
+    return new ScoreDataSource(this.#ctx, {
+      ...score,
+      timing: JSON.stringify(score.timing),
+    });
   }
 }

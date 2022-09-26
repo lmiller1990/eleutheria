@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import type { GameplayProps } from "./types";
 import ModifierPanel, {
   ModCoverParams,
 } from "../../../../components/ModifierPanel";
 import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
-import { useSongsStore } from "../../../../stores/songs";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import type { Game, Summary } from "@packages/engine";
+import type { Game, Summary, World } from "@packages/engine";
 import {
   injectNoteSkin,
   injectStylesheet,
@@ -19,33 +17,97 @@ import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
 import { ModifierManager } from "../../modiferManager";
+import { gql, useMutation, useQuery } from "@urql/vue";
+import type { StartGameArgs } from "../../gameplay";
+import {
+  GameplayDocument,
+  Gameplay_SummaryDocument,
+} from "../../../../generated/graphql";
+import { create } from "../../gameplay";
+import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
+import { extractNotesFromWorld } from "@packages/engine/utils";
+import { useEditor } from "../../editor";
+
+export interface GameplayProps {
+  __testingDoNotStartSong?: boolean;
+  __testingManualMode?: boolean;
+}
 
 const props = defineProps<GameplayProps>();
 
 const root = ref<HTMLDivElement>();
 
-const songsStore = useSongsStore();
+gql`
+  query Gameplay($songId: Int!, $difficulty: String!) {
+    song(songId: $songId) {
+      id
+      offset
+      title
+      artist
+      chart(difficulty: $difficulty) {
+        id
+        difficulty
+        offset
+        level
+        parsedTapNoteChart {
+          id
+          ms
+          column
+          measureNumber
+          char
+        }
+      }
+    }
+  }
+`;
 
-if (!songsStore.selectedChart || !songsStore.selectedSong) {
-  throw Error(
-    `Expected selectedChart and selectedSong to exist in songsStore. This should be impossible.`
-  );
-}
+gql`
+  mutation Gameplay_Summary(
+    $tapNotes: [SummaryNote!]!
+    $holdNotes: [[SummaryNote!]!]!
+    $chartId: Int!
+  ) {
+    saveScore(
+      data: { tapNotes: $tapNotes, holdNotes: $holdNotes, chartId: $chartId }
+    ) {
+      id
+    }
+  }
+`;
 
-const selectedChart = songsStore.selectedChart;
-const selectedSong = songsStore.selectedSong;
-const highlightColor = colors[selectedChart.difficulty] ?? "yellow";
+const { songId, difficulty } = getParams();
 
-const defaultNoteSkin = props.startGameArgs.noteSkinData.find(
-  (x) => x.name === "default"
-);
+const [noteSkinData, userData, query] = await Promise.all([
+  fetchNoteSkins(),
+  fetchUser(),
+  useQuery({
+    query: GameplayDocument,
+    variables: {
+      songId: parseInt(songId, 10),
+      difficulty,
+    },
+  }),
+]);
+
+const gqlData = computed(() => {
+  if (!query.data.value?.song?.chart.parsedTapNoteChart) {
+    throw Error("uh oh!");
+  }
+  return query.data.value;
+});
+
+const highlightColor = colors[difficulty] ?? "yellow";
+
+const defaultNoteSkin = noteSkinData.find((x) => x.name === "default");
 
 if (!defaultNoteSkin) {
   throw Error(`No default note skin found`);
 }
 
 injectNoteSkin(defaultNoteSkin);
-injectStylesheet(props.startGameArgs.userData.css, "user-css");
+injectStylesheet(userData.css, "user-css");
+
+const saveScore = useMutation(Gameplay_SummaryDocument);
 
 const timingSummary = reactive<
   Record<typeof windowsWithMiss[number], number> & { percent: string }
@@ -55,6 +117,36 @@ const timingSummary = reactive<
   miss: 0,
   percent: "0.00",
 });
+
+async function songCompleted(world: World) {
+  const summaryData = extractNotesFromWorld(world);
+
+  const res = await saveScore.executeMutation({
+    ...summaryData,
+    chartId: gqlData.value.song.chart.id,
+  });
+
+  if (!res.data?.saveScore?.id) {
+    throw Error(`Expected id to be returned for score`);
+  }
+
+  router.push({ path: "/summary", query: { id: res.data.saveScore.id } });
+}
+
+const startGameArgs: Omit<StartGameArgs, "updateSummary"> = {
+  songData: {
+    chart: {
+      parsedTapNoteChart: {
+        tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+      },
+      offset: gqlData.value.song.chart.offset,
+    },
+  },
+  paramData: { songId, difficulty },
+  noteSkinData,
+  userData,
+  songCompleted,
+};
 
 const scoreData = computed<TableCell[]>(() => {
   return [
@@ -103,6 +195,9 @@ function stop(event: KeyboardEvent) {
 function handleKeydown(event: KeyboardEvent) {
   heldKeys.add(event.code);
 
+  if (heldKeys.has("Space") && event.code === "KeyE") {
+  }
+
   // lower the cover
   if (heldKeys.has("Space") && event.code === "KeyJ") {
     modifierManager.setCover({
@@ -132,14 +227,26 @@ onMounted(async () => {
     return;
   }
 
-  const { create } = await import("../../gameplay");
-
-  const init = await create(
+  const init = create(
     root.value,
     {
-      ...props.startGameArgs,
       modifierManager,
       updateSummary,
+      songData: {
+        chart: {
+          parsedTapNoteChart: {
+            tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+          },
+          offset: gqlData.value.song.chart.offset,
+        },
+      },
+      noteSkinData: noteSkinData,
+      paramData: {
+        songId,
+        difficulty,
+      },
+      userData,
+      songCompleted,
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode
@@ -173,7 +280,30 @@ onMounted(async () => {
     currentCover.value = "default";
   }
 
+  if (true) {
+    init.game.editorRepeat = {
+      emitAfterMs: 8000,
+      emitAfterMsCallback: async () => {
+        // TODO: may only need to do this once
+        await query.executeQuery({ requestPolicy: "network-only" });
+        init.game?.updateChart({
+          tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+          // offset: gqlData.value.song.chart.offset,
+        });
+        init.stop();
+        init.start();
+      },
+    };
+  }
+
   init.start();
+});
+
+const { emitter } = useEditor();
+
+emitter.subscribe("editor:chart:updated", () => {
+  // TODO: may only need to do this once
+  query.executeQuery({ requestPolicy: "network-only" });
 });
 
 function handleChangeScrollMod(val: ScrollDirection) {
@@ -238,15 +368,17 @@ function handleChangeSpeedMod(val: number) {
               <InfoPanel
                 panelTitle="Song"
                 class="w-full"
-                :class="selectedChart.difficulty"
+                :class="gqlData.song.chart.difficulty"
                 :highlightColor="highlightColor"
               >
                 <div class="flex flex-col">
-                  <div>{{ selectedSong.title }}</div>
-                  <div>{{ selectedSong.artist }}</div>
+                  <!-- <div>{{ selectedSong.title }}</div> -->
+                  <div>{{ gqlData.song.title }}</div>
+                  <div>{{ gqlData.song.artist }}</div>
                   <div class="empty">Empty</div>
                   <div class="capitalize">
-                    {{ selectedChart.difficulty }} Lv {{ selectedChart.level }}
+                    {{ gqlData.song.chart.difficulty }} Lv
+                    {{ gqlData.song.chart.level }}
                   </div>
                 </div>
               </InfoPanel>
@@ -254,8 +386,8 @@ function handleChangeSpeedMod(val: number) {
               <SongInfoPanel
                 panelTitle="Stats"
                 class="w-full"
-                :class="selectedChart.difficulty"
                 :data="scoreData"
+                :class="gqlData.song.chart.difficulty"
                 :highlightColor="highlightColor"
               />
             </div>
@@ -266,7 +398,7 @@ function handleChangeSpeedMod(val: number) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style>
 .gameplay-content {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -285,5 +417,17 @@ function handleChangeSpeedMod(val: number) {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   column-gap: 10px;
+}
+
+.side {
+  margin: 40px;
+}
+
+.empty {
+  visibility: hidden;
+}
+
+.capitalize {
+  text-transform: capitalize;
 }
 </style>

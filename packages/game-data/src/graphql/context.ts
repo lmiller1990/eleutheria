@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { knex } from "../knex";
-import { DB } from "../../";
+import { knex, knexTable } from "../knex";
 import { DataActions } from "../actions";
 import { DataSources } from "../sources";
+import { Users } from "../../ dbschema";
 
 export class Context {
   req: Request;
@@ -19,12 +19,25 @@ export class Context {
     return knex;
   }
 
-  async viewer() {
-    const user = await knex("sessions")
-      .where({ "sessions.id": this.req.session.id })
+  get knexTable() {
+    return knexTable;
+  }
+
+  queryForCurrentUser(): Promise<Users | undefined> {
+    return knexTable("sessions")
+      .where({ "sessions.id": this.req.session?.id })
       .join("users", "users.id", "=", "sessions.user_id")
-      .first<DB.User>();
-    return user;
+      .first<Users>();
+  }
+
+  async viewer() {
+    const user = await this.queryForCurrentUser();
+
+    if (!user) {
+      return null;
+    }
+
+    return { ...user, id: user.id.toString() };
   }
 
   get app() {

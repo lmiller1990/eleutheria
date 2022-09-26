@@ -1,12 +1,13 @@
 overwrite: true
 schema: "../game-data/src/graphql/schema.graphql"
-documents: "./src/**/*.vue"
+documents: "./src/**/*.{vue,tsx}"
 config:
   immutableTypes: true
   useTypeImports: true
   preResolveTypes: true
   onlyOperationTypes: true
-  avoidOptionals: true
+  avoidOptionals: false
+  arrayInputCoercion: false
 generates:
   "./src/generated/graphql.ts":
     plugins:

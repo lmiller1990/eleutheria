@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import path from "node:path";
 import http from "node:http";
@@ -24,12 +24,15 @@ import {
 } from "./scripts/generateNotes";
 import { graphqlHTTP } from "express-graphql";
 import { graphqlSchema } from "./src/graphql/schema";
-import { knex } from "./src/knex";
+import { knexTable } from "./src/knex";
 import cookieParser from "cookie-parser";
 import { sessionMiddleware } from "./src/middleware/session";
 import pg from "pg";
 import { debug } from "./util/debug";
 import { contextMiddleware } from "./src/middleware/context";
+import type { Users } from "./ dbschema";
+import { EditorActions } from "./src/actions/editor";
+import { Context } from "./src/graphql/context";
 
 const log = debug("game-data:index");
 
@@ -41,14 +44,6 @@ const pgClient = new pg.Client({
 export const COOKIE = "rhythm-cookie";
 
 console.log("Starting game server...");
-
-export declare namespace DB {
-  interface User {
-    id: string;
-    email: string;
-    password: string;
-  }
-}
 
 const PORT = 5566;
 
@@ -85,35 +80,19 @@ interface WebSocketEditorStartMessage {
 
 type WebSocketPayload = WebSocketEditorStartMessage;
 
-let watchers = new Map<string, chokidar.FSWatcher>();
+// @ts-ignore - figure out how we want to handle editing eventually
+// Just need this for the EditorActions
+const ctxSingleton = new Context(null, null);
+
+const watcher = chokidar.watch(EditorActions.editingPath);
 
 wss.on("connection", (ws) => {
-  ws.on("message", (buffer) => {
-    const msg = JSON.parse(buffer.toString()) as WebSocketPayload;
-
-    if (msg.type === "editor:start") {
-      if (!watchers.has(msg.data.id)) {
-        const chartPath = path.join(
-          songsDir,
-          msg.data.id,
-          msg.data.difficulty,
-          `${msg.data.id}.chart`
-        );
-        const watcher = chokidar.watch(chartPath);
-
-        watchers.set(`${msg.data.id}-${msg.data.difficulty}`, watcher);
-
-        watcher.on("change", async () => {
-          try {
-            const newData = await loadSong(msg.data.id);
-            ws.send(
-              JSON.stringify({ type: "editor:chart:updated", data: newData })
-            );
-          } catch (e) {
-            //
-          }
-        });
-      }
+  watcher.on("change", async () => {
+    try {
+      await ctxSingleton.actions.editor.writeChartToDb();
+      ws.send(JSON.stringify({ type: "editor:chart:updated" }));
+    } catch (e) {
+      //
     }
   });
 });
@@ -207,12 +186,6 @@ app.get("/static/:asset", (req, res) => {
   res.sendFile(p);
 });
 
-app.get("/songs/:id", async (req, res) => {
-  const data = await loadSong(req.params.id);
-
-  res.json(data);
-});
-
 app.get("/note-skins", (_req, res) => {
   if (process.env.NODE_ENV === "production") {
     const skins = compileSkins(path.join(__dirname, "notes"), "css");
@@ -227,12 +200,12 @@ app.get("/note-skins", (_req, res) => {
 app.post<{}, {}, { name: string; password: string }>(
   "/login",
   async (req, res) => {
-    const user = await knex<DB.User>("users")
+    const user = await knexTable<Users>("users")
       .where({ email: req.body.name, password: req.body.password })
       .first();
 
     if (user) {
-      await knex("sessions")
+      await knexTable("sessions")
         .where({ id: req.session.id })
         .update({ user_id: user.id });
     }
@@ -265,22 +238,4 @@ app.get("/user", async (_req, res) => {
   };
 
   res.json(data);
-});
-
-app.get("/songs", async (_req, res) => {
-  const assets = (await fs.readdir(songsDir)).filter((x) => !x.startsWith("."));
-
-  const songs: BaseSong[] = await Promise.all(
-    assets.map(async (p): Promise<BaseSong> => {
-      const data = await loadSong(p);
-
-      return {
-        ...data.metadata,
-        id: p,
-        charts: data.charts,
-      };
-    })
-  );
-
-  res.json(songs);
 });

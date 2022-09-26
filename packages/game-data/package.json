@@ -25,18 +25,20 @@
     "@types/fs-extra": "^9.0.13",
     "@types/pg": "^8.6.5",
     "@types/ws": "8.5.3",
+    "pg-to-ts": "4.1.0",
     "autobarrel": "^1.2.0",
     "nexus": "^1.3.0",
     "vitest": "0.1.24"
   },
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node --transpileOnly index.ts",
     "test": "echo 'ok - no tests here yet'",
     "postinstall": "echo 'ok' # yarn build",
     "build": "tsc && yarn genProdData && cp -r songs dist && cp songMetadata.json dist",
-    "genProdData": "ts-node --esm ./scripts/generateDataForProd.ts",
+    "genProdData": "ts-node --esm --transpileOnly ./scripts/generateDataForProd.ts",
     "check-ts": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "build-schema": "ts-node --transpile-only src/graphql/buildSchema.ts"
+    "build-schema": "ts-node --transpileOnly src/graphql/buildSchema.ts",
+    "genTypesFromDb": "ts-node --esm --transpileOnly ./scripts/generateTypesFromDb.ts"
   }
 }
