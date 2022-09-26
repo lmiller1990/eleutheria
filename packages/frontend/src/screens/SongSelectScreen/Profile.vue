@@ -54,6 +54,6 @@ async function handleSignOut() {
 /* Styles */
 .profile {
   background: #373737;
-  @apply max-w-3xl text-white uppercase;
+  /* @apply max-w-3xl text-white uppercase; */
 }
 </style>

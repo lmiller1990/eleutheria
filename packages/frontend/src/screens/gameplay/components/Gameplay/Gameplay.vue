@@ -280,7 +280,7 @@ onMounted(async () => {
     currentCover.value = "default";
   }
 
-  if (true) {
+  if (false) {
     init.game.editorRepeat = {
       emitAfterMs: 8000,
       emitAfterMsCallback: async () => {

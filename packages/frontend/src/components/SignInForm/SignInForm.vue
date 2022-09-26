@@ -2,7 +2,6 @@
 import { computed } from "@vue/reactivity";
 import { reactive, ref } from "vue";
 import Button from "../Button.vue";
-import type { SignInFormProps } from "./types";
 import ValidationInput from "../ValidationInput.vue";
 import { gql } from "@urql/core";
 import { useMutation } from "@urql/vue";
@@ -19,8 +18,6 @@ gql`
     }
   }
 `;
-
-defineProps<SignInFormProps>();
 
 const modal = useModal();
 
@@ -44,6 +41,10 @@ const submitting = ref(false);
 const error = ref<string | undefined>();
 
 const signIn = useMutation(SignInForm_SignInDocument);
+
+function handleSignUp () {
+  modal.showModal('signUp')
+}
 
 async function handleSubmit() {
   const res = await signIn.executeMutation({
@@ -82,11 +83,14 @@ async function handleSubmit() {
     <Button type="submit" :disabled="!valid || submitting">Submit</Button>
 
     <div v-if="error" class="pt-5 text-red-300">{{ error }}</div>
+
+    <div class="pt-5">
+      New Here? <button class="underline" @click="handleSignUp">Sign Up</button>.
+    </div>
   </form>
 </template>
 
 <style scoped lang="scss">
-/* Styles */
 .form {
   background: #373737;
   @apply max-w-3xl;
