@@ -18,7 +18,8 @@ function waitFor<T>(win: Window, key: string) {
   });
 }
 
-describe("Gameplay", () => {
+// TODO: How do we test actual gameplay?
+describe.skip("Gameplay", () => {
   before(() => {
     cy.viewport(1500, 820);
   });
