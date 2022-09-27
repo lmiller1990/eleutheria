@@ -40,7 +40,7 @@ jobs:
     - run: yarn install
 
     - name: Connect to PostgreSQL
-      run: cd packages/game-data && ts-node --transpileOnly setupDb.ts
+      run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
       env:
         POSTGRES_HOST: postgres
         POSTGRES_PORT: 5432
