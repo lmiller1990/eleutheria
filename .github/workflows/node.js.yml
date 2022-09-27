@@ -31,6 +31,7 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
+
     steps:
     - uses: actions/checkout@v3
 
@@ -41,6 +42,15 @@ jobs:
         cache: 'npm'
 
     - run: yarn install
+
+    - name: Connect to PostgreSQL
+      uses: lhotari/action-upterm@v1
+      run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
+      env:
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: postgres
+        POSTGRES_DB: rhythm
 
     - name: Connect to PostgreSQL
       run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
