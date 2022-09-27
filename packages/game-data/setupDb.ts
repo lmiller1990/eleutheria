@@ -4,11 +4,13 @@ async function main() {
   console.log("which psql")
   await execa("which", ["psql"], {
     cwd: __dirname,
+    shell: true,
   })
 
   console.log("which createdb")
   await execa("which", ["createdb"], {
     cwd: __dirname,
+    shell: true,
   })
 
   console.log(`Creating database: ${process.env.POSTGRES_DB}`);
