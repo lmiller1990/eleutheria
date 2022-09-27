@@ -1,4 +1,3 @@
-import { padStart } from "@packages/audio-utils";
 import type { BaseNote, HoldNote } from "@packages/chart-parser";
 import {
   createChart,
@@ -43,6 +42,7 @@ export const fetchAudio: AudioProvider = async (
 ) => {
   const audioContext = new AudioContext();
 
+  const { padStart } = await import("@packages/audio-utils");
   let buffer = await getAudioData(`/static/${id}.mp3`, audioContext);
   buffer = padStart(audioContext, buffer, paddingMs);
 

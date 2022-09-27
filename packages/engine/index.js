@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV !== "production") {
   const tsNode = require("ts-node");
   // register TypeScript Node require hook
   // https://github.com/TypeStrong/ts-node#programmatic-usage
