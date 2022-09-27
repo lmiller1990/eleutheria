@@ -86,7 +86,9 @@ async function handleSubmit() {
 
     <div class="pt-5">
       New Here?
-      <button class="underline" @click="handleSignUp">Sign Up</button>.
+      <button type="button" class="underline" @click.prevent="handleSignUp">
+        Sign Up</button
+      >.
     </div>
   </form>
 </template>

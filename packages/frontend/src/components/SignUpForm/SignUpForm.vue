@@ -48,6 +48,8 @@ onMounted(() => {
   // getViewer.executeQuery()
 });
 
+const modal = useModal();
+
 async function handleSubmit() {
   if (submitting.value && valid.value) {
     return;
@@ -62,9 +64,9 @@ async function handleSubmit() {
   });
 
   submitting.value = false;
-}
 
-const modal = useModal();
+  modal.hideModal();
+}
 
 function handleSignIn() {
   modal.showModal("signIn");
@@ -102,7 +104,7 @@ function handleSignIn() {
 
     <div class="pt-5">
       Have an account?
-      <button class="underline" @click="handleSignIn">Sign In</button>.
+      <button class="underline" @click.prevent="handleSignIn">Sign In</button>.
     </div>
   </form>
 </template>

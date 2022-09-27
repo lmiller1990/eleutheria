@@ -8,7 +8,7 @@ import inquirer from "inquirer";
 import { ChildProcess, spawn } from "child_process";
 import http from "http";
 
-function waitForServer(hostname: string, port: number) {
+export function waitForServer(hostname: string, port: number) {
   const INTERVAL = 1000;
   const TRY_COUNT = 10;
 
@@ -37,8 +37,7 @@ function waitForServer(hostname: string, port: number) {
           },
         },
         (res) => {
-          res.on("data", (data: Buffer) => {
-            console.log("data!", data.toString());
+          res.on("data", (_data: Buffer) => {
             clearInterval(interval);
             resolve();
             req.end();

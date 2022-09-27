@@ -30,6 +30,7 @@ export const mutation = mutationType({
           password: args.password,
           username: args.username,
         });
+        await ctx.actions.db.signIn(args.email, args.password);
         return ctx;
       },
     });
@@ -41,9 +42,9 @@ export const mutation = mutationType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_, args, _ctx) => {
-        await _ctx.actions.db.signIn(args.email, args.password);
-        return _ctx;
+      resolve: async (_, args, ctx) => {
+        await ctx.actions.db.signIn(args.email, args.password);
+        return ctx;
       },
     });
 
