@@ -21,6 +21,7 @@ jobs:
         # Provide the password for postgres
         env:
           PGPASSWORD: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -45,6 +46,7 @@ jobs:
       env:
         POSTGRES_HOST: localhost
         PGPASSWORD: postgres
+        POSTGRES_PASSWORD: postgres
         POSTGRES_PORT: 5432
         POSTGRES_USER: postgres
         POSTGRES_DB: rhythm
