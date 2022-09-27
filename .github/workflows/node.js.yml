@@ -45,7 +45,6 @@ jobs:
 
     - name: Connect to PostgreSQL
       uses: lhotari/action-upterm@v1
-      run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
       env:
         POSTGRES_HOST: postgres
         POSTGRES_PORT: 5432
