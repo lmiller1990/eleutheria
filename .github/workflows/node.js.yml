@@ -20,7 +20,7 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
-          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -42,7 +42,8 @@ jobs:
     - name: Connect to PostgreSQL
       run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
       env:
-        POSTGRES_HOST: postgres
+        POSTGRES_HOST: localhost
+        PGPASSWORD: postgres
         POSTGRES_PORT: 5432
         POSTGRES_USER: postgres
         POSTGRES_DB: rhythm
