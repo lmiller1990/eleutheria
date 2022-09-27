@@ -17,6 +17,19 @@ jobs:
       matrix:
         node-version: [16.x]
 
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -25,6 +38,17 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: yarn install
+
+    - name: Connect to PostgreSQL
+    # Runs a script that creates a PostgreSQL table, populates
+    # the table with data, and then retrieves the data.
+    run: cd packages/game-data && ts-node --transpileOnly setupDb.ts
+    env:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_DB: rhythm
+
     - run: cd packages/game-data && yarn build-schema && cd ../..
     - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
     - run: yarn lint:check

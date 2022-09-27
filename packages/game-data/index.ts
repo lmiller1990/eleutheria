@@ -37,8 +37,8 @@ import { Context } from "./src/graphql/context";
 const log = debug("game-data:index");
 
 const pgClient = new pg.Client({
-  user: "lachlan",
-  database: "rhythm",
+  user: process.env.POSTGRES_USER ?? "lachlan",
+  database: process.env.POSTGRES_DB ?? "rhythm",
 });
 
 export const COOKIE = "rhythm-cookie";
