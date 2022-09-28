@@ -15,4 +15,3 @@ export function extractNotesFromWorld(world: World): SummaryData {
     ]),
   };
 }
-

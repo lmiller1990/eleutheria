@@ -7,7 +7,7 @@ import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import type { Game, Summary, World } from "@packages/engine";
+import type { Game, World } from "@packages/engine";
 import {
   injectNoteSkin,
   injectStylesheet,
@@ -25,7 +25,7 @@ import {
 } from "../../../../generated/graphql";
 import { create } from "../../gameplay";
 import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
-import { extractNotesFromWorld } from "@packages/engine";
+import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 
 export interface GameplayProps {

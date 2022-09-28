@@ -6,11 +6,12 @@
   "module": "./src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "test": "echo 'ok'",
+    "test": "vitest --run",
     "check-ts": "tsc --noEmit",
     "build": "yarn tsc"
   },
   "devDependencies": {
-    "typescript": "4.7.4"
+    "typescript": "4.7.4",
+    "vitest": "0.1.24"
   }
 }

@@ -1,4 +1,4 @@
-import type { SummaryData } from "@packages/engine";
+import type { SummaryData } from "@packages/shared";
 import { intArg, mutationType, nonNull, stringArg } from "nexus";
 import { debug } from "../../../util/debug";
 import { SaveScoreInputType } from "../inputObjectTypes";
