@@ -15,7 +15,7 @@ async function main() {
   // 1. we build front-end first, because game-data needs the manifest
   // that is generated
   try {
-    await build("types");
+    await build("shared");
     await build("chart-parser");
     await build("audio-utils");
     await build("engine")
