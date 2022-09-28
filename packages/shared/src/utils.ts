@@ -1,5 +1,5 @@
-import type { EngineNote, World } from "./engine";
-import type { SummaryData, SummaryNote } from "./scoring";
+import type { EngineNote, World } from "@packages/engine";
+import type { SummaryData, SummaryNote } from ".";
 
 function summaryKeysOnly(note: EngineNote): SummaryNote {
   const { id, missed, timingWindowName, hitAt, droppedAt, ms } = note;
@@ -15,3 +15,4 @@ export function extractNotesFromWorld(world: World): SummaryData {
     ]),
   };
 }
+

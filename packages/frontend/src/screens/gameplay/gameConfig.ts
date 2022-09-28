@@ -1,5 +1,5 @@
 import type { EngineConfiguration } from "@packages/engine";
-import { timingWindows } from "@packages/types";
+import { timingWindows } from "@packages/shared";
 
 export const windows = timingWindows.map((x) => x.name);
 export const windowsWithMiss = [...windows, "miss"] as const;

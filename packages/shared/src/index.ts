@@ -63,15 +63,4 @@ export interface UserScripts {
   js: string;
 }
 
-export const timingWindows = [
-  {
-    name: "absolute",
-    windowMs: 25,
-    weight: 2,
-  },
-  {
-    name: "perfect",
-    windowMs: 50,
-    weight: 1,
-  },
-] as const;
+export * from "./scoring";

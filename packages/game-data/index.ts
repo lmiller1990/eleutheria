@@ -9,7 +9,7 @@ import type {
   UserScripts,
   BaseSong,
   LoadSongData,
-} from "@packages/types";
+} from "@packages/shared";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {

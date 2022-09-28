@@ -1,5 +1,17 @@
-import type { EngineNote } from ".";
-import type { TimingWindow } from "./engine";
+import type { TimingWindow, EngineNote } from "@packages/engine";
+
+export const timingWindows = [
+  {
+    name: "absolute",
+    windowMs: 25,
+    weight: 2,
+  },
+  {
+    name: "perfect",
+    windowMs: 50,
+    weight: 1,
+  },
+] as const;
 
 export interface TimingTypeSummary {
   count: number;

@@ -1,6 +1,6 @@
 {
   "version": "0.0.0-development",
-  "name": "@packages/types",
+  "name": "@packages/shared",
   "private": true,
   "main": "index.js",
   "module": "./src/index.ts",

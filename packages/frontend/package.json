@@ -17,7 +17,7 @@
     "@packages/audio-utils": "0.0.0-development",
     "@packages/chart-parser": "0.0.0-development",
     "@packages/engine": "0.0.0-development",
-    "@packages/types": "0.0.0-development",
+    "@packages/shared": "0.0.0-development",
     "@urql/core": "3.0.3",
     "@urql/exchange-graphcache": "^5.0.1",
     "@urql/vue": "1.0.2",
