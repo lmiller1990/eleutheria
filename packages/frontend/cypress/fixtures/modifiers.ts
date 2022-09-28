@@ -1,5 +1,5 @@
 import dedent from "dedent";
-import type { NoteSkin } from "@packages/types";
+import type { NoteSkin } from "@packages/shared";
 
 const dim = dedent`
   height: 35px;

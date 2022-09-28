@@ -9,7 +9,7 @@ import type {
   UserScripts,
   BaseSong,
   LoadSongData,
-} from "@packages/types";
+} from "@packages/shared";
 import { WebSocketServer } from "ws";
 import fs from "fs-extra";
 import {
@@ -37,8 +37,8 @@ import { Context } from "./src/graphql/context";
 const log = debug("game-data:index");
 
 const pgClient = new pg.Client({
-  user: "lachlan",
-  database: "rhythm",
+  user: process.env.POSTGRES_USER ?? "lachlan",
+  database: process.env.POSTGRES_DB ?? "rhythm",
 });
 
 export const COOKIE = "rhythm-cookie";

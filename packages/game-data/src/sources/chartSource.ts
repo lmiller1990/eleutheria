@@ -1,4 +1,4 @@
-import { parseChart, parseHoldsChart } from "@packages/chart-parser";
+import { parseChart } from "@packages/chart-parser";
 import { Charts } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
@@ -37,7 +37,6 @@ export class ChartDataSource {
   }
 
   get offset() {
-    console.log("offset is", this.data.offset);
     return this.data.offset;
   }
 

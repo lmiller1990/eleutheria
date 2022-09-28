@@ -1,4 +1,4 @@
-import { Summary } from "@packages/engine";
+import { Summary } from "@packages/shared";
 import { defineStore } from "pinia";
 
 interface SummaryState {

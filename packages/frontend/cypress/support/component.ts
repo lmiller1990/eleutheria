@@ -8,6 +8,10 @@ import { testSong } from "../fixtures/songs";
 import { createRouterMock } from 'vue-router-mock'
 import "./style.css";
 import "../../src/output.css";
+import { createClient } from "@urql/core";
+import { defineComponent, h } from "vue";
+import { provideClient } from "@urql/vue";
+import { MountingOptions } from "cypress/vue/dist/@vue/test-utils";
 
 let pinia: Pinia;
 
@@ -37,14 +41,18 @@ declare global {
   }
 }
 
-Cypress.Commands.add("mount", _mount);
+Cypress.Commands.add("mount", mount);
 
-type MountingOptions<T> = Parameters<typeof _mount<T>>[1]
-type Comp = Parameters<typeof _mount>[0]
-
-export function mount(comp: Comp, payload: MountingOptions<any> = {}) {
-  return _mount(comp as any, {
-    ...payload,
+export function mount(comp: any, { props, ...rest }: MountingOptions<any> = {}) {
+  const client = createClient({ url: 'http://' })
+  const Parent = defineComponent({
+    setup () {
+      provideClient(client)
+      return () => h(comp, { ...props })
+    }
+  })
+  return _mount(Parent, {
+    ...rest,
     global: {
       plugins: [pinia, createRouterMock({ 
         spy: {

@@ -12,19 +12,45 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # container: node:16-bullseye
 
-    strategy:
-      matrix:
-        node-version: [16.x]
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          PGPASSWORD: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: yarn install
+
+    # - name: Setup upterm session
+    #   uses: lhotari/action-upterm@v1
+
+
+    - name: Install Dependencies
+      run: yarn install
+
+    - name: Connect to PostgreSQL
+      run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
+      env:
+        POSTGRES_HOST: localhost
+        PGPASSWORD: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: postgres
+        POSTGRES_DB: rhythm
+
     - run: cd packages/game-data && yarn build-schema && cd ../..
     - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
     - run: yarn lint:check

@@ -1,4 +1,3 @@
-import { mount } from "../../../../../cypress/support/component";
 import Gameplay from "./Gameplay.vue";
 import appStyle from "../../../../style.css";
 
@@ -26,7 +25,7 @@ describe.skip("Gameplay", () => {
 
   it("renders", () => {
     // @ts-ignore
-    mount(Gameplay, {
+    cy.mount(Gameplay, {
       props: {
         __testingDoNotStartSong: false,
         __testingManualMode: true,

@@ -59,3 +59,10 @@ watchEffect(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+label,
+input {
+  @apply uppercase;
+}
+</style>

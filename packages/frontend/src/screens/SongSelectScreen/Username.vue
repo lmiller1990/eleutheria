@@ -33,11 +33,16 @@ function handleSignOut() {
 
 <template>
   <button class="button" v-if="viewerQuery.fetching.value">-</button>
-  <button class="button" v-else-if="viewer?.email" @click="handleSignOut">
+  <button
+    class="button"
+    v-else-if="viewer?.email"
+    data-cy="viewer"
+    @click="handleSignOut"
+  >
     {{ viewer.email }}
   </button>
-  <button class="button" v-else @click="handleAuthenticate">
-    {{ "Guest" }}
+  <button class="button" v-else data-cy="guest" @click="handleAuthenticate">
+    Guest
   </button>
 </template>
 

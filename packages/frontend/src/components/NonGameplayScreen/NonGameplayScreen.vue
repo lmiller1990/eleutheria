@@ -41,7 +41,7 @@ const props = defineProps<NonGameplayScreenProps>();
   text-align: right;
   height: 54px;
   font-size: 2rem;
-  text-transform: uppercase;
+  // text-transform: uppercase;
   font-weight: bold;
   padding: 0 40px;
 }

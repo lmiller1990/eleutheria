@@ -4,12 +4,12 @@ import {
   PreviousFrameMeta,
   GameConfig,
   GameLifecycle,
-  Summary,
   EngineNote,
   JudgementResult,
   AudioProvider,
 } from "@packages/engine";
-import { summarizeResults, Game } from "@packages/engine";
+import { Game } from "@packages/engine";
+import { summarizeResults, Summary } from "@packages/shared";
 import {
   $tapNote,
   createElements,
@@ -26,7 +26,7 @@ import {
   ParamData,
   timingWindows,
   UserScripts,
-} from "@packages/types";
+} from "@packages/shared";
 import { preferencesManager } from "./preferences";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
 

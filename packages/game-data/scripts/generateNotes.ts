@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs-extra";
 import sass from "sass";
-import { NoteSkin } from "@packages/types";
+import { NoteSkin } from "@packages/shared";
 
 const userDir = path.join(__dirname, "..", "user");
 

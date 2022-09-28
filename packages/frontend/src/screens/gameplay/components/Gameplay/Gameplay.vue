@@ -7,7 +7,7 @@ import InfoPanel from "../../../../components/InfoPanel";
 import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
 import { windowsWithMiss } from "../../gameConfig";
 import { colors } from "../../../../shared";
-import type { Game, Summary, World } from "@packages/engine";
+import type { Game, World } from "@packages/engine";
 import {
   injectNoteSkin,
   injectStylesheet,
@@ -25,7 +25,7 @@ import {
 } from "../../../../generated/graphql";
 import { create } from "../../gameplay";
 import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
-import { extractNotesFromWorld } from "@packages/engine/utils";
+import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 
 export interface GameplayProps {
@@ -280,21 +280,21 @@ onMounted(async () => {
     currentCover.value = "default";
   }
 
-  if (true) {
-    init.game.editorRepeat = {
-      emitAfterMs: 8000,
-      emitAfterMsCallback: async () => {
-        // TODO: may only need to do this once
-        await query.executeQuery({ requestPolicy: "network-only" });
-        init.game?.updateChart({
-          tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
-          // offset: gqlData.value.song.chart.offset,
-        });
-        init.stop();
-        init.start();
-      },
-    };
-  }
+  // if (true) {
+  //   init.game.editorRepeat = {
+  //     emitAfterMs: 8000,
+  //     emitAfterMsCallback: async () => {
+  //       // TODO: may only need to do this once
+  //       await query.executeQuery({ requestPolicy: "network-only" });
+  //       init.game?.updateChart({
+  //         tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+  //         // offset: gqlData.value.song.chart.offset,
+  //       });
+  //       init.stop();
+  //       init.start();
+  //     },
+  //   };
+  // }
 
   init.start();
 });

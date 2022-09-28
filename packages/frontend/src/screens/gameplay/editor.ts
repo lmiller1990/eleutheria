@@ -1,4 +1,4 @@
-import type { WebSocketEmitData } from "@packages/types";
+import type { WebSocketEmitData } from "@packages/shared";
 
 // TODO: These
 // let startAtSeconds = 4;

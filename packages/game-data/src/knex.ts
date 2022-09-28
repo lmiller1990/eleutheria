@@ -5,8 +5,8 @@ export const knex = _knex({
   client: "pg",
   // debug: true,
   connection: {
-    user: "lachlan",
-    database: "rhythm",
+    user: process.env.POSTGRES_USER ?? "lachlan",
+    database: process.env.POSTGRES_DB ?? "rhythm",
   },
 });
 

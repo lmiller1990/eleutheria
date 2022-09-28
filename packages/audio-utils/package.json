@@ -2,9 +2,12 @@
   "version": "0.0.0-development",
   "name": "@packages/audio-utils",
   "private": true,
-  "main": "index.ts",
+  "main": "index.js",
+  "module": "./src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "test": "echo 'ok'",
-    "check-ts": "tsc --noEmit"
+    "check-ts": "tsc --noEmit",
+    "build": "yarn tsc"
   }
 }

@@ -6,6 +6,7 @@ import { min, max, email as emailRule } from "../../validation";
 import Button from "../Button.vue";
 import { SignUpDocument } from "../../generated/graphql";
 import { gql, useMutation } from "@urql/vue";
+import { useModal } from "../../composables/modal";
 
 gql`
   mutation SignUp($email: String!, $password: String!, $username: String!) {
@@ -47,6 +48,8 @@ onMounted(() => {
   // getViewer.executeQuery()
 });
 
+const modal = useModal();
+
 async function handleSubmit() {
   if (submitting.value && valid.value) {
     return;
@@ -61,6 +64,12 @@ async function handleSubmit() {
   });
 
   submitting.value = false;
+
+  modal.hideModal();
+}
+
+function handleSignIn() {
+  modal.showModal("signIn");
 }
 </script>
 
@@ -92,6 +101,11 @@ async function handleSubmit() {
     />
 
     <Button type="submit" :disabled="!valid || submitting">Submit</Button>
+
+    <div class="pt-5">
+      Have an account?
+      <button class="underline" @click.prevent="handleSignIn">Sign In</button>.
+    </div>
   </form>
 </template>
 

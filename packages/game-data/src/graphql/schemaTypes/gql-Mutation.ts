@@ -1,11 +1,5 @@
-import { SummaryData } from "@packages/engine";
-import {
-  inputObjectType,
-  intArg,
-  mutationType,
-  nonNull,
-  stringArg,
-} from "nexus";
+import type { SummaryData } from "@packages/shared";
+import { intArg, mutationType, nonNull, stringArg } from "nexus";
 import { debug } from "../../../util/debug";
 import { SaveScoreInputType } from "../inputObjectTypes";
 import { Query } from "./gql-Query";
@@ -36,6 +30,7 @@ export const mutation = mutationType({
           password: args.password,
           username: args.username,
         });
+        await ctx.actions.db.signIn(args.email, args.password);
         return ctx;
       },
     });
@@ -47,9 +42,9 @@ export const mutation = mutationType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_, args, _ctx) => {
-        await _ctx.actions.db.signIn(args.email, args.password);
-        return _ctx;
+      resolve: async (_, args, ctx) => {
+        await ctx.actions.db.signIn(args.email, args.password);
+        return ctx;
       },
     });
 

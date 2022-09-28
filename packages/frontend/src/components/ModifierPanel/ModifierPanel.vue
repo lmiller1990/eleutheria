@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NoteSkin } from "@packages/types";
+import type { NoteSkin } from "@packages/shared";
 import { computed, FunctionalComponent, h } from "vue";
 import InfoPanel from "../InfoPanel";
 import type { ModifierPanelProps, ModCoverParams } from "./types";

@@ -1,5 +1,5 @@
-import { Input } from "@packages/engine";
-import { DevModeOptions } from "./api";
+import type { Input } from ".";
+import type { DevModeOptions } from "./api";
 
 export interface InputManagerConfig {
   maxWindowMs: number;

@@ -1,4 +1,4 @@
-import type { NoteSkin, ParamData, UserScripts } from "@packages/types";
+import type { NoteSkin, ParamData, UserScripts } from "@packages/shared";
 
 export async function fetchNoteSkins(): Promise<NoteSkin[]> {
   const res = await window.fetch(`/note-skins`);
