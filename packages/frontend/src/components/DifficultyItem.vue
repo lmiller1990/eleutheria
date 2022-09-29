@@ -8,35 +8,32 @@ defineProps<{
 
 <template>
   <div
-    class="difficulty-item w-full items-center flex justify-between"
+    class="capitalize text-xl difficulty-item w-full flex justify-between"
     :class="difficulty.name"
   >
-    <div class="difficulty-label">
+    <div class="difficulty-label p-3">
       {{ difficulty.name }}
     </div>
 
     <div
-      class="level flex items-center justify-center"
+      class="level h-100 flex justify-center"
       :class="`${difficulty.name}-level`"
     >
-      {{ difficulty.level }}
+      <div class="flex items-center justify-center">
+        {{ difficulty.level }}
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .difficulty-item {
-  padding-left: 30px;
-  text-transform: capitalize;
   font-family: "Sansation", sans-serif;
-  font-weight: bold;
-  font-size: 1.5rem;
   cursor: pointer;
 }
 
-.difficulty-label,
 .level {
-  padding: 10px;
+  width: 52px;
 }
 
 .basic {
@@ -85,9 +82,5 @@ defineProps<{
 
 .expert-level {
   background: #991111;
-}
-
-.level {
-  width: 60px;
 }
 </style>
