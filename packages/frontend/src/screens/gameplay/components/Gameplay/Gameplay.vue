@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
-import ModifierPanel, {
-  ModCoverParams,
-} from "../../../../components/ModifierPanel";
-import InfoPanel from "../../../../components/InfoPanel";
-import SongInfoPanel, { TableCell } from "../../../../components/SongInfoPanel";
+import {
+  computed,
+  FunctionalComponent,
+  h,
+  onMounted,
+  reactive,
+  ref,
+} from "vue";
 import { windowsWithMiss } from "../../gameConfig";
-import { colors } from "../../../../shared";
 import type { Game, World } from "@packages/engine";
 import {
   injectNoteSkin,
@@ -18,7 +19,6 @@ import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
 import { ModifierManager } from "../../modiferManager";
 import { gql, useMutation, useQuery } from "@urql/vue";
-import type { StartGameArgs } from "../../gameplay";
 import {
   GameplayDocument,
   Gameplay_SummaryDocument,
@@ -27,6 +27,8 @@ import { create } from "../../gameplay";
 import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
+import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
+import DifficultyItem from "../../../../components/DifficultyItem.vue";
 
 export interface GameplayProps {
   __testingDoNotStartSong?: boolean;
@@ -96,8 +98,6 @@ const gqlData = computed(() => {
   return query.data.value;
 });
 
-const highlightColor = colors[difficulty] ?? "yellow";
-
 const defaultNoteSkin = noteSkinData.find((x) => x.name === "default");
 
 if (!defaultNoteSkin) {
@@ -133,40 +133,24 @@ async function songCompleted(world: World) {
   router.push({ path: "/summary", query: { id: res.data.saveScore.id } });
 }
 
-const startGameArgs: Omit<StartGameArgs, "updateSummary"> = {
-  songData: {
-    chart: {
-      parsedTapNoteChart: {
-        tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+const scoreData = computed<GameplayScoreProps>(() => {
+  return {
+    percent: `${timingSummary.percent}%`,
+    timing: [
+      {
+        window: "Absolute",
+        count: timingSummary.absolute,
       },
-      offset: gqlData.value.song.chart.offset,
-    },
-  },
-  paramData: { songId, difficulty },
-  noteSkinData,
-  userData,
-  songCompleted,
-};
-
-const scoreData = computed<TableCell[]>(() => {
-  return [
-    {
-      title: "Absolute",
-      content: timingSummary.absolute,
-    },
-    {
-      title: "Perfect",
-      content: timingSummary.perfect,
-    },
-    {
-      title: "Miss",
-      content: timingSummary.miss,
-    },
-    {
-      title: "Score",
-      content: `${timingSummary.percent}%`,
-    },
-  ];
+      {
+        window: "Perfect",
+        count: timingSummary.perfect,
+      },
+      {
+        window: "Miss",
+        count: timingSummary.miss,
+      },
+    ],
+  };
 });
 
 function updateSummary(summary: Summary) {
@@ -306,93 +290,76 @@ emitter.subscribe("editor:chart:updated", () => {
   query.executeQuery({ requestPolicy: "network-only" });
 });
 
-function handleChangeScrollMod(val: ScrollDirection) {
-  if (!game) {
-    return;
-  }
+// function handleChangeScrollMod(val: ScrollDirection) {
+//   if (!game) {
+//     return;
+//   }
 
-  game.modifierManager.setScroll(val);
-  preferencesManager.updatePreferences({ scrollDirection: val });
-  currentScroll.value = val;
-}
+//   game.modifierManager.setScroll(val);
+//   preferencesManager.updatePreferences({ scrollDirection: val });
+//   currentScroll.value = val;
+// }
 
-function handleChangeCover(val: ModCoverParams) {
-  if (!game) {
-    return;
-  }
+// function handleChangeCover(val: ModCoverParams) {
+//   if (!game) {
+//     return;
+//   }
 
-  game.modifierManager.setCover(val);
-  preferencesManager.updatePreferences({ cover: val });
-  currentCover.value = val.id;
-}
+//   game.modifierManager.setCover(val);
+//   preferencesManager.updatePreferences({ cover: val });
+//   currentCover.value = val.id;
+// }
 
-function handleChangeSpeedMod(val: number) {
-  if (!game) {
-    return;
-  }
+// function handleChangeSpeedMod(val: number) {
+//   if (!game) {
+//     return;
+//   }
 
-  const newMod = game.modifierManager.multiplier + val;
+//   const newMod = game.modifierManager.multiplier + val;
 
-  if (newMod <= 0) {
-    return;
-  }
+//   if (newMod <= 0) {
+//     return;
+//   }
 
-  game.modifierManager.setMultipler(newMod);
-  preferencesManager.updatePreferences({ speedModifier: newMod });
-  currentSpeed.value = newMod;
-}
+//   game.modifierManager.setMultipler(newMod);
+//   preferencesManager.updatePreferences({ speedModifier: newMod });
+//   currentSpeed.value = newMod;
+// }
+
+const Side: FunctionalComponent = (_props, { slots }) => {
+  return h("div", { class: "mt-48" }, slots);
+};
 </script>
 
 <template>
   <div class="flex justify-center">
     <div class="max-w-screen-lg">
       <div class="gameplay-content">
+        <Side class="mt-48 mr-8">
+          <div>
+            <div class="bg-zinc-700 text-white text-xl p-3 mb-3">
+              <h2>{{ gqlData.song.title }}</h2>
+            </div>
+
+            <DifficultyItem
+              :difficulty="{
+                name: gqlData.song.chart.difficulty,
+                level: gqlData.song.chart.level,
+              }"
+            />
+          </div>
+        </Side>
+
         <div class="gameplay" v-once>
           <div ref="root" class="max-w-screen-log" v-once />
         </div>
 
-        <div class="stats flex flex-col justify-center">
-          <div class="stats-wrapper">
-            <div class="modifier-wrapper">
-              <ModifierPanel
-                :currentSpeed="currentSpeed"
-                :currentScroll="currentScroll"
-                :notes="startGameArgs.noteSkinData"
-                @changeNoteSkin="injectNoteSkin"
-                @changeSpeedMod="handleChangeSpeedMod"
-                @changeScrollMod="handleChangeScrollMod"
-                @changeCover="handleChangeCover"
-              />
-            </div>
-            <div class="info-panels flex">
-              <InfoPanel
-                panelTitle="Song"
-                class="w-full"
-                :class="gqlData.song.chart.difficulty"
-                :highlightColor="highlightColor"
-              >
-                <div class="flex flex-col">
-                  <!-- <div>{{ selectedSong.title }}</div> -->
-                  <div>{{ gqlData.song.title }}</div>
-                  <div>{{ gqlData.song.artist }}</div>
-                  <div class="empty">Empty</div>
-                  <div class="capitalize">
-                    {{ gqlData.song.chart.difficulty }} Lv
-                    {{ gqlData.song.chart.level }}
-                  </div>
-                </div>
-              </InfoPanel>
-
-              <SongInfoPanel
-                panelTitle="Stats"
-                class="w-full"
-                :data="scoreData"
-                :class="gqlData.song.chart.difficulty"
-                :highlightColor="highlightColor"
-              />
-            </div>
-          </div>
-        </div>
+        <Side class="flex ml-8">
+          <GameplayScore
+            :percent="scoreData.percent"
+            :timing="scoreData.timing"
+          />
+        </Side>
       </div>
     </div>
   </div>
@@ -401,26 +368,8 @@ function handleChangeSpeedMod(val: number) {
 <style>
 .gameplay-content {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1fr 1.5fr 1fr;
   column-gap: 40px;
-}
-
-.stats-wrapper {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1.25fr 1fr;
-  row-gap: 50px;
-}
-
-.info-panels {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  column-gap: 10px;
-}
-
-.side {
-  margin: 40px;
 }
 
 .empty {

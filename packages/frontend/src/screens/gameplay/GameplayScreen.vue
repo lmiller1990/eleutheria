@@ -7,6 +7,7 @@ import "../../style.css";
   <Suspense>
     <template #default>
       <div id="game-app">
+        <!-- <Gameplay :__testingDoNotStartSong="true"/> -->
         <Gameplay />
       </div>
     </template>
