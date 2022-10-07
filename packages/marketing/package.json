@@ -1,0 +1,14 @@
+{
+  "name": "@packages/marketing",
+  "version": "0.0.0-development",
+  "scripts": {
+    "dev": "concurrently \"serve src\" \"tailwindcss -i src/index.css -o ./src/output.css --watch\"",
+    "build": "tailwindcss -i src/index.css -o ./src/output.css"
+  },
+  "devDependencies": {
+    "concurrently": "7.4.0",
+    "postcss": "^8.4.6",
+    "serve": "14.0.1",
+    "tailwindcss": "3.1.8"
+  }
+}
