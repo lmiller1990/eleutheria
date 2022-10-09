@@ -39,7 +39,7 @@ function handleSelected() {
 
 <template>
   <div
-    class="h-full w-full items-center song-title-banner"
+    class="h-full w-full items-center song-title-banner bg-zinc-700"
     :class="{ selected }"
     data-cy="song-tile"
     @click="handleSelected"
@@ -59,7 +59,9 @@ function handleSelected() {
       />
     </div>
 
-    <div class="song-title text-white flex items-center justify-center">
+    <div
+      class="song-title bg-zinc-700 text-white flex items-center justify-center"
+    >
       {{ songTitle }}
     </div>
   </div>
@@ -71,11 +73,6 @@ $img-height: 75%;
 .play-symbol {
   position: absolute;
   border-radius: 50%;
-}
-
-.song-title-banner,
-.song-title {
-  background: #373737;
 }
 
 .song-title-banner {

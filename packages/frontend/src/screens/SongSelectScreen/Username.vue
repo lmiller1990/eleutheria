@@ -48,7 +48,6 @@ function handleSignOut() {
 
 <style scoped>
 .button {
-  background: #373737;
-  @apply text-white px-3 h-8;
+  @apply text-white px-3 h-8 bg-zinc-700;
 }
 </style>

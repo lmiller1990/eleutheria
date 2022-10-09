@@ -6,7 +6,7 @@ const props = defineProps<NonGameplayScreenProps>();
 
 <template>
   <div class="flex flex-col outer items-center w-full h-full">
-    <nav class="screen-name w-full text-white flex justify-center">
+    <nav class="bg-zinc-700 w-full text-white flex justify-center">
       <div class="max-1024 screen-title w-full flex flex-col justify-center">
         {{ props.screenTitle }}
       </div>
@@ -31,10 +31,6 @@ const props = defineProps<NonGameplayScreenProps>();
 
 .outer {
   padding: 25px 0;
-}
-
-.screen-name {
-  background: #373737;
 }
 
 .screen-title {

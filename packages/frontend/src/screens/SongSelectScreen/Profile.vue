@@ -38,7 +38,7 @@ async function handleSignOut() {
 </script>
 
 <template>
-  <div class="profile w-full h-full text-2xl">
+  <div class="bg-zinc-700 w-full h-full text-2xl">
     <div class="flex justify-between items-center">
       <h1>Profile for {{ viewerQuery.data?.value?.viewer?.username }}</h1>
       <Button @click="handleSignOut">Sign Out</Button>
@@ -49,11 +49,3 @@ async function handleSignOut() {
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Styles */
-.profile {
-  background: #373737;
-  /* @apply max-w-3xl text-white uppercase; */
-}
-</style>

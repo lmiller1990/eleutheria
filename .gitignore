@@ -12,3 +12,4 @@ packages/game-data/src/graphql/gen/nxs.gen.ts
 packages/game-data/src/graphql/schema.graphql
 packages/frontend/src/output.css
 packages/game-data/tmp/editing.txt
+packages/marketing/src/output.css

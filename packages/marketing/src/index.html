@@ -1,13 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/output.css">
-  <title>Game</title>
-</head>
-<body>
-  <div class="bg-red-200">Hello</div> 
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/output.css" />
+    <title>Game</title>
+
+    <script lang="javascript">
+      const posts = [
+        {
+          category: "engineering",
+          title: "A Simple Rhythm Game Engine",
+          description: "Insight on the basics of a rhythm game engine, like the one that powers [game]."
+        },
+        {
+          category: "engineering",
+          title: "A Simple Rhythm Game Engine",
+          description: "Insight on the basics of a rhythm game engine, like the one that powers [game]."
+        },
+        {
+          category: "engineering",
+          title: "A Simple Rhythm Game Engine",
+          description: "Insight on the basics of a rhythm game engine, like the one that powers [game]."
+        },
+      ]
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const $news = document.querySelector('#news')
+        const $template = document.querySelector('template#post')
+
+        const getById = (node, sel) => node.querySelector(`[data-id="${sel}"]`)
+
+        for (const post of posts) {
+          const node = $template.content.cloneNode(true)
+          for (const k in post) {
+            getById(node, k).textContent = post[k]
+          }
+          $news.appendChild(node)
+        }
+      })
+    </script>
+  </head>
+
+  <body class="">
+    <template id="post">
+      <div class="news bg-white z-100">
+        <div class="flex">
+          <img src="https://via.placeholder.com/145x180.png" />
+          <div class="m-2">
+            <p data-id="category" class="text-gray-300">
+              <!-- category -->
+            </p>
+            <h4 data-id="title" class="font-bold py-1">
+              A Simple Rhythm Game Engine
+            </h4>
+            <p data-id="description">
+              Insight on the basics of a rhythm game engine, like the one that
+              powers [game].
+            </p>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <section class="bg-slate-700 text-gray-300 py-32">
+      <div class="flex flex-col items-center">
+        <div
+          class="border border-8 border-gray-300 rounded-full text-9xl h-32 w-32 flex justify-center items-center"
+        >
+          <span class="mb-12 klee-one"> ε </span>
+        </div>
+        <h1 class="klee-one text-7xl mb-6 mt-2 pr-8">
+          <span class="text-8xl inline-block w-20">ε</span>leutheria
+        </h1>
+        <h2 class="text-xl subtitle">Hackable, Web Based Rhythm Game</h2>
+      </div>
+    </section>
+
+    <section id="blog-posts" class="relative">
+      <div class="flex">
+        <h3 class="uppercase inline-block -rotate-90 flex items-center">
+          news
+        </h3>
+        <div class="grid grid-cols-3 w-full z-50" id="news">
+          <!-- content dynamically inserted -->
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-200">
+      <div class="flex flex-col items-center text-xl">
+        <p>
+          [Name Here] is currently in
+          <span class="font-bold">private alpha</span>.
+        </p>
+
+        <p>Join the mailing list for updates.</p>
+
+        <form class="w-full max-w-md">
+          <div>
+            <input type="email" placeholder="Email..." class="input my-4" />
+            <button class="button" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </body>
 </html>
