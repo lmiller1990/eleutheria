@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/index.js"></script>
+  <title>Demo</title>
+  <style>
+    #gameplay {
+      position: relative;
+    }
+
+    #target {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 25px;
+      border: 2px solid;
+    }
+
+    .note {
+      position: absolute;
+      width: 100px;
+      height: 25px;
+      background: darkcyan;
+    }
+
+    #timing {
+      position: absolute;
+      left: 100px;
+      list-style: none;
+    }
+  </style>
+</head>
+
+<body>
+  <p>Rhythm engine demo.</p>
+  <ul>
+    <li>Click <b>Start</b> to start.</li>
+    <li>Press <b>J</b> to hit notes when they overlap the rectangle.</li>
+  </ul>
+  <div>
+    <button onclick="start()">Start</button>
+    <hr>
+  </div>
+
+  <div id="gameplay">
+    <div id="target"></div>
+    <ul id="timing">
+    </ul>
+  </div>
+
+</body>
+
+</html>
