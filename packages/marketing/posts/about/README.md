@@ -9,7 +9,7 @@ metadata_end -->
 
 # About Eleutheria
 
-Welcome to the *Eleutheria* website! In this post, I will discuss my goals for the *Eleutheria* project and outline my design principles.
+Welcome to the *Eleutheria* website! Eleutheria is a hackable, web based rhythm game. In this post, I will discuss my goals for the *Eleutheria* project and outline my design principles.
 
 ## Existing Literature
 
@@ -27,14 +27,18 @@ All these projects deliver a clean, refined gameplay experience.
 
 So - there are already many great rhythm game engines. Why do we need another one?
 
-What makes *Eleutheria* interesting is the entire game is written using HTML, CSS and JavaScript. Even the gameplay is composed entirely from DOM elements! This is, of course, not very efficient - something like WebGL via Pixi.js or Three.js would be far more performant. The trade off is the game is far more easily modified by non-experts. Making changes using CSS gives you instant feedback. It's responsible by default. JavaScript scripting is hopefully more intuitive and approachable than the Lua API exposed by something like Stepmania, at least for designers and non-developers. 
+What makes *Eleutheria* interesting is the entire game is written using HTML, CSS and JavaScript. Even the gameplay is composed entirely from DOM elements! This is, of course, not very efficient - something like WebGL via Pixi.js or Three.js would be far more performant. The trade off is the game is far more easily modified by non-experts. Making changes using CSS gives you instant feedback. It's responsive by default. JavaScript scripting is hopefully more intuitive and approachable than the Lua API exposed by something like Stepmania, at least for designers and non-developers. 
 
 Although DOM rendering is not nearly as quick as using WebGL, with careful attention and optimization, the game can still easily run at a consistent 60 FPS, even on older machines. Newer machines can comfortable run at 120 FPS. Performance isn't an issue.
 
 ## A Complete, In Browser Experience
 
-Many rhythm games use music without the creator's permission, or blatantly distribute unlicensed, stolen music. Not only are all the songs in Eleutheria are used with the artist's express permission, but the artist receives licensing fees. Finally, the client features a bio for each artist, with links to their work. I hope Eleutheria can be a platform to help great musicians gain more exposure and popularity.
+Many rhythm games use music without the creator's permission, or blatantly distribute unlicensed, stolen music. Not only are all the songs in Eleutheria are used with the artist's express permission, but the artist receives licensing fees. Finally, the client features a profile for each artist, with links to their work. I hope Eleutheria can be a platform to help great musicians gain more exposure and popularity.
 
 ## Open to the Core
 
-Eleutheria is completely open source. The code is [available on GitHub](https://github.com/lmiller1990/rhythm). You can find the designs in Figma.
+Eleutheria is completely open source. The code is [available on GitHub](https://github.com/lmiller1990/eleutheria). You can find the designs in our public [Figma board](https://www.figma.com/file/zU7hIg1kLRvSSlKbjp7B8u/Game?node-id=0%3A1).
+
+## What Next?
+
+I hope this post explains a bit a about Eleutheria. Interested? Join the [Discord server](https://www.figma.com/file/zU7hIg1kLRvSSlKbjp7B8u/Game?node-id=0%3A1) or [try Eleutheria](/app) now!

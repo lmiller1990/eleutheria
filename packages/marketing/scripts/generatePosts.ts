@@ -2,6 +2,7 @@ import fs from "fs-extra";
 import * as shiki from "shiki";
 import * as marked from "marked";
 import path from "path";
+import globby from "globby";
 
 function insertInlineIframes(html: string) {
   const startIframe = "<!-- iframe";
@@ -134,6 +135,10 @@ async function main() {
       });
   }
 
+  (await globby("*.png", { cwd: src })).forEach(async (asset) => {
+    await fs.copy(path.join("src", asset), path.join(dist, asset));
+  });
+
   const postsJson = JSON.stringify(allPostsMetadata, null, 4);
   await fs.writeFile(path.join("dist", "metadata.json"), postsJson, "utf8");
 
@@ -150,6 +155,17 @@ async function main() {
 
   // favicon
   await fs.copy(path.join(src, "favicon.ico"), path.join(dist, "favicon.ico"));
+
+  // generate list of static assets
+  const assets = await globby("**/*.{png,wav}", {
+    absolute: false,
+    cwd: dist,
+  });
+
+  await fs.writeFile(
+    path.join(dist, "assets.json"),
+    JSON.stringify(assets, null, 4)
+  );
 }
 
 main();

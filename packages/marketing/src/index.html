@@ -21,7 +21,7 @@
           for (const k of ['category', 'title', 'description']) {
             getById(node, k).textContent = post[k]
           }
-          node.querySelector('a').setAttribute('href', `${post.filename}.html`)
+          node.querySelector('a').setAttribute('href', `/${post.filename}`)
           $news.appendChild(node)
         }
       })
@@ -77,7 +77,7 @@
     <section class="bg-slate-200">
       <div class="flex flex-col items-center text-xl">
         <p>
-          Eleutheria is currently in
+          Eleutheret is currently in
           <span class="font-bold">private alpha</span>.
         </p>
 
