@@ -47,6 +47,7 @@ function createChart() {
     $gameplay.appendChild(el);
     notes.push({ ms: i * _4th * 1000 + offsetMs, el });
   }
+  console.log(JSON.stringify(notes, null, 2))
   return notes;
 }
 

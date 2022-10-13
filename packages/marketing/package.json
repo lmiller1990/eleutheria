@@ -5,7 +5,12 @@
     "dev": "concurrently \"serve src\" \"tailwindcss -i src/index.css -o ./src/output.css --watch\"",
     "build": "tailwindcss -i src/index.css -o ./src/output.css"
   },
+  "dependencies": {
+    "marked": "4.1.1",
+    "shiki": "0.11.1"
+  },
   "devDependencies": {
+    "@types/marked": "4.0.7",
     "concurrently": "7.4.0",
     "postcss": "^8.4.6",
     "serve": "14.0.1",

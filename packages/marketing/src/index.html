@@ -8,23 +8,7 @@
     <title>Game</title>
 
     <script lang="javascript">
-      const posts = [
-        {
-          category: "engineering",
-          title: "A Simple Rhythm Game Engine",
-          description: "Insight on the basics of a rhythm game engine, like the one that powers [game]."
-        },
-        {
-          category: "engineering",
-          title: "A Simple Rhythm Game Engine",
-          description: "Insight on the basics of a rhythm game engine, like the one that powers [game]."
-        },
-        {
-          category: "engineering",
-          title: "A Simple Rhythm Game Engine",
-          description: "Insight on the basics of a rhythm game engine, like the one that powers [game]."
-        },
-      ]
+      /* post_array */
 
       document.addEventListener('DOMContentLoaded', () => {
         const $news = document.querySelector('#news')
@@ -34,9 +18,10 @@
 
         for (const post of posts) {
           const node = $template.content.cloneNode(true)
-          for (const k in post) {
+          for (const k of ['category', 'title', 'description']) {
             getById(node, k).textContent = post[k]
           }
+          node.querySelector('a').setAttribute('href', `${post.filename}.html`)
           $news.appendChild(node)
         }
       })
@@ -45,10 +30,10 @@
 
   <body class="">
     <template id="post">
-      <div class="news bg-white z-100">
-        <div class="flex">
+      <div class="news bg-white z-100 h-full">
+        <div class="flex h-full">
           <img src="https://via.placeholder.com/145x180.png" />
-          <div class="m-2">
+          <a class="p-2">
             <p data-id="category" class="text-gray-300">
               <!-- category -->
             </p>
@@ -59,7 +44,7 @@
               Insight on the basics of a rhythm game engine, like the one that
               powers [game].
             </p>
-          </div>
+          </a>
         </div>
       </div>
     </template>
@@ -71,8 +56,8 @@
         >
           <span class="mb-12 klee-one"> ε </span>
         </div>
-        <h1 class="klee-one text-7xl mb-6 mt-2 pr-8">
-          <span class="text-8xl inline-block w-20">ε</span>leutheria
+        <h1 class="klee-one text-7xl mb-6 mt-2">
+          Eleutheria
         </h1>
         <h2 class="text-xl subtitle">Hackable, Web Based Rhythm Game</h2>
       </div>
@@ -92,7 +77,7 @@
     <section class="bg-slate-200">
       <div class="flex flex-col items-center text-xl">
         <p>
-          [Name Here] is currently in
+          Eleutheria is currently in
           <span class="font-bold">private alpha</span>.
         </p>
 
