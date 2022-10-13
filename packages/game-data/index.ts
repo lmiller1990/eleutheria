@@ -69,7 +69,10 @@ const ctxSingleton = new Context(null, null);
 
 const watcher = chokidar.watch(EditorActions.editingPath);
 
-const marketing = path.join(__dirname, "..", "marketing", "dist");
+const marketing =
+  process.env.NODE_ENV === "production"
+    ? path.join(__dirname, "..", "..", "marketing", "dist")
+    : path.join(__dirname, "..", "marketing", "dist");
 
 wss.on("connection", (ws) => {
   watcher.on("change", async () => {

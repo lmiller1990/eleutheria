@@ -19,6 +19,7 @@
   "devDependencies": {
     "@packages/chart-parser": "0.0.0-development",
     "@packages/engine": "0.0.0-development",
+    "@packages/marketing": "0.0.0-development",
     "@packages/shared": "0.0.0-development",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",
