@@ -20,6 +20,7 @@ async function main() {
     await build("audio-utils");
     await build("engine")
     await build("frontend");
+    await build("marketing")
 
     // 2. game-data (the backend)
     await build("game-data");
