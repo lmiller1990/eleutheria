@@ -35,7 +35,7 @@ Create a user and database however you like. Then, you'll need to run the migrat
 cd packages/game-data
 
 # run migrations = I put some example env vars, put the correct ones for your setup.
-PGPASSWORD=<PASSWORD> POSTGRES_HOST=localhost POSTGRES_USER=eleutheria POSTGRES_DB=eleutheria yarn knex migrate:latest
+PGPASSWORD=<password> POSTGRES_HOST=localhost POSTGRES_USER=<user> POSTGRES_DB=<db> yarn knex migrate:latest
 ```
 
 If it worked, you'll see:
@@ -50,6 +50,11 @@ Done in 11.88s.
 
 Once you set up the database, you can start development by running `yarn dev` at the root and visting `http://localhost:5566`.
 
-## Deployment
+## Production Deployment
 
-Build the app with `yarn build` at the top level.
+Build the app with `yarn build` at the top level. Once that is built, start the server:
+
+```sh
+cd packages/game-data
+PGPASSWORD=<password> POSTGRES_HOST=localhost POSTGRES_USER=<user> POSTGRES_DB=<database> NODE_ENV=production node dist/index.js
+```
