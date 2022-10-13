@@ -3,9 +3,9 @@ import path from "path";
 
 const packages = path.join(__dirname, "..", "packages");
 
-async function build(pkg: string) {
-  console.log(`Building ${pkg}`);
-  return execa("yarn", ["build"], {
+async function build(pkg: string, command = 'build') {
+  console.log(`Running ${command} in ${pkg}...`);
+  return execa("yarn", [command], {
     cwd: path.join(packages, pkg),
     shell: true,
     stderr: "pipe",
@@ -19,6 +19,7 @@ async function main() {
     await build("chart-parser");
     await build("audio-utils");
     await build("engine")
+    await build("game-data", "build-schema");
     await build("frontend");
     await build("marketing")
 

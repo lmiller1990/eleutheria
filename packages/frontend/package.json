@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && tailwind:build && codegen && vite build",
+    "build": "tsc && yarn tailwind:build && yarn codegen && vite build",
     "test": "node ./scripts/runCypress.js",
     "e2e": "ts-node --transpileOnly ./scripts/runE2E.ts",
     "test:unit": "vitest --run",
