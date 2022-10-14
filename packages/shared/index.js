@@ -16,8 +16,7 @@ if (process.env.NODE_ENV !== "production") {
     transpileOnly: true,
     preferTsExts: true,
   });
-
   module.exports = require("./src");
 } else {
-  module.exports = require("./dist");
+  module.exports = require("./dist/src");
 }

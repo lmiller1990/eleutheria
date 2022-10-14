@@ -1,22 +1,12 @@
 import express from "express";
+import fs from "fs-extra";
 import cors from "cors";
 import path from "node:path";
 import http from "node:http";
 import bodyParser from "body-parser";
 import chokidar from "chokidar";
-import type {
-  ParamData,
-  UserScripts,
-  BaseSong,
-  LoadSongData,
-} from "@packages/shared";
+import type { UserScripts } from "@packages/shared";
 import { WebSocketServer } from "ws";
-import fs from "fs-extra";
-import {
-  ChartMetadata,
-  parseChart,
-  parseHoldsChart,
-} from "@packages/chart-parser";
 import {
   compileSkins,
   compileUserStyle,
@@ -73,18 +63,16 @@ const wss = new WebSocketServer({
   server,
 });
 
-interface WebSocketEditorStartMessage {
-  type: "editor:start";
-  data: ParamData;
-}
-
-type WebSocketPayload = WebSocketEditorStartMessage;
-
 // @ts-ignore - figure out how we want to handle editing eventually
 // Just need this for the EditorActions
 const ctxSingleton = new Context(null, null);
 
 const watcher = chokidar.watch(EditorActions.editingPath);
+
+const marketing =
+  process.env.NODE_ENV === "production"
+    ? path.join(__dirname, "..", "..", "marketing", "dist")
+    : path.join(__dirname, "..", "marketing", "dist");
 
 wss.on("connection", (ws) => {
   watcher.on("change", async () => {
@@ -97,60 +85,26 @@ wss.on("connection", (ws) => {
   });
 });
 
-const songMetadata = fs.readJsonSync("./songMetadata.json");
-
-const songsDir = path.join(__dirname, "songs");
-
-async function loadSong(id: string): Promise<LoadSongData> {
-  const chartPath = path.join(songsDir, id);
-
-  const _metadata = await fs.readFile(
-    path.join(chartPath, "data.json"),
-    "utf-8"
-  );
-
-  const metadata = JSON.parse(_metadata) as ChartMetadata;
-
-  const charts = await Promise.all(
-    metadata.charts.map(async (chart) => {
-      return {
-        ...chart,
-        tapNotes: await fs.readFile(
-          path.join(chartPath, chart.difficulty, `${id}.chart`),
-          "utf-8"
-        ),
-        holdNotes: await fs.readFile(
-          path.join(chartPath, chart.difficulty, `${id}.holds.chart`),
-          "utf-8"
-        ),
-      };
-    })
-  );
-
-  const data: LoadSongData = {
-    charts: charts.map((chartData) => {
-      return {
-        ...chartData,
-        parsedTapNoteChart: parseChart(metadata, chartData.tapNotes),
-        parsedHoldNoteChart: parseHoldsChart(metadata, chartData.holdNotes),
-      };
-    }),
-    metadata: {
-      ...metadata,
-      duration: songMetadata[id] ?? "??",
-    },
-  };
-
-  return data;
-}
-
-app.get("/", async (req, res) => {
+app.get("/app", async (req, res) => {
   if (process.env.NODE_ENV === "production") {
     res.send(await req.ctx.sources.html.prodModeIndexHtml());
     return;
   }
 
   res.send(req.ctx.sources.html.devModeIndexHtml);
+});
+
+app.get("/", async (_req, res) => {
+  res.sendFile(path.join(marketing, "index.html"));
+});
+
+// marketing page styling
+app.get("/output.css", async (_req, res) => {
+  res.sendFile(path.join(marketing, "output.css"));
+});
+
+app.get("/KleeOne-Regular.ttf", async (_req, res) => {
+  res.sendFile(path.join(marketing, "KleeOne-Regular.ttf"));
 });
 
 app.get("/assets/:asset", (req, res) => {
@@ -238,4 +192,26 @@ app.get("/user", async (_req, res) => {
   };
 
   res.json(data);
+});
+
+// blog posts
+const blogPosts = fs.readJsonSync(
+  path.join(marketing, "metadata.json")
+) as Array<{ filename: string }>;
+
+blogPosts.forEach((post) => {
+  app.get(`/${post.filename}`, (_req, res) => {
+    res.sendFile(path.join(marketing, `${post.filename}.html`));
+  });
+});
+
+// blog post assets
+const blogPostsAssets = fs.readJsonSync(
+  path.join(marketing, "assets.json")
+) as string[];
+
+blogPostsAssets.forEach((asset) => {
+  app.get(`/${asset}`, (_req, res) => {
+    res.sendFile(path.join(marketing, asset));
+  });
 });

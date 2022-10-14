@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/output.css" />
+    <style>
+      /* post_css */
+    </style>
+    <style>
+      .shiki {
+        padding: 15px;
+        overflow: scroll;
+      }
+      .shiki > code > .line {
+        font-weight: normal;
+      }
+
+      iframe {
+        width: 100%;
+        height: calc(100vh / 2);
+        border: 1px solid black;
+        resize: vertical;
+      }
+
+      .social {
+        height: 40px;
+      }
+
+      img {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      /* used for date above h1 */
+      h6 {
+        margin: 1rem 0 0 0;
+        font-size: 0.9rem;
+      }
+
+      p {
+        margin: 1.25rem 0;
+      }
+
+      ul,
+      ol,
+      p {
+        font-size: 18px;
+      }
+
+      ul {
+        list-style-type: disc;
+        list-style-position: inside;
+      }
+
+      ol {
+        list-style-type: decimal;
+        list-style-position: inside;
+      }
+
+      a {
+        border-bottom: 1px solid cornflowerblue;
+      }
+
+      code {
+        font-size: 0.875rem;
+        font-weight: bolder;
+      }
+
+      .no-border {
+        border: 0;
+      }
+    </style>
+    <title>Document</title>
+  </head>
+
+  <body>
+    <header
+      class="bg-slate-700 text-gray-300 h-14 flex justify-center items-center"
+    >
+      <div class="max-w-2xl w-full flex items-center justify-between">
+        <a class="klee-one text-3xl no-border" href="/">Eleutheria</a>
+        <div class="flex items-center">
+          <button
+            class="ml-2 no-border h-8 p-2 rounded-sm bg-slate-200 text-slate-700 opacity-75 cursor-not-allowed flex items-center"
+            href="/app"
+          >
+            Play
+          </button>
+          <div class="flex">
+            <a href="https://github.com/lmiller1990/eleutheria" class="no-border">
+              <img class="p-2 social" src="/github.png" />
+            </a>
+            <a href="https://discord.gg/NZC2FWpvhz" class="no-border">
+              <img class="p-2 social" src="/discord.png" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="flex justify-center">
+      <div class="max-w-2xl">
+        <!-- post_content -->
+      </div>
+    </div>
+
+    <footer
+      class="bg-slate-700 text-gray-300 h-14 flex justify-center items-center"
+    >
+      <div class="flex">
+        <a href="https://github.com/lmiller1990/eleutheria" class="no-border">
+          <img class="p-2 social" src="/github.png" />
+        </a>
+        <a href="https://discord.gg/NZC2FWpvhz" class="no-border">
+          <img class="p-2 social" src="/discord.png" />
+        </a>
+      </div>
+    </footer>
+  </body>
+</html>

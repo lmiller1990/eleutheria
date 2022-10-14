@@ -1,8 +1,7 @@
-## Rhythm
+# Eleutheria
 
-- `yarn dev` to start in dev mode 
+A hackable rhythm game for the 21st century build on web technologie.
 
-## TODO
+## Development
 
-Docs, etc.
-
+See [DEVELOPMENT](./DEVELOPMENT.md).

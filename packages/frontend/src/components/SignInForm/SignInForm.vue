@@ -62,7 +62,7 @@ async function handleSubmit() {
 
 <template>
   <form
-    class="w-full form text-white h-full flex flex-col items-center p-8"
+    class="w-full max-w-3xl bg-zinc-700 text-white h-full flex flex-col items-center p-8"
     @submit.prevent="handleSubmit"
   >
     <ValidationInput
@@ -92,10 +92,3 @@ async function handleSubmit() {
     </div>
   </form>
 </template>
-
-<style scoped lang="scss">
-.form {
-  background: #373737;
-  @apply max-w-3xl;
-}
-</style>

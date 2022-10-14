@@ -1,6 +1,5 @@
-import { intArg, nonNull, objectType, stringArg } from "nexus";
+import { nonNull, objectType, stringArg } from "nexus";
 import path from "path";
-import { ChartDataSource } from "../../sources/chartSource";
 import { Chart } from "./gql-Chart";
 
 export const Song = objectType({
@@ -41,15 +40,8 @@ export const Song = objectType({
 
     t.nonNull.list.nonNull.field("charts", {
       type: Chart,
-      resolve: (source, args, ctx) => {
+      resolve: (source, _args, ctx) => {
         return ctx.actions.db.getChartsForSong(source.id);
-        // return (await ctx.actions.db.getChartsForSong(source.id)).map((c) => {
-        //   return new ChartDataSource(ctx, {
-        //     ...c,
-        //     bpm: source.bpm,
-        //     offset: source.offset,
-        //   });
-        // });
       },
     });
   },

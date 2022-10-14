@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /*
+! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com
+*/
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+*/
+
+html {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4;
+  /* 3 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* 4 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font family by default.
+2. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+}
+
+::-webkit-backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+}
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.m-2 {
+  margin: 0.5rem;
+}
+
+.my-24 {
+  margin-top: 6rem;
+  margin-bottom: 6rem;
+}
+
+.mx-16 {
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-32 {
+  height: 8rem;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
+.h-4 {
+  height: 1rem;
+}
+
+.h-6 {
+  height: 1.5rem;
+}
+
+.h-14 {
+  height: 3.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-32 {
+  width: 8rem;
+}
+
+.w-20 {
+  width: 5rem;
+}
+
+.w-4 {
+  width: 1rem;
+}
+
+.w-6 {
+  width: 1.5rem;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.max-w-3xl {
+  max-width: 48rem;
+}
+
+.max-w-2xl {
+  max-width: 42rem;
+}
+
+.max-w-xl {
+  max-width: 36rem;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.-rotate-90 {
+  --tw-rotate: -90deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.resize {
+  resize: both;
+}
+
+.appearance-none {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.rounded-md {
+  border-radius: 0.375rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-8 {
+  border-width: 8px;
+}
+
+.border-gray-300 {
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}
+
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.bg-slate-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+
+.bg-slate-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 232 240 / var(--tw-bg-opacity));
+}
+
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.py-32 {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+
+.pr-8 {
+  padding-right: 2rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-9xl {
+  font-size: 8rem;
+  line-height: 1;
+}
+
+.text-7xl {
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.text-8xl {
+  font-size: 6rem;
+  line-height: 1;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.text-slate-900 {
+  --tw-text-opacity: 1;
+  color: rgb(15 23 42 / var(--tw-text-opacity));
+}
+
+.text-gray-300 {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity));
+}
+
+.underline {
+  -webkit-text-decoration-line: underline;
+          text-decoration-line: underline;
+}
+
+.shadow-sm {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.outline {
+  outline-style: solid;
+}
+
+.ring-1 {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+* {
+  /* font-family: "Sansation", sans-serif; */
+  /* text-transform: uppercase; */
+  /* outline: none; */
+}
+
+section {
+  /* @apply bg-gray-500 my-24 mx-16 p-8; */
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  padding-left: 6rem;
+  padding-right: 6rem;
+}
+
+.news {
+  border-width: 2px;
+  --tw-border-opacity: 1;
+  border-color: rgb(254 226 226 / var(--tw-border-opacity));
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border-radius: 0.375rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.input::-moz-placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
+}
+
+.input::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
+}
+
+.input {
+  --tw-text-opacity: 1;
+  color: rgb(15 23 42 / var(--tw-text-opacity));
+}
+
+@media (min-width: 640px) {
+  .input {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+.input {
+  height: 2.5rem;
+  width: 100%;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(226 232 240 / var(--tw-ring-opacity));
+}
+
+.input:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(14 165 233 / var(--tw-ring-opacity));
+}
+
+.button {
+  width: 100%;
+  justify-content: center;
+  border-radius: 0.5rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+}
+
+.button:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+
+.button {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+  height: 2.5rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+section#blog-posts::before {
+  /* https://pattern.monster/cross-section/ */
+  background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='20' height='20' patternTransform='scale(2) rotate(45)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0,0%,100%,1)'/><path d='M 10,-2.55e-7 V 20 Z M -1.1677362e-8,10 H 20 Z'  stroke-width='1' stroke='hsla(0, 0%, 49%, 1)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+}
+
+@font-face {
+  font-family: KleeOne;
+
+  src: url(KleeOne-Regular.ttf);
+}
+
+.klee-one {
+  font-family: KleeOne;
+}
+
+.subtitle {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.hover\:bg-slate-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus\:ring-sky-500:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(14 165 233 / var(--tw-ring-opacity));
+}
+  </style>
+  <style>
+    .shiki {
+      padding: 15px;
+      overflow: scroll;
+    }
+    .shiki > code > .line {
+      font-weight: normal;
+    }
+
+    iframe {
+      width: 100%;
+      padding: 0 5rem;
+      height: calc(100vh / 2);
+      border: 1px solid black;
+      resize: vertical;
+    }
+
+    img {
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 3rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 1.25rem 0;
+    }
+
+    ul, ol, p {
+      font-size: 18px;
+    }
+
+    ul {
+      list-style-type: disc;
+      list-style-position: inside;
+    }
+
+    ol {
+      list-style-type: decimal;
+      list-style-position: inside;
+    }
+
+    a {
+      border-bottom: 1px solid cornflowerblue;
+    }
+
+    code {
+      font-size: 0.875rem;
+      font-weight: bolder;
+    }
+  </style>
+  <title>Document</title>
+</head>
+
+<body>
+  <header class="bg-slate-700 text-gray-300 h-14 flex justify-center items-center">
+    <div class="max-w-2xl w-full">
+      <span class="klee-one text-6xl">εleutheria</span>
+    </div>
+  </header>
+  <div class="flex justify-center">
+
+    <div class="max-w-2xl">
+
+      <p>In this article, I will demonstrate how to build a simple rhythm game engine for the web, similar to something like Stepmania, Osu!, etc.</p>
+<p>The goal of this article is the <strong>core engine</strong> - this means the module to track user input and calculate if a note was hit, how accurately, etc. You could build any kind of user interface on top of this engine - a traditional lane based game, or something more like Osu! or Jubeat.</p>
+<p>Grab the <a href="https://gist.github.com/lmiller1990/4c7294f028542df3659a4a1fc11de8b5">full source code here</a>.</p>
+<h2 id="overview--important-concepts">Overview &amp; Important Concepts</h2>
+<p>Over the years, there have been many different rhythm game engines; most closed source, but others open. The one I&#39;m most familiar with is Stepmania, which is <strong>time based</strong>. Other engines, such as older DDR games, are <strong>frame based</strong> (or as I understand it, based on my research). Most modern rhythm game engines will be time based. This is in constrast to many other game engines, which are predominantly <strong>frame based</strong>. In fighting games, the primary currency is <strong>frames</strong> - in rhythm games, it is <strong>time</strong>.</p>
+<p>In general, <strong>time based</strong> engines make a lot more sense for a rhythm game, where the core concept is how accurately a player hits a note, which is usually measured in milliseconds.</p>
+<p>The primary tenet of a rhythm game engine is to keep track of the current song&#39;s playback progress, and the notes and user inputs, <strong>relative to the playback progress</strong>. At any given time, we need to know:</p>
+<ol>
+<li>Time elapsed since song started.</li>
+</ol>
+<p>The start of the song is <strong>time zero</strong>, or t=0ms. All the calculations (timing windows, player inputs) are relative to the song playback. This way, the timing is decoupled from the rendering engine (and by extension, frame rate).</p>
+<ol start="2">
+<li>Duration between the present time and when each note is supposed to be hit.</li>
+</ol>
+<p>Let&#39;s say <strong>250ms</strong> has elapsed. We receive a player input. There are two notes - one at <strong>200ms</strong> and one at <strong>280ms</strong>. The engine needs to determine <em>which note the player was trying to hit</em> (the note at 280ms), and how accurate they were (30ms early, in this case).</p>
+<ol start="3">
+<li>Time and associated lane* of any user inputs (lane 1, 2 ... lane N), if you are building a traditional &quot;lane based&quot; game. If you are making something like Osu!, this might be measured in X/Y coordinates. This time is relative to time zero.</li>
+</ol>
+<p>This diagram illustrates the three timings the engine should track and perform comparisons on:</p>
+<p><img src="./rhythm-engine.png" alt=""></p>
+<h2 id="important-apis--methods">Important APIs &amp; Methods</h2>
+<p>We are targeting the web. Let&#39;s look at the tools at our disposal. The main Web APIs we will use are:</p>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Performance/now"><code>performance.now()</code></a>, which returns a <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp"><code>DOMHighResTimeStamp</code></a>. This is accurate to at least millisecond precision, which is appropriate for a rhythm game.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/timeStamp"><code>Event.timeStamp</code></a>. This is the millisecond at which an event was created. Like <code>performance.now()</code>, it returns a <code>DOMHighResTimeStamp</code>.</li>
+</ul>
+<p>It&#39;s worth noting that both these methods have their <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/timeStamp#reduced_time_precision">precision reduced</a> to prevent fingerprinting in Firefox. I&#39;d generally recommend Chrome for your rhythm game development; you might want to distribute a desktop binary using Electron, too, so Chrome(ium) is a good platform.</p>
+<p>The value of a <code>DOMHighResTimeStamp</code> is based on how much time has passed since the document&#39;s created. <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp#the_time_origin">More info here</a>. Basically, if you open a new page and run <code>performance.now()</code> in the console after about 1 second, you&#39;ll see something like 1003.30000001192 - the value is in <strong>milliseconds</strong>. </p>
+<p>In general, I like to normalize everything to milliseconds.</p>
+<p>The final API that we need is <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/getOutputTimestamp"><code>AudioContext.getOutputTimestamp()</code></a>. <code>AudioContext</code> is how I will manage playback. It returns a <code>AudioTimestamp</code> which has two timestamps: <code>contextTime</code> and <code>performanceTime</code>. I will use <code>performanceTime</code> - it also returns a <code>DOMHighResTimeStamp</code>, with the same units and origin as <code>performance.now()</code>.</p>
+<p>We will also learn a little more about the Web Audio API as we go. Let&#39;s get started!</p>
+<h2 id="play-audio-with-the-web-audio-api">Play Audio with the Web Audio API</h2>
+<p>There are (quite) a few ways to play audio on the web. The one I&#39;ve found to be the best fit for rhythm games is <code>AudioContext</code>, mainly because we can get high precision information about playback progress using <code>getOutputTimestamp()</code>.</p>
+<p>This is a simple function that fetches an audio file, and returns a function that will start the playback when called.</p>
+<p>Fetching and playing audio using <code>AudioContext</code> is a bit involved. The Web Audio API is very powerful - we only use it in a simplistic way here:</p>
+<ol>
+<li>Fetch audio data.</li>
+<li>Convert into an <code>ArrayBuffer</code>.</li>
+<li>Decode the buffer using <code>AudioContext.decodeAudioData()</code>.</li>
+</ol>
+<p>We then need to create a <code>GainNode</code> and connect it to our <code>AudioContext</code>. Finally, we create a <code>AudioBufferSourceNode</code>, connect the <code>GainNode</code> and call <code>AudioBufferSourceNode.start()</code>.</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #90A4AE">/**</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">string</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> url</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">returns</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">Promise&lt;() =&gt; { audioContext: AudioContext, startTime?: number }&gt;</span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #90A4AE"> */</span></span>
+<span class="line"><span style="color: #9C3EDA">async</span><span style="color: #90A4AE"> </span><span style="color: #9C3EDA">function</span><span style="color: #90A4AE"> </span><span style="color: #6182B8">fetchAudio</span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">url</span><span style="color: #39ADB5">)</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">new</span><span style="color: #E53935"> </span><span style="color: #90A4AE">window</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">AudioContext</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">res</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">await</span><span style="color: #E53935"> </span><span style="color: #90A4AE">window</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">fetch</span><span style="color: #E53935">(</span><span style="color: #90A4AE">url</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">buf</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">await</span><span style="color: #E53935"> </span><span style="color: #90A4AE">res</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">arrayBuffer</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">buffer</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">await</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">decodeAudioData</span><span style="color: #E53935">(</span><span style="color: #90A4AE">buf</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">gainNode</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">createGain</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #90A4AE">gainNode</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">gain</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">value</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #F76D47">1.0</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #90A4AE">gainNode</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">connect</span><span style="color: #E53935">(</span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">destination</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">return</span><span style="color: #E53935"> </span><span style="color: #39ADB5">()</span><span style="color: #E53935"> </span><span style="color: #9C3EDA">=&gt;</span><span style="color: #E53935"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">source</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">createBufferSource</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">source</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">buffer</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">buffer</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">source</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">connect</span><span style="color: #E53935">(</span><span style="color: #90A4AE">gainNode</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">source</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">start</span><span style="color: #E53935">(</span><span style="color: #F76D47">0</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">getOutputTimestamp</span><span style="color: #E53935">()</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">performanceTime</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">return</span><span style="color: #E53935"> </span><span style="color: #39ADB5">{</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #E53935"> </span><span style="color: #39ADB5">};</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">};</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span></code></pre>
+</code></pre>
+<p>It would be a bit of work, but you could extend this system to support key sounding, which is where each note has a sound associated with it, that is played when (well, if) you hit the corresponding note. This style of gameplay is featured in Beatmania IIDX, Drummania, Guitar Hero, and some other titles, but outside the scope of this tutorial.</p>
+<p>Let&#39;s test out the code so far:</p>
+<iframe srcdoc='<script>
+async function fetchAudio(url) {
+  const audioContext = new window.AudioContext();
+
+  const res = await window.fetch(url);
+  const buf = await res.arrayBuffer();
+  const buffer = await audioContext.decodeAudioData(buf);
+
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = 1.0;
+  gainNode.connect(audioContext.destination);
+
+  return () => {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(gainNode);
+    source.start(0);
+    const startTime = audioContext.getOutputTimestamp().performanceTime;
+
+    return { audioContext, startTime };
+  };
+}
+
+async function start () {
+  const play = await fetchAudio("/135bpm.wav");
+  const { startTime, audioContext } = play();
+}
+</script>
+
+<button onclick="start()">Start</button>'></iframe>
+
+<p>Music to my ears.</p>
+<h2 id="creating-a-note-chart">Creating a Note Chart</h2>
+<p>Now that we have a song playing, we need a note chart. There are lots of formats for note charts - Stepmania uses a system where the metadata is at the top, and the time the note should be hit is derived from the metadata. A simple example:</p>
+<pre><code><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #90A4AE">#TITLE: SONG NAME</span></span>
+<span class="line"><span style="color: #90A4AE">#OFFSET: 100</span></span>
+<span class="line"><span style="color: #90A4AE">#BPMS: 0=236</span></span>
+<span class="line"><span style="color: #90A4AE">#NOTES:</span></span>
+<span class="line"><span style="color: #90A4AE">0100</span></span>
+<span class="line"><span style="color: #90A4AE">0010</span></span>
+<span class="line"><span style="color: #90A4AE">0100</span></span>
+<span class="line"><span style="color: #90A4AE">0010</span></span>
+<span class="line"><span style="color: #90A4AE">,</span></span>
+<span class="line"><span style="color: #90A4AE">0000</span></span>
+<span class="line"><span style="color: #90A4AE">0000</span></span>
+<span class="line"><span style="color: #90A4AE">0000</span></span>
+<span class="line"><span style="color: #90A4AE">0000</span></span></code></pre>
+</code></pre>
+<p>The song runs at 236 BPM. The notes are offset by 100ms. Since there are four lines in the first measure, each line of notes is spaced a 4th beat apart. 60 / 236 = 0.254. Crunching the numbers, we get something like:</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #90A4AE">[</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">id</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">1</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">lane</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">1</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">ms</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">100</span><span style="color: #90A4AE">  </span><span style="color: #90A4AE">// (0ms + 100ms offset)</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">id</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">2</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">lane</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">2</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">ms</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">354</span><span style="color: #90A4AE"> </span><span style="color: #90A4AE">// (254ms + 100ms offset)</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">id</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">3</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">lane</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">1</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">ms</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">608</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">id</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">4</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">lane</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">2</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #E53935">ms</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">862</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">]</span></span></code></pre>
+</code></pre>
+<p>This can get very complex very quickly, depending on what an engine requires. For the purpose of this article, I&#39;m going to assume a constant BPM (the test song runs at 135 BPM) and we are just going to support 4th notes.</p>
+<p>This function creates a simple chart that is similar to the one above. It also creates a <code>&lt;div class=&quot;note&quot;&gt;</code> for each note, which will be useful later on. Finally, this demo application only has one lane. The <code>timing</code> property is for later on - it&#39;s used for capturing the time the player hit the note.</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #90A4AE">/**</span></span>
+<span class="line"><span style="color: #90A4AE"> * A simple &quot;chart&quot;</span></span>
+<span class="line"><span style="color: #90A4AE"> * 4th note at 135 bpm</span></span>
+<span class="line"><span style="color: #90A4AE"> * 60/135 = 0.444...</span></span>
+<span class="line"><span style="color: #90A4AE"> * A note every 0.444ms</span></span>
+<span class="line"><span style="color: #90A4AE"> *</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">returns</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">Array&lt;{ el: HTMLDivElement, ms: number, timing?: number }&gt;</span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #90A4AE"> */</span></span>
+<span class="line"><span style="color: #9C3EDA">function</span><span style="color: #90A4AE"> </span><span style="color: #6182B8">createChart</span><span style="color: #39ADB5">()</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">offsetMs</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #F76D47">60</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">_4th</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #F76D47">60</span><span style="color: #E53935"> </span><span style="color: #39ADB5">/</span><span style="color: #E53935"> </span><span style="color: #F76D47">135</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">notes</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> []</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">$gameplay</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">document</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">querySelector</span><span style="color: #E53935">(</span><span style="color: #39ADB5">&quot;</span><span style="color: #91B859">#gameplay</span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">for</span><span style="color: #E53935"> (</span><span style="color: #9C3EDA">let</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #F76D47">1</span><span style="color: #39ADB5">;</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #E53935"> </span><span style="color: #39ADB5">&lt;</span><span style="color: #E53935"> </span><span style="color: #F76D47">16</span><span style="color: #39ADB5">;</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #39ADB5">++</span><span style="color: #E53935">) </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">el</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">document</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">createElement</span><span style="color: #E53935">(</span><span style="color: #39ADB5">&quot;</span><span style="color: #91B859">div</span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">el</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">className</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">&quot;</span><span style="color: #91B859">note</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">$gameplay</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">appendChild</span><span style="color: #E53935">(</span><span style="color: #90A4AE">el</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">notes</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">push</span><span style="color: #E53935">(</span><span style="color: #39ADB5">{</span><span style="color: #E53935"> ms</span><span style="color: #39ADB5">:</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #E53935"> </span><span style="color: #39ADB5">*</span><span style="color: #E53935"> </span><span style="color: #90A4AE">_4th</span><span style="color: #E53935"> </span><span style="color: #39ADB5">*</span><span style="color: #E53935"> </span><span style="color: #F76D47">1000</span><span style="color: #E53935"> </span><span style="color: #39ADB5">+</span><span style="color: #E53935"> </span><span style="color: #90A4AE">offsetMs</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">el</span><span style="color: #E53935"> </span><span style="color: #39ADB5">}</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">return</span><span style="color: #E53935"> </span><span style="color: #90A4AE">notes</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span></code></pre>
+</code></pre>
+<p>The <code>offsetMs</code> of 60 is just something I figured out by feel. A more production-like solution would be to use a tool like Audacity to analyze the waveform for more specific, accurate offset, or even allow the player to adjust it based on their preference.</p>
+<p>The data structure <code>createChart()</code> returns looks like this:</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #90A4AE">[</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">ms</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">504.4444444444444</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">timing</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">undefined,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">el</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">ms</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">948.8888888888888</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">timing</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">undefined,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">el</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">ms</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">1393.3333333333333</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">timing</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">undefined,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">el</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// ... etc ...</span></span>
+<span class="line"><span style="color: #90A4AE">]</span></span></code></pre>
+</code></pre>
+<h2 id="scrolling-notes">Scrolling Notes</h2>
+<p>Now we have a song and a note chart, we are ready to get some notes moving! Let&#39;s see some code, then talk about it. I&#39;m stubbing out <code>InputManager</code> for now - this is how we will handle player input, which will be the final part of the system.</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #9C3EDA">class</span><span style="color: #90A4AE"> </span><span style="color: #E2931D">InputManager</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #E53935">process</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">chart</span><span style="color: #39ADB5">)</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E53935"> </span><span style="color: #90A4AE">/* TODO */</span><span style="color: #E53935"> </span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #E53935">clear</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">()</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E53935"> </span><span style="color: #90A4AE">/* TODO */</span><span style="color: #E53935"> </span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #90A4AE">/**</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">Array&lt;{ el: HTMLDivElement; ms: number, timing?: number }&gt;</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> chart</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">AudioContext</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> audioContext</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">number</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> startTime</span></span>
+<span class="line"><span style="color: #90A4AE"> * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">InputManager</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> inputManager</span></span>
+<span class="line"><span style="color: #90A4AE"> */</span></span>
+<span class="line"><span style="color: #9C3EDA">function</span><span style="color: #90A4AE"> </span><span style="color: #6182B8">gameLoop</span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">chart</span><span style="color: #39ADB5">,</span><span style="color: #90A4AE"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">,</span><span style="color: #90A4AE"> </span><span style="color: #90A4AE">startTime</span><span style="color: #39ADB5">,</span><span style="color: #90A4AE"> </span><span style="color: #90A4AE">inputManager</span><span style="color: #39ADB5">)</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// Amount of time that has passed since song started playing</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">elapsed</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">getOutputTimestamp</span><span style="color: #E53935">()</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">performanceTime</span><span style="color: #E53935"> </span><span style="color: #39ADB5">-</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// Process input</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #90A4AE">inputManager</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">process</span><span style="color: #E53935">(</span><span style="color: #90A4AE">chart</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// Calculate new position based on playback</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">for</span><span style="color: #E53935"> (</span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">note</span><span style="color: #E53935"> </span><span style="color: #39ADB5">of</span><span style="color: #E53935"> </span><span style="color: #90A4AE">chart</span><span style="color: #E53935">) </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">note</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">el</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">style</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">top</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">`${</span><span style="color: #90A4AE">note</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">ms </span><span style="color: #39ADB5">-</span><span style="color: #90A4AE"> elapsed</span><span style="color: #39ADB5">}</span><span style="color: #91B859">px</span><span style="color: #39ADB5">`</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// Clear input</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #90A4AE">inputManager</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">clear</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #6182B8">requestAnimationFrame</span><span style="color: #E53935">(</span><span style="color: #39ADB5">()</span><span style="color: #E53935"> </span><span style="color: #9C3EDA">=&gt;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #6182B8">gameLoop</span><span style="color: #E53935">(</span><span style="color: #90A4AE">chart</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">inputManager</span><span style="color: #E53935">)</span></span>
+<span class="line"><span style="color: #E53935">  )</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #9C3EDA">async</span><span style="color: #90A4AE"> </span><span style="color: #9C3EDA">function</span><span style="color: #90A4AE"> </span><span style="color: #6182B8">start</span><span style="color: #39ADB5">()</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">play</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">await</span><span style="color: #E53935"> </span><span style="color: #6182B8">fetchAudio</span><span style="color: #E53935">(</span><span style="color: #39ADB5">&quot;</span><span style="color: #91B859">/135bpm.wav</span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">chart</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #6182B8">createChart</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #39ADB5">{</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #E53935"> </span><span style="color: #39ADB5">}</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #6182B8">play</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">inputManager</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">new</span><span style="color: #E53935"> </span><span style="color: #6182B8">InputManager</span><span style="color: #E53935">(</span><span style="color: #90A4AE">startTime</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #6182B8">gameLoop</span><span style="color: #E53935">(</span><span style="color: #90A4AE">chart</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">inputManager</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span></code></pre>
+</code></pre>
+<p>Every frame, we calculate how much time has passed <strong>since the song started playing</strong>. </p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #9C3EDA">const</span><span style="color: #90A4AE"> elapsed </span><span style="color: #39ADB5">=</span><span style="color: #90A4AE"> audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">getOutputTimestamp</span><span style="color: #90A4AE">()</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">performanceTime </span><span style="color: #39ADB5">-</span><span style="color: #90A4AE"> startTime</span><span style="color: #39ADB5">;</span></span></code></pre>
+</code></pre>
+<p><code>audioContext.getOutputTimestamp().performanceTime</code> is the current time - so after one second, the value will be around 1000. <code>startTime</code> comes from the function returned from <code>fetchAudio</code>. As a reminder:</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #9C3EDA">async</span><span style="color: #90A4AE"> </span><span style="color: #9C3EDA">function</span><span style="color: #90A4AE"> </span><span style="color: #6182B8">fetchAudio</span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">url</span><span style="color: #39ADB5">)</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// ... omitted ...</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">return</span><span style="color: #E53935"> </span><span style="color: #39ADB5">()</span><span style="color: #E53935"> </span><span style="color: #9C3EDA">=&gt;</span><span style="color: #E53935"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">source</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">createBufferSource</span><span style="color: #E53935">()</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">source</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">buffer</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">buffer</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">source</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">connect</span><span style="color: #E53935">(</span><span style="color: #90A4AE">gainNode</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">source</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">start</span><span style="color: #E53935">(</span><span style="color: #F76D47">0</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #39ADB5">    </span><span style="color: #90A4AE">// Here is startTime - it&#39;s the `performanceTime`, a DOMHighResTimeStamp</span></span>
+<span class="line"><span style="color: #39ADB5">    </span><span style="color: #90A4AE">// which we grabbed when the audio first started playing.</span></span>
+<span class="line"><span style="color: #39ADB5">    </span><span style="color: #90A4AE">// This is effectively time zero for the gameplay.</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">getOutputTimestamp</span><span style="color: #E53935">()</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">performanceTime</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">return</span><span style="color: #E53935"> </span><span style="color: #39ADB5">{</span><span style="color: #E53935"> </span><span style="color: #90A4AE">audioContext</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #90A4AE">startTime</span><span style="color: #E53935"> </span><span style="color: #39ADB5">};</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">};</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span></code></pre>
+</code></pre>
+<p>This ensures everything will always stay in sync - the song playback is the source of truth. We effectively are calculating &quot;time_now - start_time&quot;. A concrete example:</p>
+<ul>
+<li>Song is 50 seconds long</li>
+<li>Gameplay started 2 seconds after page was loaded</li>
+</ul>
+<p>If we are 15 seconds into the song, time_now - start_time will be (15000 + 2000) - 2000. We need to normalize everything in milliseconds, relative to <strong>when the playback began, considering this point to be time zero</strong>. This is important because our note chart assumes it begins at 0ms:</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #90A4AE">[</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">ms</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">504.4444444444444</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">timing</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">undefined,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">el</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">ms</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">948.8888888888888</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">timing</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">undefined,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">el</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">ms</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #F76D47">1393.3333333333333</span><span style="color: #39ADB5">,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">timing</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">undefined,</span></span>
+<span class="line"><span style="color: #90A4AE">    </span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">el</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">:</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{}</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #39ADB5">},</span></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// ... etc ...</span></span>
+<span class="line"><span style="color: #90A4AE">]</span></span></code></pre>
+</code></pre>
+<p>Finally - all we need to do is listen for the player inputs, and compare them to the notes. We will also need to normalize the <code>Event.timeStamp</code> property to be relative to the playback, since by default, this is <em>also</em> calculated based on the time the page was loaded.</p>
+<p>First, a demo of the notes moving in time to the song:</p>
+<iframe srcdoc='<script>
+async function fetchAudio(url) {
+  const audioContext = new window.AudioContext();
+
+  const res = await window.fetch(url);
+  const buf = await res.arrayBuffer();
+  const buffer = await audioContext.decodeAudioData(buf);
+
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = 1.0;
+  gainNode.connect(audioContext.destination);
+
+  return () => {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(gainNode);
+    source.start(0);
+    const startTime = audioContext.getOutputTimestamp().performanceTime;
+
+    return { audioContext, startTime };
+  };
+}
+
+class InputManager {
+  process (chart) { /* TODO */ }
+  clear () { /* TODO */ }
+}
+
+function gameLoop(chart, audioContext, startTime, inputManager) {
+  // Amount of time that has passed since song started playing
+  const elapsed = audioContext.getOutputTimestamp().performanceTime - startTime;
+
+  // Process input
+  inputManager.process(chart);
+
+  // Calculate new position based on playback
+  for (const note of chart) {
+    note.el.style.top = `${(note.ms - elapsed) * 0.5}px`;
+  }
+
+  // Clear input
+  inputManager.clear();
+
+  requestAnimationFrame(() =>
+    gameLoop(chart, audioContext, startTime, inputManager)
+  );
+}
+
+function createChart() {
+  const offsetMs = 60;
+  const _4th = 60 / 135;
+  const notes = [];
+
+  const $gameplay = document.querySelector("#gameplay");
+
+  for (let i = 1; i < 16; i++) {
+    const el = document.createElement("div");
+    el.className = "note";
+    $gameplay.appendChild(el);
+    notes.push({ ms: i * _4th * 1000 + offsetMs, el });
+  }
+  return notes;
+}
+
+async function start() {
+  const play = await fetchAudio("/135bpm.wav");
+  const chart = createChart();
+  const { startTime, audioContext } = play();
+  const inputManager = new InputManager(startTime);
+  gameLoop(chart, audioContext, startTime, inputManager);
+}
+</script>
+
+<style>
+#gameplay {
+  position: relative;
+}
+
+#target {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 25px;
+  border: 2px solid;
+}
+
+.note {
+  position: absolute;
+  width: 100px;
+  height: 25px;
+  background: darkcyan;
+}
+</style>
+
+<button onclick="start()">Start</button>
+<hr>
+
+<div id="gameplay">
+  <div id="target"></div>
+</div>'></iframe>
+
+<p>Hit start - you can see the notes scrolling in time with the music.</p>
+<h2 id="managing-user-input--timing-windows">Managing User Input &amp; Timing Windows</h2>
+<p>The final part of the system will be the input manager. Since this demo only features a single lane, we don&#39;t need any logic to compare a given key and note combination. The logic is:</p>
+<ol>
+<li>Create an <code>keydown</code> event listener (in this case, we will listen for the J key)</li>
+<li>Capture the input event, normalize <code>Event.timeStamp</code> relative to the start of gameplay</li>
+<li>At the start of the game loop, check if the input was close to any note.</li>
+<li>If so, consider the note hit and update the <code>timing</code> property</li>
+</ol>
+<p>This means we also need a timing window - in this system, we have a single timing window. It is 100 ms. </p>
+<p>For simplicity, I am choosing to handle the timing logic in the <code>InputManager</code>. In a production system, I&#39;d probably handle this elsewhere - I think <code>InputManager</code> should exclusively be responsible for capturing inputs, and not have knowledge of any game mechanics.</p>
+<p>The <code>InputManager</code> is a singleton and implemented as follows:</p>
+<pre><code class="language-js"><pre class="shiki" style="background-color: #FAFAFA"><code><span class="line"><span style="color: #9C3EDA">class</span><span style="color: #90A4AE"> </span><span style="color: #E2931D">InputManager</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #39ADB5">  </span><span style="color: #90A4AE">// Time of last input in ms, relative to gameplay time zero.</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #90A4AE">/** </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">type</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">number | undefined</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> */</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #E53935">#input</span><span style="color: #39ADB5">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #90A4AE">/**</span></span>
+<span class="line"><span style="color: #90A4AE">   * Gameplay start time (time zero, or t=0ms).</span></span>
+<span class="line"><span style="color: #90A4AE">   * Captured using audioContext.getOutputTimestamp().performanceTime.</span></span>
+<span class="line"><span style="color: #90A4AE">   * Required to normalize Event.timeStamp.</span></span>
+<span class="line"><span style="color: #90A4AE">   * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">number</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> t0</span></span>
+<span class="line"><span style="color: #90A4AE">   */</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #9C3EDA">constructor</span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">t0</span><span style="color: #39ADB5">)</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #90A4AE">window</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">addEventListener</span><span style="color: #E53935">(</span><span style="color: #39ADB5">&quot;</span><span style="color: #91B859">keydown</span><span style="color: #39ADB5">&quot;</span><span style="color: #39ADB5">,</span><span style="color: #E53935"> </span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">event</span><span style="color: #39ADB5">)</span><span style="color: #E53935"> </span><span style="color: #9C3EDA">=&gt;</span><span style="color: #E53935"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #39ADB5">if</span><span style="color: #E53935"> (</span><span style="color: #90A4AE">event</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">code</span><span style="color: #E53935"> </span><span style="color: #39ADB5">!==</span><span style="color: #E53935"> </span><span style="color: #39ADB5">&quot;</span><span style="color: #91B859">KeyJ</span><span style="color: #39ADB5">&quot;</span><span style="color: #E53935">) </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">        </span><span style="color: #39ADB5">return</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #39ADB5">      </span><span style="color: #90A4AE">// Normalize timeStamp.</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #39ADB5">this.</span><span style="color: #90A4AE">#input</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">event</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">timeStamp</span><span style="color: #E53935"> </span><span style="color: #39ADB5">-</span><span style="color: #E53935"> </span><span style="color: #90A4AE">t0</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">}</span><span style="color: #E53935">)</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #E53935">clear</span><span style="color: #39ADB5">()</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">this.</span><span style="color: #90A4AE">#input</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #39ADB5">undefined;</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #90A4AE">/**</span></span>
+<span class="line"><span style="color: #90A4AE">   * Check each note and see if any are close to the last input.</span></span>
+<span class="line"><span style="color: #90A4AE">   * If so, consider the note hit and update the timing property.</span></span>
+<span class="line"><span style="color: #90A4AE">   * </span><span style="color: #39ADB5">@</span><span style="color: #9C3EDA">param</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span><span style="color: #E2931D">Array&lt;{ el: HTMLDivElement, ms: number, timing?: number }&gt;</span><span style="color: #39ADB5">}</span><span style="color: #90A4AE"> notes</span></span>
+<span class="line"><span style="color: #90A4AE">   */</span></span>
+<span class="line"><span style="color: #90A4AE">  </span><span style="color: #E53935">process</span><span style="color: #39ADB5">(</span><span style="color: #90A4AE">notes</span><span style="color: #39ADB5">)</span><span style="color: #90A4AE"> </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">if</span><span style="color: #E53935"> (</span><span style="color: #39ADB5">!this.</span><span style="color: #90A4AE">#input</span><span style="color: #E53935">) </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #39ADB5">return</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">timingWindowMs</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #F76D47">100</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">for</span><span style="color: #E53935"> (</span><span style="color: #9C3EDA">let</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #F76D47">0</span><span style="color: #39ADB5">;</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #E53935"> </span><span style="color: #39ADB5">&lt;</span><span style="color: #E53935"> </span><span style="color: #90A4AE">notes</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">length</span><span style="color: #39ADB5">;</span><span style="color: #E53935"> </span><span style="color: #90A4AE">i</span><span style="color: #39ADB5">++</span><span style="color: #E53935">) </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #9C3EDA">const</span><span style="color: #E53935"> </span><span style="color: #90A4AE">note</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">notes</span><span style="color: #E53935">[</span><span style="color: #90A4AE">i</span><span style="color: #E53935">]</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #39ADB5">if</span><span style="color: #E53935"> (</span><span style="color: #90A4AE">Math</span><span style="color: #39ADB5">.</span><span style="color: #6182B8">abs</span><span style="color: #E53935">(</span><span style="color: #90A4AE">note</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">ms</span><span style="color: #E53935"> </span><span style="color: #39ADB5">-</span><span style="color: #E53935"> </span><span style="color: #39ADB5">this.</span><span style="color: #90A4AE">#input</span><span style="color: #E53935">) </span><span style="color: #39ADB5">&lt;</span><span style="color: #E53935"> </span><span style="color: #90A4AE">timingWindowMs</span><span style="color: #E53935">) </span><span style="color: #39ADB5">{</span></span>
+<span class="line"><span style="color: #39ADB5">        </span><span style="color: #90A4AE">// Close enough to be considered hit! Update the timing property.</span></span>
+<span class="line"><span style="color: #E53935">        </span><span style="color: #90A4AE">note</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">timing</span><span style="color: #E53935"> </span><span style="color: #39ADB5">=</span><span style="color: #E53935"> </span><span style="color: #90A4AE">note</span><span style="color: #39ADB5">.</span><span style="color: #90A4AE">ms</span><span style="color: #E53935"> </span><span style="color: #39ADB5">-</span><span style="color: #E53935"> </span><span style="color: #39ADB5">this.</span><span style="color: #90A4AE">#input</span><span style="color: #39ADB5">;</span></span>
+<span class="line"><span style="color: #E53935">      </span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #E53935">    </span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #E53935">  </span><span style="color: #39ADB5">}</span></span>
+<span class="line"><span style="color: #39ADB5">}</span></span></code></pre>
+</code></pre>
+<p><code>InputManager</code> is fairly simple. We start listening for <code>keydown</code> in the <code>constructor</code>. We normalize the <code>Event.timeStamp</code> based on the gameplay time zero.  <code>process</code> is where the comparison happens.</p>
+<p>Give it a try below! I added a little debugging GUI to show how accurately you hit each note.</p>
+<iframe srcdoc='<script>
+async function fetchAudio(url) {
+  const audioContext = new window.AudioContext();
+
+  const res = await window.fetch(url);
+  const buf = await res.arrayBuffer();
+  const buffer = await audioContext.decodeAudioData(buf);
+
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = 1.0;
+  gainNode.connect(audioContext.destination);
+
+  return () => {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(gainNode);
+    source.start(0);
+    const startTime = audioContext.getOutputTimestamp().performanceTime;
+
+    return { audioContext, startTime };
+  };
+}
+
+function createChart() {
+  const offsetMs = 60;
+  const _4th = 60 / 135;
+  const notes = [];
+
+  const $gameplay = document.querySelector("#gameplay");
+
+  for (let i = 1; i < 16; i++) {
+    const el = document.createElement("div");
+    el.className = "note";
+    $gameplay.appendChild(el);
+    notes.push({ ms: i * _4th * 1000 + offsetMs, el });
+  }
+  console.log(JSON.stringify(notes, null, 2))
+  return notes;
+}
+
+function gameLoop(chart, audioContext, startTime, inputManager) {
+  const elapsed = audioContext.getOutputTimestamp().performanceTime - startTime;
+  inputManager.process(chart);
+
+  // calculate new position based on playback
+  for (const note of chart) {
+    note.el.style.top = `${(note.ms - elapsed) * 0.5}px`;
+  }
+
+  inputManager.clear();
+  requestAnimationFrame(() =>
+    gameLoop(chart, audioContext, startTime, inputManager)
+  );
+}
+
+class InputManager {
+  #input;
+
+  constructor(t0) {
+    window.addEventListener("keydown", (event) => {
+      if (event.code !== "KeyJ") {
+        return;
+      }
+
+      this.#input = event.timeStamp - t0;
+    });
+  }
+
+  clear() {
+    this.#input = undefined;
+  }
+
+  process(notes) {
+    if (!this.#input) {
+      return;
+    }
+
+    const $ul = document.querySelector("#timing");
+
+    if (!$ul) {
+      return;
+    }
+
+    $ul.innerHTML = "";
+
+    for (let i = 0; i < notes.length; i++) {
+      const note = notes[i];
+      if (Math.abs(note.ms - this.#input) < 100) {
+        // close enough to be considered hit!
+        note.timing = note.ms - this.#input;
+      }
+
+      const $li = document.createElement("li");
+      const content = note.timing ? `${note.timing.toFixed(0)}ms` : "-";
+      const id = i.toString().padStart(2, "0");
+      $li.textContent = `Note #${id}: ${content}`;
+      $ul.appendChild($li);
+    }
+  }
+}
+
+async function start() {
+  const play = await fetchAudio("/135bpm.wav");
+  const chart = createChart();
+  const { startTime, audioContext } = play();
+  const inputManager = new InputManager(startTime);
+  gameLoop(chart, audioContext, startTime, inputManager);
+}
+</script>
+
+<style>
+  #gameplay {
+    position: relative;
+  }
+
+  #target {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 25px;
+    border: 2px solid;
+  }
+
+  .note {
+    position: absolute;
+    width: 100px;
+    height: 25px;
+    background: darkcyan;
+  }
+
+  #timing {
+    position: absolute;
+    left: 100px;
+    list-style: none;
+  }
+</style>
+
+<p>Rhythm engine demo.</p>
+<ul>
+  <li>Click <b>Start</b> to start.</li>
+  <li>Press <b>J</b> to hit notes when they overlap the rectangle.</li>
+</ul>
+<div>
+  <button onclick="start()">Start</button>
+  <hr>
+</div>
+
+<div id="gameplay">
+  <div id="target"></div>
+  <ul id="timing">
+  </ul>
+</div>'></iframe>
+
+
+<p>There you have it - a <strong>very</strong> basic rhythm game engine. There&#39;s a lot of improvements that would need to be implemented for a production system. such as preventing a note from getting hit more than once. The core concepts are generally what you see here - most critically: </p>
+<ul>
+<li>The source of truth is the song. We are building a rhythm game, and time is the prime currency we deal with.</li>
+<li>Normalize everything to make calculations simple. I recommend setting time zero as the time since the song started, and using milliseconds for everything.</li>
+<li>The entire user derived <strong>based on the game state</strong> - you should be able to play the game without even needing a UI. If you know React or Vue, think of the interface as the <code>render()</code> function - it&#39;s a pure function, derived based on the current game state.</li>
+</ul>
+<p>Grab the <a href="https://gist.github.com/lmiller1990/4c7294f028542df3659a4a1fc11de8b5">full source code here</a>.</p>
+
+
+    </div>
+  </div>
+</body>
+
+</html>

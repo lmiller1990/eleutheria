@@ -75,7 +75,7 @@ function handleSignIn() {
 
 <template>
   <form
-    class="w-full form text-white h-full flex flex-col items-center"
+    class="w-full max-w-3xl bg-zinc-700 text-white h-full flex flex-col items-center"
     @submit.prevent="handleSubmit"
   >
     <ValidationInput
@@ -108,10 +108,3 @@ function handleSignIn() {
     </div>
   </form>
 </template>
-
-<style scoped lang="scss">
-.form {
-  background: #373737;
-  @apply max-w-3xl;
-}
-</style>

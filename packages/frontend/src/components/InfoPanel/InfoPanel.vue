@@ -12,10 +12,10 @@ const props = defineProps<InfoPanelProps>();
 </script>
 
 <template>
-  <div class="info-wrapper flex flex-col items-center">
+  <div class="info-wrapper bg-zinc-700 flex flex-col items-center">
     <div class="flex w-full items-center">
       <div class="highlight highlight-left" :style="highlightStyle" />
-      <h4 class="panel-title">{{ panelTitle }}</h4>
+      <h4 class="panel-title bg-zinc-700">{{ panelTitle }}</h4>
       <div class="highlight" :style="highlightStyle" />
     </div>
     <div class="info-content w-full">
@@ -37,13 +37,11 @@ $border: 3px;
 .info-wrapper {
   padding: 10px 0 20px 0;
   color: white;
-  background: $bg;
   border: $border solid transparent;
   font-family: "Sansation", sans-serif;
 }
 
 .panel-title {
-  background: $bg;
   font-size: 1.2rem;
   white-space: nowrap;
 }

@@ -5,15 +5,7 @@
 </script>
 
 <template>
-  <div class="plain-panel-wrapper flex items-center justify-center text-white">
+  <div class="bg-zinc-709 flex items-center justify-center text-white">
     <slot />
   </div>
 </template>
-
-<style scoped lang="scss">
-@import "../../shared.scss";
-
-.plain-panel-wrapper {
-  background: $bg;
-}
-</style>

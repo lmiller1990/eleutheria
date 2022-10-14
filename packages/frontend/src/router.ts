@@ -6,7 +6,7 @@ import { useSongsStore } from "./stores/songs";
 
 export const createRouter = () => {
   const router = _createRouter({
-    history: createWebHistory(),
+    history: createWebHistory("/app"),
     routes: [
       {
         path: "/",
