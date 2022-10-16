@@ -6,8 +6,8 @@ import path from "path";
 export const Chart = objectType({
   name: "Chart",
   sourceType: {
-    module: path.join(__dirname, "../../sources/chartDataSource.ts"),
-    export: "SongDataSource",
+    module: path.join(__dirname, "../../sources/chartSource.ts"),
+    export: "ChartDataSource",
   },
   definition(t) {
     t.nonNull.int("id");

@@ -1,10 +1,10 @@
 import { FunctionalComponent } from "vue";
 
 interface SongInfoProps {
-  best: string;
-  notes: number;
-  duration: string;
-  bpm: number;
+  best: string | string;
+  notes: number | string;
+  duration: string | string;
+  bpm: number | string;
 }
 
 const Info: FunctionalComponent<{ title: string; datum: string | number }> = (

@@ -41,7 +41,7 @@ export class ChartDataSource {
     return this.data.offset;
   }
 
-  get tapNoteCount() {
+  tapNoteCount() {
     return this.parsedTapNoteChart.length;
   }
 
