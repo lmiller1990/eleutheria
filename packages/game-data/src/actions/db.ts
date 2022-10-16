@@ -96,9 +96,18 @@ export class DbActions {
   async getChartsForSong(songId: number): Promise<ChartDataSource[]> {
     const charts = await knexTable("charts")
       .join("songs", "songs.id", "=", "charts.song_id")
-      .where<Array<Charts & Songs>>("charts.song_id", songId);
+      .where<Array<Charts & Songs>>("charts.song_id", songId)
+      .select([
+        "charts.id",
+        "charts.level",
+        "charts.notes",
+        "charts.difficulty",
+        "charts.song_id",
+        "songs.bpm",
+        "songs.offset",
+      ]);
 
-    log(`getChartsForSong`, charts);
+    console.log(`getChartsForSong`, charts);
 
     return charts.map((data) => new ChartDataSource(this.#ctx, data));
   }
@@ -112,16 +121,18 @@ export class DbActions {
   }
 
   async queryForScore(id: number): Promise<ScoreDataSource | undefined> {
-    const score = await knexTable("scores").where<Scores>("id", id).first();
+    const score = await knexTable("scores")
+      .where<Scores>("scores.id", id)
+      .first();
+
     if (!score) {
+      console.log(`Did not find score with id ${id}`);
       return undefined;
     }
 
-    log(`got score`, score);
-
     return new ScoreDataSource(this.#ctx, {
       ...score,
-      timing: JSON.stringify(score.timing),
+      timing: score.timing,
     });
   }
 }

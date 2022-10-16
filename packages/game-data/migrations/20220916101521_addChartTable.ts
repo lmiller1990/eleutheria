@@ -7,11 +7,11 @@ const tempChart = `001000
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("charts", (table) => {
-    table.increments("id");
+    table.integer("id").notNullable().unique();
     table.text("difficulty").notNullable();
     table.integer("level").notNullable();
     table.text("notes").notNullable().defaultTo(tempChart);
-    table.integer("song_id");
+    table.integer("song_id").notNullable();
     table.foreign("song_id").references("id").inTable("songs");
   });
 }

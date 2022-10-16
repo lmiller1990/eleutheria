@@ -8,6 +8,7 @@ import { testSong } from "../fixtures/songs";
 import { createRouterMock } from 'vue-router-mock'
 import "./style.css";
 import "../../src/output.css";
+import "../../src/style.css"
 import { createClient } from "@urql/core";
 import { defineComponent, h } from "vue";
 import { provideClient } from "@urql/vue";

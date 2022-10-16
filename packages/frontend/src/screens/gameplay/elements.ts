@@ -1,4 +1,4 @@
-import { windows } from "./gameConfig";
+import { windows, windowsWithMiss } from "./gameConfig";
 
 const $ = <T extends Element = HTMLDivElement>(sel: string) => {
   const el = document.querySelector<T>(sel);
@@ -154,7 +154,7 @@ const NOTE_HIT_FLASH_CLASS = "target-col-flash-note-hit";
 
 const CLASSES = [TARGET_FLASH_CLASS, NOTE_HIT_FLASH_CLASS] as const;
 
-const TIMING_CLASSES = windows;
+const TIMING_CLASSES = windowsWithMiss;
 
 export function judgementFlash(
   $timing: HTMLDivElement,

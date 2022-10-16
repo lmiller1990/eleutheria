@@ -41,8 +41,7 @@ const modal = useModal();
     <component class="h-fit p-8" :is="modal.component.value" @click.stop />
   </div>
 
-  <RouterView class="main-view" :class="{ 'zoom-out': modal.show.value }" />
-  <!-- <Query /> -->
+  <RouterView />
 </template>
 
 <style>
@@ -67,13 +66,21 @@ body,
   @apply opacity-0 -z-50 scale-90;
 }
 
-.modal,
-.main-view {
+.modal {
   transition: all 0.1s ease;
 }
 
 .zoom-out {
   filter: blur(5px) grayscale(50%);
   transform: scale(0.98);
+}
+
+@font-face {
+  font-family: KleeOne;
+  src: url(KleeOne-Regular.ttf);
+}
+
+.klee-one {
+  font-family: KleeOne;
 }
 </style>

@@ -1,44 +1,49 @@
 <script lang="ts" setup>
 import type { NonGameplayScreenProps } from "./types";
+import { Logo } from "./Logo";
+import { useModal } from "../../composables/modal";
 
 const props = defineProps<NonGameplayScreenProps>();
+
+const modal = useModal();
 </script>
 
 <template>
-  <div class="flex flex-col outer items-center w-full h-full">
-    <nav class="bg-zinc-700 w-full text-white flex justify-center">
-      <div class="max-1024 screen-title w-full flex flex-col justify-center">
-        {{ props.screenTitle }}
+  <div
+    class="flex flex-col outer items-center w-full h-full"
+    :class="{ 'zoom-out': modal.show.value }"
+  >
+    <nav class="bg-zinc-700 w-full text-white flex justify-center title-nav">
+      <div class="max-width w-full flex justify-center items-center klee-one">
+        <Logo />
+        <div class="klee-one pb-1 ml-4 screen-title">
+          {{ props.screenTitle }}
+        </div>
       </div>
     </nav>
 
-    <div class="screen-content max-1024 w-full h-full">
+    <div class="screen-content max-width w-full h-full flex items-center">
       <slot />
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-@import "../../shared.scss";
+<style lang="scss">
+.title-nav {
+  height: 54px;
+  margin-top: 25px;
+}
 
 .screen-content {
-  padding: 40px;
+  margin: 30px;
+  max-height: 768px;
 }
 
-.max-1024 {
-  max-width: 1024px;
-}
-
-.outer {
-  padding: 25px 0;
+.max-width {
+  @apply max-w-3xl;
 }
 
 .screen-title {
-  text-align: right;
-  height: 54px;
-  font-size: 2rem;
-  // text-transform: uppercase;
-  font-weight: bold;
-  padding: 0 40px;
+  font-size: 35px;
 }
 </style>
