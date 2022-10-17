@@ -1,11 +1,14 @@
 @import "@packages/game-data/styles/global.css";
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #app {
   margin: 0;
   padding: 0;
-  /* overflow: hidden; */
 }
 
 #game-app {
@@ -141,6 +144,10 @@ body,
 
 .timing-perfect {
   color: #add8e6;
+}
+
+.timing-miss {
+  color: black;
 }
 
 .timing-great {

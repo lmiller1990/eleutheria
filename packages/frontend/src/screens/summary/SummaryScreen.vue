@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import SummaryScreenContainer from "./SummaryScreenContainer.vue";
+import { SummaryWrapper } from "./SummaryWrapper";
 </script>
 
 <template>
   <Suspense>
     <template #default>
-      <SummaryScreenContainer />
+      <SummaryWrapper />
     </template>
     <template #fallback> Loading... </template>
   </Suspense>

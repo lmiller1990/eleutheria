@@ -9,6 +9,8 @@ import {
 } from "vue";
 import { windowsWithMiss } from "../../gameConfig";
 import type { Game, World } from "@packages/engine";
+import { SongImage } from "../../../SongSelectScreen/SongImage";
+import { SongTitle } from "../../components/Gameplay/SongTitle";
 import {
   injectNoteSkin,
   injectStylesheet,
@@ -28,7 +30,6 @@ import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
-import DifficultyItem from "../../../../components/DifficultyItem.vue";
 
 export interface GameplayProps {
   __testingDoNotStartSong?: boolean;
@@ -135,7 +136,7 @@ async function songCompleted(world: World) {
 
 const scoreData = computed<GameplayScoreProps>(() => {
   return {
-    percent: `${timingSummary.percent}%`,
+    percent: timingSummary.percent,
     timing: [
       {
         window: "Absolute",
@@ -337,16 +338,11 @@ const Side: FunctionalComponent = (_props, { slots }) => {
       <div class="gameplay-content">
         <Side class="mt-48 mr-8">
           <div>
-            <div class="bg-zinc-700 text-white text-xl p-3 mb-3">
-              <h2>{{ gqlData.song.title }}</h2>
-            </div>
-
-            <DifficultyItem
-              :difficulty="{
-                name: gqlData.song.chart.difficulty,
-                level: gqlData.song.chart.level,
-              }"
+            <SongImage
+              src="https://i1.sndcdn.com/artworks-I25aaV3g3bIRnsV2-jJchQg-t500x500.jpg"
+              :level="gqlData.song.chart.level"
             />
+            <SongTitle :title="gqlData.song.title" />
           </div>
         </Side>
 

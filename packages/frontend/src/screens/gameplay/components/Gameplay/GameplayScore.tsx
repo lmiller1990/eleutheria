@@ -1,4 +1,5 @@
 import type { FunctionalComponent } from "vue";
+import cs from "classnames";
 
 export interface Timing {
   window: string;
@@ -7,14 +8,30 @@ export interface Timing {
 
 export interface GameplayScoreProps {
   percent: string;
+  classes?: {
+    wrapper: string;
+    percent: string;
+  };
   timing: Timing[];
 }
 
 const TimingCount: FunctionalComponent<{ count: number }> = (props) => {
-  const str = props.count.toString().padStart(4, "0").split("");
+  const str = props.count.toString().padStart(4, "0");
+
+  if (str === "0000") {
+    return [
+      <span class="text-stone-400 font-mono">0</span>,
+      <span class="text-stone-400 font-mono">0</span>,
+      <span class="text-stone-400 font-mono">0</span>,
+      <span class="text-white font-mono">0</span>,
+    ];
+  }
+
+  const strArr = str.split("");
+
   let foundNonZero = false;
   let jsx: JSX.Element[] = [];
-  for (const char of str) {
+  for (const char of strArr) {
     if (char !== "0") {
       foundNonZero = true;
     }
@@ -33,10 +50,22 @@ export const GameplayScore: FunctionalComponent<GameplayScoreProps> = (
   props
 ) => {
   return (
-    <div class="flex flex-col text-white text-2xl uppercase">
-      <div class="flex justify-end font-mono text-5xl">{props.percent}</div>
+    <div
+      class={cs(
+        "flex flex-col text-white uppercase",
+        props.classes?.wrapper ?? "text-2xl"
+      )}
+    >
+      <div
+        class={cs(
+          "flex justify-end font-mono",
+          props.classes?.percent ?? "text-5xl"
+        )}
+      >
+        {props.percent}%
+      </div>
       {props.timing.map((timing) => (
-        <div class="mt-5">
+        <div class="mt-8">
           <div
             class={`timing-${timing.window.toLowerCase()} flex justify-end`}
             key={timing.window}

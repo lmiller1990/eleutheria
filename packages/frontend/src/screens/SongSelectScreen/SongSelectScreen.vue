@@ -1,61 +1,83 @@
 <template>
-  <NonGameplayScreen screenTitle="Select Song">
-    <div class="flex justify-end mb-4">
-      <Username />
-    </div>
-    <div class="wrapper max-w-screen-lg h-full">
-      <div class="tiles flex items-center justify-center">
-        <SongTile
-          v-for="(song, idx) of songsQuery.data?.value?.songs"
-          :key="song.id"
-          :songTitle="song.title"
-          class="h-full"
-          :imgSrc="thumbails[idx]"
-          :selected="song.id === selectedSongId"
-          @selected="handleSelected(song.id)"
-        />
+  <NonGameplayScreen screenTitle="Eleutheria">
+    <div id="content">
+      <div class="flex flex-col">
+        <div class="flex flex-col h-full">
+          <SongTile
+            v-for="(song, idx) of songsQuery.data?.value?.songs"
+            :key="song.id"
+            :songTitle="song.title"
+            :artist="song.artist"
+            class="h-full mb-4"
+            :imgSrc="thumbails[idx]"
+            :selected="song.id === selectedSongId"
+            @selected="handleSelected(song.id)"
+          />
+        </div>
+
+        <div id="levels">
+          <button
+            v-for="{ level, id } in levels"
+            :key="id"
+            class="bg-zinc-700 text-white h-14 w-14 mr-4 text-xl border border-2 border-black"
+          >
+            {{ level }}
+          </button>
+        </div>
       </div>
 
-      <div class="info-col">
-        <DifficultyPanel
-          :difficulties="difficulties"
-          :selectedIndex="songsStore.selectedChartIdx"
-          @selected="(idx) => songsStore.setSelectedChartIdx(idx)"
+      <div class="flex flex-col justify-between">
+        <SongImage
+          src="https://i1.sndcdn.com/artworks-I25aaV3g3bIRnsV2-jJchQg-t500x500.jpg"
         />
+        <div>
+          <SongInfo
+            :best="tableData.best"
+            :notes="tableData.notes"
+            :duration="tableData.duration"
+            :bpm="tableData.bpm"
+          />
+        </div>
+      </div>
+      <div>
+        <IconButton @click="handleAuthenticate">
+          <UserIcon />
+        </IconButton>
 
-        <SongInfoPanel
-          class="w-full song-panel"
-          :class="chartDifficulty"
-          :data="tableData"
-          :highlightColor="highlightColor"
-        />
+        <IconButton>
+          <SettingsIcon />
+        </IconButton>
       </div>
     </div>
   </NonGameplayScreen>
 </template>
 
 <script setup lang="ts">
+import { IconButton } from "./IconButton";
+import { SettingsIcon } from "./SettingsIcon";
+import { UserIcon } from "./UserIcon";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import SongTile from "../../components/SongTile";
-import SongInfoPanel from "../../components/SongInfoPanel";
-import DifficultyPanel from "../../components/DifficultyPanel.vue";
 import { thumbails } from "../../thumbnails";
 import { useRouter } from "vue-router";
 import { useSongsStore } from "../../stores/songs";
-import { SongDifficulty } from "../../types";
-import { colors } from "../../shared";
-import { TableCell } from "../../components/SongInfoPanel/types";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
-import Username from "./Username.vue";
 import { gql, useQuery } from "@urql/vue";
 import {
   SongSelectScreen_SongsDocument,
   SongSelectScreen_ChartDocument,
 } from "../../generated/graphql";
+import { SongInfo } from "../../components/SongInfo";
+import { SongImage } from "./SongImage";
+import { useModal } from "../../composables/modal";
 
 gql`
   query SongSelectScreen_Songs {
+    viewer {
+      id
+      email
+    }
     songs {
       id
       title
@@ -79,6 +101,15 @@ gql`
 `;
 
 const songsStore = useSongsStore();
+const modal = useModal();
+
+function handleAuthenticate() {
+  if (viewer.value) {
+    modal.showModal("signOut");
+  } else {
+    modal.showModal("signIn");
+  }
+}
 
 const selectedSongId = ref<number>();
 
@@ -93,6 +124,10 @@ const chartQuery = useQuery({
     songId: selectedSongId,
   },
   pause: computed(() => !selectedSongId.value),
+});
+
+const viewer = computed(() => {
+  return songsQuery.data?.value?.viewer ?? null;
 });
 
 function handleKeyDown(event: KeyboardEvent) {
@@ -132,18 +167,14 @@ const chartDifficulty = computed(() => {
   return selectedChart.value?.difficulty ?? "";
 });
 
-const highlightColor = computed(() => {
-  return colors[chartDifficulty.value] ?? "yellow";
-});
-
-const difficulties = computed<SongDifficulty[]>(() => {
+const levels = computed<Array<{ level: number; id: number }>>(() => {
   if (!chartQuery.data.value?.charts) {
     return [];
   }
 
   return chartQuery.data.value.charts.map((chart) => {
     return {
-      name: chart.difficulty,
+      id: chart.id,
       level: chart.level,
     };
   });
@@ -157,32 +188,13 @@ const selectedSong = computed(() =>
   songsQuery.data.value?.songs?.find((x) => x.id === selectedSongId.value)
 );
 
-const tableData = computed<TableCell[]>(() => {
-  if (!selectedChart.value || !selectedSong.value) {
-    return ["Notes", "Duration", "BPM", "Best"].map((title) => ({
-      title,
-      content: "-",
-    }));
-  }
-
-  return [
-    {
-      title: "Notes",
-      content: selectedChart.value.tapNoteCount ?? "-",
-    },
-    {
-      title: "Duration",
-      content: selectedSong?.value.duration ?? "-",
-    },
-    {
-      title: "BPM",
-      content: selectedSong?.value.bpm ?? "-",
-    },
-    {
-      title: "Best",
-      content: "99.50%",
-    },
-  ];
+const tableData = computed(() => {
+  return {
+    notes: selectedChart?.value?.tapNoteCount ?? "-",
+    duration: selectedSong?.value?.duration ?? "-",
+    bpm: selectedSong?.value?.bpm ?? "-",
+    best: "99.50%",
+  };
 });
 
 const router = useRouter();
@@ -215,32 +227,9 @@ function handleSelected(songId: number) {
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
+#content {
   display: grid;
-  grid-template-columns: 1.8fr 1fr;
-  width: 100%;
-  column-gap: 80px;
-}
-
-.info-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.song-panel {
-  margin-top: 20px;
-}
-
-.tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(3, 1fr);
-  row-gap: 50px;
-  column-gap: 50px;
-}
-
-.max-1024 {
-  max-width: 1024px;
+  grid-template-columns: 1fr 0.65fr 50px;
+  column-gap: 30px;
 }
 </style>

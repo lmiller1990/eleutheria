@@ -2,7 +2,7 @@
 #__cy_vue_root,
 [data-v-app],
 body {
-  height: 100%;
+  height: 100vh;
   background: #828282;
   overflow: hidden;
 }
