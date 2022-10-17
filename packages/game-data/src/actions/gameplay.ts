@@ -18,10 +18,10 @@ export class GameplayActions {
     summaryData: SummaryData,
     chartId: number
   ): Promise<ScoreDataSource> {
-    const user = await this.#ctx.queryForCurrentUser();
+    let user = await this.#ctx.queryForCurrentUser();
 
     if (!user) {
-      throw Error("Cannot save score without an associated user.");
+      user = await this.#ctx.actions.db.queryForGuestUser();
     }
 
     const result = summarizeResults(summaryData, timingWindows);
