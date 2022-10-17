@@ -1,3 +1,4 @@
+import assert from "assert";
 import { Charts, Scores, Songs, Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
@@ -116,6 +117,21 @@ export class DbActions {
       .delete();
 
     log(`deleted session with id ${this.#ctx.req.session.id}`);
+  }
+
+  async queryForGuestUser(): Promise<Users> {
+    const guest = await knexTable<Users>("users")
+      .where("email", "guest@eleutheria")
+      .andWhere("username", "guest")
+      .andWhere("id", 1)
+      .first();
+
+    assert(
+      guest,
+      "expected guest user to exist with id=1, wasn't found. This should be scaffolded during the initial database setup."
+    );
+
+    return guest;
   }
 
   async queryForScore(id: number): Promise<ScoreDataSource | undefined> {

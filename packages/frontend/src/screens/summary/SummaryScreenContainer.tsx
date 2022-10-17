@@ -24,7 +24,7 @@ const RecordScore: FunctionalComponent<{ label: string; score: string }> = (
   props
 ) => {
   return (
-    <div class="flex justify-between text-3xl text-white mb-4">
+    <div class="flex justify-between text-2xl text-white mb-4">
       <div>{props.label}</div>
       <div>{props.score}%</div>
     </div>
@@ -49,7 +49,7 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
   const router = useRouter();
 
   return (
-    <NonGameplayScreen screenTitle="Evaluation">
+    <NonGameplayScreen screenTitle="Eleutheria">
       <div class="flex flex-col">
         <div class="summary-wrapper">
           <div>
@@ -71,7 +71,7 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
               <GameplayScore
                 percent={props.percent}
                 timing={props.timing}
-                classes={{ wrapper: "text-4xl", percent: "text-7xl" }}
+                classes={{ wrapper: "text-3xl", percent: "text-7xl" }}
               />
             </div>
           </div>
