@@ -78,7 +78,7 @@ gql`
   }
 `;
 
-const { songId, difficulty } = getParams();
+const { songId, difficulty, file } = getParams();
 
 const [noteSkinData, userData, query] = await Promise.all([
   fetchNoteSkins(),
@@ -228,6 +228,7 @@ onMounted(async () => {
       noteSkinData: noteSkinData,
       paramData: {
         songId,
+        file,
         difficulty,
       },
       userData,

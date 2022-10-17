@@ -55,6 +55,7 @@ export interface NoteSkin {
 
 export interface ParamData {
   songId: string;
+  file: string;
   difficulty: string;
 }
 

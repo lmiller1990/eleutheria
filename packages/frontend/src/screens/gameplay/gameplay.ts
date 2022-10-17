@@ -491,7 +491,7 @@ export function create(
     game,
     start: () => {
       redrawTargets(elements, modifierManager);
-      return game.start(paramData.songId);
+      return game.start(paramData.file);
     },
     stop: () => {
       teardown();
