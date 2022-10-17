@@ -1,6 +1,5 @@
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { ChartDataSource } from "./chartSource";
 
 const log = debug(`game-data:songDataSource`);
 
@@ -11,6 +10,7 @@ export interface SongDataDefinition {
   duration: string;
   artist: string;
   bpm: number;
+  file: string;
   offset: number;
 }
 
@@ -19,6 +19,7 @@ export class SongDataSource {
   data: SongDataDefinition;
 
   constructor(ctx: Context, data: SongDataDefinition) {
+    log(`creating SongDataSource`, data);
     this.#ctx = ctx;
     this.data = data;
   }
@@ -49,6 +50,10 @@ export class SongDataSource {
 
   get offset() {
     return this.data.offset;
+  }
+
+  get file() {
+    return this.data.file;
   }
 
   async charts() {

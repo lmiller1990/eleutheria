@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     knex
       .table("songs")
       .update({
-        file: "good_life.mp3",
+        file: "good_life.wav",
       })
       .where("id", 1),
     knex

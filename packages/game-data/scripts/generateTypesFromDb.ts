@@ -8,7 +8,7 @@ async function main() {
       "pg-to-ts",
       "generate",
       "-c",
-      `postgresql://${whoami}@localhost/rhythm`,
+      `postgresql://${whoami}@localhost/${process.env.POSTGRES_DB ?? "rhythm"}`,
       "-o dbschema.ts",
     ]);
   } catch (e) {

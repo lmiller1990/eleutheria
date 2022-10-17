@@ -11,7 +11,7 @@
             class="h-full mb-4"
             :imgSrc="thumbails[idx]"
             :selected="song.id === selectedSongId"
-            @selected="handleSelected(song.id)"
+            @selected="handleSelected(song)"
           />
         </div>
 
@@ -67,6 +67,7 @@ import { gql, useQuery } from "@urql/vue";
 import {
   SongSelectScreen_SongsDocument,
   SongSelectScreen_ChartDocument,
+  SongSelectScreen_SongsQuery,
 } from "../../generated/graphql";
 import { SongInfo } from "../../components/SongInfo";
 import { SongImage } from "./SongImage";
@@ -81,6 +82,7 @@ gql`
     songs {
       id
       title
+      file
       imgSrc
       duration
       artist
@@ -136,7 +138,13 @@ function handleKeyDown(event: KeyboardEvent) {
   }
 
   if (event.code === "Enter") {
-    handleSelected(songsStore.selectedSongId);
+    const song = songsQuery.data.value?.songs.find(
+      (x) => x.id === songsStore.selectedSongId
+    );
+    if (!song) {
+      return;
+    }
+    handleSelected(song);
   }
 
   if (!chartQuery.data.value?.charts.length) {
@@ -200,11 +208,11 @@ const tableData = computed(() => {
 const router = useRouter();
 const heldKeys = useHeldKeys();
 
-function handleSelected(songId: number) {
-  selectedSongId.value = songId;
+function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
+  selectedSongId.value = song.id;
   songsStore.setSelectedChartIdx(0);
 
-  if (songsStore.selectedSongId === songId) {
+  if (songsStore.selectedSongId === song.id) {
     // they already clicked it once
     // time to play!
 
@@ -216,12 +224,13 @@ function handleSelected(songId: number) {
     router.push({
       path: route,
       query: {
-        songId: songId,
+        songId: song.id,
+        file: song.file,
         difficulty: chartDifficulty.value,
       },
     });
   } else {
-    songsStore.setSelectedSongId(songId);
+    songsStore.setSelectedSongId(song.id);
   }
 }
 </script>

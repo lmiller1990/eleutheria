@@ -36,14 +36,14 @@ async function getAudioData(
 }
 
 export const fetchAudio: AudioProvider = async (
-  id: string,
+  file: string,
   paddingMs: number,
   startAtMs: number = 0
 ) => {
   const audioContext = new AudioContext();
 
   const { padStart } = await import("@packages/audio-utils");
-  let buffer = await getAudioData(`/static/${id}.mp3`, audioContext);
+  let buffer = await getAudioData(`/static/${file}`, audioContext);
   buffer = padStart(audioContext, buffer, paddingMs);
 
   var gainNode = audioContext.createGain();
