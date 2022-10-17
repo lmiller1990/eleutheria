@@ -34,7 +34,10 @@ export class ScoreDataSource {
 
   async chart(): Promise<ChartDataSource> {
     const chart = await this.#ctx.actions.db.queryChartById(this.data.chart_id);
-    assert(chart, `score must have a chart. Looked using chart_id: ${this.data.chart_id}`);
+    assert(
+      chart,
+      `score must have a chart. Looked using chart_id: ${this.data.chart_id}`
+    );
     return chart;
   }
 }
