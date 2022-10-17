@@ -13,3 +13,5 @@ packages/game-data/src/graphql/schema.graphql
 packages/frontend/src/output.css
 packages/game-data/tmp/editing.txt
 packages/marketing/src/output.css
+packages/frontend/static/*.wav
+packages/frontend/static/*.mp3

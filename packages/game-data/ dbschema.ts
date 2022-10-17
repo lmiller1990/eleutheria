@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT!
  *
@@ -8,6 +9,7 @@
  * $ pg-to-ts generate -c postgresql://username:password@localhost/rhythm -t charts -t knex_migrations -t knex_migrations_lock -t scores -t sessions -t songs -t users -s public
  *
  */
+
 
 export type Json = unknown;
 
@@ -27,15 +29,13 @@ export interface ChartsInput {
   song_id?: number | null;
 }
 const charts = {
-  tableName: "charts",
-  columns: ["id", "difficulty", "level", "notes", "song_id"],
-  requiredForInsert: ["difficulty", "level"],
-  primaryKey: "id",
-  foreignKeys: {
-    song_id: { table: "songs", column: "id", $type: null as unknown as Songs },
-  },
+  tableName: 'charts',
+  columns: ['id', 'difficulty', 'level', 'notes', 'song_id'],
+  requiredForInsert: ['difficulty', 'level'],
+  primaryKey: 'id',
+  foreignKeys: { song_id: { table: 'songs', column: 'id', $type: null as unknown as Songs }, },
   $type: null as unknown as Charts,
-  $input: null as unknown as ChartsInput,
+  $input: null as unknown as ChartsInput
 } as const;
 
 // Table knex_migrations
@@ -52,13 +52,13 @@ export interface KnexMigrationsInput {
   migration_time?: Date | null;
 }
 const knex_migrations = {
-  tableName: "knex_migrations",
-  columns: ["id", "name", "batch", "migration_time"],
+  tableName: 'knex_migrations',
+  columns: ['id', 'name', 'batch', 'migration_time'],
   requiredForInsert: [],
-  primaryKey: "id",
+  primaryKey: 'id',
   foreignKeys: {},
   $type: null as unknown as KnexMigrations,
-  $input: null as unknown as KnexMigrationsInput,
+  $input: null as unknown as KnexMigrationsInput
 } as const;
 
 // Table knex_migrations_lock
@@ -71,13 +71,13 @@ export interface KnexMigrationsLockInput {
   is_locked?: number | null;
 }
 const knex_migrations_lock = {
-  tableName: "knex_migrations_lock",
-  columns: ["index", "is_locked"],
+  tableName: 'knex_migrations_lock',
+  columns: ['index', 'is_locked'],
   requiredForInsert: [],
-  primaryKey: "index",
+  primaryKey: 'index',
   foreignKeys: {},
   $type: null as unknown as KnexMigrationsLock,
-  $input: null as unknown as KnexMigrationsLockInput,
+  $input: null as unknown as KnexMigrationsLockInput
 } as const;
 
 // Table scores
@@ -96,20 +96,16 @@ export interface ScoresInput {
   chart_id: number;
 }
 const scores = {
-  tableName: "scores",
-  columns: ["id", "percent", "timing", "user_id", "chart_id"],
-  requiredForInsert: ["percent", "timing", "user_id", "chart_id"],
-  primaryKey: "id",
+  tableName: 'scores',
+  columns: ['id', 'percent', 'timing', 'user_id', 'chart_id'],
+  requiredForInsert: ['percent', 'timing', 'user_id', 'chart_id'],
+  primaryKey: 'id',
   foreignKeys: {
-    user_id: { table: "users", column: "id", $type: null as unknown as Users },
-    chart_id: {
-      table: "charts",
-      column: "id",
-      $type: null as unknown as Charts,
-    },
+    user_id: { table: 'users', column: 'id', $type: null as unknown as Users },
+    chart_id: { table: 'charts', column: 'id', $type: null as unknown as Charts },
   },
   $type: null as unknown as Scores,
-  $input: null as unknown as ScoresInput,
+  $input: null as unknown as ScoresInput
 } as const;
 
 // Table sessions
@@ -124,15 +120,13 @@ export interface SessionsInput {
   user_id?: number | null;
 }
 const sessions = {
-  tableName: "sessions",
-  columns: ["id", "created", "user_id"],
-  requiredForInsert: ["id"],
+  tableName: 'sessions',
+  columns: ['id', 'created', 'user_id'],
+  requiredForInsert: ['id'],
   primaryKey: null,
-  foreignKeys: {
-    user_id: { table: "users", column: "id", $type: null as unknown as Users },
-  },
+  foreignKeys: { user_id: { table: 'users', column: 'id', $type: null as unknown as Users }, },
   $type: null as unknown as Sessions,
-  $input: null as unknown as SessionsInput,
+  $input: null as unknown as SessionsInput
 } as const;
 
 // Table songs
@@ -153,13 +147,13 @@ export interface SongsInput {
   bpm: number;
 }
 const songs = {
-  tableName: "songs",
-  columns: ["id", "title", "duration", "artist", "offset", "bpm"],
-  requiredForInsert: ["title", "duration", "artist", "offset", "bpm"],
-  primaryKey: "id",
+  tableName: 'songs',
+  columns: ['id', 'title', 'duration', 'artist', 'offset', 'bpm'],
+  requiredForInsert: ['title', 'duration', 'artist', 'offset', 'bpm'],
+  primaryKey: 'id',
   foreignKeys: {},
   $type: null as unknown as Songs,
-  $input: null as unknown as SongsInput,
+  $input: null as unknown as SongsInput
 } as const;
 
 // Table users
@@ -176,14 +170,15 @@ export interface UsersInput {
   username: string;
 }
 const users = {
-  tableName: "users",
-  columns: ["id", "email", "password", "username"],
-  requiredForInsert: ["email", "password", "username"],
-  primaryKey: "id",
+  tableName: 'users',
+  columns: ['id', 'email', 'password', 'username'],
+  requiredForInsert: ['email', 'password', 'username'],
+  primaryKey: 'id',
   foreignKeys: {},
   $type: null as unknown as Users,
-  $input: null as unknown as UsersInput,
+  $input: null as unknown as UsersInput
 } as const;
+
 
 export interface TableTypes {
   charts: {
@@ -224,4 +219,4 @@ export const tables = {
   sessions,
   songs,
   users,
-};
+}
