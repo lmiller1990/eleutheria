@@ -40,8 +40,8 @@
         </div>
       </div>
       <div>
-        <IconButton>
-          <UserIcon @click="handleAuthenticate" />
+        <IconButton @click="handleAuthenticate">
+          <UserIcon />
         </IconButton>
 
         <IconButton>

@@ -107,8 +107,6 @@ export class DbActions {
         "songs.offset",
       ]);
 
-    console.log(`getChartsForSong`, charts);
-
     return charts.map((data) => new ChartDataSource(this.#ctx, data));
   }
 
@@ -126,7 +124,6 @@ export class DbActions {
       .first();
 
     if (!score) {
-      console.log(`Did not find score with id ${id}`);
       return undefined;
     }
 
