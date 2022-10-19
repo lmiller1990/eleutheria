@@ -125,9 +125,9 @@ export class Game implements GameAPI {
     emitAfterMsCallback: () => void;
   };
   /**
-   * temp hack for assist tick in edit mode
+   * Used exclusively for assist tick in edit mode
    */
-  updated = performance.now();
+  #gameStartTime = performance.now();
 
   #__dev: {
     initialGameState?: World;
@@ -158,7 +158,7 @@ export class Game implements GameAPI {
   }
 
   async start(id: string) {
-    this.updated = performance.now();
+    this.#gameStartTime = performance.now();
     const chart = createChart({
       tapNotes: this.#config.chart.tapNotes.map((x) => ({
         ...x,
@@ -292,7 +292,7 @@ export class Game implements GameAPI {
       updatedWorld,
       previousFrameMeta,
       this.#modifierManager,
-      this.updated
+      this.#gameStartTime
     );
 
     if (

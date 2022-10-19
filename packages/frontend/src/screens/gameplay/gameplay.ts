@@ -358,13 +358,13 @@ export function create(
     // $root.innerHTML = "";
   };
 
-  let prev: number | undefined;
+  let prevGameStartTime: number | undefined;
 
   const lifecycle: GameLifecycle = {
-    onUpdate: (world, previousFrameMeta, modifierManager, __updated) => {
-      if (prev !== __updated) {
+    onUpdate: (world, previousFrameMeta, modifierManager, gameStartTime) => {
+      if (prevGameStartTime !== gameStartTime) {
         beeped.clear();
-        prev = __updated;
+        prevGameStartTime = gameStartTime;
       }
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {

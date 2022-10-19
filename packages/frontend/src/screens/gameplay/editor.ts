@@ -36,7 +36,6 @@ export function useEditor() {
 
   ws.addEventListener("message", (msg) => {
     const payload = JSON.parse(msg.data) as WebSocketEmitData;
-    console.log("received web socket message", msg, payload);
 
     if (payload.type === "editor:chart:updated") {
       emitter.emit("editor:chart:updated");
