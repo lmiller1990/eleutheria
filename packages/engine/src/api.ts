@@ -86,7 +86,8 @@ export interface GameLifecycle {
   onUpdate?: (
     world: World,
     previousFrameMeta: PreviousFrameMeta,
-    modifierManager: ModifierManager
+    modifierManager: ModifierManager,
+    updated: number
   ) => void;
   onDebug?: (world: World, fps: number) => void;
   onStart?: (world: World) => void;
@@ -123,6 +124,10 @@ export class Game implements GameAPI {
     emitAfterMs: number;
     emitAfterMsCallback: () => void;
   };
+  /**
+   * temp hack for assist tick in edit mode
+   */
+  updated = performance.now()
 
   #__dev: {
     initialGameState?: World;
@@ -153,6 +158,7 @@ export class Game implements GameAPI {
   }
 
   async start(id: string) {
+    this.updated = performance.now()
     const chart = createChart({
       tapNotes: this.#config.chart.tapNotes.map((x) => ({
         ...x,
@@ -285,7 +291,8 @@ export class Game implements GameAPI {
     this.#lifecycle.onUpdate?.(
       updatedWorld,
       previousFrameMeta,
-      this.#modifierManager
+      this.#modifierManager,
+      this.updated
     );
 
     if (
