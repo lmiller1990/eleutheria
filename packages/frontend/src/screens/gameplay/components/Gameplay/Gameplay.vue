@@ -85,7 +85,7 @@ const [noteSkinData, userData, query] = await Promise.all([
   fetchUser(),
   useQuery({
     query: GameplayDocument,
-    requestPolicy: 'network-only',
+    requestPolicy: "network-only",
     variables: {
       songId: parseInt(songId, 10),
       difficulty,
@@ -236,7 +236,7 @@ onMounted(async () => {
       songCompleted,
     },
     props.__testingDoNotStartSong,
-    props.__testingManualMode,
+    props.__testingManualMode
     // 128000 // repeat
   );
 
@@ -290,7 +290,7 @@ onMounted(async () => {
 const { emitter } = useEditor();
 
 emitter.subscribe("editor:chart:updated", () => {
-  console.log("chart updated")
+  console.log("chart updated");
   // TODO: may only need to do this once
   query.executeQuery({ requestPolicy: "network-only" });
 });

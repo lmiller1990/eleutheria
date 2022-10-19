@@ -127,7 +127,7 @@ export class Game implements GameAPI {
   /**
    * temp hack for assist tick in edit mode
    */
-  updated = performance.now()
+  updated = performance.now();
 
   #__dev: {
     initialGameState?: World;
@@ -158,7 +158,7 @@ export class Game implements GameAPI {
   }
 
   async start(id: string) {
-    this.updated = performance.now()
+    this.updated = performance.now();
     const chart = createChart({
       tapNotes: this.#config.chart.tapNotes.map((x) => ({
         ...x,

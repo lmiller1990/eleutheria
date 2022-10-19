@@ -75,10 +75,10 @@ const marketing =
     : path.join(__dirname, "..", "marketing", "dist");
 
 wss.on("connection", (ws) => {
-  console.log('web socket connected')
+  console.log("web socket connected");
   watcher.on("change", async () => {
     try {
-      console.log('Writing chart to db...')
+      console.log("Writing chart to db...");
       await ctxSingleton.actions.editor.writeChartToDb();
       ws.send(JSON.stringify({ type: "editor:chart:updated" }));
     } catch (e) {
