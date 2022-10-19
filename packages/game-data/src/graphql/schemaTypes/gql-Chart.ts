@@ -6,7 +6,7 @@ import path from "path";
 export const Chart = objectType({
   name: "Chart",
   sourceType: {
-    module: path.join(__dirname, "../../sources/chartSource.ts"),
+    module: path.join(__dirname, "../../sources/chartDataSource.ts"),
     export: "ChartDataSource",
   },
   definition(t) {
@@ -14,6 +14,7 @@ export const Chart = objectType({
     t.nonNull.string("difficulty");
     t.nonNull.int("level");
     t.nonNull.int("tapNoteCount");
+
     t.nonNull.int("offset", {
       description: "Delay between notes and audio. Inherited from song.",
     });

@@ -2,7 +2,7 @@ import assert from "assert";
 import { Scores } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { ChartDataSource } from "./chartSource";
+import { ChartDataSource } from "./chartDataSource";
 
 const log = debug(`game-data:ScoreDataSource`);
 

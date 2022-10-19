@@ -2,8 +2,8 @@ import assert from "assert";
 import { Charts, Scores, Songs, Users } from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
-import { knexTable } from "../knex";
-import { ChartDataSource } from "../sources/chartSource";
+import { knex, knexTable } from "../knex";
+import { ChartDataSource } from "../sources/chartDataSource";
 import { ScoreDataSource } from "../sources/scoreDataSource";
 import { SongDataSource } from "../sources/songDataSource";
 
@@ -132,6 +132,30 @@ export class DbActions {
     );
 
     return guest;
+  }
+
+  async queryForUserPersonalBest(
+    chartId: number,
+    userId: number
+  ): Promise<ScoreDataSource | undefined> {
+    const score = await knexTable("scores")
+      .where<Scores>("scores.chart_id", chartId)
+      .andWhere<Scores>("scores.user_id", userId)
+      .orderByRaw("scores.percent::float desc")
+      .first();
+
+    log(
+      `best score for user_id ${userId} on chart_id ${chartId} is ${score?.percent}`
+    );
+
+    if (!score) {
+      return undefined;
+    }
+
+    return new ScoreDataSource(this.#ctx, {
+      ...score,
+      timing: score.timing,
+    });
   }
 
   async queryForScore(id: number): Promise<ScoreDataSource | undefined> {

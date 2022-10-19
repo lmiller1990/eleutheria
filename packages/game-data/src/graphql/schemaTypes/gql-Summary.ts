@@ -17,6 +17,24 @@ export const Summary = objectType({
       description: "Percentage score out of 100",
     });
 
+    t.string("personalBest", {
+      description: "Personal best score on this chart",
+      resolve: async (source, _args, ctx) => {
+        const user = await ctx.queryForCurrentUser();
+
+        if (!user) {
+          return null;
+        }
+
+        const cds = await ctx.actions.db.queryForUserPersonalBest(
+          source.data.chart_id,
+          user.id
+        );
+
+        return cds?.percent ?? null;
+      },
+    });
+
     t.nonNull.string("timing", {
       description:
         "timing result. It's a JSON object with the shape [timingWindow: string]: { early: number, late: number, count: number }",

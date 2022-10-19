@@ -51,6 +51,16 @@ jobs:
         POSTGRES_USER: postgres
         POSTGRES_DB: rhythm
 
+    - name: Setup test database
+      run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
+      env:
+        POSTGRES_HOST: localhost
+        PGPASSWORD: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: postgres
+        POSTGRES_DB: eleutheria_test
+
     - run: cd packages/game-data && yarn build-schema && cd ../..
     - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
     - run: yarn lint:check
