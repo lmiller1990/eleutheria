@@ -8,6 +8,7 @@ const log = debug(`game-data:actions:editor`);
 
 export class EditorActions {
   #ctx: Context;
+  #editingChartId = 10;
 
   constructor(ctx: Context) {
     this.#ctx = ctx;
@@ -18,6 +19,7 @@ export class EditorActions {
   }
 
   async copyChartToFile(chartId: number): Promise<void> {
+    this.#editingChartId = chartId;
     log("editing chart");
     const chart = await this.#ctx.actions.db.queryChartById(chartId);
     assert(chart, `Could not find chart with id ${chartId}`);
@@ -26,10 +28,20 @@ export class EditorActions {
 
   // TODO: Don't hardcode chartId
   async writeChartToDb() {
+    if (!this.#editingChartId) {
+      log(
+        `Cannot edit chart without first setting #editingChartId. Do that with the startEditing mutation.`
+      );
+      return;
+    }
+    log(`Updating chartId: ${this.#editingChartId}`);
     const notes = await fs.readFile(EditorActions.editingPath, "utf8");
-    await this.#ctx.knexTable("charts").where("id", 1).update({
-      notes,
-    });
+    await this.#ctx
+      .knexTable("charts")
+      .where("id", this.#editingChartId)
+      .update({
+        notes,
+      });
     return notes;
   }
 }

@@ -358,8 +358,14 @@ export function create(
     // $root.innerHTML = "";
   };
 
+  let prevGameStartTime: number | undefined;
+
   const lifecycle: GameLifecycle = {
-    onUpdate: (world, previousFrameMeta, modifierManager) => {
+    onUpdate: (world, previousFrameMeta, modifierManager, gameStartTime) => {
+      if (prevGameStartTime !== gameStartTime) {
+        beeped.clear();
+        prevGameStartTime = gameStartTime;
+      }
       // if (world.time > 4000) { return }
       for (const [id, engineNote] of world.chart.tapNotes) {
         const ypos = calcYPosition(engineNote, world, modifierManager);
