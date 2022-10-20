@@ -152,6 +152,6 @@ export function summarizeResults(
 
   return {
     ...summary,
-    percent,
+    percent: parseFloat(percent.toFixed(2)),
   };
 }

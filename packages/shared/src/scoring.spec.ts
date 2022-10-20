@@ -45,7 +45,7 @@ describe("scoring", () => {
   it("summarizes results", () => {
     const expected: Summary = {
       achievements: [],
-      percent: 60.0,
+      percent: 60,
       timing: {
         perfect: {
           count: 3,
@@ -93,7 +93,7 @@ describe("scoring", () => {
   it("does not count future tapNotes as missed", () => {
     const expected: Summary = {
       achievements: [],
-      percent: 0.0,
+      percent: 0,
       timing: {
         perfect: {
           count: 0,
@@ -137,7 +137,7 @@ describe("scoring", () => {
   it("calculates perfect percentage score of 100%", () => {
     const expected: Summary = {
       achievements: [],
-      percent: 100.0,
+      percent: 100,
       timing: {
         perfect: {
           count: 5,
@@ -196,7 +196,7 @@ describe("scoring", () => {
   it("calculates considering dropped hold", () => {
     const expected: Summary = {
       achievements: [],
-      percent: 75.0,
+      percent: 75,
       timing: {
         perfect: {
           count: 2,
@@ -296,7 +296,7 @@ describe("scoring", () => {
   it("calculates a score for no notes", () => {
     const expected: Summary = {
       achievements: [],
-      percent: 0.0,
+      percent: 0,
       timing: {
         perfect: {
           count: 0,
