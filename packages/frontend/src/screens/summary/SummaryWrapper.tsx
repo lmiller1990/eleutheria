@@ -11,6 +11,7 @@ gql`
       id
       timing
       percent
+      personalBest
       chart {
         id
         level
