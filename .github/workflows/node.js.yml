@@ -34,10 +34,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # - name: Setup upterm session
-    #   uses: lhotari/action-upterm@v1
-
-
     - name: Install Dependencies
       run: yarn install
 
@@ -60,6 +56,10 @@ jobs:
         POSTGRES_PORT: 5432
         POSTGRES_USER: postgres
         POSTGRES_DB: eleutheria_test
+
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+
 
     - run: cd packages/game-data && yarn build-schema && cd ../..
     - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
