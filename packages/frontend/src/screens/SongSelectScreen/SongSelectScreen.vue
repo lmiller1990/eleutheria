@@ -98,6 +98,7 @@ gql`
       difficulty
       level
       tapNoteCount
+      personalBest
     }
   }
 `;
@@ -201,7 +202,9 @@ const tableData = computed(() => {
     notes: selectedChart?.value?.tapNoteCount ?? "-",
     duration: selectedSong?.value?.duration ?? "-",
     bpm: selectedSong?.value?.bpm ?? "-",
-    best: "99.50%",
+    best: selectedChart.value?.personalBest
+      ? `${selectedChart.value?.personalBest?.toFixed(2)}%`
+      : "-",
   };
 });
 

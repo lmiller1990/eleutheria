@@ -7,7 +7,7 @@ export interface Timing {
 }
 
 export interface GameplayScoreProps {
-  percent: string;
+  percent: number;
   classes?: {
     wrapper: string;
     percent: string;
@@ -62,7 +62,7 @@ export const GameplayScore: FunctionalComponent<GameplayScoreProps> = (
           props.classes?.percent ?? "text-5xl"
         )}
       >
-        {props.percent}%
+        {props.percent.toFixed(2)}%
       </div>
       {props.timing.map((timing) => (
         <div class="mt-8">

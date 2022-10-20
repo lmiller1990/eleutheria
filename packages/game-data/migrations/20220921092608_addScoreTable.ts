@@ -3,7 +3,7 @@ import { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("scores", (table) => {
     table.increments("id");
-    table.text("percent").notNullable();
+    table.float("percent").notNullable();
     table.json("timing").notNullable();
     table.integer("user_id").notNullable();
     table.foreign("user_id").references("id").inTable("users");

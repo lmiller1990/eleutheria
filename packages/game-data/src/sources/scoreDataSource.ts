@@ -6,9 +6,7 @@ import { ChartDataSource } from "./chartDataSource";
 
 const log = debug(`game-data:ScoreDataSource`);
 
-export interface ScoreDataDefinition extends Scores {
-  percent: string;
-}
+export interface ScoreDataDefinition extends Scores {}
 
 export class ScoreDataSource {
   #ctx: Context;

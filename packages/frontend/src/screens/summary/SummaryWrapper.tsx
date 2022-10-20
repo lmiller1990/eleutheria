@@ -12,6 +12,7 @@ gql`
       timing
       percent
       personalBest
+      worldRecord
       chart {
         id
         level
@@ -67,8 +68,8 @@ export const SummaryWrapper = defineComponent({
         level={gqlData.data.value.summary.chart.level}
         songTitle={gqlData.data.value.summary.chart.song.title}
         records={{
-          personal: "XX.XX",
-          world: "YY.YY",
+          personal: gqlData.data.value.summary.personalBest ?? undefined,
+          world: gqlData.data.value.summary.worldRecord ?? undefined,
         }}
       />
     );

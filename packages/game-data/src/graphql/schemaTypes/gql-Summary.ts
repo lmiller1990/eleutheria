@@ -13,11 +13,22 @@ export const Summary = objectType({
   definition(t) {
     t.nonNull.int("id");
 
-    t.nonNull.string("percent", {
+    t.nonNull.float("percent", {
       description: "Percentage score out of 100",
     });
 
-    t.string("personalBest", {
+    t.float("worldRecord", {
+      description:
+        "Highest score ever achieved on this song, including guest scores. If there are multiple, the most recent is prioritized.",
+      resolve: async (source, _args, ctx) => {
+        const cds = await ctx.actions.db.queryForWorldRecord(
+          source.data.chart_id
+        );
+        return cds?.percent ?? null;
+      },
+    });
+
+    t.float("personalBest", {
       description: "Personal best score on this chart",
       resolve: async (source, _args, ctx) => {
         const user = await ctx.queryForCurrentUser();
