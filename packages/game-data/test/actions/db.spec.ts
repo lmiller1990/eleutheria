@@ -26,15 +26,15 @@ describe("db", () => {
 
   describe("queryForUserPersonalBest", () => {
     it("gets personal best for a given user and chart", async () => {
-      const data: Omit<Scores, "id"> = {
-        percent: "90.00",
+      const data: Omit<Scores, "id" | "created_at"> = {
+        percent: 90.0,
         timing: {},
         chart_id: 1,
         user_id: 1,
       };
 
       await Promise.all([
-        ctx.knexTable("scores").insert({ ...data, percent: "90.00" }),
+        ctx.knexTable("scores").insert({ ...data, percent: 90.0 }),
         ctx.knexTable("scores").insert({ ...data, percent: "95.55" }),
         ctx.knexTable("scores").insert({ ...data, percent: "100.00" }),
       ]);
@@ -47,8 +47,8 @@ describe("db", () => {
 
   describe("queryForWorldRecord", () => {
     it.only("gets world record for given chart", async () => {
-      const data: Omit<Scores, "id"> = {
-        percent: "80.00",
+      const data: Omit<Scores, "id" | "created_at"> = {
+        percent: 80.0,
         timing: {},
         chart_id: 1,
         user_id: 1,
@@ -57,7 +57,7 @@ describe("db", () => {
       await ctx.knexTable("scores").insert({
         ...data,
         user_id: 1,
-        percent: "90.01",
+        percent: 90.01,
         created_at: "2020-10-10 11:00:50.000000+10",
       });
 
