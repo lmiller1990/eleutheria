@@ -34,7 +34,7 @@
   },
   "scripts": {
     "start": "ts-node --transpileOnly index.ts",
-    "test": "echo 'ok - no tests here yet'",
+    "test": "POSTGRES_DB=eleutheria_test vitest --run",
     "postinstall": "echo 'ok' # yarn build",
     "build": "tsc && yarn genProdData && cp -r songs dist && cp songMetadata.json dist",
     "genProdData": "ts-node --esm --transpileOnly ./scripts/generateDataForProd.ts",

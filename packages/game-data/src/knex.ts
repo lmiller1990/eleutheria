@@ -1,13 +1,23 @@
 import { knex as _knex } from "knex";
+import { ClientConfig } from "pg";
 import type { TableTypes } from "../ dbschema";
+
+const connection: ClientConfig = {
+  user: process.env.POSTGRES_USER ?? "lachlan",
+  database: process.env.POSTGRES_DB ?? "rhythm",
+  password: process.env.POSTGRES_PASSWORD,
+  host: process.env.POSTGRES_HOST,
+  port: 5432,
+};
+
+if (process.env.CI) {
+  console.log("Creating Knex client with", connection);
+}
 
 export const knex = _knex({
   client: "pg",
-  // debug: true,
-  connection: {
-    user: process.env.POSTGRES_USER ?? "lachlan",
-    database: process.env.POSTGRES_DB ?? "rhythm",
-  },
+  // it's correct
+  connection: connection as any,
 });
 
 export const knexTable = <T extends {}>(

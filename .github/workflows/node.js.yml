@@ -34,10 +34,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # - name: Setup upterm session
-    #   uses: lhotari/action-upterm@v1
-
-
     - name: Install Dependencies
       run: yarn install
 
@@ -51,9 +47,31 @@ jobs:
         POSTGRES_USER: postgres
         POSTGRES_DB: rhythm
 
+    - name: Setup test database
+      run: cd packages/game-data && yarn ts-node --transpileOnly setupDb.ts
+      env:
+        POSTGRES_HOST: localhost
+        PGPASSWORD: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: postgres
+        POSTGRES_DB: eleutheria_test
+
+    # - name: Setup upterm session
+    #   uses: lhotari/action-upterm@v1
+
     - run: cd packages/game-data && yarn build-schema && cd ../..
     - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
     - run: yarn lint:check
     - run: yarn check-ts
+
     - run: yarn test
+      env:
+        POSTGRES_HOST: localhost
+        PGPASSWORD: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: postgres
+        POSTGRES_DB: eleutheria_test
+
     - run: yarn build # make sure prod build is working

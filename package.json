@@ -25,6 +25,7 @@
     "build": "NODE_ENV=production ts-node --esm --transpileOnly scripts/build.ts",
     "clean": "find . -name 'dist' -type d -prune -exec rm -rf '{}' +",
     "lint": "prettier --write packages",
+    "lint:staged": "prettier --write $(git diff --name-only --diff-filter d | grep '.ts$' | xargs)",
     "test": "lerna run test --stream",
     "lint:check": "yarn prettier --check packages",
     "check-ts": "lerna run check-ts",
