@@ -112,12 +112,12 @@ injectStylesheet(userData.css, "user-css");
 const saveScore = useMutation(Gameplay_SummaryDocument);
 
 const timingSummary = reactive<
-  Record<typeof windowsWithMiss[number], number> & { percent: string }
+  Record<typeof windowsWithMiss[number], number> & { percent: number }
 >({
   absolute: 0,
   perfect: 0,
   miss: 0,
-  percent: "0.00",
+  percent: 0,
 });
 
 async function songCompleted(world: World) {

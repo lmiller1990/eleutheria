@@ -14,6 +14,23 @@ export const Chart = objectType({
     t.nonNull.string("difficulty");
     t.nonNull.int("level");
     t.nonNull.int("tapNoteCount");
+    t.float("personalBest", {
+      description: "Personal best score on this chart",
+      resolve: async (source, _args, ctx) => {
+        const user = await ctx.queryForCurrentUser();
+
+        if (!user) {
+          return null;
+        }
+
+        const cds = await ctx.actions.db.queryForUserPersonalBest(
+          source.data.id,
+          user.id
+        );
+
+        return cds?.percent ?? null;
+      },
+    });
 
     t.nonNull.int("offset", {
       description: "Delay between notes and audio. Inherited from song.",

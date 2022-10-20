@@ -26,7 +26,7 @@ export class GameplayActions {
 
     const result = summarizeResults(summaryData, timingWindows);
 
-    const data: Omit<Scores, "id"> = {
+    const data: Omit<Scores, "id" | "created_at"> = {
       percent: result.percent,
       timing: JSON.stringify(result.timing),
       chart_id: chartId,

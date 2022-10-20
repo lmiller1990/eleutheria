@@ -22,13 +22,35 @@ describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
     mount(
       () => (
         <SummaryScreenContainer
-          percent="99.50"
+          percent={99.5}
           timing={timing}
           level={15}
           songTitle="Abyss Breaker"
           records={{
-            world: "98.58",
-            personal: "92.60",
+            world: 98.58,
+            personal: 92.6,
+          }}
+        />
+      ),
+      {
+        styles: [
+          "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
+        ],
+      }
+    );
+  });
+
+  it.only("new personal best record", () => {
+    mount(
+      () => (
+        <SummaryScreenContainer
+          percent={90.5}
+          timing={timing}
+          level={15}
+          songTitle="Abyss Breaker"
+          records={{
+            world: 98.58,
+            personal: 80.5,
           }}
         />
       ),

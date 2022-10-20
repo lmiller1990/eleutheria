@@ -21,7 +21,7 @@ export interface TimingTypeSummary {
 
 export interface Summary {
   achievements: string[];
-  percent: string;
+  percent: number;
   timing: {
     [key: string]: TimingTypeSummary;
   };
@@ -52,7 +52,7 @@ export function summarizeResults(
   timingWindows: Readonly<TimingWindow[]>
 ): Summary {
   const init: Summary = {
-    percent: "0.00",
+    percent: 0,
     achievements: [],
     timing: {
       miss: {
@@ -152,6 +152,6 @@ export function summarizeResults(
 
   return {
     ...summary,
-    percent: percent.toFixed(2),
+    percent: parseFloat(percent.toFixed(2)),
   };
 }

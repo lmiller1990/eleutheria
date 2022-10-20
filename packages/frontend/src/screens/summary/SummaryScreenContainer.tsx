@@ -1,5 +1,6 @@
 import { FunctionalComponent } from "vue";
 import { useRouter } from "vue-router";
+import cs from "classnames";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import {
   GameplayScore,
@@ -10,23 +11,39 @@ import { SongImage } from "../SongSelectScreen/SongImage";
 import "./SummaryScreenContainer.css";
 
 interface Props {
-  percent: string;
+  percent: number;
   level: number;
   timing: Timing[];
   songTitle: string;
   records: {
-    personal: string;
-    world: string;
+    personal?: number;
+    world?: number;
   };
 }
 
-const RecordScore: FunctionalComponent<{ label: string; score: string }> = (
-  props
-) => {
+const RecordScore: FunctionalComponent<{
+  label: string;
+  score?: number;
+  summaryScore: number;
+}> = (props) => {
+  const newRecord = props.score && props.summaryScore >= props.score;
+  const scoreToShow = newRecord ? props.summaryScore : props.score;
+
   return (
-    <div class="flex justify-between text-2xl text-white mb-4">
+    <div class="flex justify-between text-2xl text-white mb-4 relative">
       <div>{props.label}</div>
-      <div>{props.score}%</div>
+      <div>{scoreToShow ? `${scoreToShow.toFixed(2)}%` : "-"}</div>
+      {newRecord && (
+        <div
+          class={cs(
+            { "text-yellow-100 animate-pulse-fast": newRecord },
+            "absolute"
+          )}
+          style={{ right: "-120px" }}
+        >
+          Updated!
+        </div>
+      )}
     </div>
   );
 };
@@ -61,8 +78,16 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
               <SongTitle title={props.songTitle} />
             </div>
             <div>
-              <RecordScore label="Your Record" score={props.records.personal} />
-              <RecordScore label="World Record" score={props.records.world} />
+              <RecordScore
+                label="Your Record"
+                score={props.records.personal}
+                summaryScore={props.percent}
+              />
+              <RecordScore
+                label="World Record"
+                score={props.records.world}
+                summaryScore={props.percent}
+              />
             </div>
           </div>
 

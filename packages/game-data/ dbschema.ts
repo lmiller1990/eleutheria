@@ -83,21 +83,23 @@ const knex_migrations_lock = {
 // Table scores
 export interface Scores {
   id: number;
-  percent: string;
+  percent: number;
   timing: Json;
   user_id: number;
   chart_id: number;
+  created_at: Date;
 }
 export interface ScoresInput {
   id?: number;
-  percent: string;
+  percent: number;
   timing: Json;
   user_id: number;
   chart_id: number;
+  created_at?: Date;
 }
 const scores = {
   tableName: "scores",
-  columns: ["id", "percent", "timing", "user_id", "chart_id"],
+  columns: ["id", "percent", "timing", "user_id", "chart_id", "created_at"],
   requiredForInsert: ["percent", "timing", "user_id", "chart_id"],
   primaryKey: "id",
   foreignKeys: {

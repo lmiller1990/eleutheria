@@ -134,6 +134,36 @@ export class DbActions {
     return guest;
   }
 
+  async queryForWorldRecord(
+    chartId: number
+  ): Promise<ScoreDataSource | undefined> {
+    const subquery = await knexTable("scores")
+      .max<[{ max: number }]>(knex.raw("percent"))
+      .returning("scores");
+    const max = subquery[0].max;
+    if (!max) {
+      // No existing score found
+      return;
+    }
+
+    const score = await knexTable("scores")
+      .where<Scores>("scores.chart_id", chartId)
+      .andWhere("scores.percent", "=", max)
+      .orderBy("created_at", "desc")
+      .first();
+
+    log(`best score for chart_id ${chartId} is ${score?.percent}`);
+
+    if (!score) {
+      return undefined;
+    }
+
+    return new ScoreDataSource(this.#ctx, {
+      ...score,
+      timing: score.timing,
+    });
+  }
+
   async queryForUserPersonalBest(
     chartId: number,
     userId: number
@@ -141,7 +171,7 @@ export class DbActions {
     const score = await knexTable("scores")
       .where<Scores>("scores.chart_id", chartId)
       .andWhere<Scores>("scores.user_id", userId)
-      .orderByRaw("scores.percent::float desc")
+      .orderByRaw("scores.percent desc")
       .first();
 
     log(

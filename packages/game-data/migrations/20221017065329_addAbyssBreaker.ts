@@ -8,7 +8,7 @@ export async function up(knex: Knex): Promise<void> {
     bpm: 195,
     file: "abyss_breaker.wav",
     artist: "打打だいず",
-    offset: 0,
+    offset: 1240,
   });
 
   return knex("charts").insert({
