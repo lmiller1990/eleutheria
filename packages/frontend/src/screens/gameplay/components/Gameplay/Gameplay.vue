@@ -19,7 +19,6 @@ import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
-import { ModifierManager } from "../../modiferManager";
 import { gql, useMutation, useQuery } from "@urql/vue";
 import {
   GameplayDocument,
@@ -30,6 +29,7 @@ import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
+import { useGameplayOptions } from "../../../../composables/gameplayOptions";
 
 export interface GameplayProps {
   __testingDoNotStartSong?: boolean;
@@ -163,7 +163,7 @@ function updateSummary(summary: Summary) {
 }
 
 let game: Game | undefined;
-const modifierManager = new ModifierManager();
+const { modifierManager } = useGameplayOptions();
 
 const router = useRouter();
 
@@ -290,7 +290,6 @@ onMounted(async () => {
 const { emitter } = useEditor();
 
 emitter.subscribe("editor:chart:updated", () => {
-  console.log("chart updated");
   // TODO: may only need to do this once
   query.executeQuery({ requestPolicy: "network-only" });
 });

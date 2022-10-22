@@ -18,7 +18,12 @@ import {
   judgementFlash,
   Elements,
 } from "./elements";
-import { engineConfiguration, PADDING_MS, codeColumnMap } from "./gameConfig";
+import {
+  engineConfiguration,
+  PADDING_MS,
+  codeColumnMap,
+  SPEED_MOD_NORM_FACTOR,
+} from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
 import {
@@ -27,7 +32,6 @@ import {
   timingWindows,
   UserScripts,
 } from "@packages/shared";
-import { preferencesManager } from "./preferences";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
 
 let timeoutId: number | undefined;
@@ -83,7 +87,10 @@ function calcInitHeightOfHold(
 ): number {
   const firstNoteOfHold = hold.at(0)!;
   const lastNoteOfHold = hold.at(-1)!;
-  return (lastNoteOfHold.ms - firstNoteOfHold.ms) * modifierManager.multiplier;
+  return (
+    ((lastNoteOfHold.ms - firstNoteOfHold.ms) * modifierManager.multiplier) /
+    SPEED_MOD_NORM_FACTOR
+  );
 }
 
 function calcHeightOfDroppedHold(
@@ -97,7 +104,9 @@ function calcHeightOfDroppedHold(
   }
 
   return (
-    (lastNoteOfHold.ms - firstNoteOfHold.droppedAt) * modifierManager.multiplier
+    ((lastNoteOfHold.ms - firstNoteOfHold.droppedAt) *
+      modifierManager.multiplier) /
+    SPEED_MOD_NORM_FACTOR
   );
 }
 
@@ -220,7 +229,10 @@ function calcYPosition(
   world: World,
   modifierManager: ModifierManager
 ) {
-  return (note.ms - world.time) * modifierManager.multiplier;
+  return (
+    ((note.ms - world.time) * modifierManager.multiplier) /
+    SPEED_MOD_NORM_FACTOR
+  );
 }
 
 export interface StartGameArgs {
@@ -258,16 +270,16 @@ export function create(
 
   const modifierManager =
     startGameArgs.modifierManager ?? new ModifierManager();
-  // modifierManager.setMultipler(0.25);
-  modifierManager.setMultipler(1);
-  modifierManager.setCover({ visible: false });
+  modifierManager.setCover({ visible: true });
 
-  elements.cover.style.display = modifierManager.cover.visible
-    ? "block"
-    : "none";
+  elements.cover.setAttribute("style", modifierManager.cover.style);
+  if (modifierManager.scrollDirection === "up") {
+    elements.cover.style.top = `${100 - modifierManager.cover.offset}%`;
+  }
 
-  const offset = window.innerHeight - modifierManager.cover.offset;
-  elements.cover.style[modifierManager.cover.location] = `${offset}px`;
+  if (modifierManager.scrollDirection === "down") {
+    elements.cover.style.bottom = `${100 - modifierManager.cover.offset}%`;
+  }
 
   modifierManager.on("set:scrollDirection", (val) => {
     if (val === "up") {
@@ -283,36 +295,6 @@ export function create(
       elements.timing.style.top = "unset";
       elements.combo.style.top = "unset";
     }
-  });
-
-  modifierManager.on("set:cover", (val) => {
-    elements.cover.style.display = val.visible ? "block" : "none";
-
-    if (!val.visible) {
-      return;
-    }
-
-    // need to update these manually, since these modifiers
-    // are not added via the ModifierPanel UI.
-    modifierManager.setOffset(val.offset);
-    preferencesManager.updatePreferences({ cover: val });
-
-    let position: string | undefined;
-
-    if (val.location === "top") {
-      position = `calc(-100vh + ${val.offset}px)`;
-    }
-
-    if (val.location === "bottom") {
-      position = `calc(-100vh + ${val.offset}px)`;
-    }
-
-    if (!position) {
-      throw Error(`Expected position to be assigned`);
-    }
-
-    elements.cover.setAttribute("style", val.style);
-    elements.cover.style[val.location] = position;
   });
 
   if (__testingDoNotStartSong) {

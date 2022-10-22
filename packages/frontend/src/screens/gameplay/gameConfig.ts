@@ -11,6 +11,8 @@ export const NOTE_WIDTH = parseInt(
   10
 );
 
+export const SPEED_MOD_NORM_FACTOR = 400;
+
 export const PADDING_MS = 2000;
 
 export const engineConfiguration: EngineConfiguration = {

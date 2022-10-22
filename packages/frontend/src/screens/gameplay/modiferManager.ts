@@ -26,7 +26,7 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
     id: "default",
     visible: true,
     location: "top",
-    offset: 200,
+    offset: 0,
     style: "background: blue;",
   };
 
@@ -55,7 +55,7 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
   }
 
   get multiplier() {
-    return this.#multiplier; //  * 1.25;
+    return this.#multiplier;
   }
 
   get scrollDirection() {
