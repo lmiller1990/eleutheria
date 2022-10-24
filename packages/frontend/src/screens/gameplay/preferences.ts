@@ -1,11 +1,18 @@
+import { NoteSkin } from "@packages/shared";
 import { CoverParams } from "./modiferManager";
 import { ScrollDirection } from "./types";
 
-const validPreferences = ["speedModifier", "scrollDirection", "cover"] as const;
+const validPreferences = [
+  "speedModifier",
+  "scrollDirection",
+  "cover",
+  "noteSkin",
+] as const;
 
 export interface Preferences {
   scrollDirection: ScrollDirection;
   speedModifier: number;
+  noteSkin: NoteSkin;
   cover: Partial<CoverParams>;
 }
 

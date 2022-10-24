@@ -2,6 +2,8 @@ import { intArg, nonNull, objectType } from "nexus";
 import { SongDataSource } from "../../sources/songDataSource";
 import { App } from "./gql-App";
 import { Chart } from "./gql-Chart";
+import { Cover } from "./gql-Cover";
+import { NoteSkin } from "./gql-NoteSkin";
 import { Song } from "./gql-Song";
 import { Summary } from "./gql-Summary";
 import { Viewer } from "./gql-Viewer";
@@ -41,6 +43,19 @@ export const Query = objectType({
       description: "Get a list of known songs",
       resolve: (_root, _args, ctx) => {
         return ctx.actions.db.queryForSongs();
+      },
+    });
+
+    t.nonNull.list.nonNull.field("covers", {
+      type: Cover,
+      resolve: (_source, _args, ctx) => ctx.actions.db.queryForAllCovers(),
+    });
+
+    t.nonNull.list.nonNull.field("noteSkins", {
+      type: NoteSkin,
+      resolve: async (_source, _args, ctx) => {
+        const res = await ctx.actions.db.queryForAllNoteSkins();
+        return res.map((x) => ({ ...x, id: x.id.toString() }));
       },
     });
 

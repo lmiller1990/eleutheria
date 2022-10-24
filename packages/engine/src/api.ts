@@ -74,6 +74,8 @@ export interface GameConfig {
     holdNotes: HoldNote[];
     offset: number;
   };
+  /** used for showing an inline game in the game options pane. Not very performance due to use of getBoundingClientRect(). */
+  noteCulling?: boolean;
   preSongPadding?: number;
   postSongPadding?: number;
   engineConfiguration: EngineConfiguration;

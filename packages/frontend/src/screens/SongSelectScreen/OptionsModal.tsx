@@ -1,52 +1,122 @@
-import type { NoteSkin } from "@packages/shared";
-import { defineComponent, FunctionalComponent, reactive, ref } from "vue";
+import type { Cover, NoteSkin } from "@packages/shared";
+import { gql } from "@urql/core";
+import {
+  defineComponent,
+  FunctionalComponent,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  Ref,
+  Suspense,
+} from "vue";
 import { useGameplayOptions } from "../../composables/gameplayOptions";
 import { CoverParams } from "../gameplay/modiferManager";
 // import { getStyleByClass } from "../../components/ModifierPanel/css";
 import { ScrollDirection } from "../gameplay/types";
+import { OptionsModalDocument } from "../../generated/graphql";
+import { useQuery } from "@urql/vue";
+import {
+  injectNoteSkin,
+  injectStylesheet,
+} from "../../plugins/injectGlobalCssVars";
+import { getStyleByClass } from "../../components/ModifierPanel/css";
+import dedent from "dedent";
+import { create, StartGameArgs, StartGame } from "../gameplay/gameplay";
+import "../../style.css";
+
+gql`
+  query OptionsModal {
+    noteSkins {
+      id
+      name
+      css
+    }
+    covers {
+      id
+      name
+      thumbnailColor
+      css
+      code
+    }
+  }
+`;
 
 function extractCss(style: string) {
-  // return getStyleByClass(style, ".note");
+  return getStyleByClass(style, ".note");
 }
-// <div
-//   v-for="note of notes"
-//   :style="extractCss(note.css)"
-//   class="note-mod"
-//   :id="`note-${note.name}`"
-//   @click="emit('changeNoteSkin', note)"
-// />
 
-// const NoteModPanel = defineComponent<{ notes: NoteSkin[] }>({
-//   setup(props) {
-//     const currentValue = ref<NoteSkin>(props.notes[0]);
+const overrideStyles = dedent`
+  #targets, .col {
+    height: 100%;
+  }
 
-//     function onClick(value: NoteSkin) {
-//       currentValue.value = value
-//     }
+  :root {
+    /* 50% smaller */
+    --note-height: 25px;
+    --col-width: 35px;
+    --target-height: var(--note-height);
+  }
+`;
 
-//     return () => (
-//       <OptionsPanel title="Note" selected={currentValue.value}>
-//         <div class="flex">
-//           {props.notes.map((x) => (
-//             <button
-//               class="bg-zinc-700 border border-bg-black text-white py-1 w-16 mr-2"
-//               style={extractCss(note.css)}
-//               onClick={() => onClick(x)}
-//             >
-//               Note
-//             </button>
-//           ))}
-//         </div>
-//       </OptionsPanel>
-//     );
-//   },
-// });
+const noteStyle = dedent`
+  height: 30px;
+  width: 50px;
+`;
+
+const CoverSkinModPanel: FunctionalComponent<{
+  covers: OptionsModalProps["covers"];
+  onChangeMod: OptionsModalProps["onChangeCoverMod"];
+}> = (props) => {
+  return (
+    <OptionsPanel title="Cover" selected={""}>
+      <div class="flex">
+        {props.covers.map((x) => {
+          console.log(x);
+          return (
+            <div class="flex flex-col items-center mr-2">
+              <button
+                class="h-6 w-10 border border-white"
+                onClick={() => props.onChangeMod(x)}
+                style={{ background: x.thumbnailColor }}
+              />
+              <label class="text-xs mt-1 font-light">{x.name}</label>
+            </div>
+          );
+        })}
+      </div>
+    </OptionsPanel>
+  );
+};
+
+const NoteSkinModPanel: FunctionalComponent<{
+  noteSkins: OptionsModalProps["noteSkins"];
+  modValue: OptionsModalProps["currentNoteSkin"];
+  onChangeMod: OptionsModalProps["onChangeNoteSkin"];
+}> = (props) => {
+  return (
+    <OptionsPanel title="Note" selected={""}>
+      <div class="flex">
+        {props.noteSkins.map((x) => {
+          const style = extractCss(x.css) + noteStyle;
+          return (
+            <div class="flex flex-col items-center mr-2">
+              <button style={style} onClick={() => props.onChangeMod(x)} />
+              <label class="text-xs mt-1 font-light">{x.name}</label>
+            </div>
+          );
+        })}
+      </div>
+    </OptionsPanel>
+  );
+};
 
 const ScrollModPanel: FunctionalComponent<{
   modValue: OptionsModalProps["currentScrollMod"];
   onChangeMod: OptionsModalProps["onChangeScrollMod"];
 }> = (props) => {
-  function onClick(direction: ScrollDirection) {
+  function onClick(event: Event, direction: ScrollDirection) {
+    event.preventDefault();
     props.onChangeMod(direction);
   }
 
@@ -56,7 +126,7 @@ const ScrollModPanel: FunctionalComponent<{
         {(["up", "down"] as const).map((dir) => (
           <button
             class="bg-zinc-700 border border-bg-black text-white py-1 w-16 mr-2"
-            onClick={() => onClick(dir)}
+            onClick={(event) => onClick(event, dir)}
           >
             {dir}
           </button>
@@ -93,6 +163,7 @@ const CoverOffsetModPanel: FunctionalComponent<{
       <Slider
         options={options}
         max={100}
+        value={props.modValue.offset}
         step={1}
         id="cover-offset"
         onInput={input}
@@ -107,19 +178,17 @@ const Slider: FunctionalComponent<{
   options: JSX.Element[];
   step: number;
   max: number;
+  value: number;
 }> = (props) => {
   return (
     <>
       <input
+        {...props}
         min={0}
-        max={props.max}
-        step={props.step}
-        type="range"
-        id={props.id}
         list={`${props.id}-tickmarks`}
         name={props.id}
+        type="range"
         class="w-full"
-        onInput={props.onInput}
       />
       <datalist
         id={`${props.id}-tickmarks`}
@@ -157,6 +226,7 @@ const SpeedModPanel: FunctionalComponent<{
     <OptionsPanel title="Speed" selected={props.modValue}>
       <Slider
         options={options}
+        value={props.modValue}
         max={1000}
         step={10}
         id="speed-mod"
@@ -171,7 +241,7 @@ const OptionsPanel: FunctionalComponent<{
   selected: string | number;
 }> = (props, { slots }) => {
   return (
-    <div class="w-full text-white text-lg p-4 bg-neutral-600 my-6">
+    <div class="w-full text-white text-lg p-2 bg-neutral-600 mt-6 border border-black">
       <div class="flex justify-between w-full my-1">
         <div>{props.title}</div>
         <div>{props.selected}</div>
@@ -182,44 +252,146 @@ const OptionsPanel: FunctionalComponent<{
 };
 
 interface OptionsModalProps {
-  currentScrollMod: ScrollDirection;
+  gameplayRoot: Ref<HTMLDivElement | undefined>;
+
   currentSpeedMod: number;
-  currentCover: CoverParams;
   onChangeSpeedMod: (val: number) => void;
+
+  currentScrollMod: ScrollDirection;
   onChangeScrollMod: (val: ScrollDirection) => void;
+
+  currentCover: CoverParams;
   onChangeCoverMod: (cover: Partial<CoverParams>) => void;
+
+  noteSkins: NoteSkin[];
+  currentNoteSkin: NoteSkin;
+  onChangeNoteSkin: (val: NoteSkin) => void;
+
+  covers: Cover[];
 }
 
-export const OptionsModal: FunctionalComponent<OptionsModalProps> = (props) => {
+const Col: FunctionalComponent = (_props, { slots }) => (
+  <div class="h-full flex flex-col justify-center mx-6">
+    {slots.default?.()}
+  </div>
+);
+
+export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
+  function stopPropagation(e: Event) {
+    e.stopPropagation();
+  }
+
   return (
-    <div style={{ background: "#828282" }}>
-      <SpeedModPanel
-        onChangeMod={props.onChangeSpeedMod}
-        modValue={props.currentSpeedMod}
-        id="speed-mod"
-      />
-      <ScrollModPanel
-        onChangeMod={props.onChangeScrollMod}
-        modValue={props.currentScrollMod}
-      />
-      <CoverOffsetModPanel
-        onChangeMod={props.onChangeCoverMod}
-        modValue={props.currentCover}
-        id="cover-offset"
-      />
-      {/* <NoteModPanel /> */}
+    <div
+      style={{ background: "#828282", height: "75vh" }}
+      class="flex px-10 border border-white"
+      onClick={stopPropagation}
+    >
+      <Col>
+        <SpeedModPanel
+          onChangeMod={props.onChangeSpeedMod}
+          modValue={props.currentSpeedMod}
+          id="speed-mod"
+        />
+        <ScrollModPanel
+          onChangeMod={props.onChangeScrollMod}
+          modValue={props.currentScrollMod}
+        />
+        <NoteSkinModPanel
+          noteSkins={props.noteSkins}
+          onChangeMod={props.onChangeNoteSkin}
+          modValue={props.currentNoteSkin}
+        />
+        <CoverOffsetModPanel
+          onChangeMod={props.onChangeCoverMod}
+          modValue={props.currentCover}
+          id="cover-offset"
+        />
+        <CoverSkinModPanel
+          covers={props.covers}
+          onChangeMod={props.onChangeCoverMod}
+        />
+      </Col>
+      <Col>
+        <div style="height: 75%">
+          <div ref={props.gameplayRoot} class="h-full" />
+        </div>
+      </Col>
     </div>
   );
 };
 
+export const OptionsModal: FunctionalComponent = () => {
+  const slots = {
+    default: () => <OptionsModalWrapper />,
+    fallback: () => <div>Loading...</div>,
+  };
+
+  return <Suspense v-slots={slots} />;
+};
+
 export const OptionsModalWrapper = defineComponent({
-  setup() {
+  async setup() {
     const modifiers = useGameplayOptions();
+    const gameplayRoot = ref(undefined);
+    const { modifierManager } = useGameplayOptions();
+    let game: StartGame | void;
+    const cleanup = injectStylesheet(overrideStyles, "__overrides__");
+
+    onMounted(() => {
+      const startGameArgs: StartGameArgs = {
+        noteSkinData: [],
+        userData: {
+          css: "",
+          js: "",
+        },
+        noteCulling: true,
+        modifierManager,
+        songCompleted: () => {},
+        updateSummary: () => {},
+        paramData: {
+          file: "empty.mp3",
+          songId: "",
+          difficulty: "",
+        },
+        songData: {
+          chart: {
+            offset: 0,
+            parsedTapNoteChart: {
+              tapNotes: Array(1000)
+                .fill(undefined)
+                .map((_x, idx) => ({
+                  id: idx.toString(),
+                  ms: 500 * idx,
+                  column: idx % 6,
+                  measureNumber: 0,
+                  char: "x",
+                })),
+            },
+          },
+        },
+      };
+      game = create(gameplayRoot.value!, startGameArgs, false, false, 0);
+      game!.start();
+    });
+
+    let cleanupNoteSkin: (() => void) | undefined;
+
+    onBeforeUnmount(() => {
+      cleanup();
+      cleanupNoteSkin?.();
+    });
+
+    const onChangeNoteSkin = (noteSkin: NoteSkin) => {
+      cleanupNoteSkin = injectNoteSkin(noteSkin);
+      modifiers.handleChangeNoteSkin(noteSkin);
+    };
 
     const localMods = reactive({
       speed: modifiers.modifierManager.multiplier,
       scroll: modifiers.modifierManager.scrollDirection,
       cover: modifiers.modifierManager.cover,
+      noteSkin: modifiers.modifierManager.noteSkin,
     });
 
     modifiers.modifierManager.on("set:multiplier", (val) => {
@@ -234,14 +406,36 @@ export const OptionsModalWrapper = defineComponent({
       localMods.cover = { ...oldVal, ...val };
     });
 
+    modifiers.modifierManager.on("set:noteSkin", (val) => {
+      localMods.noteSkin = val;
+    });
+
+    const gql = await useQuery({ query: OptionsModalDocument });
+
+    const defaultNoteSkin = gql.data.value?.noteSkins.find(
+      (x) => x.name === "default"
+    );
+    console.log(gql.data.value);
+
+    if (!defaultNoteSkin) {
+      throw Error(
+        `Default note skin not found. This should not happen. Note skins are ${gql.data.value?.noteSkins}`
+      );
+    }
+
     return () => (
-      <OptionsModal
+      <OptionsPane
+        gameplayRoot={gameplayRoot}
         currentCover={localMods.cover}
         currentSpeedMod={localMods.speed}
         currentScrollMod={localMods.scroll}
         onChangeSpeedMod={modifiers.handleChangeSpeedMod}
         onChangeScrollMod={modifiers.handleChangeScrollMod}
         onChangeCoverMod={modifiers.handleChangeCoverMod}
+        noteSkins={gql.data.value?.noteSkins ?? []}
+        covers={gql.data.value?.covers ?? []}
+        currentNoteSkin={localMods.noteSkin}
+        onChangeNoteSkin={onChangeNoteSkin}
       />
     );
   },

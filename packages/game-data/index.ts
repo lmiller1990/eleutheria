@@ -153,6 +153,7 @@ app.get("/note-skins", (_req, res) => {
 
   const notesDir = path.join(__dirname, "notes");
   const skins = compileSkins(notesDir, "scss");
+  console.log(skins);
   res.json(skins);
 });
 

@@ -2,7 +2,7 @@ overwrite: true
 schema: "../game-data/src/graphql/schema.graphql"
 documents: "./src/**/*.{vue,tsx}"
 config:
-  immutableTypes: true
+  immutableTypes: false
   useTypeImports: true
   preResolveTypes: true
   onlyOperationTypes: true

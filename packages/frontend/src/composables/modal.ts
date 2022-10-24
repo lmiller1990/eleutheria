@@ -1,7 +1,7 @@
 import { ref, shallowRef } from "vue";
 import SignInForm from "../components/SignInForm/SignInForm.vue";
 import SignUpForm from "../components/SignUpForm/SignUpForm.vue";
-import { OptionsModalWrapper } from "../screens/SongSelectScreen/OptionsModal";
+import { OptionsModal } from "../screens/SongSelectScreen/OptionsModal";
 
 const show = ref(false);
 const component = shallowRef();
@@ -14,7 +14,7 @@ export function useModal() {
       show.value = true;
       switch (type) {
         case "options":
-          return (component.value = OptionsModalWrapper);
+          return (component.value = OptionsModal);
         case "signUp":
           return (component.value = SignUpForm);
         case "signIn":

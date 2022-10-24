@@ -33,6 +33,11 @@ import {
   UserScripts,
 } from "@packages/shared";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
+import { ScrollDirection } from "./types";
+import {
+  injectNoteSkin,
+  injectStylesheet,
+} from "../../plugins/injectGlobalCssVars";
 
 let timeoutId: number | undefined;
 
@@ -171,27 +176,29 @@ function updateNote(
   }
 }
 
-function redrawTargets(elements: Elements, modifierManager: ModifierManager) {
-  if (modifierManager.scrollDirection === "up") {
-    elements.targetLine.style.top = "100px";
+function getCssVar(name: string) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name);
+}
+
+function redrawTargets(elements: Elements, scrollDirection: ScrollDirection) {
+  const noteHeight = parseInt(getCssVar("--note-height"), 10);
+  const offset = `${noteHeight * 2}px`;
+  if (scrollDirection === "up") {
+    elements.targetLine.style.top = offset;
     elements.targetLine.style.bottom = "";
   }
 
-  if (modifierManager.scrollDirection === "down") {
+  if (scrollDirection === "down") {
     elements.targetLine.style.top = "";
-    elements.targetLine.style.bottom = "100px";
+    elements.targetLine.style.bottom = offset;
   }
 }
 
 function updateUI(
   state: World,
   previousFrameMeta: PreviousFrameMeta,
-  modifierManager: ModifierManager,
   elements: Elements
 ) {
-  // if the scrollDirection has changed, we need to redraw the targets.
-  redrawTargets(elements, modifierManager);
-
   if (previousFrameMeta.judgementResults.length) {
     // some notes were judged on the previous window
     for (const judgement of previousFrameMeta.judgementResults) {
@@ -235,7 +242,32 @@ function calcYPosition(
   );
 }
 
+/** TODO: Ensure this cannot be used maliciously. We need to either hand curate or sandbox this. */
+function dangerouslyExecuteArbitraryCode(code: string) {
+  const fn = new Function(code);
+  fn.call(undefined);
+}
+
+function cullOutOfBoundsNotes(
+  targetsRect: DOMRect,
+  notes: Map<string, HTMLDivElement>
+) {
+  for (const note of notes.values()) {
+    const noteRect = note.getBoundingClientRect();
+
+    if (
+      noteRect.top > targetsRect.top &&
+      noteRect.bottom < targetsRect.bottom
+    ) {
+      note.classList.remove("opacity-0");
+    } else {
+      note.classList.add("opacity-0");
+    }
+  }
+}
+
 export interface StartGameArgs {
+  noteCulling?: boolean;
   songData: {
     chart: {
       parsedTapNoteChart: ParsedTapNoteChart;
@@ -264,22 +296,38 @@ export function create(
   __testingManualMode = false,
   __startAtMs: number = 0
 ): StartGame | void {
-  const { songData, paramData, songCompleted, updateSummary } = startGameArgs;
+  const { songData, paramData, songCompleted, updateSummary, noteCulling } =
+    startGameArgs;
 
   const elements = createElements($root, 6);
 
   const modifierManager =
     startGameArgs.modifierManager ?? new ModifierManager();
-  modifierManager.setCover({ visible: true });
 
-  elements.cover.setAttribute("style", modifierManager.cover.style);
-  if (modifierManager.scrollDirection === "up") {
-    elements.cover.style.top = `${100 - modifierManager.cover.offset}%`;
-  }
+  const targetsRect = elements.targets.getBoundingClientRect();
 
-  if (modifierManager.scrollDirection === "down") {
-    elements.cover.style.bottom = `${100 - modifierManager.cover.offset}%`;
-  }
+  modifierManager.on("set:scrollDirection", (direction) => {
+    // if the scrollDirection has changed, we need to redraw the targets.
+    redrawTargets(elements, direction);
+  });
+
+  modifierManager.on("set:cover", (newCover) => {
+    if (modifierManager.scrollDirection === "up") {
+      elements.cover.style.top = `${100 - newCover.offset}%`;
+    }
+
+    if (modifierManager.scrollDirection === "down") {
+      elements.cover.style.bottom = `${100 - newCover.offset}%`;
+      elements.cover.style.height = `${
+        elements.cover.getBoundingClientRect().bottom -
+        elements.targets.getBoundingClientRect().top
+      }px`;
+    }
+
+    elements.cover.innerHTML = ``;
+    dangerouslyExecuteArbitraryCode(newCover.code);
+    injectStylesheet(newCover.css, "__COVER_CSS__");
+  });
 
   modifierManager.on("set:scrollDirection", (val) => {
     if (val === "up") {
@@ -312,6 +360,7 @@ export function create(
       offset: songData.chart.offset,
     },
     preSongPadding: PADDING_MS,
+    noteCulling,
     postSongPadding: PADDING_MS,
     engineConfiguration,
     codeColumns: codeColumnMap,
@@ -337,7 +386,6 @@ export function create(
     noteMap.clear();
     holdMap.clear();
     timeoutId = undefined;
-    // $root.innerHTML = "";
   };
 
   let prevGameStartTime: number | undefined;
@@ -348,7 +396,11 @@ export function create(
         beeped.clear();
         prevGameStartTime = gameStartTime;
       }
-      // if (world.time > 4000) { return }
+
+      if (noteCulling) {
+        cullOutOfBoundsNotes(targetsRect, noteMap);
+      }
+
       for (const [id, engineNote] of world.chart.tapNotes) {
         const ypos = calcYPosition(engineNote, world, modifierManager);
         let $note = noteMap.get(id);
@@ -359,6 +411,7 @@ export function create(
         }
 
         const inViewport = ypos < window.innerHeight;
+
         // If:
         // - the DOM element does not exist
         // - it has not already been hit
@@ -432,7 +485,7 @@ export function create(
         }
       }
 
-      updateUI(world, previousFrameMeta, modifierManager, elements);
+      updateUI(world, previousFrameMeta, elements);
     },
 
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
@@ -458,7 +511,14 @@ export function create(
     },
 
     onStart: (_world: World) => {
-      // ...
+      // trigger render of UI
+      modifierManager.emit(
+        "set:cover",
+        modifierManager.cover,
+        modifierManager.cover
+      );
+
+      injectNoteSkin(modifierManager.noteSkin);
     },
   };
 
@@ -478,7 +538,7 @@ export function create(
   return {
     game,
     start: () => {
-      redrawTargets(elements, modifierManager);
+      redrawTargets(elements, modifierManager.scrollDirection);
       return game.start(paramData.file);
     },
     stop: () => {

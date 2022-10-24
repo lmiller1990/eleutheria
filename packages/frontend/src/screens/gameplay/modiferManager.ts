@@ -1,5 +1,7 @@
+import { NoteSkin } from "@packages/shared";
 import { EventEmitter } from "events";
 import TypedEmitter from "typed-emitter";
+import { defaultNoteSkinFallback } from "../../composables/gameplayOptions";
 import { ScrollDirection } from "./types";
 
 export interface CoverParams {
@@ -8,9 +10,12 @@ export interface CoverParams {
   offset: number;
   location: "top" | "bottom";
   style: string;
+  code: string;
+  css: string;
 }
 
 type ModifierManagerEvents = {
+  "set:noteSkin": (val: NoteSkin) => void;
   "set:multiplier": (val: number, oldVal: number) => void;
   "set:cover": (val: CoverParams, oldVal: CoverParams) => void;
   "set:scrollDirection": (
@@ -22,12 +27,18 @@ type ModifierManagerEvents = {
 export class ModifierManager extends (EventEmitter as new () => TypedEmitter<ModifierManagerEvents>) {
   #multiplier = 1;
   #scrollDirection: ScrollDirection = "up";
+  #noteSkin: NoteSkin = {
+    name: "default",
+    css: defaultNoteSkinFallback,
+  };
   #cover: CoverParams = {
     id: "default",
     visible: true,
     location: "top",
     offset: 0,
-    style: "background: blue;",
+    css: "",
+    code: "",
+    style: "",
   };
 
   setMultipler(val: number) {
@@ -48,6 +59,15 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
     this.emit("set:scrollDirection", val, this.#scrollDirection);
     this.setCover({ location: val === "up" ? "bottom" : "top" });
     this.#scrollDirection = val;
+  }
+
+  setNoteSkin(noteSkin: NoteSkin) {
+    this.#noteSkin = noteSkin;
+    this.emit("set:noteSkin", noteSkin);
+  }
+
+  get noteSkin() {
+    return this.#noteSkin;
   }
 
   get cover() {
