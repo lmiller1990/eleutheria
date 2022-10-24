@@ -1,29 +1,11 @@
 import { NoteSkin } from "@packages/shared";
-import dedent from "dedent";
 import {
   CoverParams,
+  defaultNoteSkinFallback,
   ModifierManager,
 } from "../screens/gameplay/modiferManager";
 import { preferencesManager } from "../screens/gameplay/preferences";
 import { ScrollDirection } from "../screens/gameplay/types";
-
-export const defaultNoteSkinFallback = dedent`
-  .note {
-    height: var(--note-height);
-    border-radius: 12px;
-
-    box-sizing: border-box;
-    font-size: 2rem;
-
-    border: 1px solid #a8bdc7;
-    background: #a8bdc7;
-  }
-
-  .note-1,
-  .note-4 {
-    background: #0a6ed6 !important;
-  }
-`;
 
 const preferences = preferencesManager.getPreferences();
 const modifierManager = new ModifierManager();

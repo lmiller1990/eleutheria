@@ -294,42 +294,6 @@ emitter.subscribe("editor:chart:updated", () => {
   query.executeQuery({ requestPolicy: "network-only" });
 });
 
-// function handleChangeScrollMod(val: ScrollDirection) {
-//   if (!game) {
-//     return;
-//   }
-
-//   game.modifierManager.setScroll(val);
-//   preferencesManager.updatePreferences({ scrollDirection: val });
-//   currentScroll.value = val;
-// }
-
-// function handleChangeCover(val: ModCoverParams) {
-//   if (!game) {
-//     return;
-//   }
-
-//   game.modifierManager.setCover(val);
-//   preferencesManager.updatePreferences({ cover: val });
-//   currentCover.value = val.id;
-// }
-
-// function handleChangeSpeedMod(val: number) {
-//   if (!game) {
-//     return;
-//   }
-
-//   const newMod = game.modifierManager.multiplier + val;
-
-//   if (newMod <= 0) {
-//     return;
-//   }
-
-//   game.modifierManager.setMultipler(newMod);
-//   preferencesManager.updatePreferences({ speedModifier: newMod });
-//   currentSpeed.value = newMod;
-// }
-
 const Side: FunctionalComponent = (_props, { slots }) => {
   return h("div", { class: "mt-48" }, slots);
 };

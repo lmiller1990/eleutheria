@@ -12,7 +12,6 @@ import {
 } from "vue";
 import { useGameplayOptions } from "../../composables/gameplayOptions";
 import { CoverParams } from "../gameplay/modiferManager";
-// import { getStyleByClass } from "../../components/ModifierPanel/css";
 import { ScrollDirection } from "../gameplay/types";
 import { OptionsModalDocument } from "../../generated/graphql";
 import { useQuery } from "@urql/vue";
@@ -69,10 +68,9 @@ const CoverSkinModPanel: FunctionalComponent<{
   onChangeMod: OptionsModalProps["onChangeCoverMod"];
 }> = (props) => {
   return (
-    <OptionsPanel title="Cover" selected={""}>
+    <OptionsPanel title="Cover Style" selected={""}>
       <div class="flex">
         {props.covers.map((x) => {
-          console.log(x);
           return (
             <div class="flex flex-col items-center mr-2">
               <button
@@ -159,7 +157,7 @@ const CoverOffsetModPanel: FunctionalComponent<{
   }
 
   return (
-    <OptionsPanel title="Cover" selected={`${props.modValue.offset}%`}>
+    <OptionsPanel title="Cover Height" selected={`${props.modValue.offset}%`}>
       <Slider
         options={options}
         max={100}
@@ -415,7 +413,6 @@ export const OptionsModalWrapper = defineComponent({
     const defaultNoteSkin = gql.data.value?.noteSkins.find(
       (x) => x.name === "default"
     );
-    console.log(gql.data.value);
 
     if (!defaultNoteSkin) {
       throw Error(
