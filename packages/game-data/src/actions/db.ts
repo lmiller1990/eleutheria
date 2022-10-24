@@ -1,5 +1,13 @@
+import { Cover } from "@packages/shared";
 import assert from "assert";
-import { Charts, Scores, Songs, Users } from "../../ dbschema";
+import {
+  Charts,
+  Covers,
+  NoteSkins,
+  Scores,
+  Songs,
+  Users,
+} from "../../ dbschema";
 import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
 import { knex, knexTable } from "../knex";
@@ -201,5 +209,21 @@ export class DbActions {
       ...score,
       timing: score.timing,
     });
+  }
+
+  async queryForAllNoteSkins(): Promise<NoteSkins[]> {
+    const skins = await knexTable<NoteSkins>("note_skins");
+    log(`skins are ${skins}`);
+    return skins;
+  }
+
+  async queryForAllCovers(): Promise<Cover[]> {
+    const covers = await knexTable<Covers>("covers");
+    log(`covers are ${covers}`);
+    return covers.map((x) => ({
+      ...x,
+      id: x.id.toString(),
+      thumbnailColor: x.thumbnail_color,
+    }));
   }
 }

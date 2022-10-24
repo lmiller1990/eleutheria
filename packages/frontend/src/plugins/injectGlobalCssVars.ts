@@ -7,6 +7,9 @@ export function injectStylesheet(style: string, id: string) {
   el.id = id;
   el.innerText = style;
   document.head.insertAdjacentElement("beforeend", el);
+  return () => {
+    el?.remove();
+  };
 }
 
 const noteSkinStyleId = "__NOTE_SKIN__";

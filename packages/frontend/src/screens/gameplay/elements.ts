@@ -125,7 +125,7 @@ export function createElements($root: HTMLDivElement, columnCount: number) {
     debug: $("#debug"),
     debugLiveNoteCount: $("#debug-live-notes"),
     debugFps: $("#debug-fps"),
-  };
+  } as const;
 }
 
 export type Elements = ReturnType<typeof createElements>;
@@ -133,13 +133,13 @@ export type Elements = ReturnType<typeof createElements>;
 export function $tapNote(
   classes: string = "",
   column: number,
-  textContent: string = ""
+  _textContent: string = ""
 ) {
   const d = document.createElement("div");
   d.className = `note note-${column} ${classes}`;
-  if (textContent) {
-    d.textContent = textContent;
-  }
+  // if (textContent) {
+  //   d.textContent = textContent;
+  // }
   return d;
 }
 

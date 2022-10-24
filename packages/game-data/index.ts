@@ -7,11 +7,7 @@ import bodyParser from "body-parser";
 import chokidar from "chokidar";
 import type { UserScripts } from "@packages/shared";
 import { WebSocketServer } from "ws";
-import {
-  compileSkins,
-  compileUserStyle,
-  readUserJavaScript,
-} from "./scripts/generateNotes";
+import { compileUserStyle, readUserJavaScript } from "./scripts/generateNotes";
 import { graphqlHTTP } from "express-graphql";
 import { graphqlSchema } from "./src/graphql/schema";
 import { knexTable } from "./src/knex";
@@ -143,17 +139,6 @@ app.get("/static/:asset", (req, res) => {
   const p = path.join(__dirname, "..", "frontend", "static", req.params.asset);
   log(`serving static asset ${req.params.asset} from path ${p}`);
   res.sendFile(p);
-});
-
-app.get("/note-skins", (_req, res) => {
-  if (process.env.NODE_ENV === "production") {
-    const skins = compileSkins(path.join(__dirname, "notes"), "css");
-    res.json(skins);
-  }
-
-  const notesDir = path.join(__dirname, "notes");
-  const skins = compileSkins(notesDir, "scss");
-  res.json(skins);
 });
 
 app.post<{}, {}, { name: string; password: string }>(

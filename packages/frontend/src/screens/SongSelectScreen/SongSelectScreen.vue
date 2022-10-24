@@ -45,7 +45,7 @@
         </IconButton>
 
         <IconButton>
-          <SettingsIcon />
+          <SettingsIcon @click="modal.showModal('options')" />
         </IconButton>
       </div>
     </div>

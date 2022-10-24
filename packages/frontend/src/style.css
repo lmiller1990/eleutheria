@@ -1,5 +1,3 @@
-@import "@packages/game-data/styles/global.css";
-
 * {
   box-sizing: border-box;
 }
@@ -123,6 +121,7 @@ body,
   text-shadow: 0px 0px 30px black;
   top: 250px;
   font-size: 2rem;
+  z-index: 10;
 }
 
 #combo {
@@ -159,4 +158,5 @@ body,
   position: absolute;
   z-index: 10;
   height: 100vh;
+  /* display: none; */
 }

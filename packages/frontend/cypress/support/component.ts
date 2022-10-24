@@ -45,7 +45,7 @@ declare global {
 Cypress.Commands.add("mount", mount);
 
 export function mount(comp: any, { props, ...rest }: MountingOptions<any> = {}) {
-  const client = createClient({ url: 'http://' })
+  const client = createClient({ url: 'http://localhost:5566/graphql' })
   const Parent = defineComponent({
     setup () {
       provideClient(client)

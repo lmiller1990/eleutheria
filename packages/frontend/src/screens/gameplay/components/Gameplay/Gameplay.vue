@@ -19,7 +19,6 @@ import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
 import { preferencesManager } from "../../preferences";
-import { ModifierManager } from "../../modiferManager";
 import { gql, useMutation, useQuery } from "@urql/vue";
 import {
   GameplayDocument,
@@ -30,6 +29,7 @@ import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
+import { useGameplayOptions } from "../../../../composables/gameplayOptions";
 
 export interface GameplayProps {
   __testingDoNotStartSong?: boolean;
@@ -163,7 +163,7 @@ function updateSummary(summary: Summary) {
 }
 
 let game: Game | undefined;
-const modifierManager = new ModifierManager();
+const { modifierManager } = useGameplayOptions();
 
 const router = useRouter();
 
@@ -290,46 +290,9 @@ onMounted(async () => {
 const { emitter } = useEditor();
 
 emitter.subscribe("editor:chart:updated", () => {
-  console.log("chart updated");
   // TODO: may only need to do this once
   query.executeQuery({ requestPolicy: "network-only" });
 });
-
-// function handleChangeScrollMod(val: ScrollDirection) {
-//   if (!game) {
-//     return;
-//   }
-
-//   game.modifierManager.setScroll(val);
-//   preferencesManager.updatePreferences({ scrollDirection: val });
-//   currentScroll.value = val;
-// }
-
-// function handleChangeCover(val: ModCoverParams) {
-//   if (!game) {
-//     return;
-//   }
-
-//   game.modifierManager.setCover(val);
-//   preferencesManager.updatePreferences({ cover: val });
-//   currentCover.value = val.id;
-// }
-
-// function handleChangeSpeedMod(val: number) {
-//   if (!game) {
-//     return;
-//   }
-
-//   const newMod = game.modifierManager.multiplier + val;
-
-//   if (newMod <= 0) {
-//     return;
-//   }
-
-//   game.modifierManager.setMultipler(newMod);
-//   preferencesManager.updatePreferences({ speedModifier: newMod });
-//   currentSpeed.value = newMod;
-// }
 
 const Side: FunctionalComponent = (_props, { slots }) => {
   return h("div", { class: "mt-48" }, slots);

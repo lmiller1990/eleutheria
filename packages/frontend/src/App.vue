@@ -31,6 +31,7 @@ const modal = useModal();
 
 <template>
   <div
+    id="modal-overlay"
     class="modal absolute h-screen w-screen flex items-center justify-center"
     :class="{
       'modal-show': modal.show.value,
@@ -38,7 +39,12 @@ const modal = useModal();
     }"
     @click="modal.hideModal"
   >
-    <component class="h-fit p-8" :is="modal.component.value" @click.stop />
+    <component
+      v-if="modal.show.value"
+      class="h-fit p-8"
+      :is="modal.component.value"
+      @click.stop
+    />
   </div>
 
   <RouterView />

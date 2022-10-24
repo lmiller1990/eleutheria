@@ -1,7 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
 import sass from "sass";
-import { NoteSkin } from "@packages/shared";
 
 const userDir = path.join(__dirname, "..", "user");
 
@@ -23,15 +22,4 @@ export async function compileUserStyle(): Promise<string> {
   }
 
   return sass.compile(p).css;
-}
-
-export function compileSkins(notesDir: string, ext: string): NoteSkin[] {
-  const skins = fs.readdirSync(notesDir);
-
-  return skins.map((name) => {
-    return {
-      css: sass.compile(path.join(notesDir, name, `index.${ext}`), {}).css,
-      name,
-    };
-  });
 }

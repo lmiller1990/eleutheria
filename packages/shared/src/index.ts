@@ -53,6 +53,14 @@ export interface NoteSkin {
   css: string;
 }
 
+export interface Cover {
+  id: string;
+  name: string;
+  thumbnailColor: string;
+  css: string;
+  code: string;
+}
+
 export interface ParamData {
   songId: string;
   file: string;
