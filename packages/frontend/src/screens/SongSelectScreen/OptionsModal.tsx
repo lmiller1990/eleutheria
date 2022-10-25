@@ -376,9 +376,7 @@ export const OptionsModalWrapper = defineComponent({
     });
 
     onBeforeUnmount(() => {
-      // Inject by the gameplay module, which isn't managed by Vue,
-      // so we need to remove these manually.
-      // removeAllInjectedStylesheets()
+      // This also cleans up any injected stylesheets.
       game?.stop();
     });
 

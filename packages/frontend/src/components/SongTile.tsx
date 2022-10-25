@@ -9,7 +9,6 @@ export interface Props {
 
 export const SongTile: FunctionalComponent<Props> = (props) => {
   const className = props.selected ? "border-white" : "border-black";
-  console.log(props.selected);
   return (
     <button
       class={`w-full bg-zinc-700 ${className} border-2 h-20 flex items-center justify-between`}
