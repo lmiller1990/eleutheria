@@ -16,7 +16,7 @@ const modal = useModal();
     <nav class="bg-zinc-700 w-full text-white flex justify-center title-nav">
       <div class="max-width w-full flex justify-center items-center klee-one">
         <Logo />
-        <div class="klee-one pb-1 ml-4 screen-title">
+        <div class="klee-one pb-1 ml-2 screen-title">
           {{ props.screenTitle }}
         </div>
       </div>

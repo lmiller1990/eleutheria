@@ -4,14 +4,14 @@
       <div class="flex flex-col">
         <div class="flex flex-col h-full">
           <SongTile
-            v-for="(song, idx) of songsQuery.data?.value?.songs"
+            v-for="song of songsQuery.data?.value?.songs"
             :key="song.id"
             :songTitle="song.title"
             :artist="song.artist"
-            class="h-full mb-4"
-            :imgSrc="thumbails[idx]"
-            :selected="song.id === selectedSongId"
-            @selected="handleSelected(song)"
+            :file="song.file"
+            class="mb-4"
+            :selected="song.id == selectedSong?.id"
+            @click="handleSelected(song)"
           />
         </div>
 
@@ -27,9 +27,7 @@
       </div>
 
       <div class="flex flex-col justify-between">
-        <SongImage
-          src="https://i1.sndcdn.com/artworks-I25aaV3g3bIRnsV2-jJchQg-t500x500.jpg"
-        />
+        <SongImage :src="`/static/${selectedSong?.file}.png`" />
         <div>
           <SongInfo
             :best="tableData.best"
@@ -57,8 +55,7 @@ import { IconButton } from "./IconButton";
 import { SettingsIcon } from "./SettingsIcon";
 import { UserIcon } from "./UserIcon";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import SongTile from "../../components/SongTile";
-import { thumbails } from "../../thumbnails";
+import { SongTile } from "../../components/SongTile";
 import { useRouter } from "vue-router";
 import { useSongsStore } from "../../stores/songs";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
@@ -83,7 +80,6 @@ gql`
       id
       title
       file
-      imgSrc
       duration
       artist
       bpm

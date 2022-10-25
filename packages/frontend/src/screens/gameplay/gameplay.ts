@@ -26,17 +26,14 @@ import {
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
-import {
-  NoteSkin,
-  ParamData,
-  timingWindows,
-  UserScripts,
-} from "@packages/shared";
+import { ParamData, timingWindows, UserScripts } from "@packages/shared";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
 import { ScrollDirection } from "./types";
 import {
   injectNoteSkin,
   injectStylesheet,
+  removeAllInjectedStylesheets,
+  stylesheetInjectionKeys,
 } from "../../plugins/injectGlobalCssVars";
 
 let timeoutId: number | undefined;
@@ -274,7 +271,6 @@ export interface StartGameArgs {
       offset: number;
     };
   };
-  noteSkinData: NoteSkin[];
   paramData: ParamData;
   userData: UserScripts;
   modifierManager?: ModifierManager;
@@ -326,7 +322,7 @@ export function create(
 
     elements.cover.innerHTML = ``;
     dangerouslyExecuteArbitraryCode(newCover.code);
-    injectStylesheet(newCover.css, "__COVER_CSS__");
+    injectStylesheet(newCover.css, stylesheetInjectionKeys.coverCss);
   });
 
   modifierManager.on("set:scrollDirection", (val) => {
@@ -517,7 +513,6 @@ export function create(
         modifierManager.cover,
         modifierManager.cover
       );
-
       injectNoteSkin(modifierManager.noteSkin);
     },
   };
@@ -543,6 +538,7 @@ export function create(
     },
     stop: () => {
       teardown();
+      removeAllInjectedStylesheets();
       game.stop();
     },
   };

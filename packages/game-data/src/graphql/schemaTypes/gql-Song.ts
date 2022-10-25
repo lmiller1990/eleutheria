@@ -12,7 +12,6 @@ export const Song = objectType({
     t.nonNull.int("id");
     t.nonNull.int("offset");
     t.nonNull.string("title");
-    t.nonNull.string("imgSrc");
     t.nonNull.string("duration");
     t.nonNull.string("file", {
       description: "Music file (eg, mp3 or wav) for this song",

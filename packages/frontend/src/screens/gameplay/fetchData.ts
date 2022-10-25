@@ -1,9 +1,4 @@
-import type { NoteSkin, ParamData, UserScripts } from "@packages/shared";
-
-export async function fetchNoteSkins(): Promise<NoteSkin[]> {
-  const res = await window.fetch(`/note-skins`);
-  return res.json();
-}
+import type { ParamData, UserScripts } from "@packages/shared";
 
 export async function fetchUser(): Promise<UserScripts> {
   // TODO: User Data via GraphQL

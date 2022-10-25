@@ -1,5 +1,17 @@
 import { NoteSkin } from "@packages/shared";
 
+export const stylesheetInjectionKeys = {
+  coverCss: "__COVER_CSS__",
+  modsPaneOverrides: "__OVERRIDES__",
+  noteSkin: "__NOTE_SKIN__",
+} as const;
+
+export function removeAllInjectedStylesheets() {
+  for (const id of Object.values(stylesheetInjectionKeys)) {
+    document.getElementById(id)?.remove();
+  }
+}
+
 export function injectStylesheet(style: string, id: string) {
   let el = document.querySelector<HTMLStyleElement>(`#${id}`);
   el?.remove();
@@ -12,8 +24,6 @@ export function injectStylesheet(style: string, id: string) {
   };
 }
 
-const noteSkinStyleId = "__NOTE_SKIN__";
-
 export function injectNoteSkin(skin: NoteSkin) {
-  return injectStylesheet(skin.css, noteSkinStyleId);
+  return injectStylesheet(skin.css, stylesheetInjectionKeys.noteSkin);
 }
