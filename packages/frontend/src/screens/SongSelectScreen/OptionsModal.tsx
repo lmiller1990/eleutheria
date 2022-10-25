@@ -18,6 +18,7 @@ import { useQuery } from "@urql/vue";
 import {
   injectNoteSkin,
   injectStylesheet,
+  stylesheetInjectionKeys,
 } from "../../plugins/injectGlobalCssVars";
 import { getStyleByClass } from "../../components/ModifierPanel/css";
 import dedent from "dedent";
@@ -123,7 +124,7 @@ const ScrollModPanel: FunctionalComponent<{
       <div class="flex">
         {(["up", "down"] as const).map((dir) => (
           <button
-            class="bg-zinc-700 border border-bg-black text-white py-1 w-16 mr-2"
+            class="bg-zinc-700 text-sm border border-bg-black text-white py-1 w-14 mr-2"
             onClick={(event) => onClick(event, dir)}
           >
             {dir}
@@ -239,7 +240,7 @@ const OptionsPanel: FunctionalComponent<{
   selected: string | number;
 }> = (props, { slots }) => {
   return (
-    <div class="w-full text-white text-lg p-2 bg-neutral-600 mt-6 border border-black">
+    <div class="w-full text-white text-lg p-2 bg-neutral-600 mt-2 border border-black">
       <div class="flex justify-between w-full my-1">
         <div>{props.title}</div>
         <div>{props.selected}</div>
@@ -269,7 +270,7 @@ interface OptionsModalProps {
 }
 
 const Col: FunctionalComponent = (_props, { slots }) => (
-  <div class="h-full flex flex-col justify-center mx-6">
+  <div class="h-full flex flex-col justify-center mx-10">
     {slots.default?.()}
   </div>
 );
@@ -282,10 +283,11 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
   return (
     <div
       style={{ background: "#828282", height: "75vh" }}
-      class="flex px-10 border border-white"
+      class="flex px-14 border border-white"
       onClick={stopPropagation}
     >
       <Col>
+        <h2 class="text-3xl">Options</h2>
         <SpeedModPanel
           onChangeMod={props.onChangeSpeedMod}
           modValue={props.currentSpeedMod}
@@ -311,7 +313,7 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
         />
       </Col>
       <Col>
-        <div style="height: 75%">
+        <div style="height: 85%">
           <div ref={props.gameplayRoot} class="h-full" />
         </div>
       </Col>
@@ -334,11 +336,11 @@ export const OptionsModalWrapper = defineComponent({
     const gameplayRoot = ref(undefined);
     const { modifierManager } = useGameplayOptions();
     let game: StartGame | void;
-    const cleanup = injectStylesheet(overrideStyles, "__overrides__");
+
+    injectStylesheet(overrideStyles, stylesheetInjectionKeys.modsPaneOverrides);
 
     onMounted(() => {
       const startGameArgs: StartGameArgs = {
-        noteSkinData: [],
         userData: {
           css: "",
           js: "",
@@ -373,15 +375,15 @@ export const OptionsModalWrapper = defineComponent({
       game!.start();
     });
 
-    let cleanupNoteSkin: (() => void) | undefined;
-
     onBeforeUnmount(() => {
-      cleanup();
-      cleanupNoteSkin?.();
+      // Inject by the gameplay module, which isn't managed by Vue,
+      // so we need to remove these manually.
+      // removeAllInjectedStylesheets()
+      game?.stop();
     });
 
     const onChangeNoteSkin = (noteSkin: NoteSkin) => {
-      cleanupNoteSkin = injectNoteSkin(noteSkin);
+      injectNoteSkin(noteSkin);
       modifiers.handleChangeNoteSkin(noteSkin);
     };
 

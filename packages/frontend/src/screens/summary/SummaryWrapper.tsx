@@ -19,6 +19,7 @@ gql`
         song {
           id
           title
+          file
         }
       }
     }
@@ -65,6 +66,7 @@ export const SummaryWrapper = defineComponent({
       <SummaryScreenContainer
         percent={gqlData.data.value.summary.percent}
         timing={timing}
+        file={gqlData.data.value.summary.chart.song.file}
         level={gqlData.data.value.summary.chart.level}
         songTitle={gqlData.data.value.summary.chart.song.title}
         records={{

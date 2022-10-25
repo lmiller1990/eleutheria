@@ -15,6 +15,7 @@ interface Props {
   level: number;
   timing: Timing[];
   songTitle: string;
+  file: string;
   records: {
     personal?: number;
     world?: number;
@@ -70,10 +71,7 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
       <div class="flex flex-col">
         <div class="summary-wrapper">
           <div>
-            <SongImage
-              src="https://i1.sndcdn.com/artworks-I25aaV3g3bIRnsV2-jJchQg-t500x500.jpg"
-              level={props.level}
-            />
+            <SongImage src={`/static/${props.file}.png`} level={props.level} />
             <div class="my-5">
               <SongTitle title={props.songTitle} />
             </div>

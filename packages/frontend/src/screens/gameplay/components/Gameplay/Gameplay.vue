@@ -11,10 +11,7 @@ import { windowsWithMiss } from "../../gameConfig";
 import type { Game, World } from "@packages/engine";
 import { SongImage } from "../../../SongSelectScreen/SongImage";
 import { SongTitle } from "../../components/Gameplay/SongTitle";
-import {
-  injectNoteSkin,
-  injectStylesheet,
-} from "../../../../plugins/injectGlobalCssVars";
+import { injectStylesheet } from "../../../../plugins/injectGlobalCssVars";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
 import { ScrollDirection } from "../../types";
@@ -25,7 +22,7 @@ import {
   Gameplay_SummaryDocument,
 } from "../../../../generated/graphql";
 import { create } from "../../gameplay";
-import { fetchNoteSkins, fetchUser, getParams } from "../../fetchData";
+import { fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
@@ -46,6 +43,7 @@ gql`
       id
       offset
       title
+      file
       artist
       chart(difficulty: $difficulty) {
         id
@@ -80,8 +78,7 @@ gql`
 
 const { songId, difficulty, file } = getParams();
 
-const [noteSkinData, userData, query] = await Promise.all([
-  fetchNoteSkins(),
+const [userData, query] = await Promise.all([
   fetchUser(),
   useQuery({
     query: GameplayDocument,
@@ -100,13 +97,6 @@ const gqlData = computed(() => {
   return query.data.value;
 });
 
-const defaultNoteSkin = noteSkinData.find((x) => x.name === "default");
-
-if (!defaultNoteSkin) {
-  throw Error(`No default note skin found`);
-}
-
-injectNoteSkin(defaultNoteSkin);
 injectStylesheet(userData.css, "user-css");
 
 const saveScore = useMutation(Gameplay_SummaryDocument);
@@ -226,10 +216,9 @@ onMounted(async () => {
           offset: gqlData.value.song.chart.offset,
         },
       },
-      noteSkinData: noteSkinData,
       paramData: {
         songId,
-        file,
+        file: `${file}.wav`,
         difficulty,
       },
       userData,
@@ -306,7 +295,7 @@ const Side: FunctionalComponent = (_props, { slots }) => {
         <Side class="mt-48 mr-8">
           <div>
             <SongImage
-              src="https://i1.sndcdn.com/artworks-I25aaV3g3bIRnsV2-jJchQg-t500x500.jpg"
+              :src="`/static/${gqlData.song.file}.png`"
               :level="gqlData.song.chart.level"
             />
             <SongTitle :title="gqlData.song.title" />

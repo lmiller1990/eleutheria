@@ -22,6 +22,7 @@ describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
     mount(
       () => (
         <SummaryScreenContainer
+          file="abyss_breaker"
           percent={99.5}
           timing={timing}
           level={15}
@@ -44,6 +45,7 @@ describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
     mount(
       () => (
         <SummaryScreenContainer
+          file="abyss_breaker"
           percent={90.5}
           timing={timing}
           level={15}
