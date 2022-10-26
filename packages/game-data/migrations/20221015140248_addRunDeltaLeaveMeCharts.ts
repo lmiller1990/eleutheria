@@ -13,6 +13,8 @@ export async function up(knex: Knex) {
       });
     });
 
+  // 2 is Rune Delta
+  // 3 is Leave me
   return Promise.all([...charts(2), ...charts(3)]);
 }
 

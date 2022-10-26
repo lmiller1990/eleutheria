@@ -103,7 +103,7 @@ export class DbActions {
   }
 
   async getChartsForSong(songId: number): Promise<ChartDataSource[]> {
-    const charts = await knexTable("charts")
+    const charts: Array<Charts & Songs> = await knexTable("charts")
       .join("songs", "songs.id", "=", "charts.song_id")
       .where<Array<Charts & Songs>>("charts.song_id", songId)
       .select([
@@ -116,7 +116,9 @@ export class DbActions {
         "songs.offset",
       ]);
 
-    return charts.map((data) => new ChartDataSource(this.#ctx, data));
+    return charts
+      .sort((x, y) => (y.level < x.level ? 1 : -1))
+      .map((data) => new ChartDataSource(this.#ctx, data));
   }
 
   async signOut() {
