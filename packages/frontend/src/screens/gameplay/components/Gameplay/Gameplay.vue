@@ -14,8 +14,6 @@ import { SongTitle } from "../../components/Gameplay/SongTitle";
 import { injectStylesheet } from "../../../../plugins/injectGlobalCssVars";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
-import { ScrollDirection } from "../../types";
-import { preferencesManager } from "../../preferences";
 import { gql, useMutation, useQuery } from "@urql/vue";
 import {
   GameplayDocument,
@@ -192,12 +190,6 @@ function handleKeydown(event: KeyboardEvent) {
 useEventListener("keyup", stop);
 useEventListener("keydown", handleKeydown);
 
-const preferences = preferencesManager.getPreferences();
-
-const currentSpeed = ref(preferences.speedModifier ?? 1);
-const currentScroll = ref<ScrollDirection>(preferences.scrollDirection ?? "up");
-const currentCover = ref<string>(preferences.cover?.id ?? "default");
-
 onMounted(async () => {
   if (!root.value) {
     return;
@@ -225,8 +217,8 @@ onMounted(async () => {
       songCompleted,
     },
     props.__testingDoNotStartSong,
-    props.__testingManualMode
-    // 128000 // repeat
+    props.__testingManualMode,
+    // 116000 // repeat
   );
 
   if (!init || !init.game) {
@@ -236,30 +228,9 @@ onMounted(async () => {
 
   game = init.game;
 
-  if (preferences.speedModifier) {
-    currentSpeed.value = preferences.speedModifier;
-    init.game.modifierManager.setMultipler(preferences.speedModifier);
-  } else {
-    currentSpeed.value = init.game.modifierManager.multiplier;
-  }
-
-  if (preferences.scrollDirection) {
-    currentScroll.value = preferences.scrollDirection;
-    init.game.modifierManager.setScroll(preferences.scrollDirection);
-  } else {
-    currentScroll.value = init.game.modifierManager.scrollDirection;
-  }
-
-  if (preferences.cover) {
-    currentCover.value = preferences.cover?.id ?? "default";
-    init.game.modifierManager.setCover(preferences.cover);
-  } else {
-    currentCover.value = "default";
-  }
-
   // if (true) {
   //   init.game.editorRepeat = {
-  //     emitAfterMs: 8000,
+  //     emitAfterMs: 10000,
   //     emitAfterMsCallback: async () => {
   //       // TODO: may only need to do this once
   //       await query.executeQuery({ requestPolicy: "network-only" });

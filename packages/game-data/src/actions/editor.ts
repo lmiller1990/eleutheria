@@ -8,7 +8,7 @@ const log = debug(`game-data:actions:editor`);
 
 export class EditorActions {
   #ctx: Context;
-  #editingChartId = 10;
+  #editingChartId?: number = undefined; // 2;
 
   constructor(ctx: Context) {
     this.#ctx = ctx;
@@ -19,6 +19,9 @@ export class EditorActions {
   }
 
   async copyChartToFile(chartId: number): Promise<void> {
+    if (!chartId) {
+      return;
+    }
     this.#editingChartId = chartId;
     log("editing chart");
     const chart = await this.#ctx.actions.db.queryChartById(chartId);
@@ -28,6 +31,10 @@ export class EditorActions {
 
   // TODO: Don't hardcode chartId
   async writeChartToDb() {
+    if (!this.#editingChartId) {
+      return;
+    }
+
     if (!this.#editingChartId) {
       log(
         `Cannot edit chart without first setting #editingChartId. Do that with the startEditing mutation.`

@@ -17,9 +17,10 @@
 
         <div id="levels">
           <button
-            v-for="{ level, id } in levels"
+            v-for="({ level, id }, idx) of levels"
             :key="id"
             class="bg-zinc-700 text-white h-14 w-14 mr-4 text-xl border border-2 border-black"
+            @click="handleSelectChart(idx)"
           >
             {{ level }}
           </button>
@@ -167,6 +168,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
+
+function handleSelectChart (idx: number) {
+  songsStore.setSelectedChartIdx(idx)
+}
 
 const chartDifficulty = computed(() => {
   return selectedChart.value?.difficulty ?? "";
