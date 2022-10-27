@@ -19,7 +19,8 @@
           <button
             v-for="({ level, id }, idx) of levels"
             :key="id"
-            class="bg-zinc-700 text-white h-14 w-14 mr-4 text-xl border border-2 border-black"
+            class="bg-zinc-700 text-white h-14 w-14 mr-4 text-xl border border-2"
+            :class="idx === selectedChartIdx ? 'border-white' : 'border-black'"
             @click="handleSelectChart(idx)"
           >
             {{ level }}
@@ -59,7 +60,6 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { SongTile } from "../../components/SongTile";
 import { useRouter } from "vue-router";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
-import { useHeldKeys } from "../../utils/useHeldKeys";
 import { gql, useQuery } from "@urql/vue";
 import {
   SongSelectScreen_SongsDocument,
@@ -115,6 +115,7 @@ const selectedChartIdx = ref<number>(0);
 
 const songsQuery = useQuery({
   query: SongSelectScreen_SongsDocument,
+  // requestPolicy: 'network-only'
 });
 
 const chartQuery = useQuery({
@@ -122,12 +123,13 @@ const chartQuery = useQuery({
   variables: {
     songId: selectedSongId,
   },
+  // requestPolicy: 'network-only'
 });
 
 const emitter = useEmitter();
 
 emitter.on("authentication:changed", () => {
-  chartQuery.executeQuery({ requestPolicy: "network-only" });
+  chartQuery.executeQuery();
 });
 
 const viewer = computed(() => {
@@ -206,27 +208,30 @@ const tableData = computed(() => {
 });
 
 const router = useRouter();
-const heldKeys = useHeldKeys();
 
-function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
-  selectedSongId.value = song.id;
-  selectedChartIdx.value = 0;
-
+async function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
   if (selectedSongId.value !== song.id) {
+    selectedSongId.value = song.id;
+    selectedChartIdx.value = 0;
     return;
   }
 
   if (!chartDifficulty.value) {
-    throw Error(`No difficulty was selected. This should be impossible`);
+    throw Error(`No difficulty was selected. This should be impossible.`);
   }
 
-  const route = heldKeys.value.has("KeyE") ? "editor" : "game";
+  const chartId = chartQuery.data.value?.charts.at(selectedChartIdx.value)?.id
+
+  if (!chartId) {
+    throw Error(`Did not find chart at index ${selectedChartIdx.value}. Charts only has ${chartQuery.data.value?.charts.length} elements.`)
+  }
+
   router.push({
-    path: route,
+    path: "game",
     query: {
       songId: song.id,
       file: song.file,
-      difficulty: chartDifficulty.value,
+      chartId
     },
   });
 }

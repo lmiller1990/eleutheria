@@ -36,14 +36,14 @@ const props = defineProps<GameplayProps>();
 const root = ref<HTMLDivElement>();
 
 gql`
-  query Gameplay($songId: Int!, $difficulty: String!) {
+  query Gameplay($songId: Int!, $chartId: Int!) {
     song(songId: $songId) {
       id
       offset
       title
       file
       artist
-      chart(difficulty: $difficulty) {
+      chart(chartId: $chartId) {
         id
         difficulty
         offset
@@ -74,7 +74,7 @@ gql`
   }
 `;
 
-const { songId, difficulty, file } = getParams();
+const { songId, chartId, file } = getParams();
 
 const [userData, query] = await Promise.all([
   fetchUser(),
@@ -83,7 +83,7 @@ const [userData, query] = await Promise.all([
     requestPolicy: "network-only",
     variables: {
       songId: parseInt(songId, 10),
-      difficulty,
+      chartId: parseInt(chartId, 10),
     },
   }),
 ]);
@@ -211,7 +211,7 @@ onMounted(async () => {
       paramData: {
         songId,
         file: `${file}.wav`,
-        difficulty,
+        chartId,
       },
       userData,
       songCompleted,

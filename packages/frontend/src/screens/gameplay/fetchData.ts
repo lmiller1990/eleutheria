@@ -13,11 +13,11 @@ export function getParams(): ParamData {
   const params = new URLSearchParams(url.search);
   const songId = params.get("songId");
   const file = params.get("file");
-  const difficulty = params.get("difficulty");
-  if (!songId || !difficulty || !file) {
+  const chartId = params.get("chartId");
+  if (!songId || !chartId || !file) {
     throw Error(
-      `Expected ${window.location} to have search params ?song=<ID> and ?difficulty=<difficulty> and ?file=<file.wav>`
+      `Expected ${window.location} to have search params ?song=<ID> and ?chartId=<chartId> and ?file=<file.wav>`
     );
   }
-  return { songId, difficulty, file };
+  return { songId, chartId, file };
 }
