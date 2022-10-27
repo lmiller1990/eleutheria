@@ -1,4 +1,4 @@
-import { nonNull, objectType, stringArg } from "nexus";
+import { idArg, intArg, nonNull, objectType, stringArg } from "nexus";
 import path from "path";
 import { Chart } from "./gql-Chart";
 
@@ -23,17 +23,15 @@ export const Song = objectType({
     t.nonNull.field("chart", {
       type: Chart,
       args: {
-        difficulty: nonNull(stringArg()),
+        chartId: nonNull(intArg()),
       },
       resolve: async (source, args, ctx) => {
         const chart = (await ctx.actions.db.getChartsForSong(source.id)).find(
-          (x) => x.difficulty === args.difficulty
+          (x) => x.id === args.chartId
         );
 
         if (!chart) {
-          throw Error(
-            `Could not find chart with difficulty ${args.difficulty}`
-          );
+          throw Error(`Could not find chart with id=${args.chartId}`);
         }
 
         return chart;

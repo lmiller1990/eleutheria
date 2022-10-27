@@ -64,7 +64,7 @@ export interface Cover {
 export interface ParamData {
   songId: string;
   file: string;
-  difficulty: string;
+  chartId: string;
 }
 
 export interface UserScripts {

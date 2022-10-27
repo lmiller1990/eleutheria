@@ -352,7 +352,7 @@ export const OptionsModalWrapper = defineComponent({
         paramData: {
           file: "empty.mp3",
           songId: "",
-          difficulty: "",
+          chartId: "",
         },
         songData: {
           chart: {
