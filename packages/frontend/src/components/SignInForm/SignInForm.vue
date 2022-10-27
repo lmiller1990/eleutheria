@@ -7,6 +7,7 @@ import { gql } from "@urql/core";
 import { useMutation } from "@urql/vue";
 import { SignInForm_SignInDocument } from "../../generated/graphql";
 import { useModal } from "../../composables/modal";
+import { useEmitter } from "../../composables/emitter";
 
 gql`
   mutation SignInForm_SignIn($email: String!, $password: String!) {
@@ -46,6 +47,8 @@ function handleSignUp() {
   modal.showModal("signUp");
 }
 
+const emitter = useEmitter();
+
 async function handleSubmit() {
   const res = await signIn.executeMutation({
     email: form.email.value,
@@ -55,6 +58,7 @@ async function handleSubmit() {
   if (res.error?.graphQLErrors?.[0]) {
     error.value = res.error?.graphQLErrors?.[0].message;
   } else {
+    emitter.emit("authentication:changed");
     modal.hideModal();
   }
 }

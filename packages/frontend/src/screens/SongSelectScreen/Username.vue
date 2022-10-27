@@ -14,7 +14,10 @@ gql`
   }
 `;
 
-const viewerQuery = useQuery({ query: Username_ViewerDocument });
+const viewerQuery = useQuery({
+  query: Username_ViewerDocument,
+  requestPolicy: "network-only",
+});
 
 const viewer = computed(() => {
   return viewerQuery.data?.value?.viewer ?? null;

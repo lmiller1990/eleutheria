@@ -234,13 +234,9 @@ export class Game implements GameAPI {
       window.cancelAnimationFrame(this.#nextAnimationFrame);
     }
 
-    if (!this.#inputManager || !this.#source || !this.#audioContext) {
-      throw Error("inputManager or source not defined when calling stop.");
-    }
-
-    this.#inputManager.teardown();
-    this.#source.stop();
-    this.#audioContext.close();
+    this.#inputManager?.teardown();
+    this.#source?.stop();
+    this.#audioContext?.close();
     this.#__dev.initialGameState = undefined;
   }
 

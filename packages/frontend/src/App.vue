@@ -1,30 +1,5 @@
 <script lang="ts" setup>
-import {
-  createClient,
-  provideClient,
-  dedupExchange,
-  fetchExchange,
-} from "@urql/vue";
-import { devtoolsExchange } from "@urql/devtools";
-import { cacheExchange } from "@urql/exchange-graphcache";
 import { useModal } from "./composables/modal";
-
-const client = createClient({
-  url: "/graphql",
-  exchanges: [
-    devtoolsExchange,
-    dedupExchange,
-    cacheExchange({
-      keys: {
-        Viewer: () => null,
-        App: () => null,
-      },
-    }),
-    fetchExchange,
-  ],
-});
-
-provideClient(client);
 
 const modal = useModal();
 </script>

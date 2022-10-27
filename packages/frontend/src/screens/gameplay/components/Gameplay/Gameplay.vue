@@ -217,7 +217,7 @@ onMounted(async () => {
       songCompleted,
     },
     props.__testingDoNotStartSong,
-    props.__testingManualMode,
+    props.__testingManualMode
     // 116000 // repeat
   );
 

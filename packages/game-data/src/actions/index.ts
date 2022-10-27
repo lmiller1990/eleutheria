@@ -2,6 +2,7 @@ import { Context } from "../graphql/context";
 import { DbActions } from "./db";
 import { EditorActions } from "./editor";
 import { GameplayActions } from "./gameplay";
+import { GraphQLActions } from "./graphql";
 
 export class DataActions {
   #ctx: Context;
@@ -20,5 +21,9 @@ export class DataActions {
 
   get gameplay() {
     return new GameplayActions(this.#ctx);
+  }
+
+  get graphql() {
+    return new GraphQLActions(this.#ctx);
   }
 }

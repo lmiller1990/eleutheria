@@ -118,7 +118,9 @@ export class DbActions {
 
     return charts
       .sort((x, y) => (y.level < x.level ? 1 : -1))
-      .map((data) => new ChartDataSource(this.#ctx, data));
+      .map((data) => {
+        return new ChartDataSource(this.#ctx, data);
+      });
   }
 
   async signOut() {

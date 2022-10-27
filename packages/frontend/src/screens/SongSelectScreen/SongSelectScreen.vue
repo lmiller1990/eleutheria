@@ -58,7 +58,6 @@ import { UserIcon } from "./UserIcon";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { SongTile } from "../../components/SongTile";
 import { useRouter } from "vue-router";
-import { useSongsStore } from "../../stores/songs";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { useHeldKeys } from "../../utils/useHeldKeys";
 import { gql, useQuery } from "@urql/vue";
@@ -70,13 +69,10 @@ import {
 import { SongInfo } from "../../components/SongInfo";
 import { SongImage } from "./SongImage";
 import { useModal } from "../../composables/modal";
+import { useEmitter } from "../../composables/emitter";
 
 gql`
   query SongSelectScreen_Songs {
-    viewer {
-      id
-      email
-    }
     songs {
       id
       title
@@ -90,6 +86,10 @@ gql`
 
 gql`
   query SongSelectScreen_Chart($songId: Int!) {
+    viewer {
+      id
+      email
+    }
     charts(songId: $songId) {
       id
       difficulty
@@ -100,7 +100,6 @@ gql`
   }
 `;
 
-const songsStore = useSongsStore();
 const modal = useModal();
 
 function handleAuthenticate() {
@@ -111,7 +110,8 @@ function handleAuthenticate() {
   }
 }
 
-const selectedSongId = ref<number>();
+const selectedSongId = ref<number>(2);
+const selectedChartIdx = ref<number>(0);
 
 const songsQuery = useQuery({
   query: SongSelectScreen_SongsDocument,
@@ -120,29 +120,23 @@ const songsQuery = useQuery({
 const chartQuery = useQuery({
   query: SongSelectScreen_ChartDocument,
   variables: {
-    // @ts-expect-error - we only unpause when this is non null
     songId: selectedSongId,
   },
-  pause: computed(() => !selectedSongId.value),
+});
+
+const emitter = useEmitter();
+
+emitter.on("authentication:changed", () => {
+  chartQuery.executeQuery({ requestPolicy: "network-only" });
 });
 
 const viewer = computed(() => {
-  return songsQuery.data?.value?.viewer ?? null;
+  return chartQuery.data?.value?.viewer ?? null;
 });
 
 function handleKeyDown(event: KeyboardEvent) {
-  if (!songsStore.selectedSongId || songsStore.selectedChartIdx === undefined) {
+  if (selectedChartIdx.value === undefined) {
     return;
-  }
-
-  if (event.code === "Enter") {
-    const song = songsQuery.data.value?.songs.find(
-      (x) => x.id === songsStore.selectedSongId
-    );
-    if (!song) {
-      return;
-    }
-    handleSelected(song);
   }
 
   if (!chartQuery.data.value?.charts.length) {
@@ -151,13 +145,13 @@ function handleKeyDown(event: KeyboardEvent) {
 
   if (
     event.code === "KeyJ" &&
-    songsStore.selectedChartIdx < chartQuery.data.value.charts.length
+    selectedChartIdx.value < chartQuery.data.value.charts.length
   ) {
-    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx + 1);
+    selectedChartIdx.value += 1;
   }
 
-  if (event.code === "KeyK" && songsStore.selectedChartIdx > 0) {
-    songsStore.setSelectedChartIdx(songsStore.selectedChartIdx - 1);
+  if (event.code === "KeyK" && selectedChartIdx.value > 0) {
+    selectedChartIdx.value -= 1;
   }
 }
 
@@ -169,8 +163,8 @@ onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
 
-function handleSelectChart (idx: number) {
-  songsStore.setSelectedChartIdx(idx)
+function handleSelectChart(idx: number) {
+  selectedChartIdx.value = idx;
 }
 
 const chartDifficulty = computed(() => {
@@ -190,13 +184,15 @@ const levels = computed<Array<{ level: number; id: number }>>(() => {
   });
 });
 
-const selectedChart = computed(
-  () => chartQuery.data.value?.charts?.[songsStore.selectedChartIdx]
-);
+const selectedChart = computed(() => {
+  return chartQuery.data.value?.charts?.[selectedChartIdx.value];
+});
 
-const selectedSong = computed(() =>
-  songsQuery.data.value?.songs?.find((x) => x.id === selectedSongId.value)
-);
+const selectedSong = computed(() => {
+  return songsQuery.data.value?.songs?.find(
+    (x) => x.id === selectedSongId.value
+  );
+});
 
 const tableData = computed(() => {
   return {
@@ -214,28 +210,25 @@ const heldKeys = useHeldKeys();
 
 function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
   selectedSongId.value = song.id;
-  songsStore.setSelectedChartIdx(0);
+  selectedChartIdx.value = 0;
 
-  if (songsStore.selectedSongId === song.id) {
-    // they already clicked it once
-    // time to play!
-
-    if (!chartDifficulty.value) {
-      throw Error(`No difficulty was selected. This should be impossible`);
-    }
-
-    const route = heldKeys.value.has("KeyE") ? "editor" : "game";
-    router.push({
-      path: route,
-      query: {
-        songId: song.id,
-        file: song.file,
-        difficulty: chartDifficulty.value,
-      },
-    });
-  } else {
-    songsStore.setSelectedSongId(song.id);
+  if (selectedSongId.value !== song.id) {
+    return;
   }
+
+  if (!chartDifficulty.value) {
+    throw Error(`No difficulty was selected. This should be impossible`);
+  }
+
+  const route = heldKeys.value.has("KeyE") ? "editor" : "game";
+  router.push({
+    path: route,
+    query: {
+      songId: song.id,
+      file: song.file,
+      difficulty: chartDifficulty.value,
+    },
+  });
 }
 </script>
 
