@@ -31,9 +31,7 @@ export const Song = objectType({
         );
 
         if (!chart) {
-          throw Error(
-            `Could not find chart with id=${args.chartId}`
-          );
+          throw Error(`Could not find chart with id=${args.chartId}`);
         }
 
         return chart;

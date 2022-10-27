@@ -115,7 +115,6 @@ const selectedChartIdx = ref<number>(0);
 
 const songsQuery = useQuery({
   query: SongSelectScreen_SongsDocument,
-  // requestPolicy: 'network-only'
 });
 
 const chartQuery = useQuery({
@@ -123,7 +122,7 @@ const chartQuery = useQuery({
   variables: {
     songId: selectedSongId,
   },
-  requestPolicy: 'cache-and-network'
+  requestPolicy: "cache-and-network",
 });
 
 const emitter = useEmitter();
@@ -209,7 +208,7 @@ const tableData = computed(() => {
 
 const router = useRouter();
 
-async function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
+function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
   if (selectedSongId.value !== song.id) {
     selectedSongId.value = song.id;
     selectedChartIdx.value = 0;
@@ -220,10 +219,12 @@ async function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]
     throw Error(`No difficulty was selected. This should be impossible.`);
   }
 
-  const chartId = chartQuery.data.value?.charts.at(selectedChartIdx.value)?.id
+  const chartId = chartQuery.data.value?.charts.at(selectedChartIdx.value)?.id;
 
   if (!chartId) {
-    throw Error(`Did not find chart at index ${selectedChartIdx.value}. Charts only has ${chartQuery.data.value?.charts.length} elements.`)
+    throw Error(
+      `Did not find chart at index ${selectedChartIdx.value}. Charts only has ${chartQuery.data.value?.charts.length} elements.`
+    );
   }
 
   router.push({
@@ -231,7 +232,7 @@ async function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]
     query: {
       songId: song.id,
       file: song.file,
-      chartId
+      chartId,
     },
   });
 }
