@@ -24,6 +24,7 @@ export const Summary = objectType({
         const cds = await ctx.actions.db.queryForWorldRecord(
           source.data.chart_id
         );
+        console.log(cds, source.data.chart_id);
         return cds?.percent ?? null;
       },
     });

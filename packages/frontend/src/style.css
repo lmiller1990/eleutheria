@@ -114,19 +114,17 @@ body,
 #combo {
   font-family: "Comfortaa", cursive;
   text-transform: uppercase;
+  z-index: 4;
 }
 
 #timing {
   position: absolute;
   text-shadow: 0px 0px 30px black;
-  top: 250px;
   font-size: 2rem;
-  z-index: 10;
 }
 
 #combo {
   position: absolute;
-  top: 200px;
   font-size: 1.75rem;
   color: white;
 }
