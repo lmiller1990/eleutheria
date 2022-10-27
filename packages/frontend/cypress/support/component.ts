@@ -3,8 +3,6 @@ import { mount as _mount } from "cypress/vue";
 import type { Pinia } from "pinia";
 import "./commands";
 import "@packages/game-data/styles/global.css";
-import { useSongsStore } from "../../src/stores/songs";
-import { testSong } from "../fixtures/songs";
 import { createRouterMock } from 'vue-router-mock'
 import "./style.css";
 import "../../src/output.css";
@@ -19,11 +17,6 @@ let pinia: Pinia;
 beforeEach(() => {
   pinia = createPinia();
   setActivePinia(pinia);
-  const songsStore = useSongsStore();
-  songsStore.$patch((state) => {
-    state.selectedSongId = Number(testSong.id);
-    state.selectedChartIdx = 0;
-  });
 });
 
 // Augment the Cypress namespace to include type definitions for

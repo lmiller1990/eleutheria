@@ -2,7 +2,6 @@ import { defineComponent, h, onUnmounted } from "vue";
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { InputManager } from "@packages/engine";
 import SongSelectScreen from "./screens/SongSelectScreen";
-import { useSongsStore } from "./stores/songs";
 
 export const createRouter = () => {
   const router = _createRouter({
@@ -39,20 +38,6 @@ export const createRouter = () => {
         }),
       },
     ],
-  });
-
-  router.beforeEach((to) => {
-    const songsSongs = useSongsStore();
-
-    if (
-      songsSongs.selectedSongId === undefined &&
-      to.meta.requiresSongSelected === true
-    ) {
-      return {
-        path: "/",
-      };
-    }
-    return true;
   });
 
   return router;

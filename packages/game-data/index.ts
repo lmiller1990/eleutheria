@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import fs from "fs-extra";
 import cors from "cors";
 import path from "node:path";
@@ -84,12 +84,14 @@ wss.on("connection", (ws) => {
 });
 
 app.get("/app", async (req, res) => {
+  const ssrData = await req.ctx.actions.graphql.selectSongScreenQuery();
+
   if (process.env.NODE_ENV === "production") {
-    res.send(await req.ctx.sources.html.prodModeIndexHtml());
+    res.send(await req.ctx.sources.html.prodModeIndexHtml(ssrData));
     return;
   }
 
-  res.send(req.ctx.sources.html.devModeIndexHtml);
+  res.send(req.ctx.sources.html.devModeIndexHtml(ssrData));
 });
 
 app.get("/", async (_req, res) => {
@@ -160,8 +162,9 @@ app.post<{}, {}, { name: string; password: string }>(
 
 app.use(
   "/graphql",
-  graphqlHTTP((_req, res) => {
-    const req = _req as unknown as Express.Request;
+  graphqlHTTP((_req, _res) => {
+    const req = _req as unknown as Express.Request & Request;
+    console.log("GraphQL Request from", req.headers["x-graphql-from"]);
     return {
       schema: graphqlSchema,
       graphiql: true,

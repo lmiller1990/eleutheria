@@ -7,6 +7,7 @@ import {
   Profile_ViewerDocument,
 } from "../../generated/graphql";
 import Button from "../../components/Button.vue";
+import { useEmitter } from "../../composables/emitter";
 
 gql`
   query Profile_Viewer {
@@ -30,9 +31,11 @@ gql`
 const viewerQuery = useQuery({ query: Profile_ViewerDocument });
 const signOut = useMutation(Profile_SignOutDocument);
 const modal = useModal();
+const emitter = useEmitter()
 
 async function handleSignOut() {
   await signOut.executeMutation({});
+  emitter.emit("authentication:changed")
   modal.hideModal();
 }
 </script>

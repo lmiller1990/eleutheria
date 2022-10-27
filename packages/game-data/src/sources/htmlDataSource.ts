@@ -13,7 +13,7 @@ export class HtmlDataSource {
     this.#ctx = ctx;
   }
 
-  async prodModeIndexHtml() {
+  async prodModeIndexHtml(data: string) {
     const fe = path.join(__dirname, "..", "..", "..", "..", "frontend");
     const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
 
@@ -44,7 +44,10 @@ export class HtmlDataSource {
       </html>`;
   }
 
-  get devModeIndexHtml() {
+  /**
+   * data is result of initial GraphQL query -> JSON.stringified
+   */
+  devModeIndexHtml(ssrData: string) {
     return dedent`
       <!DOCTYPE html>
       <html lang="en">
@@ -58,6 +61,7 @@ export class HtmlDataSource {
             rel="stylesheet"
           />
           <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
+          <script>window.__SSR_DATA__ = ${ssrData}</script>
         </head>
 
         <body>

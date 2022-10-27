@@ -321,7 +321,11 @@ export function create(
     }
 
     elements.cover.innerHTML = ``;
-    dangerouslyExecuteArbitraryCode(newCover.code);
+    try {
+      dangerouslyExecuteArbitraryCode(newCover.code);
+    } catch (e) {
+      // no-op - assume userland code can and will error, should not break gameplay.
+    }
     injectStylesheet(newCover.css, stylesheetInjectionKeys.coverCss);
   });
 
