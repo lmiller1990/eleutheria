@@ -26,7 +26,6 @@ export function useEditor() {
   const emitter = new EE();
 
   ws.addEventListener("open", () => {
-    console.log("web socket open");
     ws.send(
       JSON.stringify({
         type: "editor:start",

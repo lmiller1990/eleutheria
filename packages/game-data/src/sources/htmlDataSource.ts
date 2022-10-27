@@ -13,7 +13,7 @@ export class HtmlDataSource {
     this.#ctx = ctx;
   }
 
-  async prodModeIndexHtml(data: string) {
+  async prodModeIndexHtml(ssrData: string) {
     const fe = path.join(__dirname, "..", "..", "..", "..", "frontend");
     const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
 
@@ -35,6 +35,7 @@ export class HtmlDataSource {
             rel="stylesheet"
           />
           <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
+          <script>window.__SSR_DATA__ = ${ssrData}</script>
         </head>
 
         <body>

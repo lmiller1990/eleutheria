@@ -71,7 +71,6 @@ const marketing =
     : path.join(__dirname, "..", "marketing", "dist");
 
 wss.on("connection", (ws) => {
-  console.log("web socket connected");
   watcher.on("change", async () => {
     try {
       console.log("Writing chart to db...");
@@ -164,7 +163,6 @@ app.use(
   "/graphql",
   graphqlHTTP((_req, _res) => {
     const req = _req as unknown as Express.Request & Request;
-    console.log("GraphQL Request from", req.headers["x-graphql-from"]);
     return {
       schema: graphqlSchema,
       graphiql: true,
