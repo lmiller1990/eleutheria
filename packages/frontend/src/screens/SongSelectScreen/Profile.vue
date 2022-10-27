@@ -31,11 +31,11 @@ gql`
 const viewerQuery = useQuery({ query: Profile_ViewerDocument });
 const signOut = useMutation(Profile_SignOutDocument);
 const modal = useModal();
-const emitter = useEmitter()
+const emitter = useEmitter();
 
 async function handleSignOut() {
   await signOut.executeMutation({});
-  emitter.emit("authentication:changed")
+  emitter.emit("authentication:changed");
   modal.hideModal();
 }
 </script>

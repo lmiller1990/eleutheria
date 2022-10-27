@@ -47,7 +47,7 @@ function handleSignUp() {
   modal.showModal("signUp");
 }
 
-const emitter = useEmitter()
+const emitter = useEmitter();
 
 async function handleSubmit() {
   const res = await signIn.executeMutation({
@@ -58,7 +58,7 @@ async function handleSubmit() {
   if (res.error?.graphQLErrors?.[0]) {
     error.value = res.error?.graphQLErrors?.[0].message;
   } else {
-    emitter.emit("authentication:changed")
+    emitter.emit("authentication:changed");
     modal.hideModal();
   }
 }

@@ -6,7 +6,7 @@ import {
   fetchExchange,
   ssrExchange,
 } from "@urql/core";
-import fetch from 'node-fetch'
+import fetch from "node-fetch";
 
 export class GraphQLDataSource {
   #ctx: Context;
