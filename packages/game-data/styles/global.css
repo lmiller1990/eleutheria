@@ -12,4 +12,5 @@
 .note {
   position: absolute;
   width: 95%;
+  z-index: 5;
 }

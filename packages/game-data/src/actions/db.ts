@@ -150,10 +150,13 @@ export class DbActions {
     chartId: number
   ): Promise<ScoreDataSource | undefined> {
     const subquery = await knexTable("scores")
+      .where("scores.chart_id", chartId)
       .max<[{ max: number }]>(knex.raw("percent"))
       .returning("scores");
+
     const max = subquery[0].max;
     if (!max) {
+      log(`no max found`);
       // No existing score found
       return;
     }
@@ -167,6 +170,7 @@ export class DbActions {
     log(`best score for chart_id ${chartId} is ${score?.percent}`);
 
     if (!score) {
+      log(`no score found`);
       return undefined;
     }
 

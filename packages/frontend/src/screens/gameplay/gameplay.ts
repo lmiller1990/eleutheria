@@ -302,6 +302,14 @@ export function create(
 
   const targetsRect = elements.targets.getBoundingClientRect();
 
+  if (modifierManager.scrollDirection === "up") {
+    elements.timing.style.top = "300px";
+    elements.combo.style.top = "350px";
+  } else {
+    elements.timing.style.bottom = "350px";
+    elements.combo.style.bottom = "400px";
+  }
+
   modifierManager.on("set:scrollDirection", (direction) => {
     // if the scrollDirection has changed, we need to redraw the targets.
     redrawTargets(elements, direction);
