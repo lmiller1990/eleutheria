@@ -1,11 +1,11 @@
 import { Context } from "../graphql/context";
 import {
-  cacheExchange,
   createClient,
   dedupExchange,
   fetchExchange,
   ssrExchange,
 } from "@urql/core";
+import { cacheExchange } from "@urql/exchange-graphcache";
 import fetch from "node-fetch";
 
 export class GraphQLDataSource {
@@ -22,7 +22,7 @@ export class GraphQLDataSource {
 
     const client = createClient({
       url: "http://localhost:5566/graphql",
-      exchanges: [dedupExchange, cacheExchange, ssr, fetchExchange],
+      exchanges: [dedupExchange, cacheExchange(), ssr, fetchExchange],
       // @ts-ignore - types assume window.fetch
       fetch,
     });

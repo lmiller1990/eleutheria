@@ -123,7 +123,7 @@ const chartQuery = useQuery({
   variables: {
     songId: selectedSongId,
   },
-  // requestPolicy: 'network-only'
+  requestPolicy: 'cache-and-network'
 });
 
 const emitter = useEmitter();

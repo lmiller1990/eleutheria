@@ -9,10 +9,10 @@ import urql, {
   dedupExchange,
   fetchExchange,
   ssrExchange,
-  cacheExchange,
+  // cacheExchange,
 } from "@urql/vue";
 import { devtoolsExchange } from "@urql/devtools";
-// import { cacheExchange } from "@urql/exchange-graphcache";
+import { cacheExchange } from "@urql/exchange-graphcache";
 import { createRouter } from "./router";
 import "./output.css";
 
@@ -32,13 +32,22 @@ const client = createClient({
   exchanges: [
     devtoolsExchange,
     dedupExchange,
-    cacheExchange,
-    // cacheExchange({
-    //   keys: {
-    //     Viewer: () => null,
-    //     App: () => null,
-    //   },
-    // }),
+    cacheExchange({
+      keys: {
+        Viewer: () => null,
+      },
+      updates: {
+        Mutation: {
+          signOut(_result, _args, cache, _info) {
+            // Clear out `Chart` which contains personal best scores,
+            // But keep the actual song list - that isn't user specific (yet, anyway).
+            cache.invalidate({
+              __typename: "Chart",
+            });
+          },
+        },
+      },
+    }),
     ssrExchange({
       isClient: true,
       initialState: window.__SSR_DATA__,
