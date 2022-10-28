@@ -3,13 +3,14 @@
   "version": "0.0.0-development",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && yarn tailwind:build && yarn codegen && vite build",
+    "build": "tsc && yarn tailwind:build && yarn codegen && yarn transpile:graphql && vite build",
     "test": "node ./scripts/runCypress.js",
     "e2e": "ts-node --transpileOnly ./scripts/runE2E.ts",
     "test:unit": "vitest --run",
     "check-ts": "vue-tsc --noEmit --project .",
     "cy:open": "cypress open --browser chrome --component",
-    "clean": "rm -rf dist && rm -f src/generated/graphql.ts",
+    "transpile:graphql": "node ./scripts/transpileGraphQL.js",
+    "clean": "rm -rf dist && rm -f src/generated/graphql.{js,ts}",
     "codegen": "graphql-codegen --config codegen.yml",
     "tailwind": "tailwindcss -i src/index.css -o ./src/output.css --watch",
     "tailwind:build": "tailwindcss -i src/index.css -o ./src/output.css --config tailwind.config.js"

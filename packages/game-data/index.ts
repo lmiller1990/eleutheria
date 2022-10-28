@@ -103,13 +103,24 @@ app.get("/output.css", async (_req, res) => {
 });
 
 app.get(
-  ["", "/app"].map((x) => `${x}/KleeOne-Regular.ttf`),
+  ["", "/app", "/assets", "/app/assets"].map((x) => `${x}/KleeOne-Regular.ttf`),
   async (_req, res) => {
     res.sendFile(path.join(marketing, "KleeOne-Regular.ttf"));
   }
 );
 
-app.get("/assets/:asset", (req, res) => {
+app.get("/app/", (_req, res) => {
+  res.redirect("/app");
+});
+
+app.get(
+  ["game", "summary"].map((x) => `/app/${x}`),
+  async (_req, res) => {
+    res.redirect("/app");
+  }
+);
+
+app.get(["/app/assets/:asset", "/assets/:asset"], (req, res) => {
   res.sendFile(
     path.join(
       __dirname,
