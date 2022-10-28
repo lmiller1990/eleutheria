@@ -1,30 +1,46 @@
-import execa from "execa";
-import path from "path";
+import { spawn } from "node:child_process";
 
-const packages = path.join(__dirname, "..", "packages");
+export async function spawnProcess(
+  name: string,
+  pkg: string,
+  command: string[] = ["build"]
+) {
+  const cwd = `packages/${pkg}`;
+  console.log(`Running ${command.join(" ")} in ${cwd}...`);
 
-async function build(pkg: string, command = 'build') {
-  console.log(`Running ${command} in ${pkg}...`);
-  return execa("yarn", [command], {
-    cwd: path.join(packages, pkg),
-    shell: true,
-    stderr: "pipe",
+  return new Promise<void>((resolve, reject) => {
+    spawn("yarn", command, {
+      stdio: "inherit",
+      cwd,
+    })
+      .on("exit", () => {
+        console.log(`✅ ${name}`);
+        resolve();
+      })
+      .on("error", (err) => {
+        console.log("error", err);
+        reject(err);
+      });
   });
 }
+
 async function main() {
   // 1. we build front-end first, because game-data needs the manifest
   // that is generated
   try {
-    await build("shared");
-    await build("chart-parser");
-    await build("audio-utils");
-    await build("engine")
-    await build("game-data", "build-schema");
-    await build("frontend");
-    await build("marketing")
+    // Nexus
+    await spawnProcess("Nexus", "game-data", ["build-schema"]);
+    // Frontend GraphQL
+    await spawnProcess("GraphQL Codegen", "frontend", ["codegen"]);
+    await spawnProcess("Shared", "shared");
+    await spawnProcess("Chart Parser", "chart-parser");
+    await spawnProcess("Audio Utils", "audio-utils");
+    await spawnProcess("Engine", "engine");
+    await spawnProcess("Frontend", "frontend");
+    await spawnProcess("Marketing Page", "marketing");
 
     // 2. game-data (the backend)
-    await build("game-data");
+    await spawnProcess("Backend", "game-data");
   } catch (e) {
     console.log("Error building", e);
   }

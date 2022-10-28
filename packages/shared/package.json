@@ -8,7 +8,8 @@
   "scripts": {
     "test": "vitest --run",
     "check-ts": "tsc --noEmit",
-    "build": "yarn tsc"
+    "build": "yarn tsc",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "typescript": "4.7.4",

@@ -3,10 +3,10 @@ import minimist from "minimist";
 import dedent from "dedent";
 import fs from "fs-extra";
 import chokidar from "chokidar";
-import path from "path";
+import path from "node:path";
 import inquirer from "inquirer";
-import { ChildProcess, spawn } from "child_process";
-import http from "http";
+import { ChildProcess, spawn } from "node:child_process";
+import http from "node:http";
 
 export function waitForServer(hostname: string, port: number) {
   const INTERVAL = 1000;
@@ -307,6 +307,7 @@ async function createComponent() {
   ]);
 }
 
+gulp.task("graphqlCodegen", graphqlCodegen);
 gulp.task("createPkg", createPkg);
 gulp.task("createChart", createChart);
 gulp.task("createComponent", createComponent);

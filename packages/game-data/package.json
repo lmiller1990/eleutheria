@@ -44,7 +44,7 @@
     "build": "tsc && yarn genProdData && cp -r songs dist && cp songMetadata.json dist",
     "genProdData": "ts-node --esm --transpileOnly ./scripts/generateDataForProd.ts",
     "check-ts": "tsc --noEmit",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist && rm src/graphql/gen/nxs.gen.ts && rm src/graphql/schema.graphql",
     "build-schema": "ts-node --transpileOnly src/graphql/buildSchema.ts",
     "genTypesFromDb": "ts-node --esm --transpileOnly ./scripts/generateTypesFromDb.ts"
   }
