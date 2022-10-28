@@ -3,7 +3,8 @@
   "version": "0.0.0-development",
   "scripts": {
     "dev": "concurrently \"serve src\" \"tailwindcss -i src/index.css -o ./src/output.css --watch\"",
-    "build": "tailwindcss -i src/index.css -o ./src/output.css && ts-node --esm scripts/generatePosts.ts"
+    "build": "tailwindcss -i src/index.css -o ./src/output.css && ts-node --esm scripts/generatePosts.ts",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@types/marked": "4.0.7",

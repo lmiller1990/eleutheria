@@ -8,6 +8,7 @@
   "scripts": {
     "test": "echo 'ok'",
     "check-ts": "tsc --noEmit",
-    "build": "yarn tsc"
+    "build": "yarn tsc",
+    "clean": "rm -rf dist"
   }
 }
