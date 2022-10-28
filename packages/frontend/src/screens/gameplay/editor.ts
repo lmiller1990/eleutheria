@@ -26,6 +26,7 @@ export function useEditor() {
   const emitter = new EE();
 
   ws.addEventListener("open", () => {
+    console.log("Connected to websocket");
     ws.send(
       JSON.stringify({
         type: "editor:start",
@@ -37,6 +38,7 @@ export function useEditor() {
     const payload = JSON.parse(msg.data) as WebSocketEmitData;
 
     if (payload.type === "editor:chart:updated") {
+      console.log("received websocket message");
       emitter.emit("editor:chart:updated");
     }
   });

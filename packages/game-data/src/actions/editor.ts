@@ -8,7 +8,7 @@ const log = debug(`game-data:actions:editor`);
 
 export class EditorActions {
   #ctx: Context;
-  #editingChartId?: number = undefined; // 2;
+  #editingChartId?: number = undefined;
 
   constructor(ctx: Context) {
     this.#ctx = ctx;

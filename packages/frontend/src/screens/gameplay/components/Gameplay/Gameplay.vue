@@ -31,6 +31,8 @@ export interface GameplayProps {
   __testingManualMode?: boolean;
 }
 
+const editing = false;
+
 const props = defineProps<GameplayProps>();
 
 const root = ref<HTMLDivElement>();
@@ -217,8 +219,8 @@ onMounted(async () => {
       songCompleted,
     },
     props.__testingDoNotStartSong,
-    props.__testingManualMode
-    // 116000 // repeat
+    props.__testingManualMode,
+    editing ? 90000 : undefined // repeat
   );
 
   if (!init || !init.game) {
@@ -228,21 +230,21 @@ onMounted(async () => {
 
   game = init.game;
 
-  // if (true) {
-  //   init.game.editorRepeat = {
-  //     emitAfterMs: 10000,
-  //     emitAfterMsCallback: async () => {
-  //       // TODO: may only need to do this once
-  //       await query.executeQuery({ requestPolicy: "network-only" });
-  //       init.game?.updateChart({
-  //         tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
-  //         // offset: gqlData.value.song.chart.offset,
-  //       });
-  //       init.stop();
-  //       init.start();
-  //     },
-  //   };
-  // }
+  if (editing) {
+    init.game.editorRepeat = {
+      emitAfterMs: 10000,
+      emitAfterMsCallback: async () => {
+        // TODO: may only need to do this once
+        await query.executeQuery({ requestPolicy: "network-only" });
+        init.game?.updateChart({
+          tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+          // offset: gqlData.value.song.chart.offset,
+        });
+        init.stop();
+        init.start();
+      },
+    };
+  }
 
   init.start();
 });
@@ -250,6 +252,7 @@ onMounted(async () => {
 const { emitter } = useEditor();
 
 emitter.subscribe("editor:chart:updated", () => {
+  console.log("Chart Updated");
   // TODO: may only need to do this once
   query.executeQuery({ requestPolicy: "network-only" });
 });

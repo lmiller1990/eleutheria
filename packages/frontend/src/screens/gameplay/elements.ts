@@ -133,13 +133,13 @@ export type Elements = ReturnType<typeof createElements>;
 export function $tapNote(
   classes: string = "",
   column: number,
-  _textContent: string = ""
+  textContent: string = ""
 ) {
   const d = document.createElement("div");
   d.className = `note note-${column} ${classes}`;
-  // if (textContent) {
-  //   d.textContent = textContent;
-  // }
+  if (textContent) {
+    // d.textContent = textContent;
+  }
   return d;
 }
 
