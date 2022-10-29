@@ -198,7 +198,7 @@ onMounted(async () => {
   }
 
   const fileUrl = import.meta.env.PROD
-    ? `${import.meta.env.CDN_URL}/${file}.wav`
+    ? `${import.meta.env.VITE_CDN_URL}/${file}.wav`
     : `/static/${file}.wav`;
 
   const init = create(
