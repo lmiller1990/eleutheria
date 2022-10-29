@@ -197,6 +197,10 @@ onMounted(async () => {
     return;
   }
 
+  const fileUrl = import.meta.env.PROD
+    ? `${import.meta.env.CDN_URL}/${file}.wav`
+    : `/static/${file}.wav`;
+
   const init = create(
     root.value,
     {
@@ -212,7 +216,7 @@ onMounted(async () => {
       },
       paramData: {
         songId,
-        file: `${file}.wav`,
+        file: fileUrl,
         chartId,
       },
       userData,

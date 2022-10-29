@@ -339,6 +339,10 @@ export const OptionsModalWrapper = defineComponent({
 
     injectStylesheet(overrideStyles, stylesheetInjectionKeys.modsPaneOverrides);
 
+    const fileUrl = import.meta.env.PROD
+      ? `${import.meta.env.CDN_URL}/empty.mp3`
+      : `/static/empty.mp3`;
+
     onMounted(() => {
       const startGameArgs: StartGameArgs = {
         userData: {
@@ -350,7 +354,7 @@ export const OptionsModalWrapper = defineComponent({
         songCompleted: () => {},
         updateSummary: () => {},
         paramData: {
-          file: "empty.mp3",
+          file: fileUrl,
           songId: "",
           chartId: "",
         },

@@ -13,7 +13,7 @@ import { ModifierManager } from "@packages/frontend/src/screens/gameplay/modifer
 import type { EngineNote, JudgementResult } from "./engine";
 
 export type AudioProvider = (
-  id: string,
+  audioFile: string,
   paddingMs: number,
   startAtMs?: number
 ) => Promise<() => AudioProviderResult>;
@@ -36,14 +36,14 @@ async function getAudioData(
 }
 
 export const fetchAudio: AudioProvider = async (
-  file: string,
+  fileUrl: string,
   paddingMs: number,
   startAtMs: number = 0
 ) => {
   const audioContext = new AudioContext();
 
   const { padStart } = await import("@packages/audio-utils");
-  let buffer = await getAudioData(`/static/${file}`, audioContext);
+  let buffer = await getAudioData(fileUrl, audioContext);
   buffer = padStart(audioContext, buffer, paddingMs);
 
   var gainNode = audioContext.createGain();
@@ -101,7 +101,7 @@ export interface GameLifecycle {
 }
 
 export interface GameAPI {
-  start(id: string): Promise<void>;
+  start(audioFile: string): Promise<void>;
   stop: () => void;
 }
 
@@ -159,7 +159,7 @@ export class Game implements GameAPI {
     return this.#modifierManager;
   }
 
-  async start(id: string) {
+  async start(audioFile: string) {
     this.#gameStartTime = performance.now();
     const chart = createChart({
       tapNotes: this.#config.chart.tapNotes.map((x) => ({
@@ -187,7 +187,7 @@ export class Game implements GameAPI {
     inputManager.listen();
 
     const play = await this.#audioProvider(
-      id,
+      audioFile,
       this.#config.preSongPadding || 0,
       this.#config.dev?.startAtMs
     );
