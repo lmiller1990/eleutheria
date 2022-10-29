@@ -249,7 +249,7 @@ onMounted(async () => {
   init.start();
 });
 
-const { emitter } = useEditor();
+const { emitter } = useEditor(editing);
 
 emitter.subscribe("editor:chart:updated", () => {
   console.log("Chart Updated");

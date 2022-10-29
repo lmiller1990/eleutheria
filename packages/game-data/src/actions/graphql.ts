@@ -1,9 +1,36 @@
 import { Context } from "../graphql/context";
-import {
-  SongSelectScreen_Chart,
-  SongSelectScreen_Songs,
-} from "@packages/frontend/src/generated/graphql";
-import type { Client, ssrExchange } from "@urql/core";
+import { Client, gql, ssrExchange } from "@urql/core";
+
+// Copy pasted from SongSelectScreen
+// TODO: share code.
+const SongSelectScreen_Songs = gql`
+  query SongSelectScreen_Songs {
+    songs {
+      id
+      title
+      file
+      duration
+      artist
+      bpm
+    }
+  }
+`;
+
+const SongSelectScreen_Chart = gql`
+  query SongSelectScreen_Chart($songId: Int!) {
+    viewer {
+      id
+      email
+    }
+    charts(songId: $songId) {
+      id
+      difficulty
+      level
+      tapNoteCount
+      personalBest
+    }
+  }
+`;
 
 type SSRExchange = ReturnType<typeof ssrExchange>;
 

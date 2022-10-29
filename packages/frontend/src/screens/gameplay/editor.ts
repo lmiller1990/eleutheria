@@ -21,9 +21,16 @@ class EE {
   }
 }
 
-export function useEditor() {
-  const ws = new window.WebSocket(`ws://localhost:5566`);
+export function useEditor(openWebsocket: boolean) {
   const emitter = new EE();
+
+  if (!openWebsocket) {
+    return {
+      emitter,
+    };
+  }
+
+  const ws = new window.WebSocket(`ws://localhost:5566`);
 
   ws.addEventListener("open", () => {
     console.log("Connected to websocket");
@@ -44,7 +51,6 @@ export function useEditor() {
   });
 
   return {
-    ws,
     emitter,
   };
 }

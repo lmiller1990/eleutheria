@@ -30,7 +30,6 @@ async function main() {
     await spawnProcess("Nexus", "game-data", ["build-schema"]);
     // Frontend GraphQL
     await spawnProcess("GraphQL Codegen", "frontend", ["codegen"]);
-    await spawnProcess("Transpile GraphQL Codegen", "frontend", ["transpile:graphql"]);
     await spawnProcess("Shared", "shared");
     await spawnProcess("Chart Parser", "chart-parser");
     await spawnProcess("Audio Utils", "audio-utils");
