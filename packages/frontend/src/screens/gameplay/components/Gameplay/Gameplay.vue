@@ -11,56 +11,35 @@ import { windowsWithMiss } from "../../gameConfig";
 import type { Game, World } from "@packages/engine";
 import { SongImage } from "../../../SongSelectScreen/SongImage";
 import { SongTitle } from "../../components/Gameplay/SongTitle";
-import { injectStylesheet } from "../../../../plugins/injectGlobalCssVars";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";
-import { gql, useMutation, useQuery } from "@urql/vue";
+import { gql, useMutation } from "@urql/vue";
 import {
-  GameplayDocument,
+  GameplayQuery,
   Gameplay_SummaryDocument,
 } from "../../../../generated/graphql";
 import { create } from "../../gameplay";
-import { fetchUser, getParams } from "../../fetchData";
 import { extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
 import { useGameplayOptions } from "../../../../composables/gameplayOptions";
-
-export interface GameplayProps {
-  __testingDoNotStartSong?: boolean;
-  __testingManualMode?: boolean;
-}
+import { getParams } from "../../fetchData";
 
 const editing = false;
 
-const props = defineProps<GameplayProps>();
+const props = defineProps<{
+  __testingDoNotStartSong?: boolean;
+  __testingManualMode?: boolean;
+  getAudioBuffer: () => AudioBuffer;
+  gql: GameplayQuery;
+}>();
+
+const emit = defineEmits<{
+  (event: "songLoadingChunk", streamedBytes: number, totalBytes: number): void;
+  (event: "songLoadingComplete"): void;
+}>();
 
 const root = ref<HTMLDivElement>();
-
-gql`
-  query Gameplay($songId: Int!, $chartId: Int!) {
-    song(songId: $songId) {
-      id
-      offset
-      title
-      file
-      artist
-      chart(chartId: $chartId) {
-        id
-        difficulty
-        offset
-        level
-        parsedTapNoteChart {
-          id
-          ms
-          column
-          measureNumber
-          char
-        }
-      }
-    }
-  }
-`;
 
 gql`
   mutation Gameplay_Summary(
@@ -76,28 +55,9 @@ gql`
   }
 `;
 
-const { songId, chartId, file } = getParams();
-
-const [userData, query] = await Promise.all([
-  fetchUser(),
-  useQuery({
-    query: GameplayDocument,
-    requestPolicy: "network-only",
-    variables: {
-      songId: parseInt(songId, 10),
-      chartId: parseInt(chartId, 10),
-    },
-  }),
-]);
-
-const gqlData = computed(() => {
-  if (!query.data.value?.song?.chart.parsedTapNoteChart) {
-    throw Error("uh oh!");
-  }
-  return query.data.value;
-});
-
-injectStylesheet(userData.css, "user-css");
+if (!props.gql.song.chart.parsedTapNoteChart) {
+  throw Error("error!!!!");
+}
 
 const saveScore = useMutation(Gameplay_SummaryDocument);
 
@@ -115,7 +75,7 @@ async function songCompleted(world: World) {
 
   const res = await saveScore.executeMutation({
     ...summaryData,
-    chartId: gqlData.value.song.chart.id,
+    chartId: props.gql.song.chart.id,
   });
 
   if (!res.data?.saveScore?.id) {
@@ -192,26 +152,27 @@ function handleKeydown(event: KeyboardEvent) {
 useEventListener("keyup", stop);
 useEventListener("keydown", handleKeydown);
 
+const { file, songId, chartId } = getParams();
+
 onMounted(async () => {
   if (!root.value) {
     return;
   }
 
-  const fileUrl = import.meta.env.PROD
-    ? `${import.meta.env.VITE_CDN_URL}/${file}.wav`
-    : `/static/${file}.wav`;
+  const fileUrl = `${import.meta.env.VITE_CDN_URL}/${file}.wav`;
 
   const init = create(
     root.value,
     {
+      audioBuffer: props.getAudioBuffer(),
       modifierManager,
       updateSummary,
       songData: {
         chart: {
           parsedTapNoteChart: {
-            tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+            tapNotes: props.gql.song.chart.parsedTapNoteChart,
           },
-          offset: gqlData.value.song.chart.offset,
+          offset: props.gql.song.chart.offset,
         },
       },
       paramData: {
@@ -219,12 +180,11 @@ onMounted(async () => {
         file: fileUrl,
         chartId,
       },
-      userData,
       songCompleted,
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode,
-    editing ? 90000 : undefined // repeat
+    editing ? 63000 : undefined // repeat
   );
 
   if (!init || !init.game) {
@@ -234,14 +194,22 @@ onMounted(async () => {
 
   game = init.game;
 
+  game.loadingEmitter.on("song:loading:chunk", (s, t) => {
+    emit("songLoadingChunk", s, t);
+  });
+
+  game.loadingEmitter.on("song:loading:complete", () => {
+    emit("songLoadingComplete");
+  });
+
   if (editing) {
     init.game.editorRepeat = {
-      emitAfterMs: 10000,
+      emitAfterMs: 7000,
       emitAfterMsCallback: async () => {
         // TODO: may only need to do this once
-        await query.executeQuery({ requestPolicy: "network-only" });
+        // await query.executeQuery({ requestPolicy: "network-only" });
         init.game?.updateChart({
-          tapNotes: gqlData.value.song.chart.parsedTapNoteChart.slice(),
+          tapNotes: props.gql.song.chart.parsedTapNoteChart.slice(),
           // offset: gqlData.value.song.chart.offset,
         });
         init.stop();
@@ -256,9 +224,8 @@ onMounted(async () => {
 const { emitter } = useEditor(editing);
 
 emitter.subscribe("editor:chart:updated", () => {
-  console.log("Chart Updated");
   // TODO: may only need to do this once
-  query.executeQuery({ requestPolicy: "network-only" });
+  // query.executeQuery({ requestPolicy: "network-only" });
 });
 
 const Side: FunctionalComponent = (_props, { slots }) => {
@@ -273,10 +240,10 @@ const Side: FunctionalComponent = (_props, { slots }) => {
         <Side class="mt-48 mr-8">
           <div>
             <SongImage
-              :src="`/static/${gqlData.song.file}.png`"
-              :level="gqlData.song.chart.level"
+              :src="`/static/${file}.png`"
+              :level="props.gql.song.chart.level"
             />
-            <SongTitle :title="gqlData.song.title" />
+            <SongTitle :title="props.gql.song.title" />
           </div>
         </Side>
 

@@ -6,7 +6,6 @@ import {
   GameLifecycle,
   EngineNote,
   JudgementResult,
-  AudioProvider,
 } from "@packages/engine";
 import { Game } from "@packages/engine";
 import { summarizeResults, Summary } from "@packages/shared";
@@ -26,7 +25,7 @@ import {
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
-import { ParamData, timingWindows, UserScripts } from "@packages/shared";
+import { ParamData, timingWindows } from "@packages/shared";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
 import { ScrollDirection } from "./types";
 import {
@@ -265,6 +264,7 @@ function cullOutOfBoundsNotes(
 
 export interface StartGameArgs {
   noteCulling?: boolean;
+  audioBuffer: AudioBuffer;
   songData: {
     chart: {
       parsedTapNoteChart: ParsedTapNoteChart;
@@ -272,9 +272,7 @@ export interface StartGameArgs {
     };
   };
   paramData: ParamData;
-  userData: UserScripts;
   modifierManager?: ModifierManager;
-  audioProvider?: AudioProvider;
   songCompleted: (world: World) => void;
   updateSummary: (summary: Summary) => void;
 }
@@ -292,7 +290,7 @@ export function create(
   __testingManualMode = false,
   __startAtMs: number = 0
 ): StartGame | void {
-  const { songData, paramData, songCompleted, updateSummary, noteCulling } =
+  const { songData, audioBuffer, songCompleted, updateSummary, noteCulling } =
     startGameArgs;
 
   const elements = createElements($root, 6);
@@ -535,18 +533,13 @@ export function create(
     };
   }
 
-  const game = new Game(
-    gameConfig,
-    lifecycle,
-    startGameArgs.audioProvider,
-    modifierManager
-  );
+  const game = new Game(gameConfig, lifecycle, modifierManager);
 
   return {
     game,
     start: () => {
       redrawTargets(elements, modifierManager.scrollDirection);
-      return game.start(paramData.file);
+      return game.start(audioBuffer);
     },
     stop: () => {
       teardown();

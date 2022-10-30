@@ -24,6 +24,7 @@ import { getStyleByClass } from "../../components/ModifierPanel/css";
 import dedent from "dedent";
 import { create, StartGameArgs, StartGame } from "../gameplay/gameplay";
 import "../../style.css";
+import { useAudioLoader } from "../gameplay/GameplayLoading";
 
 gql`
   query OptionsModal {
@@ -339,16 +340,19 @@ export const OptionsModalWrapper = defineComponent({
 
     injectStylesheet(overrideStyles, stylesheetInjectionKeys.modsPaneOverrides);
 
-    const fileUrl = import.meta.env.PROD
-      ? `${import.meta.env.VITE_CDN_URL}/empty.mp3`
-      : `/static/empty.mp3`;
+    const fileUrl = `${import.meta.env.VITE_CDN_URL}/empty.mp3`;
+
+    const { emitter } = useAudioLoader(fileUrl);
+
+    let audioBuffer: AudioBuffer;
+
+    emitter.on("song:loading:complete", (buffer) => {
+      audioBuffer = buffer;
+    });
 
     onMounted(() => {
       const startGameArgs: StartGameArgs = {
-        userData: {
-          css: "",
-          js: "",
-        },
+        audioBuffer,
         noteCulling: true,
         modifierManager,
         songCompleted: () => {},
