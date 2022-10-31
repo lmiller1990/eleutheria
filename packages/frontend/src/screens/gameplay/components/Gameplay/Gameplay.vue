@@ -24,14 +24,16 @@ import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
 import { useGameplayOptions } from "../../../../composables/gameplayOptions";
 import { getParams } from "../../fetchData";
+import { useAudioLoader } from "../../../../composables/audioLoader";
+import { createGameplayQuery } from "../../gameplayQuery";
 
-const editing = false;
+const editing = true;
 
 const props = defineProps<{
   __testingDoNotStartSong?: boolean;
   __testingManualMode?: boolean;
-  getAudioData: () => AudioData;
   gql: GameplayQuery;
+  getAudioData: () => AudioData;
 }>();
 
 const root = ref<HTMLDivElement>();
@@ -51,7 +53,9 @@ gql`
 `;
 
 if (!props.gql.song.chart.parsedTapNoteChart) {
-  throw Error("error!!!!");
+  throw Error(
+    "Expected props.gql to contain song.chart.parsedTapNoteChart but it did not."
+  );
 }
 
 const saveScore = useMutation(Gameplay_SummaryDocument);
@@ -147,7 +151,8 @@ function handleKeydown(event: KeyboardEvent) {
 useEventListener("keyup", stop);
 useEventListener("keydown", handleKeydown);
 
-const { file } = getParams();
+const { file, songId, chartId } = getParams();
+const query = createGameplayQuery(parseInt(songId, 10), parseInt(chartId, 10));
 
 onMounted(async () => {
   if (!root.value) {
@@ -157,7 +162,6 @@ onMounted(async () => {
   const init = create(
     root.value,
     {
-      audioData: props.getAudioData(),
       modifierManager,
       updateSummary,
       songData: {
@@ -186,26 +190,30 @@ onMounted(async () => {
     init.game.editorRepeat = {
       emitAfterMs: 7000,
       emitAfterMsCallback: async () => {
-        // TODO: may only need to do this once
-        // await query.executeQuery({ requestPolicy: "network-only" });
-        init.game?.updateChart({
-          tapNotes: props.gql.song.chart.parsedTapNoteChart.slice(),
-          // offset: gqlData.value.song.chart.offset,
+        await query.executeQuery();
+        const { emitter } = useAudioLoader(
+          `${import.meta.env.VITE_CDN_URL}/${file}.wav`
+        );
+        emitter.on("song:loading:complete", (payload) => {
+          // TODO: may only need to do this once
+          init.game?.updateChart({
+            tapNotes: props.gql.song.chart.parsedTapNoteChart,
+          });
+          init.stop();
+          init.start(payload);
         });
-        init.stop();
-        init.start();
       },
     };
   }
 
-  init.start();
+  init.start(props.getAudioData());
 });
 
 const { emitter } = useEditor(editing);
 
 emitter.subscribe("editor:chart:updated", () => {
   // TODO: may only need to do this once
-  // query.executeQuery({ requestPolicy: "network-only" });
+  query.executeQuery();
 });
 
 const Side: FunctionalComponent = (_props, { slots }) => {

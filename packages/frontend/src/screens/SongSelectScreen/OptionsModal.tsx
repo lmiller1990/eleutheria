@@ -366,7 +366,6 @@ export const OptionsModalWrapper = defineComponent({
       }
 
       const startGameArgs: StartGameArgs = {
-        audioData,
         noteCulling: true,
         modifierManager,
         songCompleted: () => {},
@@ -390,7 +389,7 @@ export const OptionsModalWrapper = defineComponent({
       };
 
       game = create(gameplayRoot.value!, startGameArgs, false, false, 0);
-      game!.start();
+      game!.start(audioData);
     });
 
     onBeforeUnmount(() => {

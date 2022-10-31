@@ -264,7 +264,6 @@ function cullOutOfBoundsNotes(
 
 export interface StartGameArgs {
   noteCulling?: boolean;
-  audioData: AudioData;
   songData: {
     chart: {
       parsedTapNoteChart: ParsedTapNoteChart;
@@ -278,7 +277,7 @@ export interface StartGameArgs {
 
 export interface StartGame {
   game: Game | undefined;
-  start: () => Promise<void> | undefined;
+  start: (audioData: AudioData) => Promise<void> | undefined;
   stop: () => void;
 }
 
@@ -289,8 +288,7 @@ export function create(
   __testingManualMode = false,
   __startAtMs: number = 0
 ): StartGame | void {
-  const { songData, audioData, songCompleted, updateSummary, noteCulling } =
-    startGameArgs;
+  const { songData, songCompleted, updateSummary, noteCulling } = startGameArgs;
 
   const elements = createElements($root, 6);
 
@@ -536,7 +534,7 @@ export function create(
 
   return {
     game,
-    start: () => {
+    start: (audioData: AudioData) => {
       redrawTargets(elements, modifierManager.scrollDirection);
       return game.start(audioData);
     },

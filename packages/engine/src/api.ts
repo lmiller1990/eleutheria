@@ -24,7 +24,7 @@ export async function setupAudio(
   paddingMs: number,
   startAtMs: number
 ): Promise<() => AudioProviderResult> {
-  const { audioBuffer, audioContext } = audioData;
+  let { audioBuffer, audioContext } = audioData;
   const { padStart } = await import("@packages/audio-utils");
   const paddedBuffer = padStart(audioContext, audioBuffer, paddingMs);
 
@@ -176,7 +176,9 @@ export class Game implements GameAPI {
       this.#config.preSongPadding ?? 0,
       this.#config.dev?.startAtMs ?? 0
     );
-    const { audioContext, source, startTime } = play();
+
+    const audioContext = audioData.audioContext;
+    const { source, startTime } = play();
 
     const gameState: World = {
       audioContext,
