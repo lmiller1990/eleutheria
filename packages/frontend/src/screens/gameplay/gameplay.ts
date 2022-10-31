@@ -8,7 +8,7 @@ import {
   JudgementResult,
 } from "@packages/engine";
 import { Game } from "@packages/engine";
-import { summarizeResults, Summary } from "@packages/shared";
+import { AudioData, summarizeResults, Summary } from "@packages/shared";
 import {
   $tapNote,
   createElements,
@@ -25,7 +25,7 @@ import {
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
-import { ParamData, timingWindows } from "@packages/shared";
+import { timingWindows } from "@packages/shared";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
 import { ScrollDirection } from "./types";
 import {
@@ -264,14 +264,13 @@ function cullOutOfBoundsNotes(
 
 export interface StartGameArgs {
   noteCulling?: boolean;
-  audioBuffer: AudioBuffer;
+  audioData: AudioData;
   songData: {
     chart: {
       parsedTapNoteChart: ParsedTapNoteChart;
       offset: number;
     };
   };
-  paramData: ParamData;
   modifierManager?: ModifierManager;
   songCompleted: (world: World) => void;
   updateSummary: (summary: Summary) => void;
@@ -290,7 +289,7 @@ export function create(
   __testingManualMode = false,
   __startAtMs: number = 0
 ): StartGame | void {
-  const { songData, audioBuffer, songCompleted, updateSummary, noteCulling } =
+  const { songData, audioData, songCompleted, updateSummary, noteCulling } =
     startGameArgs;
 
   const elements = createElements($root, 6);
@@ -539,7 +538,7 @@ export function create(
     game,
     start: () => {
       redrawTargets(elements, modifierManager.scrollDirection);
-      return game.start(audioBuffer);
+      return game.start(audioData);
     },
     stop: () => {
       teardown();

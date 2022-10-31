@@ -33,7 +33,6 @@ function handleChangeScrollMod(val: ScrollDirection) {
 function handleChangeCoverMod({ style, ...params }: Partial<CoverParams>) {
   modifierManager.setCover(params);
   preferencesManager.updatePreferences({ cover: params });
-  console.log(params);
 }
 
 function handleChangeNoteSkin(noteSkin: NoteSkin) {

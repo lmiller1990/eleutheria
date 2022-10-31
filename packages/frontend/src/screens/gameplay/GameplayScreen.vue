@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import Gameplay from "./components/Gameplay/Gameplay.vue";
-import { GameplayLoading, useAudioLoader } from "./GameplayLoading";
+import { GameplayLoading } from "./GameplayLoading";
 import "../../style.css";
 import { computed, reactive, ref } from "vue";
 import { gql, useQuery } from "@urql/vue";
 import { GameplayDocument } from "../../generated/graphql";
+import { useAudioLoader } from "../../composables/audioLoader";
 import { getParams } from "./fetchData";
+import { AudioData } from "@packages/shared";
 
 gql`
   query Gameplay($songId: Int!, $chartId: Int!) {
@@ -59,13 +61,15 @@ emitter.on("song:loading:chunk", (s, t) => {
 });
 
 let audioBuffer: AudioBuffer;
+let audioContext: AudioContext;
 
-function getAudioBuffer() {
-  return audioBuffer;
+function getAudioData(): AudioData {
+  return { audioBuffer, audioContext };
 }
 
-emitter.on("song:loading:complete", (buffer) => {
-  audioBuffer = buffer;
+emitter.on("song:loading:complete", (payload) => {
+  audioBuffer = payload.audioBuffer;
+  audioContext = payload.audioContext;
   loadingAudio.value = false;
 });
 
@@ -87,6 +91,6 @@ const gqlData = computed(() => {
     <GameplayLoading :percent="percent" />
   </div>
   <div id="game-app" v-else>
-    <Gameplay :getAudioBuffer="getAudioBuffer" v-if="gqlData" :gql="gqlData" />
+    <Gameplay :getAudioData="getAudioData" v-if="gqlData" :gql="gqlData" />
   </div>
 </template>

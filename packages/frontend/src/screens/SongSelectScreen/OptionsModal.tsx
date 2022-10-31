@@ -1,4 +1,5 @@
-import type { Cover, NoteSkin } from "@packages/shared";
+import type { AudioData, Cover, NoteSkin } from "@packages/shared";
+import pDefer from "p-defer";
 import { gql } from "@urql/core";
 import {
   defineComponent,
@@ -23,8 +24,8 @@ import {
 import { getStyleByClass } from "../../components/ModifierPanel/css";
 import dedent from "dedent";
 import { create, StartGameArgs, StartGame } from "../gameplay/gameplay";
+import { useAudioLoader } from "../../composables/audioLoader";
 import "../../style.css";
-import { useAudioLoader } from "../gameplay/GameplayLoading";
 
 gql`
   query OptionsModal {
@@ -338,30 +339,38 @@ export const OptionsModalWrapper = defineComponent({
     const { modifierManager } = useGameplayOptions();
     let game: StartGame | void;
 
-    injectStylesheet(overrideStyles, stylesheetInjectionKeys.modsPaneOverrides);
+    const cleanupInjectedStylesheet = injectStylesheet(
+      overrideStyles,
+      stylesheetInjectionKeys.modsPaneOverrides
+    );
 
     const fileUrl = `${import.meta.env.VITE_CDN_URL}/empty.mp3`;
 
     const { emitter } = useAudioLoader(fileUrl);
 
-    let audioBuffer: AudioBuffer;
+    // let audioBuffer: AudioBuffer;
+    let dfd = pDefer<AudioData>();
 
     emitter.on("song:loading:complete", (buffer) => {
-      audioBuffer = buffer;
+      // audioBuffer = buffer;
+      dfd.resolve(buffer);
     });
 
-    onMounted(() => {
+    onMounted(async () => {
+      const audioData = await dfd.promise;
+
+      // if unmounted before the promise resolves, this might be null
+      // so we return early.
+      if (!gameplayRoot.value) {
+        return;
+      }
+
       const startGameArgs: StartGameArgs = {
-        audioBuffer,
+        audioData,
         noteCulling: true,
         modifierManager,
         songCompleted: () => {},
         updateSummary: () => {},
-        paramData: {
-          file: fileUrl,
-          songId: "",
-          chartId: "",
-        },
         songData: {
           chart: {
             offset: 0,
@@ -379,12 +388,14 @@ export const OptionsModalWrapper = defineComponent({
           },
         },
       };
+
       game = create(gameplayRoot.value!, startGameArgs, false, false, 0);
       game!.start();
     });
 
     onBeforeUnmount(() => {
       // This also cleans up any injected stylesheets.
+      cleanupInjectedStylesheet();
       game?.stop();
     });
 

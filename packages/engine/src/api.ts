@@ -1,5 +1,3 @@
-import { EventEmitter } from "events";
-import TypedEmitter from "typed-emitter";
 import type { BaseNote, HoldNote } from "@packages/chart-parser";
 import {
   createChart,
@@ -13,22 +11,7 @@ import {
 } from ".";
 import { ModifierManager } from "@packages/frontend/src/screens/gameplay/modiferManager";
 import type { EngineNote, JudgementResult } from "./engine";
-
-type LoadingEmitterEvents = {
-  "song:loading:chunk": (
-    chunkSizeInBytes: number,
-    totalSizeInBytes: number
-  ) => void;
-  "song:loading:complete": () => void;
-};
-
-type LoadingEmitter = TypedEmitter<LoadingEmitterEvents>;
-
-export type AudioProvider = (
-  audioBuffer: AudioBuffer,
-  paddingMs: number,
-  startAtMs: number
-) => Promise<() => AudioProviderResult>;
+import { AudioData } from "@packages/shared";
 
 interface AudioProviderResult {
   audioContext: AudioContext;
@@ -36,16 +19,14 @@ interface AudioProviderResult {
   startTime: number;
 }
 
-export const setupAudio: AudioProvider = async (
-  buffer,
-  paddingMs,
-  startAtMs
-) => {
-  const audioContext = new AudioContext();
-
+export async function setupAudio(
+  audioData: AudioData,
+  paddingMs: number,
+  startAtMs: number
+): Promise<() => AudioProviderResult> {
+  const { audioBuffer, audioContext } = audioData;
   const { padStart } = await import("@packages/audio-utils");
-  console.log(buffer);
-  buffer = padStart(audioContext, buffer, paddingMs);
+  const paddedBuffer = padStart(audioContext, audioBuffer, paddingMs);
 
   var gainNode = audioContext.createGain();
   gainNode.gain.value = 1.0;
@@ -53,7 +34,7 @@ export const setupAudio: AudioProvider = async (
 
   return () => {
     const source = audioContext.createBufferSource();
-    source.buffer = buffer;
+    source.buffer = paddedBuffer;
     // use this for no assist tick
     // source.connect(audioContext.destination);
     source.connect(gainNode);
@@ -62,7 +43,7 @@ export const setupAudio: AudioProvider = async (
 
     return { audioContext, source, startTime };
   };
-};
+}
 
 export interface DevModeOptions {
   manualMode?: boolean;
@@ -102,7 +83,10 @@ export interface GameLifecycle {
 }
 
 export interface GameAPI {
-  start(audioBuffer: AudioBuffer): Promise<void>;
+  start(payload: {
+    audioBuffer: AudioBuffer;
+    audioContext: AudioContext;
+  }): Promise<void>;
   stop: () => void;
 }
 
@@ -120,7 +104,6 @@ export class Game implements GameAPI {
   /**
    * Used to notify loading screen of song load status.
    */
-  loadingEmitter: LoadingEmitter;
   #nextAnimationFrame?: number;
   /**
    * Used for repeating a (period) of song many times over.
@@ -155,15 +138,13 @@ export class Game implements GameAPI {
       (this.#config.preSongPadding || 0) +
       this.#config.chart.offset +
       (this.#config.postSongPadding || 0);
-    this.loadingEmitter =
-      new (class extends (EventEmitter as new () => LoadingEmitter) {})();
   }
 
   get modifierManager() {
     return this.#modifierManager;
   }
 
-  async start(audioBuffer: AudioBuffer) {
+  async start(audioData: AudioData) {
     this.#gameStartTime = performance.now();
     const chart = createChart({
       tapNotes: this.#config.chart.tapNotes.map((x) => ({
@@ -191,11 +172,10 @@ export class Game implements GameAPI {
     inputManager.listen();
 
     const play = await setupAudio(
-      audioBuffer,
+      audioData,
       this.#config.preSongPadding ?? 0,
       this.#config.dev?.startAtMs ?? 0
     );
-
     const { audioContext, source, startTime } = play();
 
     const gameState: World = {

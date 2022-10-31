@@ -19,7 +19,7 @@ import {
   Gameplay_SummaryDocument,
 } from "../../../../generated/graphql";
 import { create } from "../../gameplay";
-import { extractNotesFromWorld, Summary } from "@packages/shared";
+import { AudioData, extractNotesFromWorld, Summary } from "@packages/shared";
 import { useEditor } from "../../editor";
 import { GameplayScoreProps, GameplayScore } from "./GameplayScore";
 import { useGameplayOptions } from "../../../../composables/gameplayOptions";
@@ -30,13 +30,8 @@ const editing = false;
 const props = defineProps<{
   __testingDoNotStartSong?: boolean;
   __testingManualMode?: boolean;
-  getAudioBuffer: () => AudioBuffer;
+  getAudioData: () => AudioData;
   gql: GameplayQuery;
-}>();
-
-const emit = defineEmits<{
-  (event: "songLoadingChunk", streamedBytes: number, totalBytes: number): void;
-  (event: "songLoadingComplete"): void;
 }>();
 
 const root = ref<HTMLDivElement>();
@@ -152,19 +147,17 @@ function handleKeydown(event: KeyboardEvent) {
 useEventListener("keyup", stop);
 useEventListener("keydown", handleKeydown);
 
-const { file, songId, chartId } = getParams();
+const { file } = getParams();
 
 onMounted(async () => {
   if (!root.value) {
     return;
   }
 
-  const fileUrl = `${import.meta.env.VITE_CDN_URL}/${file}.wav`;
-
   const init = create(
     root.value,
     {
-      audioBuffer: props.getAudioBuffer(),
+      audioData: props.getAudioData(),
       modifierManager,
       updateSummary,
       songData: {
@@ -174,11 +167,6 @@ onMounted(async () => {
           },
           offset: props.gql.song.chart.offset,
         },
-      },
-      paramData: {
-        songId,
-        file: fileUrl,
-        chartId,
       },
       songCompleted,
     },
@@ -193,14 +181,6 @@ onMounted(async () => {
   }
 
   game = init.game;
-
-  game.loadingEmitter.on("song:loading:chunk", (s, t) => {
-    emit("songLoadingChunk", s, t);
-  });
-
-  game.loadingEmitter.on("song:loading:complete", () => {
-    emit("songLoadingComplete");
-  });
 
   if (editing) {
     init.game.editorRepeat = {
