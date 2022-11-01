@@ -65,6 +65,9 @@ export interface ParamData {
   file: string;
   songId: string;
   chartId: string;
+  title: string;
+  personalBest: string;
+  artist: string;
 }
 
 export interface UserScripts {
