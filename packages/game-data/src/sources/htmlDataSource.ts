@@ -27,13 +27,9 @@ export class HtmlDataSource {
           <meta charset="UTF-8" />
           <link rel="icon" type="image/svg+xml" href="favicon.svg" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+          <title>Eleutheria</title>
           <link rel="stylesheet" href="${mainCss}" />
-          <title>Vite App</title>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap"
-            rel="stylesheet"
-          />
+          <link href="http://fonts.cdnfonts.com/css/comfortaa" rel="stylesheet" />
           <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
           <script>window.__SSR_DATA__ = ${ssrData}</script>
         </head>
@@ -56,11 +52,8 @@ export class HtmlDataSource {
           <meta charset="UTF-8" />
           <link rel="icon" type="image/svg+xml" href="favicon.svg" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>Vite App</title>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap"
-            rel="stylesheet"
-          />
+          <title>Eleutheria</title>
+          <link href="http://fonts.cdnfonts.com/css/comfortaa" rel="stylesheet" />
           <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
           <script>window.__SSR_DATA__ = ${ssrData}</script>
         </head>

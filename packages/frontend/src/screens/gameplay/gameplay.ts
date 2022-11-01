@@ -6,10 +6,9 @@ import {
   GameLifecycle,
   EngineNote,
   JudgementResult,
-  AudioProvider,
 } from "@packages/engine";
 import { Game } from "@packages/engine";
-import { summarizeResults, Summary } from "@packages/shared";
+import { AudioData, summarizeResults, Summary } from "@packages/shared";
 import {
   $tapNote,
   createElements,
@@ -26,7 +25,7 @@ import {
 } from "./gameConfig";
 import { writeDebugToHtml } from "./debug";
 import { ModifierManager } from "./modiferManager";
-import { ParamData, timingWindows, UserScripts } from "@packages/shared";
+import { timingWindows } from "@packages/shared";
 import { ParsedTapNoteChart } from "@packages/chart-parser";
 import { ScrollDirection } from "./types";
 import {
@@ -271,17 +270,14 @@ export interface StartGameArgs {
       offset: number;
     };
   };
-  paramData: ParamData;
-  userData: UserScripts;
   modifierManager?: ModifierManager;
-  audioProvider?: AudioProvider;
   songCompleted: (world: World) => void;
   updateSummary: (summary: Summary) => void;
 }
 
 export interface StartGame {
   game: Game | undefined;
-  start: () => Promise<void> | undefined;
+  start: (audioData: AudioData) => Promise<void> | undefined;
   stop: () => void;
 }
 
@@ -292,8 +288,7 @@ export function create(
   __testingManualMode = false,
   __startAtMs: number = 0
 ): StartGame | void {
-  const { songData, paramData, songCompleted, updateSummary, noteCulling } =
-    startGameArgs;
+  const { songData, songCompleted, updateSummary, noteCulling } = startGameArgs;
 
   const elements = createElements($root, 6);
 
@@ -535,18 +530,13 @@ export function create(
     };
   }
 
-  const game = new Game(
-    gameConfig,
-    lifecycle,
-    startGameArgs.audioProvider,
-    modifierManager
-  );
+  const game = new Game(gameConfig, lifecycle, modifierManager);
 
   return {
     game,
-    start: () => {
+    start: (audioData: AudioData) => {
       redrawTargets(elements, modifierManager.scrollDirection);
-      return game.start(paramData.file);
+      return game.start(audioData);
     },
     stop: () => {
       teardown();

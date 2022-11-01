@@ -11,12 +11,7 @@ import {
 } from ".";
 import { ModifierManager } from "@packages/frontend/src/screens/gameplay/modiferManager";
 import type { EngineNote, JudgementResult } from "./engine";
-
-export type AudioProvider = (
-  audioFile: string,
-  paddingMs: number,
-  startAtMs?: number
-) => Promise<() => AudioProviderResult>;
+import { AudioData } from "@packages/shared";
 
 interface AudioProviderResult {
   audioContext: AudioContext;
@@ -24,27 +19,14 @@ interface AudioProviderResult {
   startTime: number;
 }
 
-async function getAudioData(
-  url: string,
-  audioContext: AudioContext
-): Promise<AudioBuffer> {
-  const res = await window.fetch(url);
-  const buf = await res.arrayBuffer();
-  const decoded = await audioContext.decodeAudioData(buf);
-  // audioCache.set(url, decoded);
-  return decoded;
-}
-
-export const fetchAudio: AudioProvider = async (
-  fileUrl: string,
+export async function setupAudio(
+  audioData: AudioData,
   paddingMs: number,
-  startAtMs: number = 0
-) => {
-  const audioContext = new AudioContext();
-
+  startAtMs: number
+): Promise<() => AudioProviderResult> {
+  let { audioBuffer, audioContext } = audioData;
   const { padStart } = await import("@packages/audio-utils");
-  let buffer = await getAudioData(fileUrl, audioContext);
-  buffer = padStart(audioContext, buffer, paddingMs);
+  const paddedBuffer = padStart(audioContext, audioBuffer, paddingMs);
 
   var gainNode = audioContext.createGain();
   gainNode.gain.value = 1.0;
@@ -52,7 +34,7 @@ export const fetchAudio: AudioProvider = async (
 
   return () => {
     const source = audioContext.createBufferSource();
-    source.buffer = buffer;
+    source.buffer = paddedBuffer;
     // use this for no assist tick
     // source.connect(audioContext.destination);
     source.connect(gainNode);
@@ -61,7 +43,7 @@ export const fetchAudio: AudioProvider = async (
 
     return { audioContext, source, startTime };
   };
-};
+}
 
 export interface DevModeOptions {
   manualMode?: boolean;
@@ -101,7 +83,10 @@ export interface GameLifecycle {
 }
 
 export interface GameAPI {
-  start(audioFile: string): Promise<void>;
+  start(payload: {
+    audioBuffer: AudioBuffer;
+    audioContext: AudioContext;
+  }): Promise<void>;
   stop: () => void;
 }
 
@@ -116,7 +101,9 @@ export class Game implements GameAPI {
   #config: GameConfig;
   #lifecycle: GameLifecycle;
   #modifierManager: ModifierManager;
-  #audioProvider: AudioProvider;
+  /**
+   * Used to notify loading screen of song load status.
+   */
   #nextAnimationFrame?: number;
   /**
    * Used for repeating a (period) of song many times over.
@@ -138,13 +125,11 @@ export class Game implements GameAPI {
   constructor(
     config: GameConfig,
     lifecycle: GameLifecycle,
-    audioProvider: AudioProvider = fetchAudio,
-    modifierManager: ModifierManager = new ModifierManager()
+    modifierManager: ModifierManager
   ) {
     this.#config = config;
     this.#lifecycle = lifecycle;
     this.#modifierManager = modifierManager;
-    this.#audioProvider = audioProvider;
     this.#timeOfLastNote =
       config.chart.tapNotes.reduce(
         (acc, curr) => (curr.ms > acc ? curr.ms : acc),
@@ -159,7 +144,7 @@ export class Game implements GameAPI {
     return this.#modifierManager;
   }
 
-  async start(audioFile: string) {
+  async start(audioData: AudioData) {
     this.#gameStartTime = performance.now();
     const chart = createChart({
       tapNotes: this.#config.chart.tapNotes.map((x) => ({
@@ -186,13 +171,14 @@ export class Game implements GameAPI {
 
     inputManager.listen();
 
-    const play = await this.#audioProvider(
-      audioFile,
-      this.#config.preSongPadding || 0,
-      this.#config.dev?.startAtMs
+    const play = await setupAudio(
+      audioData,
+      this.#config.preSongPadding ?? 0,
+      this.#config.dev?.startAtMs ?? 0
     );
 
-    const { audioContext, source, startTime } = play();
+    const audioContext = audioData.audioContext;
+    const { source, startTime } = play();
 
     const gameState: World = {
       audioContext,

@@ -13,7 +13,10 @@ export const SongTile: FunctionalComponent<Props> = (props) => {
     <button
       class={`w-full bg-zinc-700 ${className} border-2 h-20 flex items-center justify-between`}
     >
-      <img class="h-full" src={`/static/${props.file}.png`} />
+      <img
+        class="h-full"
+        src={`${import.meta.env.VITE_CDN_URL}/${props.file}.png`}
+      />
       <div class="flex flex-col items-end p-2">
         <div class="text-white text-2xl">{props.songTitle}</div>
         <div class="text-gray-300 text-xl">{props.artist}</div>

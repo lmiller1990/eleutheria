@@ -62,8 +62,8 @@ export interface Cover {
 }
 
 export interface ParamData {
-  songId: string;
   file: string;
+  songId: string;
   chartId: string;
 }
 
@@ -75,3 +75,8 @@ export interface UserScripts {
 export * from "./scoring";
 
 export * from "./utils";
+
+export interface AudioData {
+  audioContext: AudioContext;
+  audioBuffer: AudioBuffer;
+}
