@@ -29,7 +29,7 @@
       </div>
 
       <div class="flex flex-col justify-between">
-        <SongImage :src="`/static/${selectedSong?.file}.png`" />
+        <SongImage :file="selectedSong?.file" />
         <div>
           <SongInfo
             :best="tableData.best"
@@ -232,6 +232,9 @@ function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
     query: {
       songId: song.id,
       file: song.file,
+      artist: song.artist,
+      title: song.title,
+      personalBest: selectedChart.value?.personalBest ?? "-",
       chartId,
     },
   });

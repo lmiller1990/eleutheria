@@ -71,7 +71,7 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
       <div class="flex flex-col">
         <div class="summary-wrapper">
           <div>
-            <SongImage src={`/static/${props.file}.png`} level={props.level} />
+            <SongImage file={props.file} level={props.level} />
             <div class="my-5">
               <SongTitle title={props.songTitle} />
             </div>

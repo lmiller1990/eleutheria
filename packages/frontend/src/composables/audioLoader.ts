@@ -2,6 +2,8 @@ import { AudioData } from "@packages/shared";
 import { EventEmitter } from "events";
 import TypedEmitter from "typed-emitter";
 
+const wait = async () => new Promise((res) => setTimeout(res, 10));
+
 async function getAudioData(
   url: string,
   loadingEmitter: LoadingEmitter
@@ -19,6 +21,8 @@ async function getAudioData(
           controller.close();
           return;
         }
+
+        await wait();
 
         loadingEmitter.emit(
           "song:loading:chunk",

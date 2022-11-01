@@ -14,7 +14,7 @@ const bytes = reactive({
   total: 1,
 });
 
-const { file, songId, chartId } = getParams();
+const { file, songId, chartId, title, artist, personalBest } = getParams();
 
 const query = createGameplayQuery(parseInt(songId, 10), parseInt(chartId, 10));
 
@@ -52,9 +52,16 @@ const gqlData = computed(() => {
 </script>
 
 <template>
-  <div v-if="loading">
-    <GameplayLoading :percent="percent" />
-  </div>
+  <GameplayLoading
+    v-if="loading"
+    :percent="percent"
+    :song="{
+      title,
+      artist,
+      file,
+    }"
+    :personalBest="`${personalBest}%`"
+  />
   <div id="game-app" v-else>
     <Gameplay v-if="gqlData" :gql="gqlData" :getAudioData="getAudioData" />
   </div>

@@ -227,10 +227,7 @@ const Side: FunctionalComponent = (_props, { slots }) => {
       <div class="gameplay-content">
         <Side class="mt-48 mr-8">
           <div>
-            <SongImage
-              :src="`/static/${file}.png`"
-              :level="props.gql.song.chart.level"
-            />
+            <SongImage :file="file" :level="props.gql.song.chart.level" />
             <SongTitle :title="props.gql.song.title" />
           </div>
         </Side>
