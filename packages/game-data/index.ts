@@ -39,7 +39,7 @@ const SECRET = "keyboard cat";
 
 app.use(cors());
 app.use(cookieParser(SECRET));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "1mb" }));
 
 app.use(sessionMiddleware);
 app.use(contextMiddleware);

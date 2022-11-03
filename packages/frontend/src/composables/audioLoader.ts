@@ -4,6 +4,8 @@ import TypedEmitter from "typed-emitter";
 
 const wait = async () => new Promise((res) => setTimeout(res, 10));
 
+const throttle = false;
+
 async function getAudioData(
   url: string,
   loadingEmitter: LoadingEmitter
@@ -22,7 +24,9 @@ async function getAudioData(
           return;
         }
 
-        await wait();
+        if (throttle) {
+          await wait();
+        }
 
         loadingEmitter.emit(
           "song:loading:chunk",

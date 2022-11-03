@@ -27,7 +27,7 @@ import { getParams } from "../../fetchData";
 import { useAudioLoader } from "../../../../composables/audioLoader";
 import { createGameplayQuery } from "../../gameplayQuery";
 
-const editing = true;
+const editing = false;
 
 const props = defineProps<{
   __testingDoNotStartSong?: boolean;
@@ -176,7 +176,7 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode,
-    editing ? 63000 : undefined // repeat
+    editing ? 147000 : undefined // repeat
   );
 
   if (!init || !init.game) {
