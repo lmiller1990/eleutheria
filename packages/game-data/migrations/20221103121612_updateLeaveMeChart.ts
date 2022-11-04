@@ -1,6 +1,7 @@
 import { Knex } from "knex";
 
-const notes = `000000
+const notes = `001000
+000000
 000100
 000000
 000000
