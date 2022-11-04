@@ -53,7 +53,7 @@ const gqlData = computed(() => {
 
 <template>
   <GameplayLoading
-    v-if="loading"
+    :class="{ 'fade-out': !loading }"
     :percent="percent"
     :song="{
       title,
@@ -62,7 +62,11 @@ const gqlData = computed(() => {
     }"
     :personalBest="`${personalBest}%`"
   />
-  <div id="game-app" v-else>
-    <Gameplay v-if="gqlData" :gql="gqlData" :getAudioData="getAudioData" />
+  <div id="game-app">
+    <Gameplay
+      v-if="gqlData && !loading"
+      :gql="gqlData"
+      :getAudioData="getAudioData"
+    />
   </div>
 </template>

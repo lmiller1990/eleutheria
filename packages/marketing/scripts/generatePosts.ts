@@ -125,7 +125,7 @@ async function main() {
 
     // copy all assets, too
     (await fs.readdir(post))
-      .filter((x) => x.endsWith("png") || x.endsWith("wav"))
+      .filter((x) => x.endsWith("png") || x.endsWith("wav") || x.endsWith("mov"))
       .forEach(async (file) => {
         const filename = file.split(",").at(-1)!;
         const from = path.join(post, file);
@@ -157,7 +157,7 @@ async function main() {
   await fs.copy(path.join(src, "favicon.ico"), path.join(dist, "favicon.ico"));
 
   // generate list of static assets
-  const assets = await globby("**/*.{png,wav}", {
+  const assets = await globby("**/*.{png,wav,mov}", {
     absolute: false,
     cwd: dist,
   });

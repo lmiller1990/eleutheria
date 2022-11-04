@@ -1,5 +1,9 @@
 <template>
   <NonGameplayScreen screenTitle="Eleutheria">
+    <div
+      class="absolute w-screen h-screen bg-zinc-500 z-10 left-0 top-[-100vh]"
+      :class="{ [animationClass]: animating }"
+    />
     <div id="content">
       <div class="flex flex-col">
         <div class="flex flex-col h-full">
@@ -202,13 +206,22 @@ const tableData = computed(() => {
     bpm: selectedSong?.value?.bpm ?? "-",
     best: selectedChart.value?.personalBest
       ? `${selectedChart.value?.personalBest?.toFixed(2)}%`
-      : "-",
+      : "0.00%",
   };
 });
 
 const router = useRouter();
 
-function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
+const animating = ref(false);
+const animationMs = 200;
+const animationClass = `animate-[movedown_${animationMs}ms_linear_forwards]`; // animate-[movedown_200ms_linear_forwards]
+
+const delay = () =>
+  new Promise((resolve) => window.setTimeout(resolve, animationMs + 200));
+
+async function handleSelected(
+  song: SongSelectScreen_SongsQuery["songs"][number]
+) {
   if (selectedSongId.value !== song.id) {
     selectedSongId.value = song.id;
     selectedChartIdx.value = 0;
@@ -227,6 +240,9 @@ function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
     );
   }
 
+  animating.value = true;
+  await delay();
+
   router.push({
     path: "game",
     query: {
@@ -234,17 +250,23 @@ function handleSelected(song: SongSelectScreen_SongsQuery["songs"][number]) {
       file: song.file,
       artist: song.artist,
       title: song.title,
-      personalBest: selectedChart.value?.personalBest ?? "-",
+      personalBest: selectedChart.value?.personalBest ?? "0.00",
       chartId,
     },
   });
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
 #content {
   display: grid;
   grid-template-columns: 1fr 0.65fr 50px;
   column-gap: 30px;
+}
+
+@keyframes movedown {
+  100% {
+    top: 0px;
+  }
 }
 </style>
