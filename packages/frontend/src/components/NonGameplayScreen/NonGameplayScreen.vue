@@ -11,7 +11,7 @@ const modal = useModal();
 <template>
   <div
     class="flex flex-col outer items-center w-full h-full"
-    :class="{ 'zoom-out': modal.show.value }"
+    :class="{ 'zoom-out': modal.show.value, [props.wrapperClass ?? '']: true }"
   >
     <nav class="bg-zinc-700 w-full text-white flex justify-center title-nav">
       <div class="max-width w-full flex justify-center items-center klee-one">

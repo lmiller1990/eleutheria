@@ -2,9 +2,9 @@ import { AudioData } from "@packages/shared";
 import { EventEmitter } from "events";
 import TypedEmitter from "typed-emitter";
 
-const wait = async () => new Promise((res) => setTimeout(res, 10));
+const wait = async () => new Promise((res) => setTimeout(res, 5));
 
-const throttle = false;
+const throttle = true;
 
 async function getAudioData(
   url: string,
