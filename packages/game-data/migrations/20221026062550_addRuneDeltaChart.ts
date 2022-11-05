@@ -855,7 +855,7 @@ const notes = `
 000000`;
 
 export async function up(knex: Knex) {
-  const runeDeltaChart = await knex("charts").where("song_id", 2).first();
+  const runeDeltaChart = await knex("charts").where("id", 3).first();
   return knex("charts").where("id", runeDeltaChart.id).update({
     notes,
   });

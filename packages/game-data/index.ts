@@ -24,7 +24,7 @@ const log = debug("game-data:index");
 
 const pgClient = new pg.Client({
   user: process.env.POSTGRES_USER ?? "lachlan",
-  database: process.env.POSTGRES_DB ?? "rhythm",
+  database: process.env.POSTGRES_DB ?? "eleutheria",
 });
 
 export const COOKIE = "rhythm-cookie";

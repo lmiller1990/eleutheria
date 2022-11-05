@@ -11,7 +11,7 @@ async function main() {
           "localhost",
           "-U",
           "postgres",
-          process.env.POSTGRES_DB ?? "rhythm",
+          process.env.POSTGRES_DB ?? "eleutheria",
         ],
         {
           cwd: __dirname,

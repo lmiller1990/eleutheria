@@ -1192,14 +1192,14 @@ const notes = `001000
 
 export async function up(knex: Knex) {
   return knex("charts").insert({
-    id: "1",
+    id: 6,
     difficulty: "expert",
     level: 8,
-    song_id: "1",
+    song_id: 1,
     notes,
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  // noop
+  return knex("charts").where("id", 6).delete();
 }

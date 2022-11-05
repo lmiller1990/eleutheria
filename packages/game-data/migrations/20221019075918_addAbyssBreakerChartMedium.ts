@@ -953,7 +953,7 @@ export async function up(knex: Knex): Promise<any> {
     .update({
       notes,
     })
-    .where("id", 10);
+    .where("id", 7);
 }
 
 export async function down(knex: Knex): Promise<void> {

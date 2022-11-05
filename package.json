@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development yarn gulp dev",
-    "build": "NODE_ENV=production ts-node --esm --transpileOnly scripts/build.ts",
+    "build": "ts-node --esm --transpileOnly scripts/build.ts",
     "lint": "prettier --write packages",
     "lint:staged": "prettier --write $(git diff --name-only --diff-filter d | grep '.ts$' | xargs)",
     "test": "lerna run test --stream",

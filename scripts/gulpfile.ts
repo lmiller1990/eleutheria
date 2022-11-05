@@ -103,10 +103,6 @@ async function gameDataServer(): Promise<void> {
         stdio: "inherit",
         cwd: "packages/game-data",
       }),
-      spawn("yarn", ["genProdData"], {
-        stdio: "inherit",
-        cwd: "packages/game-data",
-      }),
     ];
   };
 

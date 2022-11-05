@@ -2,20 +2,30 @@ import { Knex } from "knex";
 
 export async function up(knex: Knex) {
   let id = 1; // good life chart is id=1
-  const charts = (songId: number) =>
-    [1, 4, 10, 14].map((level, idx) => {
-      id++;
-      return knex("charts").insert({
-        id,
-        difficulty: "easy",
-        level,
-        song_id: songId,
-      });
+  const charts = ({
+    songId,
+    chartId,
+    level,
+  }: {
+    songId: number;
+    chartId: number;
+    level: number;
+  }) =>
+    knex("charts").insert({
+      id: chartId,
+      difficulty: "easy",
+      level,
+      song_id: songId,
     });
 
-  // 2 is Rune Delta
-  // 3 is Leave me
-  return Promise.all([...charts(2), ...charts(3)]);
+  return Promise.all([
+    // 2 is Rune Delta
+    charts({ songId: 2, chartId: 2, level: 1 }),
+    charts({ songId: 2, chartId: 3, level: 5 }),
+    // 3 is Leave me
+    charts({ songId: 3, chartId: 4, level: 1 }),
+    charts({ songId: 3, chartId: 5, level: 5 }),
+  ]);
 }
 
 export async function down(knex: Knex): Promise<void> {

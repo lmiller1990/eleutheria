@@ -13,6 +13,7 @@ export async function spawnProcess(
       stdio: "inherit",
       cwd,
       env: {
+        ...process.env,
         NODE_ENV: "production",
       },
     })

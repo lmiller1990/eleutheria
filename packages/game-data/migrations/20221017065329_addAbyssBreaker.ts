@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
   });
 
   return knex("charts").insert({
-    id: 10,
+    id: 7,
     difficulty: "expert",
     level: 4,
     song_id: 4,
@@ -20,6 +20,6 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex("charts").where("id", 10).delete();
+  await knex("charts").where("id", 7).delete();
   return knex("songs").where("id", 4).delete();
 }
