@@ -35,7 +35,7 @@ Let's say **250ms** has elapsed. We receive a player input. There are two notes 
 
 This diagram illustrates the three timings the engine should track and perform comparisons on:
 
-![](./rhythm-engine.png)
+![](CDN/rhythm-engine.png)
 
 ## Important APIs & Methods
 

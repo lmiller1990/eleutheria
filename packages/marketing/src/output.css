@@ -578,6 +578,11 @@ video {
   margin-bottom: 1rem;
 }
 
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
 .mb-12 {
   margin-bottom: 3rem;
 }
@@ -588,10 +593,6 @@ video {
 
 .mt-2 {
   margin-top: 0.5rem;
-}
-
-.ml-2 {
-  margin-left: 0.5rem;
 }
 
 .mb-10 {
@@ -982,14 +983,8 @@ section#blog-posts::before {
   left: 0;
 }
 
-@font-face {
-  font-family: KleeOne;
-
-  src: url(KleeOne-Regular.ttf);
-}
-
 .klee-one {
-  font-family: KleeOne;
+  font-family: Klee;
 }
 
 .subtitle {

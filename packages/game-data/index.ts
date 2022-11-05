@@ -102,13 +102,6 @@ app.get("/output.css", async (_req, res) => {
   res.sendFile(path.join(marketing, "output.css"));
 });
 
-app.get(
-  ["", "/app", "/assets", "/app/assets"].map((x) => `${x}/KleeOne-Regular.ttf`),
-  async (_req, res) => {
-    res.sendFile(path.join(marketing, "KleeOne-Regular.ttf"));
-  }
-);
-
 app.get("/app/", (_req, res) => {
   res.redirect("/app");
 });
