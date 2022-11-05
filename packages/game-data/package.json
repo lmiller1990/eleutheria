@@ -41,7 +41,7 @@
     "start": "ts-node --transpileOnly index.ts",
     "test": "POSTGRES_DB=eleutheria_test vitest --run",
     "postinstall": "echo 'ok' # yarn build",
-    "build": "tsc && yarn genProdData && cp -r songs dist && cp songMetadata.json dist",
+    "build": "tsc && yarn genProdData",
     "genProdData": "ts-node --esm --transpileOnly ./scripts/generateDataForProd.ts",
     "check-ts": "tsc --noEmit",
     "clean": "rm -rf dist && rm src/graphql/gen/nxs.gen.ts && rm src/graphql/schema.graphql",
