@@ -56,12 +56,7 @@ body,
   transform: scale(0.98);
 }
 
-@font-face {
-  font-family: KleeOne;
-  src: url(KleeOne-Regular.ttf);
-}
-
 .klee-one {
-  font-family: KleeOne;
+  font-family: Klee;
 }
 </style>

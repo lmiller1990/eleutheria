@@ -41,8 +41,11 @@ function insertInlineIframes(html: string) {
 
 type HighlightFn = (code: string, { lang }: { lang: string }) => string;
 
+const cdn =  process.env.NODE_ENV === 'production' ? 'https://eleutheria.nyc3.cdn.digitaloceanspaces.com/blog_content/': ""
+
 async function toHtml(dir: string, highlighter: HighlightFn) {
-  const md = await fs.readFile(path.join(dir, "README.md"), "utf8");
+  let md = await fs.readFile(path.join(dir, "README.md"), "utf8");
+  md = md.replaceAll('CDN/', cdn)
   const html = marked.marked(md, {
     highlight(code, lang) {
       return highlighter(code, { lang });
@@ -87,12 +90,6 @@ function extractPostMetadata(filename: string, html: string) {
 
 async function main() {
   await fs.rm(dist, { force: true, recursive: true });
-
-  // copy assets (css, font)
-  await fs.copy(
-    path.join(src, "KleeOne-Regular.ttf"),
-    path.join(dist, "KleeOne-Regular.ttf")
-  );
 
   await fs.copy(path.join(src, "output.css"), path.join(dist, "output.css"));
 

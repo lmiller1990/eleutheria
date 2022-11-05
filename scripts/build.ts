@@ -12,6 +12,9 @@ export async function spawnProcess(
     spawn("yarn", command, {
       stdio: "inherit",
       cwd,
+      env: {
+        NODE_ENV: "production",
+      },
     })
       .on("exit", () => {
         console.log(`✅ ${name}`);
