@@ -67,7 +67,7 @@ export const GameplayScore: FunctionalComponent<GameplayScoreProps> = (
       {props.timing.map((timing) => (
         <div class="mt-8">
           <div
-            class={`timing-${timing.window.toLowerCase()} flex justify-end`}
+            class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
             key={timing.window}
           >
             {timing.window}
