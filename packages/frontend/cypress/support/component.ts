@@ -2,7 +2,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { mount as _mount } from "cypress/vue";
 import type { Pinia } from "pinia";
 import "./commands";
-import "@packages/game-data/styles/global.css";
+// import "@packages/game-data/styles/global.css";
 import { createRouterMock } from 'vue-router-mock'
 import "./style.css";
 import "../../src/output.css";
@@ -10,7 +10,7 @@ import "../../src/style.css"
 import { createClient } from "@urql/core";
 import { defineComponent, h } from "vue";
 import { provideClient } from "@urql/vue";
-import { MountingOptions } from "cypress/vue/dist/@vue/test-utils";
+// import { MountingOptions } from "cypress/vue/dist/@vue/test-utils";
 
 let pinia: Pinia;
 
@@ -30,14 +30,14 @@ declare global {
 
   namespace Cypress {
     interface Chainable {
-      mount: typeof _mount;
+      mount: any;
     }
   }
 }
 
 Cypress.Commands.add("mount", mount);
 
-export function mount(comp: any, { props, ...rest }: MountingOptions<any> = {}) {
+export function mount(comp: any, { props, ...rest }: any) {
   const client = createClient({ url: 'http://localhost:5566/graphql' })
   const Parent = defineComponent({
     setup () {

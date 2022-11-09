@@ -4,6 +4,7 @@ import cs from "classnames";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import {
   GameplayScore,
+  tweenTo,
   Timing,
 } from "../gameplay/components/Gameplay/GameplayScore";
 import { SongTitle } from "../gameplay/components/Gameplay/SongTitle";
@@ -65,6 +66,10 @@ const Button: FunctionalComponent<{ onClick?: () => void }> = (
 
 export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
   const router = useRouter();
+
+  setTimeout(() => {
+    tweenTo(0, 85, performance.now(), 2000, document.querySelector('#foo')!)
+  }, 250)
 
   return (
     <NonGameplayScreen screenTitle="Eleutheria">

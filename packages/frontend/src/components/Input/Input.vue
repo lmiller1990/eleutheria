@@ -16,5 +16,5 @@ const emit = defineEmits<{
 </template>
 
 <style scoped lang="scss">
-@import "../../shared.scss";
+// @import "../../shared.scss";
 </style>
