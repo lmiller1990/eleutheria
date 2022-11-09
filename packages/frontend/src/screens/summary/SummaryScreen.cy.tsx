@@ -1,6 +1,5 @@
 import { SummaryScreenContainer } from "./SummaryScreenContainer";
 import { Timing } from "../gameplay/components/Gameplay/GameplayScore";
-import { mount } from "../../../cypress/support/mount";
 
 const timing: Timing[] = [
   {
@@ -19,48 +18,34 @@ const timing: Timing[] = [
 
 describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
   it("displays score", () => {
-    mount(
-      () => (
-        <SummaryScreenContainer
-          file="abyss_breaker"
-          percent={99.5}
-          timing={timing}
-          level={15}
-          songTitle="Abyss Breaker"
-          records={{
-            world: 98.58,
-            personal: 92.6,
-          }}
-        />
-      ),
-      {
-        styles: [
-          "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
-        ],
-      }
-    );
+    cy.mount(() => (
+      <SummaryScreenContainer
+        file="abyss_breaker"
+        percent={99.5}
+        timing={timing}
+        level={15}
+        songTitle="Abyss Breaker"
+        records={{
+          world: 98.58,
+          personal: 92.6,
+        }}
+      />
+    ));
   });
 
-  it.only("new personal best record", () => {
-    mount(
-      () => (
-        <SummaryScreenContainer
-          file="abyss_breaker"
-          percent={90.5}
-          timing={timing}
-          level={15}
-          songTitle="Abyss Breaker"
-          records={{
-            world: 98.58,
-            personal: 80.5,
-          }}
-        />
-      ),
-      {
-        styles: [
-          "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
-        ],
-      }
-    );
+  it("new personal best record", () => {
+    cy.mount(() => (
+      <SummaryScreenContainer
+        file="abyss_breaker"
+        percent={90.5}
+        timing={timing}
+        level={15}
+        songTitle="Abyss Breaker"
+        records={{
+          world: 98.58,
+          personal: 80.5,
+        }}
+      />
+    ));
   });
 });

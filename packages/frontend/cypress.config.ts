@@ -1,10 +1,8 @@
-import { defineConfig as defineVite } from "vite";
+import { defineConfig as defineVite, mergeConfig } from "vite";
 import { defineConfig } from "cypress";
-import execa from "execa";
-import path from "path";
-import { waitForServer } from "../../scripts/gulpfile";
+import viteConfig from "./vite.config";
 
-const viteConfig = defineVite({
+const viteConfigTesting = defineVite({
   optimizeDeps: {
     include: [
       "cypress/vue",
@@ -27,7 +25,7 @@ export default defineConfig({
     devServer: {
       framework: "vue",
       bundler: "vite",
-      viteConfig,
+      viteConfig: mergeConfig(viteConfig, viteConfigTesting),
     },
   },
 

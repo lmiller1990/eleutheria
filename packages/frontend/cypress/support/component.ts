@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from "pinia";
-import { mount as _mount } from "cypress/vue";
+import { CyMountOptions, mount as _mount } from "cypress/vue";
 import type { Pinia } from "pinia";
 import "./commands";
 import "@packages/game-data/styles/global.css";
@@ -10,7 +10,6 @@ import "../../src/style.css"
 import { createClient } from "@urql/core";
 import { defineComponent, h } from "vue";
 import { provideClient } from "@urql/vue";
-import { MountingOptions } from "cypress/vue/dist/@vue/test-utils";
 
 let pinia: Pinia;
 
@@ -30,14 +29,30 @@ declare global {
 
   namespace Cypress {
     interface Chainable {
-      mount: typeof _mount;
+      mount: typeof mount
+      injectStylesheet: typeof injectStylesheet
     }
   }
 }
 
 Cypress.Commands.add("mount", mount);
 
-export function mount(comp: any, { props, ...rest }: MountingOptions<any> = {}) {
+Cypress.Commands.add('injectStylesheet', injectStylesheet)
+
+function injectStylesheet (link: string) {
+  if (document.getElementById(link)) {
+    return
+  }
+  const $link = document.createElement('link')
+  $link.rel = 'stylesheet'
+  $link.id = link
+  $link.href = link
+  document.head.append($link)
+}
+
+export function mount(comp: any, options: CyMountOptions<any, any> = {}) {
+  const { props, ... rest } = options
+
   const client = createClient({ url: 'http://localhost:5566/graphql' })
   const Parent = defineComponent({
     setup () {
@@ -57,3 +72,9 @@ export function mount(comp: any, { props, ...rest }: MountingOptions<any> = {}) 
     }
   });
 }
+
+before(() => {
+  cy.injectStylesheet(
+    "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap"
+  );
+})
