@@ -1,4 +1,4 @@
-import { FunctionalComponent, onMounted } from "vue";
+import { defineComponent, FunctionalComponent, onMounted, Ref, ref } from "vue";
 import cs from "classnames";
 
 export interface Timing {
@@ -46,76 +46,78 @@ const TimingCount: FunctionalComponent<{ count: number }> = (props) => {
   return jsx;
 };
 
-function easeOutCubic(start: number, end: number): number {
-  return start - Math.pow(start - end, 3);
-}
+export function tweenTo(durationMs: number, endNum: number, cb: (num: string) => void) {
+  /**
+   * start = performance.now() //=> say 50000
+   * end = 51000
+   *
+   * t=50600
+   * end - t = 400
+   * (1000-400)/1000 = 600/1000 = 60/100 = 0.6
+   * easeOutCubic -> 1 - Math.pow(1 - 0.6, 3) //=> 0.935
+   */
 
-export function tweenTo(from: number, to: number, start:number, durationMs: number, el: HTMLElement) {
-  // 0 -> 1000 over 200ms
-  // 0, 200, 400, 600, 800, 1000
-  // constantly rAF and take the diff, increment number to 
-  // make it up
-  const end = start + durationMs
-  
-  let now: number
-  if ((now = performance.now()) < end) {
-    // const d1 = now - start
-    // const d2 = end - now
-    // const diff = d1 / (d1 + d2)
+  const start = performance.now();
+  const end = start + durationMs;
+
+  const update = () => {
+    const now = window.performance.now();
+    if (now > end) {
+      cb(`${endNum.toFixed(2)}%`)
+      return;
+    }
+    const diff = end - now;
+    const percent = (durationMs - diff) / durationMs;
     // https://easings.net/#easeOutCubic
-    // const n = (100 - (to * diff))
-    // Below you see the code of this easing function written in TypeScript. 
-    // The variable x represents the absolute progress of the animation in the bounds of 0 
-    // (beginning of the animation) and 1 (end of animation).
-    // function easeOutCubic(x: number): number {
-    //   return 1 - Math.pow(1 - x, 3);
-    // }
-    // console.log({n})
-    const n = 1 - Math.pow(1 - (end - now), 3)
+    const cubic = 1 - Math.pow(1 - percent, 3);
+    const n = (endNum * cubic).toFixed(2);
+    cb(`${n}%`)
+    // el.innerText = `${n}%`;
+    window.requestAnimationFrame(update);
+  };
 
-    console.log({ n})
-    // el.innerText = `${(to * diff).toFixed(2)}%`
-    // el.innerText = `${c.toFixed(2)}%`
-    setTimeout(() => {
-      tweenTo(from, to, start, durationMs, el)
-    }, 50)
-  } else {
-    el.innerText = `${to.toFixed(2)}%`
-  }
+  update();
 }
 
-export const GameplayScore: FunctionalComponent<GameplayScoreProps> = (
-  props
-) => {
-  return (
-    <div
-      class={cs(
-        "flex flex-col text-white uppercase",
-        props.classes?.wrapper ?? "text-2xl"
-      )}
-    >
+function useCubicEasing (duration: number, to: number): Ref<string> {
+  const percent = ref('00.00%')
+  tweenTo(duration, to, (val) => {
+    percent.value = val
+  })
+  return percent
+}
+
+export const GameplayScore = defineComponent<GameplayScoreProps>({
+  setup(props) {
+    const percent = useCubicEasing(1500, props.percent)
+    return () => (
       <div
         class={cs(
-          "flex justify-end font-mono",
-          props.classes?.percent ?? "text-5xl"
+          "flex flex-col text-white uppercase",
+          props.classes?.wrapper ?? "text-2xl"
         )}
       >
-        {props.percent.toFixed(2)}%
+        <div
+          class={cs(
+            "flex justify-end font-mono",
+            props.classes?.percent ?? "text-5xl"
+          )}
+        >{percent.value}</div>
+        {props.timing.map((timing) => (
+          <div class="mt-8">
+            <div id="foo" />
+            <div
+              class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
+              key={timing.window}
+            >
+              {timing.window}
+            </div>
+            <div class="flex justify-end">
+              <TimingCount count={timing.count} />
+            </div>
+          </div>
+        ))}
       </div>
-      {props.timing.map((timing) => (
-        <div class="mt-8">
-          <div id="foo" />
-          <div
-            class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
-            key={timing.window}
-          >
-            {timing.window}
-          </div>
-          <div class="flex justify-end">
-            <TimingCount count={timing.count} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+    );
+  },
+});
