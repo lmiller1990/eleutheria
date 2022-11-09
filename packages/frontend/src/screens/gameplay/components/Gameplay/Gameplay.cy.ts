@@ -1,5 +1,5 @@
 import Gameplay from "./Gameplay.vue";
-import appStyle from "../../../../style.css";
+import "../../../../style.css";
 
 function waitFor<T>(win: Window, key: string) {
   let to = win.setTimeout(() => {
@@ -30,10 +30,6 @@ describe.skip("Gameplay", () => {
         __testingDoNotStartSong: false,
         __testingManualMode: true,
       },
-      styles: [
-        appStyle,
-        "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap",
-      ],
     });
 
     let manualTick: typeof window["manualTick"];
