@@ -1,4 +1,4 @@
-import { defineComponent, FunctionalComponent, onMounted, Ref, ref } from "vue";
+import { defineComponent, FunctionalComponent, Ref, ref } from "vue";
 import cs from "classnames";
 
 export interface Timing {
@@ -46,7 +46,11 @@ const TimingCount: FunctionalComponent<{ count: number }> = (props) => {
   return jsx;
 };
 
-export function tweenTo(durationMs: number, endNum: number, cb: (num: string) => void) {
+export function tweenTo(
+  durationMs: number,
+  endNum: number,
+  cb: (num: string) => void
+) {
   /**
    * start = performance.now() //=> say 50000
    * end = 51000
@@ -63,7 +67,7 @@ export function tweenTo(durationMs: number, endNum: number, cb: (num: string) =>
   const update = () => {
     const now = window.performance.now();
     if (now > end) {
-      cb(`${endNum.toFixed(2)}%`)
+      cb(`${endNum.toFixed(2)}%`);
       return;
     }
     const diff = end - now;
@@ -71,7 +75,7 @@ export function tweenTo(durationMs: number, endNum: number, cb: (num: string) =>
     // https://easings.net/#easeOutCubic
     const cubic = 1 - Math.pow(1 - percent, 3);
     const n = (endNum * cubic).toFixed(2);
-    cb(`${n}%`)
+    cb(`${n}%`);
     // el.innerText = `${n}%`;
     window.requestAnimationFrame(update);
   };
@@ -79,17 +83,17 @@ export function tweenTo(durationMs: number, endNum: number, cb: (num: string) =>
   update();
 }
 
-function useCubicEasing (duration: number, to: number): Ref<string> {
-  const percent = ref('00.00%')
+function useCubicEasing(duration: number, to: number): Ref<string> {
+  const percent = ref("00.00%");
   tweenTo(duration, to, (val) => {
-    percent.value = val
-  })
-  return percent
+    percent.value = val;
+  });
+  return percent;
 }
 
 export const GameplayScore = defineComponent<GameplayScoreProps>({
   setup(props) {
-    const percent = useCubicEasing(1500, props.percent)
+    const percent = useCubicEasing(1500, props.percent);
     return () => (
       <div
         class={cs(
@@ -102,7 +106,9 @@ export const GameplayScore = defineComponent<GameplayScoreProps>({
             "flex justify-end font-mono",
             props.classes?.percent ?? "text-5xl"
           )}
-        >{percent.value}</div>
+        >
+          {percent.value}
+        </div>
         {props.timing.map((timing) => (
           <div class="mt-8">
             <div id="foo" />
