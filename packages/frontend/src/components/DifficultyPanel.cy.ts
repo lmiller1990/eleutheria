@@ -20,11 +20,6 @@ const difficulties: SongDifficulty[] = [
 describe("DifficultyPanel", () => {
   it("renders", () => {
     mount(DifficultyPanel, {
-      style: `
-        body {
-          background: #828282;
-        }
-      `,
       props: {
         difficulties,
         selectedIndex: 0,
