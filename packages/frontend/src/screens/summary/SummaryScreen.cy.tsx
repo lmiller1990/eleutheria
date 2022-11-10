@@ -33,7 +33,7 @@ describe("SummaryScreen", { viewportHeight: 900, viewportWidth: 1600 }, () => {
     ));
   });
 
-  it.only("new personal best record", () => {
+  it("new personal best record", () => {
     cy.mount(() => (
       <SummaryScreenContainer
         file="abyss_breaker"

@@ -51,16 +51,6 @@ export function tweenTo(
   endNum: number,
   cb: (num: string) => void
 ) {
-  /**
-   * start = performance.now() //=> say 50000
-   * end = 51000
-   *
-   * t=50600
-   * end - t = 400
-   * (1000-400)/1000 = 600/1000 = 60/100 = 0.6
-   * easeOutCubic -> 1 - Math.pow(1 - 0.6, 3) //=> 0.935
-   */
-
   const start = performance.now();
   const end = start + durationMs;
 
@@ -76,7 +66,6 @@ export function tweenTo(
     const cubic = 1 - Math.pow(1 - percent, 3);
     const n = (endNum * cubic).toFixed(2);
     cb(`${n}%`);
-    // el.innerText = `${n}%`;
     window.requestAnimationFrame(update);
   };
 

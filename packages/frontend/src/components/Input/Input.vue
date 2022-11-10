@@ -14,7 +14,3 @@ const emit = defineEmits<{
     @input="event => emit('update:modelValue', (event.target as HTMLInputElement).value)"
   />
 </template>
-
-<style scoped lang="scss">
-// @import "../../shared.scss";
-</style>
