@@ -84,7 +84,7 @@ async function songCompleted(world: World) {
   router.push({ path: "/summary", query: { id: res.data.saveScore.id } });
 }
 
-const scoreData = computed<GameplayScoreProps>(() => {
+const scoreData = computed<Omit<GameplayScoreProps, "animate">>(() => {
   return {
     percent: timingSummary.percent,
     timing: [

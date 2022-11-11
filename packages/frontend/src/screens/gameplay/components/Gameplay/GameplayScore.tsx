@@ -49,7 +49,7 @@ const TimingCount: FunctionalComponent<{ count: number }> = (props) => {
 export function tweenTo(
   durationMs: number,
   endNum: number,
-  cb: (num: string) => void
+  cb: (num: number) => void
 ) {
   const start = performance.now();
   const end = start + durationMs;
@@ -57,62 +57,87 @@ export function tweenTo(
   const update = () => {
     const now = window.performance.now();
     if (now > end) {
-      cb(`${endNum.toFixed(2)}%`);
+      cb(endNum);
       return;
     }
     const diff = end - now;
     const percent = (durationMs - diff) / durationMs;
     // https://easings.net/#easeOutCubic
     const cubic = 1 - Math.pow(1 - percent, 3);
-    const n = (endNum * cubic).toFixed(2);
-    cb(`${n}%`);
+    const n = endNum * cubic;
+    cb(n);
     window.requestAnimationFrame(update);
   };
 
   update();
 }
 
-function useCubicEasing(duration: number, to: number): Ref<string> {
-  const percent = ref("00.00%");
+function useCubicEasing(duration: number, to: number): Ref<number> {
+  const percent = ref(0);
   tweenTo(duration, to, (val) => {
     percent.value = val;
   });
   return percent;
 }
 
-export const GameplayScore = defineComponent<GameplayScoreProps>({
+export const GameplayScoreWithAnimation = defineComponent({
+  props: {
+    percent: {
+      type: Number,
+      required: true,
+    },
+    classes: {
+      type: Object as () => GameplayScoreProps["classes"],
+    },
+    timing: {
+      type: Array as () => Timing[],
+      required: true,
+    },
+  },
   setup(props) {
     const percent = useCubicEasing(1500, props.percent);
     return () => (
-      <div
-        class={cs(
-          "flex flex-col text-white uppercase",
-          props.classes?.wrapper ?? "text-2xl"
-        )}
-      >
-        <div
-          class={cs(
-            "flex justify-end font-mono",
-            props.classes?.percent ?? "text-5xl"
-          )}
-        >
-          {percent.value}
-        </div>
-        {props.timing.map((timing) => (
-          <div class="mt-8">
-            <div id="foo" />
-            <div
-              class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
-              key={timing.window}
-            >
-              {timing.window}
-            </div>
-            <div class="flex justify-end">
-              <TimingCount count={timing.count} />
-            </div>
-          </div>
-        ))}
-      </div>
+      <GameplayScore
+        percent={percent.value}
+        timing={props.timing}
+        classes={props.classes}
+      />
     );
   },
 });
+// const percent = useCubicEasing(1500, props.percent);
+export const GameplayScore: FunctionalComponent<GameplayScoreProps> = (
+  props
+) => {
+  return (
+    <div
+      class={cs(
+        "flex flex-col text-white uppercase",
+        props.classes?.wrapper ?? "text-2xl"
+      )}
+    >
+      <div
+        class={cs(
+          "flex justify-end font-mono",
+          props.classes?.percent ?? "text-5xl"
+        )}
+      >
+        {props.percent.toFixed(2)}%
+      </div>
+      {props.timing.map((timing) => (
+        <div class="mt-8">
+          <div id="foo" />
+          <div
+            class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
+            key={timing.window}
+          >
+            {timing.window}
+          </div>
+          <div class="flex justify-end">
+            <TimingCount count={timing.count} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};

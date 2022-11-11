@@ -6,7 +6,6 @@ import { createRouterMock } from "vue-router-mock";
 import "./style.css";
 import "../../src/output.css";
 import "../../src/style.css";
-import { createClient } from "@urql/core";
 import { defineComponent, h } from "vue";
 import { provideClient } from "@urql/vue";
 
@@ -52,10 +51,9 @@ function injectStylesheet(link: string) {
 export function mount(comp: any, options: CyMountOptions<any, any> = {}) {
   const { props, ...rest } = options;
 
-  const client = createClient({ url: "http://localhost:5566/graphql" });
   const Parent = defineComponent({
     setup() {
-      provideClient(client);
+      provideClient({ url: "http://localhost:5566/graphql"  });
       return () => h(comp, { ...props });
     },
   });

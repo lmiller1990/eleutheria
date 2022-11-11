@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import type { SignUpFormProps } from "./types";
 import ValidationInput from "../ValidationInput.vue";
 import { min, max, email as emailRule } from "../../validation";
 import Button from "../Button.vue";
@@ -18,8 +17,6 @@ gql`
     }
   }
 `;
-
-defineProps<SignUpFormProps>();
 
 const signUp = useMutation(SignUpDocument);
 

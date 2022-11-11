@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import cs from "classnames";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import {
-  GameplayScore,
+  GameplayScoreWithAnimation,
   Timing,
 } from "../gameplay/components/Gameplay/GameplayScore";
 import { SongTitle } from "../gameplay/components/Gameplay/SongTitle";
@@ -90,7 +90,7 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
 
           <div>
             <div class="flex justify-center">
-              <GameplayScore
+              <GameplayScoreWithAnimation
                 percent={props.percent}
                 timing={props.timing}
                 classes={{ wrapper: "text-3xl", percent: "text-7xl" }}
