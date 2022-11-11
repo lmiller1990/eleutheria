@@ -6,7 +6,7 @@
   "module": "./src/index.ts",
   "devDependencies": {
     "typescript": "4.7.4",
-    "vitest": "0.1.24"
+    "vitest": "0.25.1"
   },
   "scripts": {
     "test": "vitest --run",
