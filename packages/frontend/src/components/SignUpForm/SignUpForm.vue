@@ -6,6 +6,7 @@ import Button from "../Button.vue";
 import { SignUpDocument } from "../../generated/graphql";
 import { gql, useMutation } from "@urql/vue";
 import { useModal } from "../../composables/modal";
+import { useEmitter } from "../../composables/emitter";
 
 gql`
   mutation SignUp($email: String!, $password: String!, $username: String!) {
@@ -46,6 +47,7 @@ onMounted(() => {
 });
 
 const modal = useModal();
+const emitter = useEmitter();
 
 async function handleSubmit() {
   if (submitting.value && valid.value) {
@@ -61,7 +63,7 @@ async function handleSubmit() {
   });
 
   submitting.value = false;
-
+  emitter.emit("authentication:changed");
   modal.hideModal();
 }
 
