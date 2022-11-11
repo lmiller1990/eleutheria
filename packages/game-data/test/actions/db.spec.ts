@@ -29,28 +29,28 @@ describe("db", () => {
       const data: Omit<Scores, "id" | "created_at"> = {
         percent: 90.0,
         timing: {},
-        chart_id: 1,
+        chart_id: 2,
         user_id: 1,
       };
 
       await Promise.all([
-        ctx.knexTable("scores").insert({ ...data, percent: 90.0 }),
-        ctx.knexTable("scores").insert({ ...data, percent: "95.55" }),
-        ctx.knexTable("scores").insert({ ...data, percent: "100.00" }),
+        ctx.knexTable("scores").insert({ ...data, percent: 90 }),
+        ctx.knexTable("scores").insert({ ...data, percent: 95.55 }),
+        ctx.knexTable("scores").insert({ ...data, percent: 100.0 }),
       ]);
 
-      const result = await actions.queryForUserPersonalBest(1, 1);
+      const result = await actions.queryForUserPersonalBest(2, 1);
 
-      expect(result?.percent).toEqual("100.00");
+      expect(result?.percent).toEqual(100);
     });
   });
 
   describe("queryForWorldRecord", () => {
-    it.only("gets world record for given chart", async () => {
+    it("gets world record for given chart", async () => {
       const data: Omit<Scores, "id" | "created_at"> = {
         percent: 80.0,
         timing: {},
-        chart_id: 1,
+        chart_id: 2,
         user_id: 1,
       };
 
@@ -64,7 +64,7 @@ describe("db", () => {
       await ctx.knexTable("scores").insert({
         ...data,
         user_id: 1,
-        percent: "80.00",
+        percent: 80,
         created_at: "2021-10-10 11:00:50.000000+10",
       });
 
@@ -73,12 +73,12 @@ describe("db", () => {
         .insert({
           ...data,
           user_id: 2,
-          percent: "90.01",
+          percent: 90.01,
           created_at: "2022-10-10 11:00:50.000000+10",
         })
         .returning("id");
 
-      const result = await actions.queryForWorldRecord(1);
+      const result = await actions.queryForWorldRecord(2);
 
       expect(result?.id).toEqual(wr.id);
     });

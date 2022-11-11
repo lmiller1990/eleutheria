@@ -18,10 +18,13 @@ const timing = [
 
 describe("GameplayScore", () => {
   it("scores", () => {
-    cy.mount(() => (
-      <div class="border border-2" style={{ width: "300px" }}>
-        <GameplayScore timing={timing} percent={99.45} />
-      </div>
-    ));
+    cy.mount(
+      () => (
+        <div class="border border-2" style={{ width: "300px" }}>
+          <GameplayScore timing={timing} percent={99.45} />
+        </div>
+      ),
+      {}
+    );
   });
 });

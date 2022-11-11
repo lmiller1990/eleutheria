@@ -1,4 +1,4 @@
-import type { FunctionalComponent } from "vue";
+import { defineComponent, FunctionalComponent, Ref, ref } from "vue";
 import cs from "classnames";
 
 export interface Timing {
@@ -46,37 +46,73 @@ const TimingCount: FunctionalComponent<{ count: number }> = (props) => {
   return jsx;
 };
 
-export const GameplayScore: FunctionalComponent<GameplayScoreProps> = (
-  props
-) => {
-  return (
-    <div
-      class={cs(
-        "flex flex-col text-white uppercase",
-        props.classes?.wrapper ?? "text-2xl"
-      )}
-    >
+export function tweenTo(
+  durationMs: number,
+  endNum: number,
+  cb: (num: string) => void
+) {
+  const start = performance.now();
+  const end = start + durationMs;
+
+  const update = () => {
+    const now = window.performance.now();
+    if (now > end) {
+      cb(`${endNum.toFixed(2)}%`);
+      return;
+    }
+    const diff = end - now;
+    const percent = (durationMs - diff) / durationMs;
+    // https://easings.net/#easeOutCubic
+    const cubic = 1 - Math.pow(1 - percent, 3);
+    const n = (endNum * cubic).toFixed(2);
+    cb(`${n}%`);
+    window.requestAnimationFrame(update);
+  };
+
+  update();
+}
+
+function useCubicEasing(duration: number, to: number): Ref<string> {
+  const percent = ref("00.00%");
+  tweenTo(duration, to, (val) => {
+    percent.value = val;
+  });
+  return percent;
+}
+
+export const GameplayScore = defineComponent<GameplayScoreProps>({
+  setup(props) {
+    const percent = useCubicEasing(1500, props.percent);
+    return () => (
       <div
         class={cs(
-          "flex justify-end font-mono",
-          props.classes?.percent ?? "text-5xl"
+          "flex flex-col text-white uppercase",
+          props.classes?.wrapper ?? "text-2xl"
         )}
       >
-        {props.percent.toFixed(2)}%
-      </div>
-      {props.timing.map((timing) => (
-        <div class="mt-8">
-          <div
-            class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
-            key={timing.window}
-          >
-            {timing.window}
-          </div>
-          <div class="flex justify-end">
-            <TimingCount count={timing.count} />
-          </div>
+        <div
+          class={cs(
+            "flex justify-end font-mono",
+            props.classes?.percent ?? "text-5xl"
+          )}
+        >
+          {percent.value}
         </div>
-      ))}
-    </div>
-  );
-};
+        {props.timing.map((timing) => (
+          <div class="mt-8">
+            <div id="foo" />
+            <div
+              class={`timing-${timing.window.toLowerCase()} flex justify-end no-animation`}
+              key={timing.window}
+            >
+              {timing.window}
+            </div>
+            <div class="flex justify-end">
+              <TimingCount count={timing.count} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
+});

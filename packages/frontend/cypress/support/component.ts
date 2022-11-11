@@ -1,12 +1,11 @@
-import { createPinia, setActivePinia } from "pinia";
 import { CyMountOptions, mount as _mount } from "cypress/vue";
-import type { Pinia } from "pinia";
+import { createPinia, Pinia, setActivePinia } from "pinia";
 import "./commands";
 import "@packages/game-data/styles/global.css";
-import { createRouterMock } from 'vue-router-mock'
+import { createRouterMock } from "vue-router-mock";
 import "./style.css";
 import "../../src/output.css";
-import "../../src/style.css"
+import "../../src/style.css";
 import { createClient } from "@urql/core";
 import { defineComponent, h } from "vue";
 import { provideClient } from "@urql/vue";
@@ -24,52 +23,55 @@ beforeEach(() => {
 // with a <reference path="./component" /> at the top of your spec.
 declare global {
   interface Window {
-    manualTick: (ms: number) => void
+    manualTick: (ms: number) => void;
   }
 
   namespace Cypress {
     interface Chainable {
-      mount: typeof mount
-      injectStylesheet: typeof injectStylesheet
+      mount: typeof mount;
+      injectStylesheet: typeof injectStylesheet;
     }
   }
 }
 
 Cypress.Commands.add("mount", mount);
 
-Cypress.Commands.add('injectStylesheet', injectStylesheet)
+Cypress.Commands.add("injectStylesheet", injectStylesheet);
 
-function injectStylesheet (link: string) {
+function injectStylesheet(link: string) {
   if (document.getElementById(link)) {
-    return
+    return;
   }
-  const $link = document.createElement('link')
-  $link.rel = 'stylesheet'
-  $link.id = link
-  $link.href = link
-  document.head.append($link)
+  const $link = document.createElement("link");
+  $link.rel = "stylesheet";
+  $link.id = link;
+  $link.href = link;
+  document.head.append($link);
 }
 
 export function mount(comp: any, options: CyMountOptions<any, any> = {}) {
-  const { props, ... rest } = options
+  const { props, ...rest } = options;
 
-  const client = createClient({ url: 'http://localhost:5566/graphql' })
+  const client = createClient({ url: "http://localhost:5566/graphql" });
   const Parent = defineComponent({
-    setup () {
-      provideClient(client)
-      return () => h(comp, { ...props })
-    }
-  })
+    setup() {
+      provideClient(client);
+      return () => h(comp, { ...props });
+    },
+  });
   return _mount(Parent, {
     ...rest,
     global: {
-      plugins: [pinia, createRouterMock({ 
-        spy: {
-          create: cy.spy,
-          reset: () => {}
-        }
-      })]
-    }
+      plugins: [
+        pinia,
+        createRouterMock({
+          spy: {
+            create: cy.spy,
+            reset: () => {},
+          },
+        }),
+      ],
+    },
   });
 }
 
@@ -77,4 +79,4 @@ before(() => {
   cy.injectStylesheet(
     "https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap"
   );
-})
+});
