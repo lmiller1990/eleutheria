@@ -41,14 +41,14 @@ async function handleSignOut() {
 </script>
 
 <template>
-  <div class="bg-zinc-700 w-full h-full text-2xl">
+  <div class="bg-zinc-700 w-full h-full max-w-3xl text-white">
     <div class="flex justify-between items-center">
-      <h1>Profile for {{ viewerQuery.data?.value?.viewer?.username }}</h1>
+      <h1 class="text-2xl">{{ viewerQuery.data?.value?.viewer?.username }}</h1>
       <Button @click="handleSignOut">Sign Out</Button>
     </div>
 
-    <div class="flex justify-center items-center m-12">
-      TODO: Useful information.
+    <div class="flex justify-center items-center m-12 text-sm">
+      Detailed user profile coming soon!
     </div>
   </div>
 </template>
