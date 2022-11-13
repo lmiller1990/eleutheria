@@ -250,7 +250,7 @@ async function handleSelected(
       file: song.file,
       artist: song.artist,
       title: song.title,
-      personalBest: selectedChart.value?.personalBest ?? "0.00",
+      personalBest: selectedChart.value?.personalBest?.toFixed(2) ?? "0.00",
       chartId,
     },
   });

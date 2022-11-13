@@ -1,6 +1,7 @@
 import { AudioData } from "@packages/shared";
 import { EventEmitter } from "events";
 import TypedEmitter from "typed-emitter";
+import { computed, reactive } from "vue";
 
 const wait = async () => new Promise((res) => setTimeout(res, 5));
 
@@ -58,8 +59,22 @@ type LoadingEmitterEvents = {
 type LoadingEmitter = TypedEmitter<LoadingEmitterEvents>;
 
 export function useAudioLoader(url: string) {
+  const bytes = reactive({
+    streamed: 0,
+    total: 1,
+  });
+
+  const percent = computed(() => {
+    return (bytes.streamed / bytes.total) * 100;
+  });
+
   const loadingEmitter =
     new (class extends (EventEmitter as new () => LoadingEmitter) {})();
+
+  loadingEmitter.on("song:loading:chunk", (s, t) => {
+    bytes.streamed += s;
+    bytes.total = t;
+  });
 
   getAudioData(url, loadingEmitter).then((payload) => {
     loadingEmitter.emit("song:loading:complete", payload);
@@ -67,5 +82,7 @@ export function useAudioLoader(url: string) {
 
   return {
     emitter: loadingEmitter,
+    bytes,
+    percent,
   };
 }
