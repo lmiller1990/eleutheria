@@ -1,5 +1,4 @@
 import type { AudioData, Cover, NoteSkin } from "@packages/shared";
-import pDefer from "p-defer";
 import { gql } from "@urql/core";
 import {
   defineComponent,
@@ -9,12 +8,15 @@ import {
   reactive,
   ref,
   Ref,
-  Suspense,
+  shallowRef,
 } from "vue";
 import { useGameplayOptions } from "../../composables/gameplayOptions";
 import { CoverParams } from "../gameplay/modiferManager";
 import { ScrollDirection } from "../gameplay/types";
-import { OptionsModalDocument } from "../../generated/graphql";
+import {
+  OptionsModalDocument,
+  OptionsModalQuery,
+} from "../../generated/graphql";
 import { useQuery } from "@urql/vue";
 import {
   injectNoteSkin,
@@ -283,11 +285,7 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
   }
 
   return (
-    <div
-      style={{ background: "#828282", height: "75vh" }}
-      class="flex px-14 border border-white"
-      onClick={stopPropagation}
-    >
+    <div onClick={stopPropagation} class="flex">
       <Col>
         <h2 class="text-3xl">Options</h2>
         <SpeedModPanel
@@ -323,17 +321,50 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
   );
 };
 
-export const OptionsModal: FunctionalComponent = () => {
-  const slots = {
-    default: () => <OptionsModalWrapper />,
-    fallback: () => <div>Loading...</div>,
-  };
+export const OptionsModal = defineComponent({
+  setup() {
+    const gql = useQuery({ query: OptionsModalDocument });
 
-  return <Suspense v-slots={slots} />;
-};
+    const fileUrl = `${import.meta.env.VITE_CDN_URL}/empty.mp3`;
+    const { emitter, percent } = useAudioLoader(fileUrl);
+
+    let audioData = shallowRef<AudioData>();
+
+    emitter.on("song:loading:complete", (buffer) => {
+      audioData.value = buffer;
+    });
+
+    return () => (
+      <div
+        style={{ background: "#828282", height: "75vh", width: "75vw" }}
+        class="flex px-14 border border-white justify-center"
+      >
+        {gql.data.value && audioData.value ? (
+          <OptionsModalWrapper
+            gql={gql.data.value}
+            audioData={audioData.value}
+          />
+        ) : (
+          <div>Loading... {`${percent.value.toFixed(0)}%`}</div>
+        )}
+      </div>
+    );
+  },
+});
 
 export const OptionsModalWrapper = defineComponent({
-  async setup() {
+  props: {
+    gql: {
+      type: Object as () => OptionsModalQuery,
+      required: true,
+    },
+    audioData: {
+      type: Object as () => AudioData,
+      required: true,
+    },
+  },
+
+  setup(props) {
     const modifiers = useGameplayOptions();
     const gameplayRoot = ref(undefined);
     const { modifierManager } = useGameplayOptions();
@@ -344,21 +375,7 @@ export const OptionsModalWrapper = defineComponent({
       stylesheetInjectionKeys.modsPaneOverrides
     );
 
-    const fileUrl = `${import.meta.env.VITE_CDN_URL}/empty.mp3`;
-
-    const { emitter } = useAudioLoader(fileUrl);
-
-    // let audioBuffer: AudioBuffer;
-    let dfd = pDefer<AudioData>();
-
-    emitter.on("song:loading:complete", (buffer) => {
-      // audioBuffer = buffer;
-      dfd.resolve(buffer);
-    });
-
     onMounted(async () => {
-      const audioData = await dfd.promise;
-
       // if unmounted before the promise resolves, this might be null
       // so we return early.
       if (!gameplayRoot.value) {
@@ -389,7 +406,7 @@ export const OptionsModalWrapper = defineComponent({
       };
 
       game = create(gameplayRoot.value!, startGameArgs, false, false, 0);
-      game!.start(audioData);
+      game!.start(props.audioData);
     });
 
     onBeforeUnmount(() => {
@@ -426,15 +443,13 @@ export const OptionsModalWrapper = defineComponent({
       localMods.noteSkin = val;
     });
 
-    const gql = await useQuery({ query: OptionsModalDocument });
-
-    const defaultNoteSkin = gql.data.value?.noteSkins.find(
+    const defaultNoteSkin = props.gql.noteSkins.find(
       (x) => x.name === "default"
     );
 
     if (!defaultNoteSkin) {
       throw Error(
-        `Default note skin not found. This should not happen. Note skins are ${gql.data.value?.noteSkins}`
+        `Default note skin not found. This should not happen. Note skins are ${props.gql.noteSkins}`
       );
     }
 
@@ -447,8 +462,8 @@ export const OptionsModalWrapper = defineComponent({
         onChangeSpeedMod={modifiers.handleChangeSpeedMod}
         onChangeScrollMod={modifiers.handleChangeScrollMod}
         onChangeCoverMod={modifiers.handleChangeCoverMod}
-        noteSkins={gql.data.value?.noteSkins ?? []}
-        covers={gql.data.value?.covers ?? []}
+        noteSkins={props.gql.noteSkins ?? []}
+        covers={props.gql.covers ?? []}
         currentNoteSkin={localMods.noteSkin}
         onChangeNoteSkin={onChangeNoteSkin}
       />
