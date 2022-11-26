@@ -7,6 +7,8 @@ const validPreferences = [
   "scrollDirection",
   "cover",
   "noteSkin",
+  "selectedSongId",
+  "selectedChartIdx",
 ] as const;
 
 export interface Preferences {
@@ -14,6 +16,8 @@ export interface Preferences {
   speedModifier: number;
   noteSkin: NoteSkin;
   cover: Partial<CoverParams>;
+  selectedSongId: number;
+  selectedChartIdx: number;
 }
 
 const PREFERENCES_KEY = "rhythm";
@@ -41,7 +45,7 @@ export function mergePreferences(
 
     // Do we need runtime validation?
     if (typeof val === "object") {
-      (existingPreferences[p] as object) = {
+      ;(existingPreferences[p] as object) = {
         ...(existingPreferences[p] as object),
         ...val,
       };

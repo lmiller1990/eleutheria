@@ -74,6 +74,7 @@ import { SongInfo } from "../../components/SongInfo";
 import { SongImage } from "./SongImage";
 import { useModal } from "../../composables/modal";
 import { useEmitter } from "../../composables/emitter";
+import { preferencesManager } from "../gameplay/preferences";
 
 gql`
   query SongSelectScreen_Songs {
@@ -114,8 +115,10 @@ function handleAuthenticate() {
   }
 }
 
-const selectedSongId = ref<number>(2);
-const selectedChartIdx = ref<number>(0);
+const preferences = preferencesManager.getPreferences();
+
+const selectedSongId = ref<number>(preferences.selectedSongId ?? 2);
+const selectedChartIdx = ref<number>(preferences.selectedChartIdx ?? 0);
 
 const songsQuery = useQuery({
   query: SongSelectScreen_SongsDocument,
@@ -170,6 +173,7 @@ onBeforeUnmount(() => {
 
 function handleSelectChart(idx: number) {
   selectedChartIdx.value = idx;
+  preferencesManager.updatePreferences({ selectedChartIdx: idx });
 }
 
 const chartDifficulty = computed(() => {
@@ -223,6 +227,9 @@ async function handleSelected(
   song: SongSelectScreen_SongsQuery["songs"][number]
 ) {
   if (selectedSongId.value !== song.id) {
+    preferencesManager.updatePreferences({
+      selectedSongId: song.id,
+    });
     selectedSongId.value = song.id;
     selectedChartIdx.value = 0;
     return;
