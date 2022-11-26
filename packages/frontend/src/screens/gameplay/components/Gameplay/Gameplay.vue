@@ -3,6 +3,7 @@ import {
   computed,
   FunctionalComponent,
   h,
+  onBeforeUnmount,
   onMounted,
   reactive,
   ref,
@@ -154,12 +155,14 @@ useEventListener("keydown", handleKeydown);
 const { file, songId, chartId } = getParams();
 const query = createGameplayQuery(parseInt(songId, 10), parseInt(chartId, 10));
 
+let init: ReturnType<typeof create>
+
 onMounted(async () => {
   if (!root.value) {
     return;
   }
 
-  const init = create(
+  init = create(
     root.value,
     {
       modifierManager,
@@ -187,6 +190,10 @@ onMounted(async () => {
   game = init.game;
 
   if (editing) {
+    if (!init?.game) {
+      throw Error('init.game not defined. How did this happen!')
+    }
+
     init.game.editorRepeat = {
       emitAfterMs: 7000,
       emitAfterMsCallback: async () => {
@@ -196,11 +203,11 @@ onMounted(async () => {
         );
         emitter.on("song:loading:complete", (payload) => {
           // TODO: may only need to do this once
-          init.game?.updateChart({
+          init?.game?.updateChart({
             tapNotes: props.gql.song.chart.parsedTapNoteChart,
           });
-          init.stop();
-          init.start(payload);
+          init?.stop();
+          init?.start(payload);
         });
       },
     };
@@ -208,6 +215,10 @@ onMounted(async () => {
 
   init.start(props.getAudioData());
 });
+
+onBeforeUnmount(() => {
+  init?.game?.stop()
+})
 
 const { emitter } = useEditor(editing);
 

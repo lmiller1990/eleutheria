@@ -57,6 +57,6 @@ body,
 }
 
 .klee-one {
-  font-family: Klee;
+  font-family: Klee One;
 }
 </style>
