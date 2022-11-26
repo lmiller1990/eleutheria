@@ -122,7 +122,7 @@ const heldKeys = new Set<string>();
 function stop(event: KeyboardEvent) {
   heldKeys.delete(event.code);
 
-  if (event.code === "KeyQ") {
+  if (event.code === "KeyQ" || event.code === "Escape") {
     game?.stop();
     router.push("/");
   }
@@ -155,7 +155,7 @@ useEventListener("keydown", handleKeydown);
 const { file, songId, chartId } = getParams();
 const query = createGameplayQuery(parseInt(songId, 10), parseInt(chartId, 10));
 
-let init: ReturnType<typeof create>
+let init: ReturnType<typeof create>;
 
 onMounted(async () => {
   if (!root.value) {
@@ -191,7 +191,7 @@ onMounted(async () => {
 
   if (editing) {
     if (!init?.game) {
-      throw Error('init.game not defined. How did this happen!')
+      throw Error("init.game not defined. How did this happen!");
     }
 
     init.game.editorRepeat = {
@@ -217,8 +217,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  init?.game?.stop()
-})
+  init?.game?.stop();
+});
 
 const { emitter } = useEditor(editing);
 

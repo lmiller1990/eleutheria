@@ -45,7 +45,7 @@ export function mergePreferences(
 
     // Do we need runtime validation?
     if (typeof val === "object") {
-      ;(existingPreferences[p] as object) = {
+      (existingPreferences[p] as object) = {
         ...(existingPreferences[p] as object),
         ...val,
       };

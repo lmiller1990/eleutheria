@@ -8,7 +8,7 @@
       <div class="flex flex-col">
         <div class="flex flex-col h-full">
           <SongTile
-            v-for="song of songsQuery.data?.value?.songs"
+            v-for="song of songs"
             :key="song.id"
             :songTitle="song.title"
             :artist="song.artist"
@@ -142,6 +142,13 @@ const viewer = computed(() => {
   return chartQuery.data?.value?.viewer ?? null;
 });
 
+const songs = computed(
+  () =>
+    songsQuery.data?.value?.songs.sort((x, y) =>
+      x.title.localeCompare(y.title)
+    ) ?? []
+);
+
 function handleKeyDown(event: KeyboardEvent) {
   if (selectedChartIdx.value === undefined) {
     return;
@@ -151,15 +158,37 @@ function handleKeyDown(event: KeyboardEvent) {
     return;
   }
 
-  if (
-    event.code === "KeyJ" &&
-    selectedChartIdx.value < chartQuery.data.value.charts.length
-  ) {
-    selectedChartIdx.value += 1;
+  if (event.code === "ArrowUp" && selectedSong) {
+    const idx =
+      songs.value?.findIndex((x) => x.id === selectedSongId.value) ?? -1;
+    if (idx > 0) {
+      const next = songs.value?.[idx - 1];
+      if (next) {
+        handleSelected(next);
+      }
+    }
   }
 
-  if (event.code === "KeyK" && selectedChartIdx.value > 0) {
-    selectedChartIdx.value -= 1;
+  if (event.code === "ArrowDown" && selectedSong) {
+    const idx =
+      songs.value?.findIndex((x) => x.id === selectedSongId.value) ?? -1;
+    if (idx + 1 < songs.value.length) {
+      const next = songs.value?.[idx + 1];
+      if (next) {
+        handleSelected(next);
+      }
+    }
+  }
+
+  if (
+    event.code === "ArrowRight" &&
+    selectedChartIdx.value + 1 < chartQuery.data.value.charts.length
+  ) {
+    handleSelectChart(selectedChartIdx.value + 1);
+  }
+
+  if (event.code === "ArrowLeft" && selectedChartIdx.value > 0) {
+    handleSelectChart(selectedChartIdx.value - 1);
   }
 }
 
