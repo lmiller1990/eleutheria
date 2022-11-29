@@ -8,7 +8,7 @@ const log = debug(`game-data:actions:editor`);
 
 export class EditorActions {
   #ctx: Context;
-  #editingChartId?: number = 6;
+  #editingChartId?: number = 8;
 
   constructor(ctx: Context) {
     this.#ctx = ctx;
@@ -41,8 +41,9 @@ export class EditorActions {
       );
       return;
     }
-    log(`Updating chartId: ${this.#editingChartId}`);
+
     const notes = await fs.readFile(EditorActions.editingPath, "utf8");
+
     await this.#ctx
       .knexTable("charts")
       .where("id", this.#editingChartId)
