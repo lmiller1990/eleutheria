@@ -41,9 +41,9 @@ export class EditorActions {
       );
       return;
     }
-    console.log(`Updating chartId: ${this.#editingChartId}`);
+
     const notes = await fs.readFile(EditorActions.editingPath, "utf8");
-    console.log(notes);
+
     await this.#ctx
       .knexTable("charts")
       .where("id", this.#editingChartId)
