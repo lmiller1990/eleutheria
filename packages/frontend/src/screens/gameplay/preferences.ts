@@ -9,6 +9,7 @@ const validPreferences = [
   "noteSkin",
   "selectedSongId",
   "selectedChartIdx",
+  "preferredSongChartIndex",
 ] as const;
 
 export interface Preferences {
@@ -18,6 +19,8 @@ export interface Preferences {
   cover: Partial<CoverParams>;
   selectedSongId: number;
   selectedChartIdx: number;
+  /** For each song we keep track of the last selected chart index. { song_id => chart_index } */
+  preferredSongChartIndex: Record<string, number>;
 }
 
 const PREFERENCES_KEY = "rhythm";

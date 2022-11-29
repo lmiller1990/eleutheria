@@ -202,7 +202,12 @@ onBeforeUnmount(() => {
 
 function handleSelectChart(idx: number) {
   selectedChartIdx.value = idx;
-  preferencesManager.updatePreferences({ selectedChartIdx: idx });
+  preferencesManager.updatePreferences({
+    selectedChartIdx: idx,
+    preferredSongChartIndex: {
+      [selectedSongId.value]: idx,
+    },
+  });
 }
 
 const chartDifficulty = computed(() => {
@@ -255,12 +260,14 @@ const delay = () =>
 async function handleSelected(
   song: SongSelectScreen_SongsQuery["songs"][number]
 ) {
+  const preferences = preferencesManager.getPreferences()
   if (selectedSongId.value !== song.id) {
     preferencesManager.updatePreferences({
       selectedSongId: song.id,
     });
     selectedSongId.value = song.id;
-    selectedChartIdx.value = 0;
+    selectedChartIdx.value =
+      preferences.preferredSongChartIndex?.[song.id] ?? 0;
     return;
   }
 
