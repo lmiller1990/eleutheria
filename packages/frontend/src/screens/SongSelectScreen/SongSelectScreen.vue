@@ -260,7 +260,7 @@ const delay = () =>
 async function handleSelected(
   song: SongSelectScreen_SongsQuery["songs"][number]
 ) {
-  const preferences = preferencesManager.getPreferences()
+  const preferences = preferencesManager.getPreferences();
   if (selectedSongId.value !== song.id) {
     preferencesManager.updatePreferences({
       selectedSongId: song.id,
