@@ -179,7 +179,7 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode,
-    editing ? 145000 : undefined // repeat
+    editing ? 124000 : undefined // repeat
   );
 
   if (!init || !init.game) {

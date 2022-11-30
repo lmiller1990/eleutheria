@@ -41,6 +41,7 @@ export class EditorActions {
       );
       return;
     }
+
     const notes = await fs.readFile(EditorActions.editingPath, "utf8");
 
     await this.#ctx
