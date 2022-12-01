@@ -1,6 +1,9 @@
 <template>
   <NonGameplayScreen screenTitle="Eleutheria">
-    <Transition name="loading-fade">
+    <Transition
+      leave-active-class="transition-opacity duration-700"
+      leave-to-class="opacity-0"
+    >
       <LoadingScreen v-if="loading" />
     </Transition>
     <div
@@ -326,13 +329,5 @@ async function handleSelected(
   100% {
     top: 0px;
   }
-}
-
-.loading-fade-leave-active {
-  @apply transition-opacity duration-700;
-}
-
-.loading-fade-leave-to {
-  @apply opacity-0;
 }
 </style>
