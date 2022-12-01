@@ -7,14 +7,10 @@ function onLoaded() {
 }
 
 export class ImageLoader {
-  #id: string;
-  #options: InitLoader;
   #created: number;
   #loadCount = ref(0);
 
-  constructor(id: string, options: InitLoader) {
-    this.#id = id;
-    this.#options = options;
+  constructor(_id: string, options: InitLoader) {
     this.#created = performance.now();
 
     watchEffect(() => {
