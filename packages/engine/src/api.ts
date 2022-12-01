@@ -222,7 +222,9 @@ export class Game implements GameAPI {
 
     this.#inputManager?.teardown();
     this.#source?.stop();
-    this.#audioContext?.close();
+    if (this.#audioContext?.state !== "closed") {
+      this.#audioContext?.close();
+    }
     this.#__dev.initialGameState = undefined;
   }
 

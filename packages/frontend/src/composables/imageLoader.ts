@@ -1,17 +1,16 @@
 import { readonly, ref, watchEffect } from "vue";
 
-const loadedImageCount = ref(0);
-
-function onLoaded() {
-  loadedImageCount.value++;
-}
-
 export class ImageLoader {
   #created: number;
   #loadCount = ref(0);
 
-  constructor(_id: string, options: InitLoader) {
+  constructor(id: string, options: InitLoader) {
     this.#created = performance.now();
+
+    function done() {
+      options.onAllLoaded();
+      loaders.delete(id);
+    }
 
     watchEffect(() => {
       if (this.#loadCount.value === options.target) {
@@ -19,13 +18,10 @@ export class ImageLoader {
 
         // wait the full minimum time before calling the callback
         if (diff < options.minimumLoadTimeMs) {
-          window.setTimeout(
-            options.onAllLoaded,
-            options.minimumLoadTimeMs - diff
-          );
+          window.setTimeout(done, options.minimumLoadTimeMs - diff);
         } else {
           // no minimum specified, or the minimum has already elapsed - just call it
-          options.onAllLoaded();
+          done();
         }
       }
     });
@@ -62,6 +58,12 @@ export function useImageLoader(id: string, options?: InitLoader) {
   }
 
   loaders.set(id, new ImageLoader(id, options));
+
+  const loadedImageCount = ref(0);
+
+  function onLoaded() {
+    loadedImageCount.value++;
+  }
 
   return {
     onLoaded,

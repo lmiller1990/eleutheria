@@ -83,6 +83,7 @@ import { useModal } from "../../composables/modal";
 import { useEmitter } from "../../composables/emitter";
 import { preferencesManager } from "../gameplay/preferences";
 import { useImageLoader } from "../../composables/imageLoader";
+import { useInitialLoad } from "../../composables/initialLoad";
 
 gql`
   query SongSelectScreen_Songs {
@@ -114,15 +115,15 @@ gql`
 `;
 
 const modal = useModal();
-
-const loading = ref(true);
+const { initial } = useInitialLoad();
+const loading = ref(initial.value);
 
 useImageLoader("songSelectScreen", {
   onAllLoaded: () => {
     loading.value = false;
   },
   target: window.__SONG_COUNT__,
-  minimumLoadTimeMs: 1000,
+  minimumLoadTimeMs: initial.value ? 1000 : 0,
 });
 
 function handleAuthenticate() {
