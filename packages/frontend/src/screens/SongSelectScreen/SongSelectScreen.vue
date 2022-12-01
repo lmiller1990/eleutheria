@@ -1,6 +1,8 @@
 <template>
   <NonGameplayScreen screenTitle="Eleutheria">
-    <LoadingScreen v-if="loading" />
+    <Transition name="loading-fade">
+      <LoadingScreen v-if="loading" />
+    </Transition>
     <div
       class="absolute w-screen h-screen bg-zinc-500 z-10 left-0 top-[-100vh]"
       :class="{ [animationClass]: animating }"
@@ -114,10 +116,9 @@ const loading = ref(true);
 
 useImageLoader("songSelectScreen", {
   onAllLoaded: () => {
-    console.log("ok!");
     loading.value = false;
   },
-  target: 4,
+  target: window.__SONG_COUNT__,
   minimumLoadTimeMs: 1000,
 });
 
@@ -325,5 +326,13 @@ async function handleSelected(
   100% {
     top: 0px;
   }
+}
+
+.loading-fade-leave-active {
+  @apply transition-opacity duration-700;
+}
+
+.loading-fade-leave-to {
+  @apply opacity-0;
 }
 </style>

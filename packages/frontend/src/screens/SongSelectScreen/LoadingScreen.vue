@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-zinc-700 w-full text-white flex justify-center">
-    <div class="absolute h-screen w-screen top-0 left-0 bg-zinc-500 z-10">
+  <div class="absolute h-screen w-screen top-0 left-0 bg-zinc-500 z-10">
+    <div class="bg-zinc-700 w-full text-white flex justify-center">
       <div class="flex flex-col items-center h-screen justify-center pb-24">
         <div
           class="max-width w-full flex justify-center items-center pb-4 text-6xl"

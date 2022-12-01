@@ -38,7 +38,6 @@ export class ImageLoader {
   addLoader(el: HTMLImageElement) {
     el.onload = () => {
       this.#loadCount.value++;
-      console.log(`${this.#loadCount.value} / ${this.#options.target}`);
     };
   }
 }
