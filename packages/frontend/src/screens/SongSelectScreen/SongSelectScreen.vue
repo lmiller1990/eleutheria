@@ -1,5 +1,11 @@
 <template>
   <NonGameplayScreen screenTitle="Eleutheria">
+    <Transition
+      leave-active-class="transition-opacity duration-700"
+      leave-to-class="opacity-0"
+    >
+      <LoadingScreen v-if="loading" />
+    </Transition>
     <div
       class="absolute w-screen h-screen bg-zinc-500 z-10 left-0 top-[-100vh]"
       :class="{ [animationClass]: animating }"
@@ -33,7 +39,7 @@
       </div>
 
       <div class="flex flex-col justify-between">
-        <SongImage :file="selectedSong?.file" />
+        <SongImage v-if="selectedSong" :file="selectedSong?.file" />
         <div>
           <SongInfo
             :best="tableData.best"
@@ -58,10 +64,11 @@
 
 <script setup lang="ts">
 import { IconButton } from "./IconButton";
+import LoadingScreen from "./LoadingScreen.vue";
 import { SettingsIcon } from "./SettingsIcon";
 import { UserIcon } from "./UserIcon";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { SongTile } from "../../components/SongTile";
+import SongTile from "../../components/SongTile.vue";
 import { useRouter } from "vue-router";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { gql, useQuery } from "@urql/vue";
@@ -71,10 +78,12 @@ import {
   SongSelectScreen_SongsQuery,
 } from "../../generated/graphql";
 import { SongInfo } from "../../components/SongInfo";
-import { SongImage } from "./SongImage";
+import SongImage from "./SongImage.vue";
 import { useModal } from "../../composables/modal";
 import { useEmitter } from "../../composables/emitter";
 import { preferencesManager } from "../gameplay/preferences";
+import { useImageLoader } from "../../composables/imageLoader";
+import { useInitialLoad } from "../../composables/initialLoad";
 
 gql`
   query SongSelectScreen_Songs {
@@ -106,6 +115,16 @@ gql`
 `;
 
 const modal = useModal();
+const { initial } = useInitialLoad();
+const loading = ref(initial.value);
+
+useImageLoader("songSelectScreen", {
+  onAllLoaded: () => {
+    loading.value = false;
+  },
+  target: window.__SONG_COUNT__,
+  minimumLoadTimeMs: initial.value ? 1000 : 0,
+});
 
 function handleAuthenticate() {
   if (viewer.value) {

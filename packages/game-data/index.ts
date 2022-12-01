@@ -83,14 +83,19 @@ wss.on("connection", (ws) => {
 });
 
 app.get("/app", async (req, res) => {
-  const ssrData = await req.ctx.actions.graphql.selectSongScreenQuery();
+  const [ssrData, allSongs] = await Promise.all([
+    req.ctx.actions.graphql.selectSongScreenQuery(),
+    req.ctx.actions.db.queryForSongs(),
+  ]);
 
   if (process.env.NODE_ENV === "production") {
-    res.send(await req.ctx.sources.html.prodModeIndexHtml(ssrData));
+    res.send(
+      await req.ctx.sources.html.prodModeIndexHtml(allSongs.length, ssrData)
+    );
     return;
   }
 
-  res.send(req.ctx.sources.html.devModeIndexHtml(ssrData));
+  res.send(req.ctx.sources.html.devModeIndexHtml(allSongs.length, ssrData));
 });
 
 app.get("/", async (_req, res) => {

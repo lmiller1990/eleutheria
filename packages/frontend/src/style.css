@@ -162,3 +162,8 @@ body,
   height: 100vh;
   /* display: none; */
 }
+
+/* TODO: do not dup this rule */
+.klee-one {
+  font-family: Klee One;
+}

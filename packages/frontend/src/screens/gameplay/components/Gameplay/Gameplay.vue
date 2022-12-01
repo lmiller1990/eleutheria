@@ -10,7 +10,7 @@ import {
 } from "vue";
 import { windowsWithMiss } from "../../gameConfig";
 import type { Game, World } from "@packages/engine";
-import { SongImage } from "../../../SongSelectScreen/SongImage";
+import SongImage from "../../../SongSelectScreen/SongImage.vue";
 import { SongTitle } from "../../components/Gameplay/SongTitle";
 import { useRouter } from "vue-router";
 import { useEventListener } from "../../../../utils/useEventListener";

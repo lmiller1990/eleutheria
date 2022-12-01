@@ -61,6 +61,23 @@ async function serverDev() {
   });
 }
 
+async function marketing() {
+  if (
+    await fs.pathExists(
+      path.join(__dirname, "../", "packages", "marketing", "dist")
+    )
+  ) {
+    return;
+  }
+
+  return new Promise((res) => {
+    spawn("yarn", ["build"], {
+      stdio: "inherit",
+      cwd: "packages/marketing",
+    }).on("exit", res);
+  });
+}
+
 async function tailwind() {
   spawn("yarn", ["tailwind"], {
     stdio: "inherit",
@@ -311,5 +328,12 @@ gulp.task("gameDataServer", gameDataServer);
 
 gulp.task(
   "dev",
-  gulp.series(tailwind, autobarrel, graphqlCodegen, gameDataServer, serverDev)
+  gulp.series(
+    marketing,
+    tailwind,
+    autobarrel,
+    gameDataServer,
+    graphqlCodegen,
+    serverDev
+  )
 );
