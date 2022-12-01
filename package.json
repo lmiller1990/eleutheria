@@ -28,7 +28,8 @@
     "test": "lerna run test --stream",
     "lint:check": "yarn prettier --check packages",
     "check-ts": "lerna run check-ts",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "clean": "lerna run clean"
   },
   "workspaces": {
     "packages": [

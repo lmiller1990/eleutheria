@@ -1,5 +1,5 @@
 import type { FunctionalComponent } from "vue";
-import { SongImage } from "../SongSelectScreen/SongImage";
+import SongImage from "../SongSelectScreen/SongImage.vue";
 import "./gameplay-loading.css";
 
 interface GameplayLoadingProps {

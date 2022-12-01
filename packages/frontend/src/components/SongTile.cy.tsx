@@ -1,4 +1,4 @@
-import { SongTile } from "./SongTile";
+import SongTile from "./SongTile.vue";
 
 describe("SongTile", () => {
   it("renders", () => {

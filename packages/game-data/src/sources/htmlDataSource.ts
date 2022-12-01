@@ -25,7 +25,7 @@ export class HtmlDataSource {
     `;
   }
 
-  async prodModeIndexHtml(ssrData: string) {
+  async prodModeIndexHtml(songCount: number, ssrData: string) {
     const fe = path.join(__dirname, "..", "..", "..", "..", "frontend");
     const manifest = await fs.readJson(path.join(fe, "dist", "manifest.json"));
 
@@ -39,6 +39,7 @@ export class HtmlDataSource {
           ${this.#common}
           <link rel="stylesheet" href="${mainCss}" />
           <script>window.__SSR_DATA__ = ${ssrData}</script>
+          <script>window.__SONG_COUNT__ = ${songCount}</script>
         </head>
 
         <body>
@@ -51,13 +52,14 @@ export class HtmlDataSource {
   /**
    * data is result of initial GraphQL query -> JSON.stringified
    */
-  devModeIndexHtml(ssrData: string) {
+  devModeIndexHtml(songCount: number, ssrData: string) {
     return dedent`
       <!DOCTYPE html>
       <html lang="en">
         <head>
           ${this.#common}
           <script>window.__SSR_DATA__ = ${ssrData}</script>
+          <script>window.__SONG_COUNT__ = ${songCount}</script>
         </head>
 
         <body>

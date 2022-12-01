@@ -1,5 +1,6 @@
 <template>
   <NonGameplayScreen screenTitle="Eleutheria">
+    <LoadingScreen v-if="loading" />
     <div
       class="absolute w-screen h-screen bg-zinc-500 z-10 left-0 top-[-100vh]"
       :class="{ [animationClass]: animating }"
@@ -33,7 +34,7 @@
       </div>
 
       <div class="flex flex-col justify-between">
-        <SongImage :file="selectedSong?.file" />
+        <SongImage v-if="selectedSong" :file="selectedSong?.file" />
         <div>
           <SongInfo
             :best="tableData.best"
@@ -58,10 +59,11 @@
 
 <script setup lang="ts">
 import { IconButton } from "./IconButton";
+import LoadingScreen from "./LoadingScreen.vue";
 import { SettingsIcon } from "./SettingsIcon";
 import { UserIcon } from "./UserIcon";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { SongTile } from "../../components/SongTile";
+import SongTile from "../../components/SongTile.vue";
 import { useRouter } from "vue-router";
 import NonGameplayScreen from "../../components/NonGameplayScreen";
 import { gql, useQuery } from "@urql/vue";
@@ -71,10 +73,11 @@ import {
   SongSelectScreen_SongsQuery,
 } from "../../generated/graphql";
 import { SongInfo } from "../../components/SongInfo";
-import { SongImage } from "./SongImage";
+import SongImage from "./SongImage.vue";
 import { useModal } from "../../composables/modal";
 import { useEmitter } from "../../composables/emitter";
 import { preferencesManager } from "../gameplay/preferences";
+import { useImageLoader } from "../../composables/imageLoader";
 
 gql`
   query SongSelectScreen_Songs {
@@ -106,6 +109,17 @@ gql`
 `;
 
 const modal = useModal();
+
+const loading = ref(true);
+
+useImageLoader("songSelectScreen", {
+  onAllLoaded: () => {
+    console.log("ok!");
+    loading.value = false;
+  },
+  target: 4,
+  minimumLoadTimeMs: 1000,
+});
 
 function handleAuthenticate() {
   if (viewer.value) {

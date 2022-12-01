@@ -7,7 +7,7 @@ import {
   Timing,
 } from "../gameplay/components/Gameplay/GameplayScore";
 import { SongTitle } from "../gameplay/components/Gameplay/SongTitle";
-import { SongImage } from "../SongSelectScreen/SongImage";
+import SongImage from "../SongSelectScreen/SongImage.vue";
 import "./SummaryScreenContainer.css";
 
 interface Props {

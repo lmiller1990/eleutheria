@@ -44,7 +44,7 @@
     "postinstall": "echo 'ok' # yarn build",
     "build": "tsc",
     "check-ts": "tsc --noEmit",
-    "clean": "rm -rf dist && rm src/graphql/gen/nxs.gen.ts && rm src/graphql/schema.graphql",
+    "clean": "rm -rf dist && rm -f src/graphql/gen/nxs.gen.ts && rm -f src/graphql/schema.graphql",
     "build-schema": "ts-node --transpileOnly src/graphql/buildSchema.ts",
     "genTypesFromDb": "ts-node --esm --transpileOnly ./scripts/generateTypesFromDb.ts"
   }

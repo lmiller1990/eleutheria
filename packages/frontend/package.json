@@ -9,7 +9,7 @@
     "test:unit": "vitest --run",
     "check-ts": "vue-tsc --noEmit --project .",
     "cy:open": "cypress open --browser chrome --component",
-    "clean": "rm -rf dist && rm -f src/generated/graphql*",
+    "clean": "rm -rf dist && rm -rf src/generated/graphql* || echo 'ok'",
     "codegen": "graphql-codegen --config codegen.yml",
     "tailwind": "tailwindcss -i src/index.css -o ./src/output.css --watch",
     "tailwind:build": "tailwindcss -i src/index.css -o ./src/output.css --config tailwind.config.js"
