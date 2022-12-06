@@ -52,7 +52,7 @@
     "@vitejs/plugin-vue": "3.2.0",
     "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.2",
-    "cypress": "11.0.1",
+    "cypress": "9.7.0",
     "cypress-real-events": "^1.7.0",
     "dedent": "0.7.0",
     "postcss": "^8.4.6",
