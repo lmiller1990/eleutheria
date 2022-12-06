@@ -1,4 +1,5 @@
 {
+  "baseUrl": "http://localhost:5566",
   "supportFile": false,
   "pluginsFile": false,
   "integrationFolder": "cypress/e2e",
