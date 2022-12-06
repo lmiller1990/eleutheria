@@ -525,6 +525,7 @@ export function create(
   };
 
   if (__testingManualMode) {
+    // @ts-ignore
     window.manualTick = (ms: number) => {
       game.setTestOnlyDeltaTime(ms);
     };
