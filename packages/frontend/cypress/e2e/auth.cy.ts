@@ -2,7 +2,7 @@ function randomNum() {
   return (10000 + Math.random() * 100000).toFixed(0);
 }
 
-describe("authentication flow", () => {
+describe("authentication flow", { defaultCommandTimeout: 30000 }, () => {
   beforeEach(() => {
     cy.clearCookies();
   });
