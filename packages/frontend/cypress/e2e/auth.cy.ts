@@ -1,5 +1,5 @@
 function randomNum() {
-  return (Math.random() * 100000).toFixed(0);
+  return (10000 + Math.random() * 100000).toFixed(0);
 }
 
 describe("authentication flow", () => {
@@ -8,8 +8,8 @@ describe("authentication flow", () => {
   });
 
   it("signs up", () => {
-    cy.visit("/");
-    cy.get('[data-cy="guest"]').contains("Guest").click();
+    cy.visit("/app");
+    cy.get('[data-cy="authenticate"]').click();
     cy.get("button").contains("Sign Up").click();
 
     const username = randomNum();
@@ -21,6 +21,8 @@ describe("authentication flow", () => {
     cy.get("input[name='password']").clear().type(password);
 
     cy.get("button").contains("Submit").click();
-    cy.get('[data-cy="viewer"]').should("have.text", email);
+
+    cy.get('[data-cy="authenticate"]').click();
+    cy.get("h1").contains(username);
   });
 });

@@ -50,7 +50,7 @@
         </div>
       </div>
       <div>
-        <IconButton @click="handleAuthenticate">
+        <IconButton @click="handleAuthenticate" data-cy="authenticate">
           <UserIcon />
         </IconButton>
 
