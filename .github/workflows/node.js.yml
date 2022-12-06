@@ -57,8 +57,8 @@ jobs:
         POSTGRES_USER: postgres
         POSTGRES_DB: eleutheria_test
 
-    # - name: Setup upterm session
-    #   uses: lhotari/action-upterm@v1
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
 
     # - run: cd packages/game-data && yarn build-schema && cd ../..
     # - run: cd packages/frontend && yarn codegen && yarn tailwind:build && cd ../..
