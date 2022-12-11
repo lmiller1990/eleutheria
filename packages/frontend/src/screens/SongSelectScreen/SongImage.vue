@@ -1,10 +1,14 @@
 <script lang="ts" setup>
+import { computed } from "vue";
+
 const props = defineProps<{
   level?: number;
   file: string;
 }>();
 
-const file = `${import.meta.env.VITE_CDN_URL}/${props.file}.png`;
+const file = computed(
+  () => `${import.meta.env.VITE_CDN_URL}/${props.file}.png`
+);
 const stars = `${import.meta.env.VITE_CDN_URL}/stars.svg`;
 </script>
 
