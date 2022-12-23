@@ -22,10 +22,8 @@ describe("authentication flow", () => {
 
     cy.get("button").contains("Submit").click();
 
-
-    cy.intercept("POST", "/graphql", 
-    (req) => {
-      // req.alias = 'foo'
+    cy.intercept("POST", "/graphql", (req) => {
+      req.alias = "foo";
       req.reply({
         body: {
           data: {
@@ -36,12 +34,10 @@ describe("authentication flow", () => {
           },
         },
       });
-    }).as('bar');
-
-    // Cannot wait for req.alias - dynamic or otherwise.
-    // cy.wait('@bar')
+    });
 
     cy.get('[data-cy="authenticate"]').click();
-    cy.get("h1").contains('aaaaa');
+    cy.wait("@foo");
+    cy.get("h1").contains("aaaaa");
   });
 });
