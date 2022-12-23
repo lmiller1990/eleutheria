@@ -28,7 +28,11 @@ gql`
   }
 `;
 
-const viewerQuery = useQuery({ query: Profile_ViewerDocument });
+const viewerQuery = useQuery({ 
+  query: Profile_ViewerDocument,
+  requestPolicy: 'network-only'
+
+});
 const signOut = useMutation(Profile_SignOutDocument);
 const modal = useModal();
 const emitter = useEmitter();
