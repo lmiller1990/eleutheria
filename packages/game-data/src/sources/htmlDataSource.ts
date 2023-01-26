@@ -19,8 +19,8 @@ export class HtmlDataSource {
       <link rel="icon" type="image/svg+xml" href="favicon.svg" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Eleutheria</title>
-      <link href="http://fonts.cdnfonts.com/css/comfortaa" rel="stylesheet" />
-      <link href="http://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
+      <link href="https://fonts.cdnfonts.com/css/comfortaa" rel="stylesheet" />
+      <link href="https://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
       <link rel="stylesheet" href="https://eleutheria.nyc3.cdn.digitaloceanspaces.com/KleeOne-Regular.ttf">
     `;
   }
