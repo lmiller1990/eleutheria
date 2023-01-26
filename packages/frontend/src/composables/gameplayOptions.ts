@@ -9,7 +9,7 @@ import { ScrollDirection } from "../screens/gameplay/types";
 
 const preferences = preferencesManager.getPreferences();
 const modifierManager = new ModifierManager();
-modifierManager.setMultipler(preferences.speedModifier ?? 1);
+modifierManager.setMultipler(preferences.speedModifier ?? 200);
 modifierManager.setScroll(preferences.scrollDirection ?? "down");
 modifierManager.setCover(preferences.cover ?? {});
 modifierManager.setNoteSkin(

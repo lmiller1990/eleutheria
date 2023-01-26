@@ -43,7 +43,7 @@ type ModifierManagerEvents = {
 };
 
 export class ModifierManager extends (EventEmitter as new () => TypedEmitter<ModifierManagerEvents>) {
-  #multiplier = 1;
+  #multiplier = 200;
   #scrollDirection: ScrollDirection = "up";
   #noteSkin: NoteSkin = {
     name: "default",
