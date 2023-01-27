@@ -66,7 +66,7 @@ const Button: FunctionalComponent<{ onClick?: () => void }> = (
 export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
   const router = useRouter();
   return (
-    <NonGameplayScreen screenTitle="Eleutheria">
+    <NonGameplayScreen>
       <div class="flex flex-col">
         <div class="summary-wrapper">
           <div>

@@ -55,8 +55,4 @@ body,
   filter: blur(5px) grayscale(50%);
   transform: scale(0.98);
 }
-
-.klee-one {
-  font-family: Klee One;
-}
 </style>

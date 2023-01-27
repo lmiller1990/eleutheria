@@ -21,7 +21,6 @@ export class HtmlDataSource {
       <title>Eleutheria</title>
       <link href="https://fonts.cdnfonts.com/css/comfortaa" rel="stylesheet" />
       <link href="https://fonts.cdnfonts.com/css/sansation" rel="stylesheet" />
-      <link rel="stylesheet" href="https://eleutheria.nyc3.cdn.digitaloceanspaces.com/KleeOne-Regular.ttf">
     `;
   }
 

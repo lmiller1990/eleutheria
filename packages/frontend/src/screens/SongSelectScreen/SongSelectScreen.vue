@@ -1,5 +1,5 @@
 <template>
-  <NonGameplayScreen screenTitle="Eleutheria">
+  <NonGameplayScreen>
     <Transition
       leave-active-class="transition-opacity duration-700"
       leave-to-class="opacity-0"
