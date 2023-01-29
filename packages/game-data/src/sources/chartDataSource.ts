@@ -2,7 +2,7 @@ import { parseChart } from "@packages/chart-parser";
 import assert from "assert";
 import { Charts } from "../../ dbschema";
 import { Context } from "../graphql/context";
-import debugLib from 'debug'
+import debugLib from "debug";
 
 const debug = debugLib(`eleutheria:game-data:sources:chartDataSource`);
 

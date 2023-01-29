@@ -1734,7 +1734,7 @@ const notes = `000000
 000010
 000010
 010000
-000000`
+000000`;
 
 export async function up(knex: Knex) {
   return knex("charts").insert({
@@ -1749,4 +1749,3 @@ export async function up(knex: Knex) {
 export async function down(knex: Knex): Promise<void> {
   return knex("charts").where("id", 12).delete();
 }
-
