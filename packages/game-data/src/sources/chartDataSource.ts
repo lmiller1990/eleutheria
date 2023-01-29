@@ -1,10 +1,10 @@
 import { parseChart } from "@packages/chart-parser";
 import assert from "assert";
 import { Charts } from "../../ dbschema";
-import { debug } from "../../util/debug";
 import { Context } from "../graphql/context";
+import debugLib from 'debug'
 
-const log = debug(`game-data:chartSource`);
+const debug = debugLib(`eleutheria:game-data:sources:chartDataSource`);
 
 export interface ChartDataDefinition extends Charts {
   bpm: number;
@@ -17,6 +17,7 @@ export class ChartDataSource {
   data: ChartDataDefinition;
 
   constructor(ctx: Context, data: ChartDataDefinition) {
+    debug("creating new ChartDataSource %o", data);
     this.#ctx = ctx;
     this.data = data;
   }
