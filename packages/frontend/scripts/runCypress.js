@@ -9,7 +9,7 @@ function run(cmd) {
 
 if (process.env.CI) {
   run(
-    `cypress run --component --record --key 9db0689e-e974-48be-9d9c-5560f615e4be`.split(
+    `cypress run --component --record --key 91f2d29e-a1eb-4278-ad88-1afccc88881d`.split(
       " "
     )
   );

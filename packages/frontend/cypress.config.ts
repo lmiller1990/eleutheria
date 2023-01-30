@@ -18,7 +18,7 @@ const viteConfigTesting = defineVite({
 });
 
 export default defineConfig({
-  projectId: "vgqrwp",
+  projectId: "7p5uce",
 
   component: {
     experimentalSingleTabRunMode: true,
@@ -31,6 +31,7 @@ export default defineConfig({
 
   e2e: {
     baseUrl: "http://localhost:5566",
+    experimentalRunAllSpecs: true,
     setupNodeEvents(on, config) {
       // on("task", {
       //   "start:server": async () => {
