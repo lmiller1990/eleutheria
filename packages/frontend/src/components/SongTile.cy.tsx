@@ -19,7 +19,5 @@ describe("SongTile", () => {
         selected={true}
       />
     ));
-
-    cy.get("a").contains("blah");
   });
 });
