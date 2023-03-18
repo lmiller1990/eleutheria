@@ -197,7 +197,7 @@ onMounted(async () => {
     init.game.editorRepeat = {
       emitAfterMs: 14000,
       emitAfterMsCallback: async () => {
-        await query.executeQuery();
+        await query.executeQuery({ requestPolicy: "network-only" });
         const { emitter } = useAudioLoader(
           `${import.meta.env.VITE_CDN_URL}/${file}.wav`
         );
