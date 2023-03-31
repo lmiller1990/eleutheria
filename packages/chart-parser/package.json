@@ -5,7 +5,7 @@
   "main": "index.js",
   "module": "./src/index.ts",
   "devDependencies": {
-    "typescript": "4.7.4",
+    "typescript": "5.0.2",
     "vitest": "0.25.1"
   },
   "scripts": {

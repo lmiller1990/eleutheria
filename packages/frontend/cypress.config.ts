@@ -31,8 +31,10 @@ export default defineConfig({
 
   e2e: {
     baseUrl: "http://localhost:5566",
-    experimentalRunAllSpecs: true,
     setupNodeEvents(on, config) {
+      on('after:spec', (spec, results) => {
+
+      })
       // on("task", {
       //   "start:server": async () => {
       //     const cwd = path.join(__dirname, "..", "game-data");
