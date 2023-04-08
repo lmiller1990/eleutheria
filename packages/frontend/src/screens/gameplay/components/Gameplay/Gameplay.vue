@@ -179,7 +179,7 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode,
-    editing ? 0 : undefined // repeat
+    editing ? 26000 : undefined // repeat
   );
 
   if (!init || !init.game) {
@@ -195,7 +195,7 @@ onMounted(async () => {
     }
 
     init.game.editorRepeat = {
-      emitAfterMs: 14000,
+      emitAfterMs: 10000,
       emitAfterMsCallback: async () => {
         await query.executeQuery({ requestPolicy: "network-only" });
         const { emitter } = useAudioLoader(

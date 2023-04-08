@@ -10,6 +10,7 @@ export interface InputManagerConfig {
 export class InputManager {
   historicalInputs: Input[] = [];
   #codeColumnMap: Map<string, number>;
+  #held = new Set<string>();
   activeInputs: Input[] = [];
   config: InputManagerConfig;
   lastUpdateHash: string = "";
@@ -49,10 +50,20 @@ export class InputManager {
     const column = this.#codeColumnMap.get(e.code);
 
     if (type === "up") {
+      this.#held.delete(e.code);
+    }
+
+    if (type === "down") {
+      // do not allow multiple triggers until released
+      if (this.#held.has(e.code)) {
+        return;
+      }
+
       const cb = this.config?.onKeyDownCallback?.get(e.code);
       if (cb) {
         cb();
       }
+      this.#held.add(e.code);
     }
 
     if (column === undefined) {
