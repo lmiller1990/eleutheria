@@ -28,7 +28,7 @@ import { getParams } from "../../fetchData";
 import { useAudioLoader } from "../../../../composables/audioLoader";
 import { createGameplayQuery } from "../../gameplayQuery";
 
-const editing = false;
+const editing = true;
 
 const props = defineProps<{
   __testingDoNotStartSong?: boolean;
@@ -179,7 +179,7 @@ onMounted(async () => {
     },
     props.__testingDoNotStartSong,
     props.__testingManualMode,
-    editing ? 0 : undefined // repeat
+    editing ? 75000 : undefined // repeat
   );
 
   if (!init || !init.game) {
@@ -195,7 +195,7 @@ onMounted(async () => {
     }
 
     init.game.editorRepeat = {
-      emitAfterMs: 14000,
+      emitAfterMs: 10000,
       emitAfterMsCallback: async () => {
         await query.executeQuery({ requestPolicy: "network-only" });
         const { emitter } = useAudioLoader(
