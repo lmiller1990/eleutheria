@@ -29,7 +29,7 @@ describe("db", () => {
       const data: Omit<Scores, "id" | "created_at"> = {
         percent: 90.0,
         timing: {},
-        chart_id: 2,
+        chart_id: 3,
         user_id: 1,
       };
 
@@ -39,7 +39,7 @@ describe("db", () => {
         ctx.knexTable("scores").insert({ ...data, percent: 100.0 }),
       ]);
 
-      const result = await actions.queryForUserPersonalBest(2, 1);
+      const result = await actions.queryForUserPersonalBest(3, 1);
 
       expect(result?.percent).toEqual(100);
     });
@@ -50,7 +50,7 @@ describe("db", () => {
       const data: Omit<Scores, "id" | "created_at"> = {
         percent: 80.0,
         timing: {},
-        chart_id: 2,
+        chart_id: 3,
         user_id: 1,
       };
 
@@ -78,7 +78,7 @@ describe("db", () => {
         })
         .returning("id");
 
-      const result = await actions.queryForWorldRecord(2);
+      const result = await actions.queryForWorldRecord(3);
 
       expect(result?.id).toEqual(wr.id);
     });
