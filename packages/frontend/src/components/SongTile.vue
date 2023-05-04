@@ -39,7 +39,7 @@ const src = computed(() => `${import.meta.env.VITE_CDN_URL}/${props.file}.png`);
       />
       <PlayIcon
         v-if="props.selected"
-        class="absolute top-0 animate-pulse [animation-duration:750ms]"
+        class="absolute top-0 animate-pulse [animation-duration:750ms] p-2"
       />
     </div>
     <div class="flex flex-col items-end p-2">
