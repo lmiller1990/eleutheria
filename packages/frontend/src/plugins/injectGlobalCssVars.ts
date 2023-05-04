@@ -4,6 +4,7 @@ export const stylesheetInjectionKeys = {
   coverCss: "__COVER_CSS__",
   modsPaneOverrides: "__OVERRIDES__",
   noteSkin: "__NOTE_SKIN__",
+  targetLine: "__TARGET_LINE__",
 } as const;
 
 export function removeAllInjectedStylesheets() {

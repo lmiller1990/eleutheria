@@ -17,6 +17,11 @@ export function getParams(): ParamData {
   const artist = params.get("artist");
   const file = params.get("file");
   const chartId = params.get("chartId");
+  if (window.top !== window) {
+    // In Cypress - ignore this for now.
+    // @ts-expect-error
+    return {};
+  }
   if (!songId || !chartId || !file || !artist || !personalBest || !title) {
     throw Error(
       `Expected ${window.location} to have search params song, chartId, file, artist, personalBest, title`

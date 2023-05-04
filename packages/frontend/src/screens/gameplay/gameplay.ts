@@ -176,17 +176,18 @@ function getCssVar(name: string) {
   return getComputedStyle(document.documentElement).getPropertyValue(name);
 }
 
-function redrawTargets(elements: Elements, scrollDirection: ScrollDirection) {
-  const noteHeight = parseInt(getCssVar("--note-height"), 10);
-  const offset = `${noteHeight * 2}px`;
+function redrawTargets(scrollDirection: ScrollDirection) {
+  const noteHeight = getCssVar("--note-height");
+  const offset = `calc(${noteHeight} * 2)`;
+
   if (scrollDirection === "up") {
-    elements.targetLine.style.top = offset;
-    elements.targetLine.style.bottom = "";
+    const style = `#target-line { top: ${offset}; }`;
+    injectStylesheet(style, stylesheetInjectionKeys.targetLine);
   }
 
   if (scrollDirection === "down") {
-    elements.targetLine.style.top = "";
-    elements.targetLine.style.bottom = offset;
+    const style = `#target-line { bottom: ${offset}; }`;
+    injectStylesheet(style, stylesheetInjectionKeys.targetLine);
   }
 }
 
@@ -233,8 +234,9 @@ function calcYPosition(
   modifierManager: ModifierManager
 ) {
   return (
-    ((note.ms - world.time) * modifierManager.multiplier) /
-    SPEED_MOD_NORM_FACTOR
+    (((note.ms - world.time) * modifierManager.multiplier) /
+      SPEED_MOD_NORM_FACTOR) *
+    (window.innerHeight / 1000)
   );
 }
 
@@ -307,7 +309,7 @@ export function create(
 
   modifierManager.on("set:scrollDirection", (direction) => {
     // if the scrollDirection has changed, we need to redraw the targets.
-    redrawTargets(elements, direction);
+    redrawTargets(direction);
   });
 
   modifierManager.on("set:cover", (newCover) => {
@@ -535,7 +537,7 @@ export function create(
   return {
     game,
     start: (audioData: AudioData) => {
-      redrawTargets(elements, modifierManager.scrollDirection);
+      redrawTargets(modifierManager.scrollDirection);
       return game.start(audioData);
     },
     stop: () => {

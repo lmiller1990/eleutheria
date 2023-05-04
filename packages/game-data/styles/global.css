@@ -1,6 +1,6 @@
 :root {
-  --note-height: 50px;
-  --col-width: 60px;
+  --col-width: calc(100vw / 30);
+  --note-height: calc(100vh / 20);
 
   --track-bg: #150d10;
   --root-bg: #4d4c4a;

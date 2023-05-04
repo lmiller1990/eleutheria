@@ -29,6 +29,28 @@ describe.skip("Gameplay", () => {
       props: {
         __testingDoNotStartSong: false,
         __testingManualMode: true,
+        getAudioData: () => {
+          return {
+            audioData: {},
+            audioContext: new AudioContext(),
+          };
+        },
+        gql: {
+          song: {
+            chart: {
+              parsedTapNoteChart: [
+                {
+                  __typename: "BaseNote",
+                  id: "1",
+                  ms: 100,
+                  column: 1,
+                  measureNumber: 1,
+                  char: "O",
+                },
+              ],
+            },
+          },
+        },
       },
     });
 
