@@ -244,7 +244,7 @@ const Side: FunctionalComponent = (_props, { slots }) => {
         </Side>
 
         <div class="gameplay" v-once>
-          <div ref="root" class="max-w-screen-log" v-once />
+          <div ref="root" class="max-w-screen-lg flex justify-center" v-once />
         </div>
 
         <Side class="flex ml-8">

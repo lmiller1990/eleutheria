@@ -1,6 +1,8 @@
 :root {
-  --col-width: calc(100vw / 30);
-  --note-height: calc(100vh / 20);
+  --col-width: max(calc(100vw / 30), 50px);
+  /* TODO: Does it make sense to scale the notes on the Y axis, too? */
+  /* --note-height: calc(100vh / 20); */
+  --note-height: 40px;
 
   --track-bg: #150d10;
   --root-bg: #4d4c4a;
