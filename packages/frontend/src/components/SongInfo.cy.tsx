@@ -1,5 +1,5 @@
 import { mount } from "cypress/vue";
-import { SongInfo } from "./SongInfo";
+import SongInfo from "./SongInfo.vue";
 
 describe("SongInfo", () => {
   it("playground", () => {

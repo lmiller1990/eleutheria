@@ -8,7 +8,6 @@ import {
 } from "../gameplay/components/Gameplay/GameplayScore";
 import { SongTitle } from "../gameplay/components/Gameplay/SongTitle";
 import SongImage from "../SongSelectScreen/SongImage.vue";
-import "./SummaryScreenContainer.css";
 
 interface Props {
   percent: number;
@@ -68,7 +67,7 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
   return (
     <NonGameplayScreen>
       <div class="flex flex-col">
-        <div class="summary-wrapper">
+        <div class="summary-wrapper grid grid-cols-[0.7fr_1fr] short:grid-cols-[0.5fr_0.5fr]">
           <div>
             <SongImage file={props.file} level={props.level} />
             <div class="my-5">
@@ -93,7 +92,10 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
               <GameplayScoreWithAnimation
                 percent={props.percent}
                 timing={props.timing}
-                classes={{ wrapper: "text-3xl", percent: "text-7xl" }}
+                classes={{
+                  wrapper: "text-xl tall:text-3xl",
+                  percent: "text-4xl tall:text-7xl",
+                }}
               />
             </div>
           </div>

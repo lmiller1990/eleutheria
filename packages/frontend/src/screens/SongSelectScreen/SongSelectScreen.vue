@@ -29,7 +29,7 @@
           <button
             v-for="({ level, id }, idx) of levels"
             :key="id"
-            class="bg-zinc-700 text-white h-14 w-14 mr-4 text-xl border border-2"
+            class="bg-zinc-700 text-white h-10 w-10 tall:h-14 tall:w-14 mr-4 tall:text-xl border border-2"
             :class="idx === selectedChartIdx ? 'border-white' : 'border-black'"
             @click="handleSelectChart(idx)"
           >
@@ -38,16 +38,14 @@
         </div>
       </div>
 
-      <div class="flex flex-col justify-between">
+      <div class="flex flex-col tall:justify-between">
         <SongImage v-if="selectedSong" :file="selectedSong?.file" />
-        <div>
-          <SongInfo
-            :best="tableData.best"
-            :notes="tableData.notes"
-            :duration="tableData.duration"
-            :bpm="tableData.bpm"
-          />
-        </div>
+        <SongInfo
+          :best="tableData.best"
+          :notes="tableData.notes"
+          :duration="tableData.duration"
+          :bpm="tableData.bpm"
+        />
       </div>
       <div>
         <IconButton @click="handleAuthenticate" data-cy="authenticate">
@@ -77,7 +75,7 @@ import {
   SongSelectScreen_ChartDocument,
   SongSelectScreen_SongsQuery,
 } from "../../generated/graphql";
-import { SongInfo } from "../../components/SongInfo";
+import SongInfo from "../../components/SongInfo.vue";
 import SongImage from "./SongImage.vue";
 import { useModal } from "../../composables/modal";
 import { useEmitter } from "../../composables/emitter";
