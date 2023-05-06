@@ -16,7 +16,9 @@ const modal = useModal();
       </div>
     </nav>
 
-    <div class="screen-content max-width w-full h-full flex justify-center">
+    <div
+      class="screen-content max-width w-full h-full flex justify-center items-center"
+    >
       <slot />
     </div>
   </div>

@@ -10,51 +10,55 @@
       class="absolute w-screen h-screen bg-zinc-500 z-10 left-0 top-[-100vh]"
       :class="{ [animationClass]: animating }"
     />
-    <div id="content">
-      <div class="flex flex-col">
-        <div class="flex flex-col h-full">
-          <SongTile
-            v-for="song of songs"
-            :key="song.id"
-            :songTitle="song.title"
-            :artist="song.artist"
-            :file="song.file"
-            class="mb-4"
-            :selected="song.id == selectedSong?.id"
-            @click="handleSelected(song)"
+    <div class="flex items-center">
+      <div class="grid grid-cols-[1fr_0.65fr_50px] gap-x-7">
+        <div class="flex flex-col">
+          <div class="flex flex-col">
+            <SongTile
+              v-for="song of songs"
+              :key="song.id"
+              :songTitle="song.title"
+              :artist="song.artist"
+              :file="song.file"
+              class="mb-4"
+              :selected="song.id == selectedSong?.id"
+              @click="handleSelected(song)"
+            />
+          </div>
+
+          <div class="mt-8" id="levels">
+            <button
+              v-for="({ level, id }, idx) of levels"
+              :key="id"
+              class="bg-zinc-700 text-white h-10 w-10 tall:h-14 tall:w-14 mr-4 tall:text-xl border border-2"
+              :class="
+                idx === selectedChartIdx ? 'border-white' : 'border-black'
+              "
+              @click="handleSelectChart(idx)"
+            >
+              {{ level }}
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <SongImage v-if="selectedSong" :file="selectedSong?.file" />
+          <SongInfo
+            :best="tableData.best"
+            :notes="tableData.notes"
+            :duration="tableData.duration"
+            :bpm="tableData.bpm"
           />
         </div>
+        <div>
+          <IconButton @click="handleAuthenticate" data-cy="authenticate">
+            <UserIcon />
+          </IconButton>
 
-        <div id="levels">
-          <button
-            v-for="({ level, id }, idx) of levels"
-            :key="id"
-            class="bg-zinc-700 text-white h-10 w-10 tall:h-14 tall:w-14 mr-4 tall:text-xl border border-2"
-            :class="idx === selectedChartIdx ? 'border-white' : 'border-black'"
-            @click="handleSelectChart(idx)"
-          >
-            {{ level }}
-          </button>
+          <IconButton>
+            <SettingsIcon @click="modal.showModal('options')" />
+          </IconButton>
         </div>
-      </div>
-
-      <div class="flex flex-col tall:justify-between">
-        <SongImage v-if="selectedSong" :file="selectedSong?.file" />
-        <SongInfo
-          :best="tableData.best"
-          :notes="tableData.notes"
-          :duration="tableData.duration"
-          :bpm="tableData.bpm"
-        />
-      </div>
-      <div>
-        <IconButton @click="handleAuthenticate" data-cy="authenticate">
-          <UserIcon />
-        </IconButton>
-
-        <IconButton>
-          <SettingsIcon @click="modal.showModal('options')" />
-        </IconButton>
       </div>
     </div>
   </NonGameplayScreen>
@@ -318,12 +322,6 @@ async function handleSelected(
 </script>
 
 <style>
-#content {
-  display: grid;
-  grid-template-columns: 1fr 0.65fr 50px;
-  column-gap: 30px;
-}
-
 @keyframes movedown {
   100% {
     top: 0px;

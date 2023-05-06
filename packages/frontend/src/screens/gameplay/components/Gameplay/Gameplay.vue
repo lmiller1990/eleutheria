@@ -228,26 +228,33 @@ emitter.subscribe("editor:chart:updated", () => {
 });
 
 const Side: FunctionalComponent = (_props, { slots }) => {
-  return h("div", { class: "mt-48" }, slots);
+  return h(
+    "div",
+    {
+      class:
+        "side flex items-center justify-center max-w-[250px] mx-4 md:mx-20",
+    },
+    slots
+  );
 };
 </script>
 
 <template>
   <div class="flex justify-center">
-    <div class="max-w-screen-lg">
-      <div class="gameplay-content">
-        <Side class="mt-48 mr-8">
-          <div>
+    <div class="max-w-screen-xl">
+      <div class="gameplay-content flex">
+        <Side>
+          <div class="mx-4">
             <SongImage :file="file" :level="props.gql.song.chart.level" />
             <SongTitle :title="props.gql.song.title" />
           </div>
         </Side>
 
         <div class="gameplay" v-once>
-          <div ref="root" class="max-w-screen-lg flex justify-center" v-once />
+          <div ref="root" class="flex justify-center" v-once />
         </div>
 
-        <Side class="flex ml-8">
+        <Side>
           <GameplayScore
             :percent="scoreData.percent"
             :timing="scoreData.timing"
@@ -259,16 +266,6 @@ const Side: FunctionalComponent = (_props, { slots }) => {
 </template>
 
 <style>
-.gameplay-content {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  column-gap: 40px;
-}
-
-.empty {
-  visibility: hidden;
-}
-
 .capitalize {
   text-transform: capitalize;
 }

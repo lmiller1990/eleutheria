@@ -54,7 +54,7 @@ const Button: FunctionalComponent<{ onClick?: () => void }> = (
 ) => {
   return (
     <button
-      class="bg-zinc-700 text-white text-xl flex justify-center items-center rounded-md h-12 p-4 m-2 mt-8 w-32"
+      class="bg-zinc-700 text-white text-xl flex justify-center items-center rounded-md h-12 p-4 mt-8 w-32"
       onClick={props.onClick}
     >
       {slots.default?.()}
@@ -87,8 +87,8 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
             </div>
           </div>
 
-          <div>
-            <div class="flex justify-center">
+          <div class="flex justify-center">
+            <div class="flex flex-col items-end">
               <GameplayScoreWithAnimation
                 percent={props.percent}
                 timing={props.timing}
@@ -97,13 +97,11 @@ export const SummaryScreenContainer: FunctionalComponent<Props> = (props) => {
                   percent: "text-4xl tall:text-7xl",
                 }}
               />
+              <div class="flex justify-center">
+                <Button onClick={() => router.push("/")}>Continue</Button>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="flex justify-center">
-          <Button onClick={() => router.push("/")}>Retry</Button>
-          <Button onClick={() => router.push("/")}>Next Song</Button>
         </div>
       </div>
     </NonGameplayScreen>
