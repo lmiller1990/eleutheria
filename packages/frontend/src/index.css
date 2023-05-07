@@ -2,8 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Sansation";
+  src: url("https://eleutheria.nyc3.cdn.digitaloceanspaces.com/Sansation-Regular.woff")
+    format("woff");
+}
+
+@font-face {
+  font-family: "Comfortaa";
+  src: url("https://eleutheria.nyc3.cdn.digitaloceanspaces.com/Comfortaa-Regular.ttf")
+    format("woff");
+}
+
 * {
   font-family: "Sansation", sans-serif;
-  /* text-transform: uppercase; */
   outline: none;
 }

@@ -28,7 +28,6 @@ defineProps<{
 
 <style scoped lang="scss">
 .difficulty-item {
-  font-family: "Sansation", sans-serif;
   cursor: pointer;
 }
 

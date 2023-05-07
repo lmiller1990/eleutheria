@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  /* font-family: "Sansation", sans-serif; */
-  /* text-transform: uppercase; */
-  /* outline: none; */
-}
-
 section {
   /* @apply bg-gray-500 my-24 mx-16 p-8; */
   @apply py-24 px-24;

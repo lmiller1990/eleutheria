@@ -23,6 +23,10 @@ const modal = useModal();
   </div>
 
   <RouterView />
+
+  <span id="preload" class="opacity-0 absolute">
+    This invisible element forces the font to preload.
+  </span>
 </template>
 
 <style>
@@ -54,5 +58,9 @@ body,
 .zoom-out {
   filter: blur(5px) grayscale(50%);
   transform: scale(0.98);
+}
+
+#preload {
+  font-family: "Comfortaa", cursive;
 }
 </style>

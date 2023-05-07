@@ -38,7 +38,6 @@ $border: 3px;
   padding: 10px 0 20px 0;
   color: white;
   border: $border solid transparent;
-  font-family: "Sansation", sans-serif;
 }
 
 .panel-title {

@@ -116,7 +116,6 @@ function normalizeMod(val: typeof speedMods[number]) {
 @import "../../shared.scss";
 
 .modifier-wrapper {
-  font-family: "Sansation", sans-serif;
   font-weight: bold;
 
   display: grid;
