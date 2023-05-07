@@ -232,7 +232,7 @@ const Side: FunctionalComponent = (_props, { slots }) => {
     "div",
     {
       class:
-        "side flex items-center justify-center max-w-[250px] mx-4 md:mx-20",
+        "side flex items-center justify-center w-[200px] mx-[20px] lg:w-[250px] lg:mx-[30px]",
     },
     slots
   );

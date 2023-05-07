@@ -31,7 +31,9 @@ watchEffect(() => {
     class="w-full flex p-8 text-2xl justify-center"
     :data-cy="`${props.label}`"
   >
-    <label class="w-32 mr-12" :for="props.label">{{ props.label }}</label>
+    <label class="w-32 mr-12 capitalize" :for="props.label">{{
+      props.label
+    }}</label>
     <div class="flex flex-grow flex-col">
       <input
         class="input bg-transparent border-b-2 border-white"
@@ -59,10 +61,3 @@ watchEffect(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-label,
-input {
-  @apply uppercase;
-}
-</style>
