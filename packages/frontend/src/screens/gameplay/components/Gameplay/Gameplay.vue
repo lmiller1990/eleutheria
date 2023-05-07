@@ -27,6 +27,7 @@ import { useGameplayOptions } from "../../../../composables/gameplayOptions";
 import { getParams } from "../../fetchData";
 import { useAudioLoader } from "../../../../composables/audioLoader";
 import { createGameplayQuery } from "../../gameplayQuery";
+import GameplayDone from "./GameplayDone.vue";
 
 const editing = false;
 
@@ -70,6 +71,8 @@ const timingSummary = reactive<
   percent: 0,
 });
 
+const songSummaryId = ref<number>();
+
 async function songCompleted(world: World) {
   const summaryData = extractNotesFromWorld(world);
 
@@ -82,7 +85,7 @@ async function songCompleted(world: World) {
     throw Error(`Expected id to be returned for score`);
   }
 
-  router.push({ path: "/summary", query: { id: res.data.saveScore.id } });
+  songSummaryId.value = res.data.saveScore.id;
 }
 
 const scoreData = computed<Omit<GameplayScoreProps, "animate">>(() => {
@@ -240,6 +243,7 @@ const Side: FunctionalComponent = (_props, { slots }) => {
 </script>
 
 <template>
+  <GameplayDone v-if="songSummaryId" :songSummaryId="songSummaryId" />
   <div class="flex justify-center">
     <div class="max-w-screen-xl">
       <div class="gameplay-content flex">

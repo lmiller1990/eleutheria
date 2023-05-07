@@ -39,6 +39,7 @@ export const SummaryWrapper = defineComponent({
     const gqlData = await useQuery({
       query: SummaryScreenContainer_GetSummaryDocument,
       variables: { id: parseInt(route.query.id as string, 10) },
+      requestPolicy: "cache-only",
     });
 
     if (!gqlData.data.value?.summary?.chart) {
