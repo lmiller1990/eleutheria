@@ -26,5 +26,6 @@ const stars = `${import.meta.env.VITE_CDN_URL}/stars.svg`;
     >
       {{ props.level.toString().padStart(2, "0") }}
     </div>
+    <slot name="info" />
   </div>
 </template>

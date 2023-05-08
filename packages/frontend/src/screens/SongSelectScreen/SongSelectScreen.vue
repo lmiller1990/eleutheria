@@ -11,7 +11,7 @@
       :class="{ [animationClass]: animating }"
     />
     <div class="flex items-center">
-      <div class="grid grid-cols-[1fr_0.65fr_50px] gap-x-7">
+      <div class="grid grid-cols-[1fr_0.5fr_50px] gap-x-7">
         <div class="flex flex-col">
           <div class="flex flex-col">
             <SongTile
@@ -42,14 +42,35 @@
         </div>
 
         <div class="flex flex-col">
-          <SongImage v-if="selectedSong" :file="selectedSong?.file" />
-          <SongInfo
-            :best="tableData.best"
-            :notes="tableData.notes"
-            :duration="tableData.duration"
-            :bpm="tableData.bpm"
-          />
+          <SongImage v-if="selectedSong" :file="selectedSong?.file">
+            <template #info>
+              <IconButton
+                size="25px"
+                class="bg-zinc-700 text-white absolute bottom-2 right-2 text-xl font-mono flex items-center justify-center"
+                @click="() => (showSongInfo = !showSongInfo)"
+              >
+                <InfoIcon />
+              </IconButton>
+            </template>
+          </SongImage>
+
+          <div class="tall:h-[336px]">
+            <SongInfo
+              v-if="showSongInfo"
+              :best="tableData.best"
+              :notes="tableData.notes"
+              :duration="tableData.duration"
+              :bpm="tableData.bpm"
+            />
+
+            <ArtistInfo
+              v-else
+              class="tall:h-[336px]"
+              :artist="selectedSong?.artist!"
+            />
+          </div>
         </div>
+
         <div>
           <IconButton @click="handleAuthenticate" data-cy="authenticate">
             <UserIcon />
@@ -86,6 +107,8 @@ import { useEmitter } from "../../composables/emitter";
 import { preferencesManager } from "../gameplay/preferences";
 import { useImageLoader } from "../../composables/imageLoader";
 import { useInitialLoad } from "../../composables/initialLoad";
+import ArtistInfo from "../../components/ArtistInfo.vue";
+import InfoIcon from "../../components/InfoIcon.vue";
 
 gql`
   query SongSelectScreen_Songs {
@@ -271,6 +294,7 @@ const tableData = computed(() => {
 
 const router = useRouter();
 
+const showSongInfo = ref(true);
 const animating = ref(false);
 const animationMs = 200;
 const animationClass = `animate-[movedown_${animationMs}ms_linear_forwards]`; // animate-[movedown_200ms_linear_forwards]
