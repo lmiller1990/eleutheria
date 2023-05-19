@@ -4,6 +4,7 @@ import { debug } from "../../../util/debug";
 import { SaveScoreInputType } from "../inputObjectTypes";
 import { Query } from "./gql-Query";
 import { Summary } from "./gql-Summary";
+import { Auth } from "../../models/auth";
 
 const log = debug("game-data:gql-Mutation");
 

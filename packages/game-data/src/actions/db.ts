@@ -14,6 +14,7 @@ import { knex, knexTable } from "../knex";
 import { ChartDataSource } from "../sources/chartDataSource";
 import { ScoreDataSource } from "../sources/scoreDataSource";
 import { SongDataSource } from "../sources/songDataSource";
+import { Auth } from "../models/auth";
 
 const log = debug(`game-data:db`);
 
@@ -37,7 +38,7 @@ export class DbActions {
       const user = await knexTable("users").insert<Users>({
         username,
         email,
-        password,
+        password: Auth.getHash(password),
       });
       log("created user", user);
       return user;
@@ -53,12 +54,16 @@ export class DbActions {
     return user;
   }
 
-  async signIn(email: string, password: string) {
+  async signIn(email: string, plaintextPassword: string) {
     log(this.#ctx.req.session.id);
 
     const user = await this.findUserByEmail(email);
 
-    if (!user || user.password !== password) {
+    if (!user) {
+      throw Error(`User with email ${email} not found.`);
+    }
+
+    if (!Auth.compare(plaintextPassword, user.password)) {
       throw Error("Credentials do not match.");
     }
 

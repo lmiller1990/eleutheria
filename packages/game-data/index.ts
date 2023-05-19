@@ -19,6 +19,7 @@ import { contextMiddleware } from "./src/middleware/context";
 import type { Users } from "./ dbschema";
 import { EditorActions } from "./src/actions/editor";
 import { Context } from "./src/graphql/context";
+import { Auth } from "./src/models/auth";
 
 const log = debug("game-data:index");
 
@@ -155,8 +156,9 @@ app.get("/static/:asset", (req, res) => {
 app.post<{}, {}, { name: string; password: string }>(
   "/login",
   async (req, res) => {
+    const password = Auth.getHash(req.body.password);
     const user = await knexTable<Users>("users")
-      .where({ email: req.body.name, password: req.body.password })
+      .where({ email: req.body.name, password })
       .first();
 
     if (user) {
