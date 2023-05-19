@@ -10,7 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="tall:h-[336px]">
+  <div class="">
     <div class="song-info short:hidden">
       <SongInfoCell title="Best" :datum="props.best" />
       <SongInfoCell title="Notes" :datum="props.notes" />

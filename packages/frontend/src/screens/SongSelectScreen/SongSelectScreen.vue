@@ -65,7 +65,6 @@
 
             <ArtistInfo
               v-else
-              class="tall:h-[336px]"
               :artist="selectedSong?.artist!"
             />
           </div>
