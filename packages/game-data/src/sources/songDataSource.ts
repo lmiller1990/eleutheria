@@ -12,6 +12,7 @@ export interface SongDataDefinition {
   bpm: number;
   file: string;
   offset: number;
+  creator: number;
 }
 
 export class SongDataSource {

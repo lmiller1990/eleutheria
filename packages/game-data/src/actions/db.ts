@@ -3,6 +3,8 @@ import assert from "assert";
 import {
   Charts,
   Covers,
+  Creator,
+  CreatorSocial,
   NoteSkins,
   Scores,
   Songs,
@@ -51,6 +53,18 @@ export class DbActions {
   async findUserByEmail(email: string) {
     const user = await knexTable("users").where<Users>("email", email).first();
     return user;
+  }
+
+  async getCreator(id: number) {
+    const creator = await knexTable("creator")
+      .join("creator_social", "creator.id", "=", "creator_social.id")
+      .where("creator.id", id);
+    if (!creator) {
+      throw new Error(`Could not find creator with id ${id}`);
+    }
+
+    console.log("creator", creator);
+    return creator;
   }
 
   async signIn(email: string, password: string) {

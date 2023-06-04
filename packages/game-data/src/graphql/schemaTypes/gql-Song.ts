@@ -1,6 +1,7 @@
 import { idArg, intArg, nonNull, objectType, stringArg } from "nexus";
 import path from "path";
 import { Chart } from "./gql-Chart";
+import { Creator } from "./gql-Creator";
 
 export const Song = objectType({
   name: "Song",
@@ -19,6 +20,18 @@ export const Song = objectType({
     t.nonNull.string("artist");
     t.nonNull.float("bpm");
     t.float("best");
+
+    t.nonNull.field("creator", {
+      type: Creator,
+      resolve: async (source, args, ctx) => {
+        const data = await ctx.actions.db.getCreator(source.data.creator);
+        return {
+          id: data[0].id,
+          name: data[0].name,
+          socials: data.map((x) => ({ social: x.social_name, link: x.link })),
+        };
+      },
+    });
 
     t.nonNull.field("chart", {
       type: Chart,

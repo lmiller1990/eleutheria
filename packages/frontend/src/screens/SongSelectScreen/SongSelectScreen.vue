@@ -65,6 +65,7 @@
 
             <ArtistInfo
               v-else
+              :composer="composer"
               :artist="selectedSong?.artist!"
             />
           </div>
@@ -118,6 +119,15 @@ gql`
       duration
       artist
       bpm
+      creator {
+        id
+        name
+        socials {
+          id
+          link
+          social
+        }
+      }
     }
   }
 `;
@@ -183,6 +193,10 @@ emitter.on("authentication:changed", () => {
 
 const viewer = computed(() => {
   return chartQuery.data?.value?.viewer ?? null;
+});
+
+const composer = computed(() => {
+  return selectedSong.value?.creator!;
 });
 
 const songs = computed(
