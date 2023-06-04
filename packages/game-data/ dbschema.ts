@@ -18,6 +18,7 @@ export interface Charts {
   level: number;
   notes: string;
   song_id: number;
+  creator: number;
 }
 export interface ChartsInput {
   id: number;
@@ -25,11 +26,12 @@ export interface ChartsInput {
   level: number;
   notes?: string;
   song_id: number;
+  creator: number;
 }
 const charts = {
   tableName: "charts",
-  columns: ["id", "difficulty", "level", "notes", "song_id"],
-  requiredForInsert: ["id", "difficulty", "level", "song_id"],
+  columns: ["id", "difficulty", "level", "notes", "song_id", "creator"],
+  requiredForInsert: ["id", "difficulty", "level", "song_id", "creator"],
   primaryKey: null,
   foreignKeys: {
     song_id: { table: "songs", column: "id", $type: null as unknown as Songs },

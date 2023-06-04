@@ -2,6 +2,7 @@ import { objectType } from "nexus";
 import { BaseNote } from "./gql-BaseNote";
 import { Song } from "./gql-Song";
 import path from "path";
+import { Creator } from "./gql-Creator";
 
 export const Chart = objectType({
   name: "Chart",
@@ -40,6 +41,10 @@ export const Chart = objectType({
     });
     t.nonNull.field("song", {
       type: Song,
+    });
+
+    t.nonNull.field("creator", {
+      type: Creator,
     });
   },
 });

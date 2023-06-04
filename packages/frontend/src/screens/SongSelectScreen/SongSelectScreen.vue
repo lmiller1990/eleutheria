@@ -66,6 +66,7 @@
             <ArtistInfo
               v-else
               :composer="composer"
+              :stepChart="stepChart"
               :artist="selectedSong?.artist!"
             />
           </div>
@@ -144,6 +145,15 @@ gql`
       level
       tapNoteCount
       personalBest
+      creator {
+        id
+        name
+        socials {
+          id
+          link
+          social
+        }
+      }
     }
   }
 `;
@@ -197,6 +207,10 @@ const viewer = computed(() => {
 
 const composer = computed(() => {
   return selectedSong.value?.creator!;
+});
+
+const stepChart = computed(() => {
+  return selectedChart.value?.creator!;
 });
 
 const songs = computed(

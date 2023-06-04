@@ -24,12 +24,7 @@ export const Song = objectType({
     t.nonNull.field("creator", {
       type: Creator,
       resolve: async (source, args, ctx) => {
-        const data = await ctx.actions.db.getCreator(source.data.creator);
-        return {
-          id: data[0].id,
-          name: data[0].name,
-          socials: data.map((x) => ({ social: x.social_name, link: x.link })),
-        };
+        return await ctx.actions.db.getCreator(source.data.creator);
       },
     });
 

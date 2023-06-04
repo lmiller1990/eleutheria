@@ -23,6 +23,14 @@ const icons = new Map([
     "website",
     "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
   ],
+  [
+    "soundcloud",
+    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
+  ],
+  [
+    "github",
+    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
+  ],
 ]);
 </script>
 

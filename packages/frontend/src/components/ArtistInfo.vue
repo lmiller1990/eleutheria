@@ -1,14 +1,17 @@
 <script lang="ts" setup>
 import ArtistInfoCell from "./ArtistInfoCell.vue";
 
+interface Creator {
+  name: string;
+  socials: Array<{
+    social: string;
+    link: string;
+  }>;
+}
+
 const props = defineProps<{
-  composer: {
-    name: string;
-    socials: Array<{
-      social: string;
-      link: string;
-    }>;
-  };
+  composer: Creator;
+  stepChart: Creator;
 }>();
 </script>
 
@@ -18,8 +21,7 @@ const props = defineProps<{
   >
     <div class="flex flex-col w-full">
       <ArtistInfoCell label="Artist" :data="props.composer" />
-      <!-- <ArtistInfoCell :text="props.artist" />
-      <ArtistInfoCell :text="props.artist" /> -->
+      <ArtistInfoCell label="Chart" :data="props.stepChart" />
     </div>
   </div>
 </template>

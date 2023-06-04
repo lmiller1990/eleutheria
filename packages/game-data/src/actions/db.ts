@@ -56,15 +56,18 @@ export class DbActions {
   }
 
   async getCreator(id: number) {
-    const creator = await knexTable("creator")
+    const data = await knexTable("creator")
       .join("creator_social", "creator.id", "=", "creator_social.id")
       .where("creator.id", id);
-    if (!creator) {
+    if (!data.length) {
       throw new Error(`Could not find creator with id ${id}`);
     }
 
-    console.log("creator", creator);
-    return creator;
+    return {
+      id: data[0].id,
+      name: data[0].name,
+      socials: data.map((x) => ({ social: x.social_name, link: x.link })),
+    };
   }
 
   async signIn(email: string, password: string) {
@@ -124,6 +127,7 @@ export class DbActions {
         "charts.id",
         "charts.level",
         "charts.notes",
+        "charts.creator",
         "charts.difficulty",
         "charts.song_id",
         "songs.bpm",
