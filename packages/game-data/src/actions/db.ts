@@ -59,6 +59,7 @@ export class DbActions {
     const data = await knexTable("creator")
       .join("creator_social", "creator.id", "=", "creator_social.id")
       .where("creator.id", id);
+
     if (!data.length) {
       throw new Error(`Could not find creator with id ${id}`);
     }

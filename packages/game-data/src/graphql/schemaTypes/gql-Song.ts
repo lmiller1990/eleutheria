@@ -28,6 +28,13 @@ export const Song = objectType({
       },
     });
 
+    t.nonNull.field("banner_creator", {
+      type: Creator,
+      resolve: async (source, args, ctx) => {
+        return await ctx.actions.db.getCreator(source.data.banner_creator_id);
+      },
+    });
+
     t.nonNull.field("chart", {
       type: Chart,
       args: {

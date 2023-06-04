@@ -67,7 +67,7 @@
               v-else
               :composer="composer"
               :stepChart="stepChart"
-              :artist="selectedSong?.artist!"
+              :bannerCreator="bannerCreator"
             />
           </div>
         </div>
@@ -121,6 +121,15 @@ gql`
       artist
       bpm
       creator {
+        id
+        name
+        socials {
+          id
+          link
+          social
+        }
+      }
+      banner_creator {
         id
         name
         socials {
@@ -207,6 +216,10 @@ const viewer = computed(() => {
 
 const composer = computed(() => {
   return selectedSong.value?.creator!;
+});
+
+const bannerCreator = computed(() => {
+  return selectedSong.value?.banner_creator!;
 });
 
 const stepChart = computed(() => {

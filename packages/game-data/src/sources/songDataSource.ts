@@ -11,6 +11,7 @@ export interface SongDataDefinition {
   artist: string;
   bpm: number;
   file: string;
+  banner_creator_id: number;
   offset: number;
   creator: number;
 }

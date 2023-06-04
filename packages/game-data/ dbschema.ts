@@ -235,6 +235,7 @@ export interface Songs {
   bpm: number;
   file: string;
   creator: number;
+  banner_creator_id: number;
 }
 export interface SongsInput {
   id: number;
@@ -245,6 +246,7 @@ export interface SongsInput {
   bpm: number;
   file: string;
   creator: number;
+  banner_creator_id: number;
 }
 const songs = {
   tableName: "songs",
@@ -257,6 +259,7 @@ const songs = {
     "bpm",
     "file",
     "creator",
+    "banner_creator_id",
   ],
   requiredForInsert: [
     "id",
@@ -267,6 +270,7 @@ const songs = {
     "bpm",
     "file",
     "creator",
+    "banner_creator_id",
   ],
   primaryKey: null,
   foreignKeys: {},
