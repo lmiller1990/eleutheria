@@ -10,28 +10,12 @@ const props = defineProps<{
   };
 }>();
 
-const icons = new Map([
-  [
-    "youtube",
-    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Youtube_colored_svg-1024.png",
-  ],
-  [
-    "twitter",
-    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
-  ],
-  [
-    "website",
-    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
-  ],
-  [
-    "soundcloud",
-    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
-  ],
-  [
-    "github",
-    "https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter3_colored_svg-1024.png",
-  ],
-]);
+const icons = new Map(
+  ["youtube", "twitter", "website", "soundcloud", "github"].map((social) => [
+    social,
+    `${import.meta.env.VITE_CDN_URL}/${social}.png`,
+  ])
+);
 </script>
 
 <template>
@@ -47,7 +31,7 @@ const icons = new Map([
           :href="link"
           class="h-full ml-1"
         >
-          <img :src="icons.get(social)" class="h-full" />
+          <img :src="icons.get(social)" class="h-full rounded" />
         </a>
       </div>
     </div>
