@@ -11,7 +11,7 @@
       :class="{ [animationClass]: animating }"
     />
     <div class="flex items-center">
-      <div class="grid grid-cols-[1fr_0.65fr_50px] gap-x-7">
+      <div class="grid grid-cols-[1fr_0.5fr_50px] gap-x-7">
         <div class="flex flex-col">
           <div class="flex flex-col">
             <SongTile
@@ -42,14 +42,36 @@
         </div>
 
         <div class="flex flex-col">
-          <SongImage v-if="selectedSong" :file="selectedSong?.file" />
-          <SongInfo
-            :best="tableData.best"
-            :notes="tableData.notes"
-            :duration="tableData.duration"
-            :bpm="tableData.bpm"
-          />
+          <SongImage v-if="selectedSong" :file="selectedSong?.file">
+            <template #info>
+              <IconButton
+                size="25px"
+                class="bg-zinc-700 text-white absolute bottom-2 right-2 text-xl font-mono flex items-center justify-center"
+                @click="() => (showSongInfo = !showSongInfo)"
+              >
+                <InfoIcon />
+              </IconButton>
+            </template>
+          </SongImage>
+
+          <div class="tall:h-[336px]">
+            <SongInfo
+              v-if="showSongInfo"
+              :best="tableData.best"
+              :notes="tableData.notes"
+              :duration="tableData.duration"
+              :bpm="tableData.bpm"
+            />
+
+            <ArtistInfo
+              v-else
+              :composer="composer"
+              :stepChart="stepChart"
+              :bannerCreator="bannerCreator"
+            />
+          </div>
         </div>
+
         <div>
           <IconButton @click="handleAuthenticate" data-cy="authenticate">
             <UserIcon />
@@ -86,6 +108,8 @@ import { useEmitter } from "../../composables/emitter";
 import { preferencesManager } from "../gameplay/preferences";
 import { useImageLoader } from "../../composables/imageLoader";
 import { useInitialLoad } from "../../composables/initialLoad";
+import ArtistInfo from "../../components/ArtistInfo.vue";
+import InfoIcon from "../../components/InfoIcon.vue";
 
 gql`
   query SongSelectScreen_Songs {
@@ -96,6 +120,24 @@ gql`
       duration
       artist
       bpm
+      creator {
+        id
+        name
+        socials {
+          id
+          link
+          social
+        }
+      }
+      banner_creator {
+        id
+        name
+        socials {
+          id
+          link
+          social
+        }
+      }
     }
   }
 `;
@@ -112,6 +154,15 @@ gql`
       level
       tapNoteCount
       personalBest
+      creator {
+        id
+        name
+        socials {
+          id
+          link
+          social
+        }
+      }
     }
   }
 `;
@@ -161,6 +212,18 @@ emitter.on("authentication:changed", () => {
 
 const viewer = computed(() => {
   return chartQuery.data?.value?.viewer ?? null;
+});
+
+const composer = computed(() => {
+  return selectedSong.value?.creator!;
+});
+
+const bannerCreator = computed(() => {
+  return selectedSong.value?.banner_creator!;
+});
+
+const stepChart = computed(() => {
+  return selectedChart.value?.creator!;
 });
 
 const songs = computed(
@@ -271,6 +334,7 @@ const tableData = computed(() => {
 
 const router = useRouter();
 
+const showSongInfo = ref(true);
 const animating = ref(false);
 const animationMs = 200;
 const animationClass = `animate-[movedown_${animationMs}ms_linear_forwards]`; // animate-[movedown_200ms_linear_forwards]

@@ -6,6 +6,8 @@ export * from "./gql-BaseNote";
 export * from "./gql-Book";
 export * from "./gql-Chart";
 export * from "./gql-Cover";
+export * from "./gql-Creator";
+export * from "./gql-CreatorSocial";
 export * from "./gql-Mutation";
 export * from "./gql-NoteSkin";
 export * from "./gql-Query";

@@ -56,4 +56,8 @@ export class ChartDataSource {
     const song = await this.#ctx.actions.db.queryForSong(this.data.song_id);
     return song;
   }
+
+  async creator() {
+    return await this.#ctx.actions.db.getCreator(this.data.creator);
+  }
 }
