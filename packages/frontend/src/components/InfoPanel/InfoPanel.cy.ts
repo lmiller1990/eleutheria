@@ -17,5 +17,6 @@ function render(_props?: Partial<InfoPanelProps>) {
 describe("InfoPanel", () => {
   it("renders", () => {
     render({});
+    expect(1).to.eq(2);
   });
 });
