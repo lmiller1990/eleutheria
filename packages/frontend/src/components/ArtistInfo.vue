@@ -23,7 +23,7 @@ const props = defineProps<{
     <div class="flex flex-col w-full">
       <ArtistInfoCell label="Artist" :data="props.composer" />
       <ArtistInfoCell label="Chart" :data="props.stepChart" />
-      <!-- <ArtistInfoCell label="Banner" :data="props.bannerCreator" /> -->
+      <ArtistInfoCell label="Banner" :data="props.bannerCreator" />
     </div>
   </div>
 </template>

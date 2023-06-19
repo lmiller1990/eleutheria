@@ -11,10 +11,9 @@ const props = defineProps<{
 }>();
 
 const icons = new Map(
-  ["youtube", "twitter", "website", "soundcloud", "github"].map((social) => [
-    social,
-    `${import.meta.env.VITE_CDN_URL}/${social}.png`,
-  ])
+  ["youtube", "twitter", "website", "soundcloud", "github", "skeb"].map(
+    (social) => [social, `${import.meta.env.VITE_CDN_URL}/${social}.png`]
+  )
 );
 </script>
 
