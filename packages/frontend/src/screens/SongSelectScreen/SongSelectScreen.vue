@@ -110,6 +110,7 @@ import { useImageLoader } from "../../composables/imageLoader";
 import { useInitialLoad } from "../../composables/initialLoad";
 import ArtistInfo from "../../components/ArtistInfo.vue";
 import InfoIcon from "../../components/InfoIcon.vue";
+import { useAudioLoader } from "../../composables/audioLoader";
 
 gql`
   query SongSelectScreen_Songs {
@@ -342,6 +343,11 @@ const animationClass = `animate-[movedown_${animationMs}ms_linear_forwards]`; //
 const delay = () =>
   new Promise((resolve) => window.setTimeout(resolve, animationMs + 200));
 
+let previewAudio: {
+  source: AudioBufferSourceNode;
+  context: AudioContext;
+};
+
 async function handleSelected(
   song: SongSelectScreen_SongsQuery["songs"][number]
 ) {
@@ -353,6 +359,29 @@ async function handleSelected(
     selectedSongId.value = song.id;
     selectedChartIdx.value =
       preferences.preferredSongChartIndex?.[song.id] ?? 0;
+
+    const url = `${import.meta.env.VITE_CDN_URL}/${song.file}_preview.wav`;
+
+    // play preview
+    const preview = useAudioLoader(url);
+    await previewAudio?.context.close();
+    previewAudio?.source.stop();
+
+    preview.emitter.on("song:loading:complete", (data) => {
+      const source = data.audioContext.createBufferSource();
+      source.buffer = data.audioBuffer;
+      const gainNode = data.audioContext.createGain();
+      gainNode.gain.value = 1.0;
+      gainNode.connect(data.audioContext.destination);
+      source.connect(gainNode);
+      source.start(0);
+      source.stop;
+      previewAudio = {
+        context: data.audioContext,
+        source: source,
+      };
+    });
+
     return;
   }
 
@@ -367,6 +396,9 @@ async function handleSelected(
       `Did not find chart at index ${selectedChartIdx.value}. Charts only has ${chartQuery.data.value?.charts.length} elements.`
     );
   }
+
+  previewAudio.source.stop();
+  await previewAudio.context.close();
 
   animating.value = true;
   await delay();
