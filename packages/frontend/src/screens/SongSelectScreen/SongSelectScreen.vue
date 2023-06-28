@@ -368,6 +368,13 @@ async function handleSelected(
     previewAudio?.source.stop();
 
     preview.emitter.on("song:loading:complete", (data) => {
+      // by the time the sample loaded, the user selected a different song
+      // just bail
+      if (selectedSongId.value !== song.id) {
+        console.log("Bail")
+        return
+      }
+
       const source = data.audioContext.createBufferSource();
       source.buffer = data.audioBuffer;
       const gainNode = data.audioContext.createGain();

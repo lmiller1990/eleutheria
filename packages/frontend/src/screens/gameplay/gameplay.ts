@@ -435,6 +435,7 @@ export function create(
 
         // See if the note has scrolled outside the viewport and remove if necessary
         // Another perf. optimization.
+        // TODO(perf): This calls getBoundingClientRect() - do we need to do this?
         if ($note && shouldRemoveNote($note, modifierManager.scrollDirection)) {
           $note.remove();
         }

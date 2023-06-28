@@ -91,6 +91,8 @@ export interface GameAPI {
 }
 
 export class Game implements GameAPI {
+  #previousFrameTimestamp: number
+  #frameTimes: number[] = []
   #fps = 0;
   #dt = 0;
   #lastDebugUpdate = 0;
@@ -269,6 +271,19 @@ export class Game implements GameAPI {
       inputs: gameState.inputManager.activeInputs,
     };
 
+    if (this.#previousFrameTimestamp) {
+      const delta = performance.now() - this.#previousFrameTimestamp
+      this.#frameTimes.push(delta)
+    } 
+
+    // @ts-ignore
+    window.logStats = () => {
+      console.log('All', this.#frameTimes)
+      console.log('Average', this.#frameTimes.reduce((acc, curr) => acc + curr, 0) / this.#frameTimes.length)
+    }
+
+    this.#previousFrameTimestamp = performance.now()
+    
     const { world: updatedWorld, previousFrameMeta } = updateGameState(
       world,
       this.#config.engineConfiguration
