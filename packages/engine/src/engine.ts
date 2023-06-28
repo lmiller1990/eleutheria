@@ -464,8 +464,12 @@ export function updateGameState(
   const prevFrameNotes = Array.from(world.chart.tapNotes.values());
   const prevFrameHoldNotes = Array.from(world.chart.holdNotes.values());
 
-  const judgementResults = world.inputs.reduce<JudgementResult[]>(
-    (acc, input) => {
+  let judgementResults: JudgementResult[] = [];
+  // @ts-ignore
+  if (window.FLAGS.SKIP_JUDGEMENT) {
+    //
+  } else {
+    judgementResults = world.inputs.reduce<JudgementResult[]>((acc, input) => {
       // we only judge inputs on key presses right now
       // maybe in the future we will have some judge-on-release mechanic (lift?)
       if (input.type === "up") {
@@ -482,9 +486,8 @@ export function updateGameState(
         return acc.concat(result);
       }
       return acc;
-    },
-    []
-  );
+    }, []);
+  }
 
   const prevFrameMissedNotesCount = [
     ...prevFrameNotes,
@@ -494,8 +497,8 @@ export function updateGameState(
   let nextFrameMissedCount: number = prevFrameMissedNotesCount;
 
   const newNotes = new Map<string, EngineNote>();
-  for (const key of world.chart.tapNotes.keys()) {
-    const oldNote = world.chart.tapNotes.get(key)!;
+  for (const [key, oldNote] of world.chart.tapNotes.entries()) {
+    // const oldNote = world.chart.tapNotes.get(key)!;
     const newNote = processNoteJudgement(
       oldNote,
       judgementResults,

@@ -185,6 +185,9 @@ onMounted(async () => {
     editing ? 26000 : undefined // repeat
   );
 
+  // @ts-ignore
+  window.FLAGS = { SKIP_JUDGEMENT: window.SKIP_JUDGEMENT || true }
+
   if (!init || !init.game) {
     // Only occurs during testing. We want a way to render this screen w/o starting gameplay.
     return;
