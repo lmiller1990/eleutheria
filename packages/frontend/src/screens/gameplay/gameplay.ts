@@ -493,17 +493,17 @@ export function create(
       updateUI(world, previousFrameMeta, elements);
     },
 
-    onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
-      const summary = summarizeResults(
-        {
-          tapNotes: [...world.chart.tapNotes.values()],
-          holdNotes: [...world.chart.holdNotes.values()],
-        },
-        timingWindows
-      );
+    // onJudgement: (world: World, _judgementResults: JudgementResult[]) => {
+    //   const summary = summarizeResults(
+    //     {
+    //       tapNotes: [...world.chart.tapNotes.values()],
+    //       holdNotes: [...world.chart.holdNotes.values()],
+    //     },
+    //     timingWindows
+    //   );
 
-      updateSummary(summary);
-    },
+    //   updateSummary(summary);
+    // },
 
     onDebug: (world: World, fps: number) => {
       writeDebugToHtml(world, fps, elements);
