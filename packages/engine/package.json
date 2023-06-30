@@ -14,6 +14,7 @@
     "@packages/audio-utils": "0.0.0-development"
   },
   "devDependencies": {
+    "@vitest/ui": "^0.32.2",
     "typescript": "4.7.4",
     "vitest": "0.25.1"
   }

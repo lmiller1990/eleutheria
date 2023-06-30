@@ -149,16 +149,26 @@ export function createChart(args: CreateChart): Chart {
  */
 export function nearestScorableNote(
   input: Input,
-  chart: Chart
+  chart: Chart,
+  tapNotesByCol: TapNoteColumnMap
 ): EngineNote | undefined {
-  const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
+  const tapable = chart.tapNotes.concat(chart.holdNotes.map((x) => x.at(0)!));
 
-  const initialCandidate = tapable.find(
-    (note) => note.column === input.column && note.canHit
-  );
+  const i = tapNotesByCol.get(input.column)?.[0].index;
 
-  if (!initialCandidate) {
-    return undefined;
+  if (i === undefined) {
+    return;
+  }
+
+  let cand =
+    tapable[
+      tapNotesByCol
+        .get(input.column)
+        ?.find((x) => chart.tapNotes[x.index].canHit)?.index ?? -1
+    ];
+
+  if (!cand) {
+    return;
   }
 
   const nearest = tapable.reduce((best, note) => {
@@ -181,7 +191,7 @@ export function nearestScorableNote(
     }
 
     return best;
-  }, initialCandidate);
+  }, cand);
 
   return nearest && nearest.column === input.column ? nearest : undefined;
 }
@@ -204,10 +214,22 @@ export function judge(input: Input, note: EngineNote): number {
   return input.ms - note.ms;
 }
 
+type TapNoteColumnMap = Map<number, Array<{ index: number; id: string }>>;
+
 export interface GameChart {
   tapNotes: Map<string, EngineNote>;
   holdNotes: Map<string, EngineNote[]>;
+
+  /**
+   * This maps each note by it's id.
+   * It makes looking up notes based on a given input
+   * N times faster where N is the column.
+   * { 1 => [1, 2, 3] } etc, where key is column, array is array of note.id.
+   */
+  tapNotesByCol: TapNoteColumnMap;
 }
+
+interface GameChartMeta {}
 
 /**
  * Represents the current state of the game engine.
@@ -305,19 +327,18 @@ interface JudgeInput {
 
   // developer supplied timing windows
   timingWindows: Readonly<TimingWindow[]> | undefined;
+
+  tapNotesByCol: TapNoteColumnMap;
 }
 
 /**
  * Given an input and a chart, see if there is a note nearby and judge
  * how accurately the player hit it.
  */
-export function judgeInput({
-  input,
-  chart,
-  maxWindow,
-  timingWindows,
-}: JudgeInput): JudgementResult | undefined {
-  const note = nearestScorableNote(input, chart);
+export function judgeInput(args: JudgeInput): JudgementResult | undefined {
+  const { input, chart, maxWindow, timingWindows } = args;
+
+  const note = nearestScorableNote(input, chart, args.tapNotesByCol);
 
   if (note && Math.abs(note.ms - input.ms) <= maxWindow) {
     const timing = judge(input, note);
@@ -337,19 +358,59 @@ export function judgeInput({
   return undefined;
 }
 
+export function tapNotesToColumnMap (tapNotes: EngineNote[]): TapNoteColumnMap {
+  const tapNotesByCol: TapNoteColumnMap = new Map();
+  for (let i = 0; i < tapNotes.length; i++) {
+    const note = tapNotes[i];
+
+    if (!tapNotesByCol.has(note.column)) {
+      tapNotesByCol.set(note.column, [
+        {
+          id: note.id,
+          index: i,
+        },
+      ]);
+    } else {
+      tapNotesByCol.get(note.column)!.push({
+        id: note.id,
+        index: i,
+      });
+    }
+  }
+
+  return tapNotesByCol
+}
+
 /**
  *  Create a new "world", which represents the play-through of one chart.
  */
 export function initGameState(chart: Chart): GameChart {
   const tapNotes = new Map<string, EngineNote>();
+  const tapNotesByCol: TapNoteColumnMap = new Map();
 
-  chart.tapNotes.forEach((note) => {
+  for (let i = 0; i < chart.tapNotes.length; i++) {
+    const note = chart.tapNotes[i];
+
     tapNotes.set(note.id, {
       ...note,
       timingWindowName: null,
       canHit: true,
     });
-  });
+
+    if (!tapNotesByCol.has(note.column)) {
+      tapNotesByCol.set(note.column, [
+        {
+          id: note.id,
+          index: i,
+        },
+      ]);
+    } else {
+      tapNotesByCol.get(note.column)!.push({
+        id: note.id,
+        index: i,
+      });
+    }
+  }
 
   const holdNotes = new Map<string, EngineNote[]>();
 
@@ -367,6 +428,7 @@ export function initGameState(chart: Chart): GameChart {
   return {
     tapNotes,
     holdNotes,
+    tapNotesByCol,
   };
 }
 
@@ -474,7 +536,11 @@ export function updateGameState(
 
       const result = judgeInput({
         input,
-        chart: { tapNotes: prevFrameNotes, holdNotes: prevFrameHoldNotes },
+        chart: {
+          tapNotes: prevFrameNotes,
+          holdNotes: prevFrameHoldNotes,
+        },
+          tapNotesByCol: world.chart.tapNotesByCol,
         maxWindow: config.maxHitWindow,
         timingWindows: config.timingWindows,
       });

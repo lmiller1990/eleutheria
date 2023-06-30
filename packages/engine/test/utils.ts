@@ -1,4 +1,4 @@
-import type { GameChart, World } from "../src";
+import { tapNotesToColumnMap, type GameChart, type World } from "../src";
 
 export function createWorld(
   chart: Partial<GameChart> = { tapNotes: new Map() },
@@ -19,6 +19,11 @@ export function createWorld(
     chart: {
       tapNotes: chart.tapNotes || new Map(),
       holdNotes: chart.holdNotes || new Map(),
+      tapNotesByCol: tapNotesToColumnMap([...(chart.tapNotes?.values() || [])])
     },
   };
+}
+
+export function values<K, V> (map: Map<K, V>): V[] {
+  return Array.from(map.values())
 }
