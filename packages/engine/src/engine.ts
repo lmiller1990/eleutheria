@@ -98,11 +98,6 @@ export interface TimingWindow {
   weight: number;
 }
 
-export interface Chart {
-  tapNotes: EngineNote[];
-  holdNotes: Array<EngineNote[]>;
-}
-
 export interface EngineConfiguration {
   maxHitWindow: number;
   timingWindows: Readonly<TimingWindow[]>;
@@ -149,41 +144,97 @@ export function createChart(args: CreateChart): Chart {
  */
 export function nearestScorableNote(
   input: Input,
-  chart: Chart
+  chart: GameChart
 ): EngineNote | undefined {
-  const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
+  // const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
 
-  const initialCandidate = tapable.find(
-    (note) => note.column === input.column && note.canHit
-  );
+  const candidates = chart.tapNotesByColumn.get(input.column);
 
-  if (!initialCandidate) {
-    return undefined;
+  if (!candidates?.length) {
+    return;
   }
 
-  const nearest = tapable.reduce((best, note) => {
-    // if the note is not scorable, we are not interested
-    if (!note.canHit) {
-      return best;
+  // Get mid element
+  let mid = Math.floor(candidates.length / 2);
+  let c1 = candidates[mid];
+  let c2 = candidates[mid - 1];
+  let c3 = candidates[mid + 1];
+  let done = false;
+  let winner: EngineNote | undefined;
+  let i = 0
+
+  while (!done) {
+    i++
+
+    if (i > 10) {
+      throw Error('...')
     }
 
-    // if it's the wrong column, we are not interested.
-    if (input.column !== note.column) {
-      return best;
+    let n1 = chart.tapNotes.get(c1)
+    let n2 = chart.tapNotes.get(c2)
+    let n3 = chart.tapNotes.get(c3)
+
+    let curr = n1 ? Math.abs(n1.ms - input.ms) : null
+    let below = n2 ? Math.abs(n2.ms - input.ms) : null
+    let above = n3 ? Math.abs(n3.ms - input.ms) : null
+    
+    if (!above || !below || !curr) {
+      winner = chart.tapNotes.get(c1);
+      done = true;
+      break
     }
 
-    const isCloserToInputMs =
-      Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms);
-    // if it's the coreect column and closer to the input ms
-    // than the current best, we have a new best note.
-    if (isCloserToInputMs) {
-      return note;
+    console.log({curr,below,above})
+    // if d1 is the smallest, we have a winner.
+    if (curr <= below && curr <= above) {
+      winner = chart.tapNotes.get(c1);
+      done = true;
+      break
     }
 
-    return best;
-  }, initialCandidate);
+    // if below is closer, we look at first half
+    if (below <= above) {
+      console.log("first half")
+      mid = Math.floor(mid / 2);
+      //
+    } else if (above <= below) {
+      console.log("upper half")
+      mid = Math.floor((candidates.length + mid) / 2);
+      //
+    }
+    c1 = candidates[mid];
+    c2 = candidates[mid - 1];
+    c3 = candidates[mid + 1];
+  }
 
-  return nearest && nearest.column === input.column ? nearest : undefined;
+  console.log({ done, winner });
+  return winner
+  // See if the next note is closer or further. Then we know if we want to
+  // discard the upper or lower half.
+
+  // const nearest = tapable.reduce((best, note) => {
+  //   // if the note is not scorable, we are not interested
+  //   if (!note.canHit) {
+  //     return best;
+  //   }
+
+  //   // if it's the wrong column, we are not interested.
+  //   if (input.column !== note.column) {
+  //     return best;
+  //   }
+
+  //   const isCloserToInputMs =
+  //     Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms);
+  //   // if it's the coreect column and closer to the input ms
+  //   // than the current best, we have a new best note.
+  //   if (isCloserToInputMs) {
+  //     return note;
+  //   }
+
+  //   return best;
+  // }, initialCandidate);
+
+  // return nearest && nearest.column === input.column ? nearest : undefined;
 }
 
 /**
@@ -205,8 +256,25 @@ export function judge(input: Input, note: EngineNote): number {
 }
 
 export interface GameChart {
+  /**
+   * Map of all notes in the chart.
+   */
   tapNotes: Map<string, EngineNote>;
   holdNotes: Map<string, EngineNote[]>;
+
+  /**
+   * Map of column => [note.id]. Can quickly
+   * get a list of all notes by column.
+   * The value is an array of note.id[] which is
+   * ordered chonologically - eg, the first note has the
+   * lowest millisecond value (appears earliest in the chart).
+   */
+  tapNotesByColumn: Map<number, string[]>;
+}
+
+export interface Chart {
+  tapNotes: EngineNote[];
+  holdNotes: Array<EngineNote[]>;
 }
 
 /**
@@ -245,7 +313,7 @@ export interface World {
 
 export interface JudgementResult {
   // the noteId used in this judgement.
-  noteId: string;
+  note: EngineNote;
 
   // how accurate the timing was. + is early. - is late.
   timing: number;
@@ -294,16 +362,24 @@ function getTimingWindow(
 }
 
 interface JudgeInput {
-  // user input
+  /**
+   * Input we are judging.
+   */
   input: Input;
 
-  // current chart
-  chart: Chart;
+  /**
+   * Current chart including useful metadata.
+   */
+  chart: GameChart;
 
-  // maximum window to hit a note
+  /**
+   * Maximum window to hit a note
+   **/
   maxWindow: number;
 
-  // developer supplied timing windows
+  /**
+   * Timing windows supplied by developer.
+   */
   timingWindows: Readonly<TimingWindow[]> | undefined;
 }
 
@@ -327,7 +403,7 @@ export function judgeInput({
 
     return {
       timing,
-      noteId: note.id,
+      note,
       time: input.ms,
       inputs: input ? [input.id] : [],
       timingWindowName,
@@ -342,14 +418,21 @@ export function judgeInput({
  */
 export function initGameState(chart: Chart): GameChart {
   const tapNotes = new Map<string, EngineNote>();
+  const tapNotesByColumn: GameChart["tapNotesByColumn"] = new Map();
 
-  chart.tapNotes.forEach((note) => {
+  for (const note of chart.tapNotes) {
     tapNotes.set(note.id, {
       ...note,
       timingWindowName: null,
       canHit: true,
     });
-  });
+
+    if (!tapNotesByColumn.has(note.column)) {
+      tapNotesByColumn.set(note.column, [note.id]);
+    } else {
+      tapNotesByColumn.get(note.column)!.push(note.id);
+    }
+  }
 
   const holdNotes = new Map<string, EngineNote[]>();
 
@@ -367,6 +450,7 @@ export function initGameState(chart: Chart): GameChart {
   return {
     tapNotes,
     holdNotes,
+    tapNotesByColumn,
   };
 }
 
@@ -394,10 +478,10 @@ function processNoteJudgement(
     return note;
   }
 
-  const noteJudgement = judgementResults.find((x) => x.noteId === note.id);
+  const noteJudgement = judgementResults.find((x) => x.note.id === note.id);
 
   // the note was hit! update to reflect this.
-  if (noteJudgement && noteJudgement.noteId === note.id) {
+  if (noteJudgement && noteJudgement.note.id === note.id) {
     return {
       ...note,
       hitAt: noteJudgement.time,
@@ -474,7 +558,7 @@ export function updateGameState(
 
       const result = judgeInput({
         input,
-        chart: { tapNotes: prevFrameNotes, holdNotes: prevFrameHoldNotes },
+        chart: world.chart,
         maxWindow: config.maxHitWindow,
         timingWindows: config.timingWindows,
       });
@@ -507,7 +591,7 @@ export function updateGameState(
       nextFrameMissedCount++;
 
       judgementResults.push({
-        noteId: newNote.id,
+        note: newNote,
         timing: 0,
         time: 0,
         timingWindowName: "miss",
@@ -536,7 +620,7 @@ export function updateGameState(
       nextFrameMissedCount++;
 
       judgementResults.push({
-        noteId: newHoldNote.id,
+        note: newHoldNote,
         timing: 0,
         time: 0,
         timingWindowName: "miss",
@@ -547,7 +631,7 @@ export function updateGameState(
     for (const result of judgementResults) {
       if (
         result.timingWindowName !== "miss" &&
-        result.noteId === key &&
+        result.note.id === key &&
         !newHoldNote.isHeld
       ) {
         newHoldNote.isHeld = true;
@@ -578,6 +662,11 @@ export function updateGameState(
     ? 0
     : world.combo +
       judgementResults.filter((x) => x.timingWindowName !== "miss").length;
+
+      for (const result of judgementResults) {
+        const d = world.chart.tapNotesByColumn.get(result.note.column)!
+        world.chart.tapNotesByColumn.set(result.note.column, d.filter(x => x !== result.note.id))
+      }
 
   return {
     world: {
