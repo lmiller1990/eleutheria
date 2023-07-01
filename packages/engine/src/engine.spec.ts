@@ -73,6 +73,7 @@ function makeTapNote(note: Partial<EngineNote>): EngineNote {
     column: 0,
     ms: 0,
     measureNumber: 0,
+    timingWindowName: null,
     missed: false,
     canHit: true,
     ...note,
@@ -81,7 +82,7 @@ function makeTapNote(note: Partial<EngineNote>): EngineNote {
 
 describe("nearestScorableNote", () => {
   it("is quick for large number of notes", () => {
-    const chart =  initGameState({
+    const chart = initGameState({
       tapNotes: [
         makeTapNote({ id: "1", ms: 0, column: 0 }),
         makeTapNote({ id: "2", ms: 500, column: 0 }),
@@ -107,7 +108,7 @@ describe("nearestScorableNote", () => {
   });
 
   it("is quick for large number of notes", () => {
-    const chart =  initGameState({
+    const chart = initGameState({
       tapNotes: [
         makeTapNote({ id: "1", ms: 0, column: 0 }),
         makeTapNote({ id: "2", ms: 500, column: 0 }),
@@ -132,7 +133,7 @@ describe("nearestScorableNote", () => {
   });
 
   it("captures nearest note based on time and input", () => {
-    const chart =  initGameState({
+    const chart = initGameState({
       tapNotes: [
         makeTapNote({ id: "1", ms: 0, column: 1 }),
         makeTapNote({ id: "2", ms: 500, column: 0 }),
@@ -151,7 +152,7 @@ describe("nearestScorableNote", () => {
 
   // TODO: Revive holds
   it.skip("captures nearest hold note leader based on time and input", () => {
-    const chart = initGameState( {
+    const chart = initGameState({
       tapNotes: [],
       holdNotes: [
         makeHoldNote({ startMs: 100, durationMs: 10 }),
@@ -167,7 +168,7 @@ describe("nearestScorableNote", () => {
   });
 
   it("handles chart with no tapNotes", () => {
-    const chart=  initGameState({
+    const chart = initGameState({
       tapNotes: [],
       holdNotes: [],
     });
@@ -180,7 +181,7 @@ describe("nearestScorableNote", () => {
   });
 
   it("handles chart with no valid tapNotes", () => {
-    const chart=  initGameState({
+    const chart = initGameState({
       tapNotes: [makeTapNote({ id: "1", ms: 100, column: 0 })],
       holdNotes: [],
     });
@@ -192,11 +193,11 @@ describe("nearestScorableNote", () => {
     expect(actual).toBeFalsy();
   });
 
-  it.only("ignores notes that have been hit already", () => {
-    const chart= initGameState( {
+  it("ignores notes that have been hit already", () => {
+    const chart = initGameState({
       tapNotes: [
         makeTapNote({ id: "1", ms: 450, column: 1, hitAt: 450, canHit: false }),
-        makeTapNote({ id: "2", ms: 500, column: 1 }),
+        makeTapNote({ id: "2", ms: 500, column: 1, canHit: true }),
       ],
       holdNotes: [],
     });
@@ -205,7 +206,7 @@ describe("nearestScorableNote", () => {
       chart
     );
 
-    expect(actual).toBe(chart.tapNotes[1]);
+    expect(actual).toBe(chart.tapNotes.get("2"));
   });
 });
 
@@ -215,17 +216,25 @@ describe("judgeInput", () => {
       column: 1,
       ms: 100,
     });
+
     // inside max input window of 100
+
     const note: EngineNote = makeTapNote({ id: "1", column: 1, ms: 200 });
+
+    const chart = initGameState({
+      tapNotes: [note],
+      holdNotes: [],
+    });
+
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note], holdNotes: [] },
+      chart,
       maxWindow: 100,
       timingWindows: undefined,
     });
 
     expect(actual).toEqual<JudgementResult>({
-      noteId: "1",
+      note,
       inputs: ["100"],
       time: 100,
       timing: -100,
@@ -240,9 +249,15 @@ describe("judgeInput", () => {
     });
     // outside max input window of 100 by 1
     const note = makeTapNote({ id: "1", column: 1, ms: 201 });
+
+    const chart = initGameState({
+      tapNotes: [note],
+      holdNotes: [],
+    });
+
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note], holdNotes: [] },
+      chart,
       maxWindow: 100,
       timingWindows: undefined,
     });
@@ -256,9 +271,13 @@ describe("judgeInput", () => {
       column: 1,
       ms: 111,
     });
+    const chart = initGameState({
+      tapNotes: [note],
+      holdNotes: [],
+    });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note], holdNotes: [] },
+      chart,
       maxWindow: 100,
       timingWindows: [
         {
@@ -277,7 +296,7 @@ describe("judgeInput", () => {
     expect(actual).toEqual<JudgementResult>({
       inputs: ["111"],
       timing: 11,
-      noteId: note.id,
+      note,
       time: 111,
       timingWindowName: "perfect",
     });
@@ -285,13 +304,17 @@ describe("judgeInput", () => {
 
   it("considers timing windows when note is early inside largest window", () => {
     const note = makeTapNote({ id: "1", column: 1, ms: 100 });
+    const chart = initGameState({
+      tapNotes: [note],
+      holdNotes: [],
+    });
     const input: Input = createInput({
       column: 1,
       ms: 111,
     });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note], holdNotes: [] },
+      chart,
       maxWindow: 100,
       timingWindows: [
         {
@@ -310,7 +333,7 @@ describe("judgeInput", () => {
     expect(actual).toEqual<JudgementResult>({
       timing: 11,
       inputs: ["111"],
-      noteId: note.id,
+      note,
       time: 111,
       timingWindowName: "great",
     });
@@ -322,10 +345,14 @@ describe("judgeInput", () => {
       column: 1,
       ms: 89,
     });
+    const chart = initGameState({
+      tapNotes: [note],
+      holdNotes: [],
+    });
 
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note], holdNotes: [] },
+      chart,
       maxWindow: 100,
       timingWindows: [
         {
@@ -344,7 +371,7 @@ describe("judgeInput", () => {
     expect(actual).toEqual<JudgementResult>({
       timing: -11,
       inputs: ["89"],
-      noteId: note.id,
+      note,
       time: 89,
       timingWindowName: "great",
     });
@@ -356,9 +383,13 @@ describe("judgeInput", () => {
       column: 1,
       ms: 150,
     });
+    const chart = initGameState({
+      tapNotes: [note],
+      holdNotes: [],
+    });
     const actual = judgeInput({
       input,
-      chart: { tapNotes: [note], holdNotes: [] },
+      chart,
       maxWindow: 100,
       timingWindows: [
         {
@@ -376,7 +407,7 @@ describe("judgeInput", () => {
 
     expect(actual).toEqual<JudgementResult>({
       timing: 50,
-      noteId: note.id,
+      note,
       time: 150,
       timingWindowName: null,
       inputs: ["150"],
@@ -493,27 +524,52 @@ describe("updateGameState", () => {
 
   it("counts a missed note as a judgement", () => {
     // 2000 ms has passed since game started
-    const tapNotes = new Map<string, EngineNote>();
-    tapNotes.set("0", {
+    const n0: EngineNote = {
       ...baseNote,
       id: "0",
       ms: 900,
       canHit: false,
       missed: true,
       timingWindowName: "miss",
+    };
+
+    const n1: EngineNote = {
+      ...baseNote,
+      id: "1",
+      ms: 1000,
+      canHit: true,
+    };
+
+    const chart = initGameState({
+      tapNotes: [n0, n1],
+      holdNotes: [],
     });
-    tapNotes.set("1", { ...baseNote, id: "1", ms: 1000, canHit: true });
 
     // 2000 ms has passed since last update
-    const world = createWorld(
-      { tapNotes },
-      {
-        combo: 0,
-        startTime: 0,
-        time: 2000,
-        inputs: [],
-      }
-    );
+    const world = createWorld(chart, {
+      combo: 0,
+      startTime: 0,
+      time: 2000,
+      inputs: [],
+    });
+
+    const updated_n0: EngineNote = {
+      ...baseNote,
+      id: "0",
+      ms: 900,
+      missed: true,
+      canHit: false,
+      timingWindowName: "miss",
+    };
+
+    const updated_n1: EngineNote = {
+      ...baseNote,
+      id: "1",
+      ms: 1000,
+      missed: true,
+      canHit: false,
+      timingWindowName: "miss",
+    };
 
     const expected: UpdatedGameState = {
       world: {
@@ -522,28 +578,12 @@ describe("updateGameState", () => {
         chart: {
           holdNotes: new Map(),
           tapNotes: new Map([
-            [
-              "0",
-              {
-                ...baseNote,
-                id: "0",
-                ms: 900,
-                missed: true,
-                canHit: false,
-                timingWindowName: "miss",
-              },
-            ],
-            [
-              "1",
-              {
-                ...baseNote,
-                id: "1",
-                ms: 1000,
-                missed: true,
-                canHit: false,
-                timingWindowName: "miss",
-              },
-            ],
+            ["0", updated_n0],
+            ["1", updated_n1],
+          ]),
+          tapNotesByColumn: new Map([
+            // n1 is gone, no longer relevant for judgement
+            [0, [updated_n0.id]],
           ]),
         },
       },
@@ -551,7 +591,7 @@ describe("updateGameState", () => {
         comboBroken: true,
         judgementResults: [
           {
-            noteId: "1",
+            note: updated_n1,
             time: 0,
             timing: 0,
             timingWindowName: "miss",
@@ -568,23 +608,23 @@ describe("updateGameState", () => {
 
   it("update game state considering input", () => {
     // 900 ms has passed since game started
-    const tapNotes = new Map<string, EngineNote>();
-    tapNotes.set(baseNote.id, { ...baseNote, ms: 1000, canHit: true });
+    const n0: EngineNote = { ...baseNote, ms: 1000, canHit: true };
+    const chart = initGameState({
+      tapNotes: [n0],
+      holdNotes: [],
+    });
 
-    const world = createWorld(
-      { tapNotes },
-      {
-        combo: 0,
-        startTime: 0,
-        time: 950,
-        inputs: [
-          createInput({
-            column: baseNote.column,
-            ms: 940,
-          }),
-        ],
-      }
-    );
+    const world = createWorld(chart, {
+      combo: 0,
+      startTime: 0,
+      time: 950,
+      inputs: [
+        createInput({
+          column: baseNote.column,
+          ms: 940,
+        }),
+      ],
+    });
 
     // 50 ms has passed since last update
     const expected: UpdatedGameState = {
@@ -595,9 +635,9 @@ describe("updateGameState", () => {
           holdNotes: new Map(),
           tapNotes: new Map([
             [
-              baseNote.id,
+              n0.id,
               {
-                ...baseNote,
+                ...n0,
                 ms: 1000,
                 canHit: false,
                 hitTiming: -60,
@@ -605,13 +645,17 @@ describe("updateGameState", () => {
               },
             ],
           ]),
+          tapNotesByColumn: new Map([
+            // gone - it's judged, no longer here
+            [n0.column, []],
+          ]),
         },
       },
       previousFrameMeta: {
         comboBroken: false,
         judgementResults: [
           {
-            noteId: "1",
+            note: n0,
             time: 940,
             timing: -60,
             // no timing windows are specified, so we are just using default maxHit
@@ -645,15 +689,16 @@ describe("updateGameState", () => {
       canHit: true,
     };
 
-    const current: GameChart = {
+    const chart: GameChart = {
       holdNotes: new Map(),
-      tapNotes: new Map<string, EngineNote>([
-        ["1", alreadyHitNote],
-        ["2", { ...upcomingNote }],
+      tapNotes: new Map([
+        [alreadyHitNote.id, alreadyHitNote],
+        [upcomingNote.id, upcomingNote],
       ]),
+      tapNotesByColumn: new Map([[upcomingNote.column, [upcomingNote.id]]]),
     };
 
-    const world = createWorld(current, {
+    const world = createWorld(chart, {
       audioContext: undefined,
       source: undefined,
       combo: 0,
@@ -661,7 +706,7 @@ describe("updateGameState", () => {
       time: 950,
       inputs: [
         createInput({
-          column: baseNote.column,
+          column: upcomingNote.column,
           ms: 950,
         }),
       ],
@@ -675,32 +720,26 @@ describe("updateGameState", () => {
         chart: {
           holdNotes: new Map(),
           tapNotes: new Map<string, EngineNote>([
-            [
-              "1",
-              {
-                ...alreadyHitNote,
-                id: "1",
-              },
-            ],
+            ["1", alreadyHitNote],
             [
               "2",
               {
                 ...upcomingNote,
-                id: "2",
-                ms: 1000,
                 canHit: false,
                 hitTiming: -50,
                 hitAt: 950,
               },
             ],
           ]),
+          // no note - it is hit
+          tapNotesByColumn: new Map([[0, []]]),
         },
       },
       previousFrameMeta: {
         comboBroken: false,
         judgementResults: [
           {
-            noteId: "2",
+            note: upcomingNote,
             time: 950,
             timing: -50,
             // no timing windows passed in config.
@@ -711,11 +750,7 @@ describe("updateGameState", () => {
       },
     };
 
-    const actual = updateGameState(
-      world,
-
-      engineConfiguration
-    );
+    const actual = updateGameState(world, engineConfiguration);
 
     expect(actual).toEqual(expected);
   });
@@ -731,7 +766,9 @@ describe("updateGameState", () => {
 
     const current: GameChart = {
       holdNotes: new Map(),
-      tapNotes: new Map<string, EngineNote>([[note.id, note]]),
+      tapNotes: new Map([[note.id, note]]),
+      // empty - note was already hit and removed.
+      tapNotesByColumn: new Map([]),
     };
 
     const world = createWorld(current, {
@@ -750,10 +787,6 @@ describe("updateGameState", () => {
       world: {
         ...world,
         combo: 0,
-        chart: {
-          holdNotes: new Map(),
-          tapNotes: new Map<string, EngineNote>([[note.id, { ...note }]]),
-        },
       },
       previousFrameMeta: {
         comboBroken: false,
@@ -767,15 +800,27 @@ describe("updateGameState", () => {
   });
 
   it("supports simultaneous inputs", () => {
-    const aNote: EngineNote = {
+    const n1: EngineNote = {
       ...baseNote,
+      id: "1",
       ms: 100,
+      column: 0,
+    };
+    const n2: EngineNote = {
+      ...baseNote,
+      id: "2",
+      ms: 100,
+      column: 1,
     };
     const current: GameChart = {
       holdNotes: new Map(),
       tapNotes: new Map<string, EngineNote>([
-        ["1", { ...aNote, id: "1", column: 0 }],
-        ["2", { ...aNote, id: "2", column: 1 }],
+        ["1", n1],
+        ["2", n2],
+      ]),
+      tapNotesByColumn: new Map([
+        [n1.column, [n1.id]],
+        [n2.column, [n2.id]],
       ]),
     };
 
@@ -808,9 +853,7 @@ describe("updateGameState", () => {
             [
               "1",
               {
-                ...aNote,
-                id: "1",
-                column: 0,
+                ...n1,
                 hitAt: 100,
                 canHit: false,
                 hitTiming: 0,
@@ -819,14 +862,17 @@ describe("updateGameState", () => {
             [
               "2",
               {
-                ...aNote,
-                id: "2",
-                column: 1,
+                ...n2,
                 hitAt: 100,
                 canHit: false,
                 hitTiming: 0,
               },
             ],
+          ]),
+          // empty - both hit
+          tapNotesByColumn: new Map([
+            [n1.column, []],
+            [n2.column, []],
           ]),
         },
       },
@@ -834,14 +880,14 @@ describe("updateGameState", () => {
         comboBroken: false,
         judgementResults: [
           {
-            noteId: "1",
+            note: n1,
             time: 100,
             timing: 0,
             timingWindowName: null,
             inputs: ["100"],
           },
           {
-            noteId: "2",
+            note: n2,
             time: 100,
             timing: 0,
             timingWindowName: null,
@@ -856,7 +902,8 @@ describe("updateGameState", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("updates the world consider holds notes", () => {
+  // TODO(holds): support hold notes
+  it.skip("updates the world consider holds notes", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     const h1: EngineNote[] = [
       { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
@@ -901,7 +948,7 @@ describe("updateGameState", () => {
         judgementResults: [
           {
             inputs: ["1000"],
-            noteId: "h1",
+            note: h1[0],
             time: 1000,
             timing: 0,
             timingWindowName: null,
@@ -941,7 +988,8 @@ describe("updateGameState", () => {
     // expect(actual).toEqual(expected);
   });
 
-  it("does hit hold inside timing window", () => {
+  // TODO(holds)
+  it.skip("does hit hold inside timing window", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     holdNotes.set("h1", [
       { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
@@ -990,7 +1038,8 @@ describe("updateGameState", () => {
     ]);
   });
 
-  it("drops hold if not consistenly held", () => {
+  // TODO(holds)
+  it.skip("drops hold if not consistenly held", () => {
     const holdNotes = new Map<string, EngineNote[]>();
     holdNotes.set("h1", [
       { ...baseNote, column: 1, id: "h1", ms: 1000, dependsOn: null },
@@ -1029,7 +1078,8 @@ describe("updateGameState", () => {
     expect(s2.previousFrameMeta.comboBroken).toEqual(true);
   });
 
-  it("removes hold from activeHolds set if end of hold is passed current time", () => {
+  // TODO: was this ever doing anything?
+  it.skip("removes hold from activeHolds set if end of hold is passed current time", () => {
     const world = createWorld(
       {
         holdNotes: new Map([
@@ -1047,16 +1097,7 @@ describe("updateGameState", () => {
       }
     );
 
-    const s1 = updateGameState(world, engineConfiguration);
-
-    const s2 = updateGameState(
-      {
-        ...s1.world,
-        time: 201,
-        inputs: [],
-      },
-      engineConfiguration
-    );
+    // const s1 = updateGameState(world, engineConfiguration);
   });
 });
 

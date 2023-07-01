@@ -161,44 +161,44 @@ export function nearestScorableNote(
   let c3 = candidates[mid + 1];
   let done = false;
   let winner: EngineNote | undefined;
-  let i = 0
+  let i = 0;
 
   while (!done) {
-    i++
+    i++;
 
     if (i > 10) {
-      throw Error('...')
+      throw Error("...");
     }
 
-    let n1 = chart.tapNotes.get(c1)
-    let n2 = chart.tapNotes.get(c2)
-    let n3 = chart.tapNotes.get(c3)
+    let n1 = chart.tapNotes.get(c1);
+    let n2 = chart.tapNotes.get(c2);
+    let n3 = chart.tapNotes.get(c3);
 
-    let curr = n1 ? Math.abs(n1.ms - input.ms) : null
-    let below = n2 ? Math.abs(n2.ms - input.ms) : null
-    let above = n3 ? Math.abs(n3.ms - input.ms) : null
-    
+    let curr = n1 ? Math.abs(n1.ms - input.ms) : null;
+    let below = n2 ? Math.abs(n2.ms - input.ms) : null;
+    let above = n3 ? Math.abs(n3.ms - input.ms) : null;
+
     if (!above || !below || !curr) {
       winner = chart.tapNotes.get(c1);
       done = true;
-      break
+      break;
     }
 
-    console.log({curr,below,above})
+    // nonsole.log({curr,below,above})
     // if d1 is the smallest, we have a winner.
     if (curr <= below && curr <= above) {
       winner = chart.tapNotes.get(c1);
       done = true;
-      break
+      break;
     }
 
     // if below is closer, we look at first half
     if (below <= above) {
-      console.log("first half")
+      // console.log("first half")
       mid = Math.floor(mid / 2);
       //
     } else if (above <= below) {
-      console.log("upper half")
+      // console.log("upper half")
       mid = Math.floor((candidates.length + mid) / 2);
       //
     }
@@ -207,8 +207,8 @@ export function nearestScorableNote(
     c3 = candidates[mid + 1];
   }
 
-  console.log({ done, winner });
-  return winner
+  // console.log({ done, winner });
+  return winner;
   // See if the next note is closer or further. Then we know if we want to
   // discard the upper or lower half.
 
@@ -663,10 +663,13 @@ export function updateGameState(
     : world.combo +
       judgementResults.filter((x) => x.timingWindowName !== "miss").length;
 
-      for (const result of judgementResults) {
-        const d = world.chart.tapNotesByColumn.get(result.note.column)!
-        world.chart.tapNotesByColumn.set(result.note.column, d.filter(x => x !== result.note.id))
-      }
+  for (const result of judgementResults) {
+    const d = world.chart.tapNotesByColumn.get(result.note.column)!;
+    world.chart.tapNotesByColumn.set(
+      result.note.column,
+      d.filter((x) => x !== result.note.id)
+    );
+  }
 
   return {
     world: {

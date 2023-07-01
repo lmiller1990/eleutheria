@@ -190,7 +190,7 @@ export class Game implements GameAPI {
       chart: {
         tapNotes: gs.tapNotes,
         holdNotes: gs.holdNotes,
-        tapNotesByColumn: gs.tapNotesByColumn
+        tapNotesByColumn: gs.tapNotesByColumn,
       },
       startTime,
       inputs: [],
