@@ -81,31 +81,49 @@ function makeTapNote(note: Partial<EngineNote>): EngineNote {
 }
 
 describe("nearestScorableNote", () => {
-  it("is quick for large number of notes", () => {
+  it.only("is quick for large number of notes", () => {
+    let tapNotes: EngineNote[] = []
+    for (let i = 0 ; i < 500; i++) {
+      tapNotes.push(
+        makeTapNote({
+          id: i.toString(),
+          ms: i * 1000,
+          column: i % 4
+        })
+      )
+    }
+
     const chart = initGameState({
-      tapNotes: [
-        makeTapNote({ id: "1", ms: 0, column: 0 }),
-        makeTapNote({ id: "2", ms: 500, column: 0 }),
-        makeTapNote({ id: "3", ms: 1000, column: 0 }),
-        makeTapNote({ id: "4", ms: 1500, column: 0 }),
-        makeTapNote({ id: "5", ms: 2000, column: 0 }),
-        makeTapNote({ id: "6", ms: 2500, column: 0 }),
-        makeTapNote({ id: "7", ms: 3000, column: 0 }),
-        makeTapNote({ id: "8", ms: 3500, column: 0 }),
-        makeTapNote({ id: "9", ms: 4000, column: 0 }),
-        makeTapNote({ id: "10", ms: 4500, column: 0 }),
-        makeTapNote({ id: "11", ms: 5000, column: 0 }),
-      ],
+      tapNotes,
       holdNotes: [],
     });
 
+    let actual = nearestScorableNote(
+      createInput({ ms: 20000, column: 2 }),
+      chart
+    );
+    expect(actual).toBe(chart.tapNotes.get("9"));
+
+    // actual = nearestScorableNote(
+    //   createInput({ ms: 9000, column: 0 }),
+    //   chart
+    // );
+    // expect(actual).toBe(chart.tapNotes.get("11"));
+  });
+
+  it("no notes", () => {
+    const chart = initGameState({
+      tapNotes: [
+      ],
+      holdNotes: [],
+    });
     const actual = nearestScorableNote(
-      createInput({ ms: 4000, column: 0 }),
+      createInput({ ms: 400, column: 0 }),
       chart
     );
 
-    expect(actual).toBe(chart.tapNotes.get("9"));
-  });
+    expect(actual).toBe(undefined);
+  })
 
   it("is quick for large number of notes", () => {
     const chart = initGameState({
@@ -130,6 +148,36 @@ describe("nearestScorableNote", () => {
     );
 
     expect(actual).toBe(chart.tapNotes.get("2"));
+  });
+
+  it("one note", () => {
+    const chart = initGameState({
+      tapNotes: [
+        makeTapNote({ id: "1", ms: 0, column: 0 }),
+      ],
+      holdNotes: [],
+    });
+    const actual = nearestScorableNote(
+      createInput({ ms: 400, column: 0 }),
+      chart
+    );
+
+    expect(actual).toBe(chart.tapNotes.get("1"));
+  });
+
+  it("small number of notes", () => {
+    const chart = initGameState({
+      tapNotes: [
+        makeTapNote({ id: "1", ms: 0, column: 0 }),
+      ],
+      holdNotes: [],
+    });
+    const actual = nearestScorableNote(
+      createInput({ ms: 400, column: 0 }),
+      chart
+    );
+
+    expect(actual).toBe(chart.tapNotes.get("1"));
   });
 
   it("captures nearest note based on time and input", () => {

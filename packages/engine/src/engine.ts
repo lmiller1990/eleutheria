@@ -139,6 +139,15 @@ export function createChart(args: CreateChart): Chart {
   };
 }
 
+function smallest(n: number, rest: number[]) {
+  for (const v of rest) {
+    if (v < n) {
+      return false
+    }
+  }
+  return true
+}
+
 /**
  * Finds the "nearest" note given an input and a chart for scoring.
  */
@@ -146,7 +155,6 @@ export function nearestScorableNote(
   input: Input,
   chart: GameChart
 ): EngineNote | undefined {
-  // const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
 
   const candidates = chart.tapNotesByColumn.get(input.column);
 
@@ -163,6 +171,7 @@ export function nearestScorableNote(
   let winner: EngineNote | undefined;
   let i = 0;
 
+  console.log("Asdf")
   while (!done) {
     i++;
 
@@ -174,37 +183,26 @@ export function nearestScorableNote(
     let n2 = chart.tapNotes.get(c2);
     let n3 = chart.tapNotes.get(c3);
 
-    let curr = n1 ? Math.abs(n1.ms - input.ms) : null;
-    let below = n2 ? Math.abs(n2.ms - input.ms) : null;
-    let above = n3 ? Math.abs(n3.ms - input.ms) : null;
+    console.log({ n1, n2, n3, mid })
 
-    if (!above || !below || !curr) {
-      winner = chart.tapNotes.get(c1);
-      done = true;
-      break;
+    let curr = n1 ? Math.abs(n1.ms - input.ms) : Number.POSITIVE_INFINITY;
+    let below = n2 ? Math.abs(n2.ms - input.ms) : Number.POSITIVE_INFINITY;
+    let above = n3 ? Math.abs(n3.ms - input.ms) : Number.POSITIVE_INFINITY;
+
+    // console.log(input.ms,{n1,n2,n3, curr, below, above})
+
+    if (smallest(below, [above, curr])) {
+      console.log("LOWER")
     }
 
-    // nonsole.log({curr,below,above})
-    // if d1 is the smallest, we have a winner.
-    if (curr <= below && curr <= above) {
-      winner = chart.tapNotes.get(c1);
-      done = true;
-      break;
-    }
+    mid = Math.floor(mid / 2)
+    c1 = candidates[mid]
+    c2 = candidates[mid - 1]
+    c3 = candidates[mid + 1]
 
-    // if below is closer, we look at first half
-    if (below <= above) {
-      // console.log("first half")
-      mid = Math.floor(mid / 2);
-      //
-    } else if (above <= below) {
-      // console.log("upper half")
-      mid = Math.floor((candidates.length + mid) / 2);
-      //
-    }
-    c1 = candidates[mid];
-    c2 = candidates[mid - 1];
-    c3 = candidates[mid + 1];
+    // c1 = candidates[mid];
+    // c2 = candidates[mid - 1];
+    // c3 = candidates[mid + 1];
   }
 
   // console.log({ done, winner });

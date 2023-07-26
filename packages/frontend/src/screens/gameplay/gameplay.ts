@@ -6,6 +6,7 @@ import {
   GameLifecycle,
   EngineNote,
   JudgementResult,
+  Input,
 } from "@packages/engine";
 import { Game } from "@packages/engine";
 import { AudioData, summarizeResults, Summary } from "@packages/shared";
@@ -491,6 +492,10 @@ export function create(
       }
 
       updateUI(world, previousFrameMeta, elements);
+    },
+
+    onInput: (input: Input, world: World) => {
+      console.log(input, world)
     },
 
     onJudgement: (world: World, _judgementResults: JudgementResult[]) => {

@@ -10,7 +10,7 @@ import {
   World,
 } from ".";
 import { ModifierManager } from "@packages/frontend/src/screens/gameplay/modiferManager";
-import type { EngineNote, JudgementResult } from "./engine";
+import type { EngineNote, Input, JudgementResult } from "./engine";
 import { AudioData } from "@packages/shared";
 
 interface AudioProviderResult {
@@ -76,6 +76,7 @@ export interface GameLifecycle {
   onDebug?: (world: World, fps: number) => void;
   onStart?: (world: World) => void;
   onJudgement?: (world: World, judgementResults: JudgementResult[]) => void;
+  onInput?: (input: Input, world: World) => void;
   onSongCompleted?: (
     world: World,
     previousFrameMeta: PreviousFrameMeta
@@ -296,6 +297,15 @@ export class Game implements GameAPI {
       this.#lifecycle.onDebug?.(updatedWorld, this.#fps);
       this.#fps = 0;
       this.#lastDebugUpdate = this.#dt;
+    }
+
+    if (
+      this.#lifecycle.onInput &&
+      gameState.inputManager.activeInputs.length > 0
+    ) {
+      for (const input of gameState.inputManager.activeInputs) {
+        this.#lifecycle.onInput(input, updatedWorld);
+      }
     }
 
     gameState.inputManager.clear();
