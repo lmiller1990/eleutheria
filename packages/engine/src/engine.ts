@@ -172,9 +172,9 @@ export function nearestScorableNote(
   }
 
   function log(prefix: string) {
-    console.log(
-      `[${prefix}]: \n\tinput.ms: ${input.ms} \n\tlower.ms: ${lower?.ms} \n\tguess.ms:  ${guess?.ms} \n\tupper.ms: ${upper?.ms}`
-    );
+    // console.log(
+    //   `[${prefix}]: \n\tinput.ms: ${input.ms} \n\tlower.ms: ${lower?.ms} \n\tguess.ms:  ${guess?.ms} \n\tupper.ms: ${upper?.ms}`
+    // );
   }
 
   let i = 0;
@@ -183,15 +183,13 @@ export function nearestScorableNote(
   while (i < 15) {
     log("Next iter");
     if (!guess || !upper || !lower) {
-      throw Error("wtf");
+      throw Error("Appears to be stuck in an endless loop");
     }
 
     const nplus1 = chart.tapNotes.get(candidates[mid + 1]);
     const nminus1 = chart.tapNotes.get(candidates[mid - 1]);
 
     if (nplus1 && diff(input.ms, guess.ms) > diff(input.ms, nplus1.ms)) {
-      console.log("Up");
-      // go up!
       min = mid;
       mid = Math.ceil((max + mid) / 2);
       assign();
@@ -199,42 +197,13 @@ export function nearestScorableNote(
       nminus1 &&
       diff(input.ms, guess.ms) > diff(input.ms, nminus1.ms)
     ) {
-      console.log("Down");
       max = mid;
       mid = Math.floor(max / 2);
       assign();
     } else {
-      console.log("OK");
       return guess;
     }
-    // let ud = diff(chart.tapNotes.get(candidates[guess]))
     ++i;
-    // if (!curr) {
-    //   throw Error("uh oh");
-    // }
-
-    // log(`Next iter`);
-
-    // if (above && diff(input.ms, curr.ms) > diff(input.ms, above.ms)) {
-    //   // need to go up!
-    //   console.log('Go up')
-    //   mid = Math.ceil((candidates.length + mid) / 2);
-    //   curr = chart.tapNotes.get(candidates[mid]);
-    //   above = chart.tapNotes.get(candidates[mid + 1]);
-    //   below = chart.tapNotes.get(candidates[mid]);
-    // } else if (below && diff(input.ms, curr.ms) > diff(input.ms, below.ms)) {
-    //   prevIndex = mid
-    //   console.log('Go down')
-    //   mid = Math.floor(mid / 2);
-    //   curr = chart.tapNotes.get(candidates[mid]);
-    //   above = chart.tapNotes.get(candidates[mid + 1]);
-    //   below = chart.tapNotes.get(candidates[mid - 1]);
-    // } else {
-    //   // winner
-    //   console.log("done", { input, curr, below, above });
-    //   return curr;
-    // }
-    // i++;
   }
 }
 
