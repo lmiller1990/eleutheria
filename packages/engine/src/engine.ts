@@ -1,4 +1,3 @@
-import { channel } from "diagnostics_channel";
 import { InputManager } from "./inputManager";
 
 type HoldNote = EngineNote[];
@@ -171,17 +170,17 @@ export function nearestScorableNote(
     guess = chart.tapNotes.get(candidates[mid]);
   }
 
-  function log(prefix: string) {
-    // console.log(
-    //   `[${prefix}]: \n\tinput.ms: ${input.ms} \n\tlower.ms: ${lower?.ms} \n\tguess.ms:  ${guess?.ms} \n\tupper.ms: ${upper?.ms}`
-    // );
-  }
+  // function log(prefix: string) {
+  //   console.log(
+  //     `[${prefix}]: \n\tinput.ms: ${input.ms} \n\tlower.ms: ${lower?.ms} \n\tguess.ms:  ${guess?.ms} \n\tupper.ms: ${upper?.ms}`
+  //   );
+  // }
 
   let i = 0;
   assign();
 
   while (i < 15) {
-    log("Next iter");
+    // log("Next iter");
     if (!guess || !upper || !lower) {
       throw Error("Appears to be stuck in an endless loop");
     }
@@ -205,6 +204,7 @@ export function nearestScorableNote(
     }
     ++i;
   }
+  return undefined;
 }
 
 /**
