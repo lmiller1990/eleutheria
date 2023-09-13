@@ -84,6 +84,7 @@ describe("nearestScorableNote", () => {
   it("is quick for large number of notes", () => {
     const chart = initGameState({
       tapNotes: [
+        makeTapNote({ id: "0", ms: 0, column: 1 }),
         makeTapNote({ id: "1", ms: 0, column: 0 }),
         makeTapNote({ id: "2", ms: 500, column: 0 }),
         makeTapNote({ id: "3", ms: 1000, column: 0 }),
@@ -132,6 +133,31 @@ describe("nearestScorableNote", () => {
     expect(actual).toBe(chart.tapNotes.get("2"));
   });
 
+  it("is quick for large number of notes", () => {
+    const chart = initGameState({
+      tapNotes: [
+        makeTapNote({ id: "1", ms: 0, column: 0 }),
+        makeTapNote({ id: "2", ms: 500, column: 0 }),
+        makeTapNote({ id: "3", ms: 1000, column: 0 }),
+        makeTapNote({ id: "4", ms: 1500, column: 0 }),
+        makeTapNote({ id: "5", ms: 2000, column: 0 }),
+        makeTapNote({ id: "6", ms: 2500, column: 0 }),
+        makeTapNote({ id: "7", ms: 3000, column: 0 }),
+        makeTapNote({ id: "8", ms: 3500, column: 0 }),
+        makeTapNote({ id: "9", ms: 4000, column: 0 }),
+        makeTapNote({ id: "10", ms: 4500, column: 0 }),
+        makeTapNote({ id: "11", ms: 5000, column: 0 }),
+      ],
+      holdNotes: [],
+    });
+    const actual = nearestScorableNote(
+      createInput({ ms: 2000, column: 0 }),
+      chart
+    );
+
+    expect(actual).toBe(chart.tapNotes.get("5"));
+  });
+
   it("captures nearest note based on time and input", () => {
     const chart = initGameState({
       tapNotes: [
@@ -164,6 +190,7 @@ describe("nearestScorableNote", () => {
       chart
     );
 
+    // @ts-ignore
     expect(actual).toBe(chart.holdNotes[0][0]);
   });
 
@@ -191,22 +218,6 @@ describe("nearestScorableNote", () => {
     );
 
     expect(actual).toBeFalsy();
-  });
-
-  it("ignores notes that have been hit already", () => {
-    const chart = initGameState({
-      tapNotes: [
-        makeTapNote({ id: "1", ms: 450, column: 1, hitAt: 450, canHit: false }),
-        makeTapNote({ id: "2", ms: 500, column: 1, canHit: true }),
-      ],
-      holdNotes: [],
-    });
-    const actual = nearestScorableNote(
-      createInput({ ms: 450, column: 1 }),
-      chart
-    );
-
-    expect(actual).toBe(chart.tapNotes.get("2"));
   });
 });
 

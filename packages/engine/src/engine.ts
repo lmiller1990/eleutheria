@@ -1,3 +1,4 @@
+import { channel } from "diagnostics_channel";
 import { InputManager } from "./inputManager";
 
 type HoldNote = EngineNote[];
@@ -139,6 +140,10 @@ export function createChart(args: CreateChart): Chart {
   };
 }
 
+function diff(n1: number, n2: number) {
+  return Math.abs(n1 - n2);
+}
+
 /**
  * Finds the "nearest" note given an input and a chart for scoring.
  */
@@ -146,95 +151,91 @@ export function nearestScorableNote(
   input: Input,
   chart: GameChart
 ): EngineNote | undefined {
-  // const tapable = [...chart.tapNotes, ...chart.holdNotes.map((x) => x.at(0)!)];
+  const candidates = chart.tapNotesByColumn.get(input.column) ?? [];
 
-  const candidates = chart.tapNotesByColumn.get(input.column);
-
-  if (!candidates?.length) {
+  if (!candidates.length) {
     return;
   }
 
-  // Get mid element
   let mid = Math.floor(candidates.length / 2);
-  let c1 = candidates[mid];
-  let c2 = candidates[mid - 1];
-  let c3 = candidates[mid + 1];
-  let done = false;
-  let winner: EngineNote | undefined;
-  let i = 0;
+  let max = candidates.length - 1;
+  let min = 0;
 
-  while (!done) {
-    i++;
+  let upper: EngineNote | undefined;
+  let lower: EngineNote | undefined;
+  let guess: EngineNote | undefined;
 
-    if (i > 10) {
-      throw Error("...");
-    }
-
-    let n1 = chart.tapNotes.get(c1);
-    let n2 = chart.tapNotes.get(c2);
-    let n3 = chart.tapNotes.get(c3);
-
-    let curr = n1 ? Math.abs(n1.ms - input.ms) : null;
-    let below = n2 ? Math.abs(n2.ms - input.ms) : null;
-    let above = n3 ? Math.abs(n3.ms - input.ms) : null;
-
-    if (!above || !below || !curr) {
-      winner = chart.tapNotes.get(c1);
-      done = true;
-      break;
-    }
-
-    // nonsole.log({curr,below,above})
-    // if d1 is the smallest, we have a winner.
-    if (curr <= below && curr <= above) {
-      winner = chart.tapNotes.get(c1);
-      done = true;
-      break;
-    }
-
-    // if below is closer, we look at first half
-    if (below <= above) {
-      // console.log("first half")
-      mid = Math.floor(mid / 2);
-      //
-    } else if (above <= below) {
-      // console.log("upper half")
-      mid = Math.floor((candidates.length + mid) / 2);
-      //
-    }
-    c1 = candidates[mid];
-    c2 = candidates[mid - 1];
-    c3 = candidates[mid + 1];
+  function assign() {
+    upper = chart.tapNotes.get(candidates[max]);
+    lower = chart.tapNotes.get(candidates[min]);
+    guess = chart.tapNotes.get(candidates[mid]);
   }
 
-  // console.log({ done, winner });
-  return winner;
-  // See if the next note is closer or further. Then we know if we want to
-  // discard the upper or lower half.
+  function log(prefix: string) {
+    console.log(
+      `[${prefix}]: \n\tinput.ms: ${input.ms} \n\tlower.ms: ${lower?.ms} \n\tguess.ms:  ${guess?.ms} \n\tupper.ms: ${upper?.ms}`
+    );
+  }
 
-  // const nearest = tapable.reduce((best, note) => {
-  //   // if the note is not scorable, we are not interested
-  //   if (!note.canHit) {
-  //     return best;
-  //   }
+  let i = 0;
+  assign();
 
-  //   // if it's the wrong column, we are not interested.
-  //   if (input.column !== note.column) {
-  //     return best;
-  //   }
+  while (i < 15) {
+    log("Next iter");
+    if (!guess || !upper || !lower) {
+      throw Error("wtf");
+    }
 
-  //   const isCloserToInputMs =
-  //     Math.abs(note.ms - input.ms) <= Math.abs(best.ms - input.ms);
-  //   // if it's the coreect column and closer to the input ms
-  //   // than the current best, we have a new best note.
-  //   if (isCloserToInputMs) {
-  //     return note;
-  //   }
+    const nplus1 = chart.tapNotes.get(candidates[mid + 1]);
+    const nminus1 = chart.tapNotes.get(candidates[mid - 1]);
 
-  //   return best;
-  // }, initialCandidate);
+    if (nplus1 && diff(input.ms, guess.ms) > diff(input.ms, nplus1.ms)) {
+      console.log("Up");
+      // go up!
+      min = mid;
+      mid = Math.ceil((max + mid) / 2);
+      assign();
+    } else if (
+      nminus1 &&
+      diff(input.ms, guess.ms) > diff(input.ms, nminus1.ms)
+    ) {
+      console.log("Down");
+      max = mid;
+      mid = Math.floor(max / 2);
+      assign();
+    } else {
+      console.log("OK");
+      return guess;
+    }
+    // let ud = diff(chart.tapNotes.get(candidates[guess]))
+    ++i;
+    // if (!curr) {
+    //   throw Error("uh oh");
+    // }
 
-  // return nearest && nearest.column === input.column ? nearest : undefined;
+    // log(`Next iter`);
+
+    // if (above && diff(input.ms, curr.ms) > diff(input.ms, above.ms)) {
+    //   // need to go up!
+    //   console.log('Go up')
+    //   mid = Math.ceil((candidates.length + mid) / 2);
+    //   curr = chart.tapNotes.get(candidates[mid]);
+    //   above = chart.tapNotes.get(candidates[mid + 1]);
+    //   below = chart.tapNotes.get(candidates[mid]);
+    // } else if (below && diff(input.ms, curr.ms) > diff(input.ms, below.ms)) {
+    //   prevIndex = mid
+    //   console.log('Go down')
+    //   mid = Math.floor(mid / 2);
+    //   curr = chart.tapNotes.get(candidates[mid]);
+    //   above = chart.tapNotes.get(candidates[mid + 1]);
+    //   below = chart.tapNotes.get(candidates[mid - 1]);
+    // } else {
+    //   // winner
+    //   console.log("done", { input, curr, below, above });
+    //   return curr;
+    // }
+    // i++;
+  }
 }
 
 /**
