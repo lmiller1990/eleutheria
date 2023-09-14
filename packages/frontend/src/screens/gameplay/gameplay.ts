@@ -200,12 +200,12 @@ function updateUI(
     // some notes were judged on the previous window
     for (const judgement of previousFrameMeta.judgementResults) {
       const note =
-        state.chart.tapNotes.get(judgement.noteId) ||
-        state.chart.holdNotes.get(judgement.noteId)?.at(0);
+        state.chart.tapNotes.get(judgement.note.id) ||
+        state.chart.holdNotes.get(judgement.note.id)?.at(0);
 
       if (!note || !note.timingWindowName) {
         throw Error(
-          `Could not find judged note with id ${judgement.noteId} and timing window ${note?.timingWindowName}. This should never happen.`
+          `Could not find judged note with id ${judgement.note.id} and timing window ${note?.timingWindowName}. This should never happen.`
         );
       }
 

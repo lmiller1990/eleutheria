@@ -19,6 +19,7 @@ export function createWorld(
     chart: {
       tapNotes: chart.tapNotes || new Map(),
       holdNotes: chart.holdNotes || new Map(),
+      tapNotesByColumn: chart.tapNotesByColumn || new Map(),
     },
   };
 }
