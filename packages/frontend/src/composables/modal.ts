@@ -1,7 +1,6 @@
 import { ref, shallowRef } from "vue";
 import SignInForm from "../components/SignInForm/SignInForm.vue";
 import SignUpForm from "../components/SignUpForm/SignUpForm.vue";
-import { OptionsModal } from "../screens/SongSelectScreen/OptionsModal";
 
 const show = ref(false);
 const component = shallowRef();
@@ -10,11 +9,9 @@ export function useModal() {
   return {
     show,
     component,
-    showModal: async (type: "signUp" | "signIn" | "signOut" | "options") => {
+    showModal: async (type: "signUp" | "signIn" | "signOut") => {
       show.value = true;
       switch (type) {
-        case "options":
-          return (component.value = OptionsModal);
         case "signUp":
           return (component.value = SignUpForm);
         case "signIn":

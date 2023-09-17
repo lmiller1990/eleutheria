@@ -6,6 +6,29 @@
     >
       <LoadingScreen v-if="loading" />
     </Transition>
+
+    <Teleport to="#options-teleport">
+      <div
+        v-if="optionsModal.visible.value"
+        class="absolute z-10 w-full h-full bg-black opacity-30"
+        @click="optionsModal.close"
+      />
+
+      <Transition
+        enter-active-class="duration-300"
+        enter-from-class="right-[-400px]"
+        leave-active-class="duration-300"
+        leave-to-class="right-[-400px]"
+      >
+        <div
+          v-if="optionsModal.visible.value"
+          class="absolute z-20 inset-y-0 w-[400px] bg-zinc-700 right-0 pt-16"
+        >
+          <OptionsModal />
+        </div>
+      </Transition>
+    </Teleport>
+
     <div
       class="absolute w-screen h-screen bg-zinc-500 z-10 left-0 top-[-100vh]"
       :class="{ [animationClass]: animating }"
@@ -78,7 +101,7 @@
           </IconButton>
 
           <IconButton>
-            <SettingsIcon @click="modal.showModal('options')" />
+            <SettingsIcon @click="optionsModal.open" />
           </IconButton>
         </div>
       </div>
@@ -88,6 +111,7 @@
 
 <script setup lang="ts">
 import { IconButton } from "./IconButton";
+import OptionsModal from "./OptionsModal.vue";
 import LoadingScreen from "./LoadingScreen.vue";
 import { SettingsIcon } from "./SettingsIcon";
 import { UserIcon } from "./UserIcon";
@@ -104,6 +128,7 @@ import {
 import SongInfo from "../../components/SongInfo.vue";
 import SongImage from "./SongImage.vue";
 import { useModal } from "../../composables/modal";
+import { useOptionsModal } from "../../composables/optionsModal";
 import { useEmitter } from "../../composables/emitter";
 import { preferencesManager } from "../gameplay/preferences";
 import { useImageLoader } from "../../composables/imageLoader";
@@ -168,6 +193,7 @@ gql`
 `;
 
 const modal = useModal();
+const optionsModal = useOptionsModal();
 const { initial } = useInitialLoad();
 const loading = ref(initial.value);
 
