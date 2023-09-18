@@ -14,19 +14,23 @@
         @click="optionsModal.close"
       />
 
-      <Transition
-        enter-active-class="duration-300"
-        enter-from-class="right-[-400px]"
-        leave-active-class="duration-300"
+      <!-- <Transition
+        name="slidein"
+        enter-active-class="duration-1000"
+        enter-from-class="right-[-500px]"
+        leave-active-class="duration-1000"
         leave-to-class="right-[-400px]"
-      >
+      > -->
+      <Transition name="slide-fade">
         <div
           v-if="optionsModal.visible.value"
-          class="absolute z-20 inset-y-0 w-[400px] bg-zinc-700 right-0 pt-16"
+          id="options-modal"
+          class="absolute z-20 inset-y-0 w-[400px] bg-zinc-700 pt-16 right-0"
         >
           <OptionsModal />
         </div>
       </Transition>
+      <!-- </Transition> -->
     </Teleport>
 
     <div
@@ -416,5 +420,15 @@ async function handleSelected(
   100% {
     top: 0px;
   }
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: 0.25s;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(400px);
 }
 </style>
