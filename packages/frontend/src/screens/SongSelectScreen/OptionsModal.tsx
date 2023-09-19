@@ -116,7 +116,7 @@ const CoverOffsetModPanel: FunctionalComponent<{
         options={options}
         max={100}
         value={props.modValue.offset}
-        step={1}
+        step={5}
         id="cover-offset"
         onInput={input}
       />
@@ -233,6 +233,8 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
     e.stopPropagation();
   }
 
+  const coverImage = /(https:.*?\.(png|jpg))/.exec(props.currentCover?.code);
+
   return (
     <div onClick={stopPropagation} class="flex">
       <Col>
@@ -260,11 +262,13 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
           covers={props.covers}
           onChangeMod={props.onChangeCoverMod}
         />
-      </Col>
-      <Col>
-        <div style="height: 85%">
-          <div ref={props.gameplayRoot} class="h-full" />
-        </div>
+        {coverImage?.[1] && (
+          <div
+            class="flex bg-cover h-[150px] w-full bg-center border-t-4 border-t-zinc-700 border-black border"
+            style={{ backgroundImage: `url("${coverImage[1]}")` }}
+            id="blah"
+          />
+        )}
       </Col>
     </div>
   );

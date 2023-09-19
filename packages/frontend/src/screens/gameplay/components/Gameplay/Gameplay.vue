@@ -133,23 +133,6 @@ function stop(event: KeyboardEvent) {
 
 function handleKeydown(event: KeyboardEvent) {
   heldKeys.add(event.code);
-
-  if (heldKeys.has("Space") && event.code === "KeyE") {
-  }
-
-  // lower the cover
-  if (heldKeys.has("Space") && event.code === "KeyJ") {
-    modifierManager.setCover({
-      offset: modifierManager.cover.offset + 50,
-    });
-  }
-
-  // raise the cover
-  if (heldKeys.has("Space") && event.code === "KeyK") {
-    modifierManager.setCover({
-      offset: modifierManager.cover.offset - 50,
-    });
-  }
 }
 
 useEventListener("keyup", stop);
