@@ -13,13 +13,20 @@ export class HtmlDataSource {
     this.#ctx = ctx;
   }
 
-  get #common() {
+  get #commonHead() {
     return `
       <meta charset="UTF-8" />
       <link rel="icon" type="image/svg+xml" href="favicon.svg" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Eleutheria</title>
     `;
+  }
+
+  get #commonBody() {
+    return `
+      <div id="options-teleport"></div>
+      <div id="app" class="h-full flex justify-center"></div>
+          `;
   }
 
   async prodModeIndexHtml(songCount: number, ssrData: string) {
@@ -33,14 +40,14 @@ export class HtmlDataSource {
       <!DOCTYPE html>
       <html lang="en">
         <head>
-          ${this.#common}
+          ${this.#commonHead}
           <link rel="stylesheet" href="${mainCss}" />
           <script>window.__SSR_DATA__ = ${ssrData}</script>
           <script>window.__SONG_COUNT__ = ${songCount}</script>
         </head>
 
         <body>
-          <div id="app" class="h-full flex justify-center"></div>
+          ${this.#commonBody}
           <script type="module" src="${moduleFile}"></script>
         </body>
       </html>`;
@@ -54,13 +61,13 @@ export class HtmlDataSource {
       <!DOCTYPE html>
       <html lang="en">
         <head>
-          ${this.#common}
+          ${this.#commonHead}
           <script>window.__SSR_DATA__ = ${ssrData}</script>
           <script>window.__SONG_COUNT__ = ${songCount}</script>
         </head>
 
         <body>
-          <div id="app" class="h-full flex justify-center"></div>
+          ${this.#commonBody}
           <script type="module" src="http://localhost:5173/@vite/client"></script>
           <script type="module" src="http://localhost:5173/src/main.ts"></script>
         </body>

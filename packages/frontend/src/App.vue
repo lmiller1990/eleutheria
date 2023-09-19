@@ -30,6 +30,10 @@ const modal = useModal();
 </template>
 
 <style>
+html {
+  overflow: hidden;
+}
+
 html,
 body,
 #app {

@@ -1,67 +1,16 @@
-import type { AudioData, Cover, NoteSkin } from "@packages/shared";
-import { gql } from "@urql/core";
-import {
-  defineComponent,
-  FunctionalComponent,
-  onBeforeUnmount,
-  onMounted,
-  reactive,
-  ref,
-  Ref,
-  shallowRef,
-} from "vue";
+import type { Cover, NoteSkin } from "@packages/shared";
+import { defineComponent, FunctionalComponent, reactive, ref, Ref } from "vue";
 import { useGameplayOptions } from "../../composables/gameplayOptions";
 import { CoverParams } from "../gameplay/modiferManager";
 import { ScrollDirection } from "../gameplay/types";
-import {
-  OptionsModalDocument,
-  OptionsModalQuery,
-} from "../../generated/graphql";
-import { useQuery } from "@urql/vue";
-import {
-  injectNoteSkin,
-  injectStylesheet,
-  stylesheetInjectionKeys,
-} from "../../plugins/injectGlobalCssVars";
-import { getStyleByClass } from "../../components/ModifierPanel/css";
+import { injectNoteSkin } from "../../plugins/injectGlobalCssVars";
+import { getStyleByClass } from "./css";
 import dedent from "dedent";
-import { create, StartGameArgs, StartGame } from "../gameplay/gameplay";
-import { useAudioLoader } from "../../composables/audioLoader";
-import "../../style.css";
-
-gql`
-  query OptionsModal {
-    noteSkins {
-      id
-      name
-      css
-    }
-    covers {
-      id
-      name
-      thumbnailColor
-      css
-      code
-    }
-  }
-`;
+import { OptionsModalQuery } from "../../generated/graphql";
 
 function extractCss(style: string) {
   return getStyleByClass(style, ".note");
 }
-
-const overrideStyles = dedent`
-  #targets, .col {
-    height: 100%;
-  }
-
-  :root {
-    /* 50% smaller */
-    --note-height: 25px;
-    --col-width: 35px;
-    --target-height: var(--note-height);
-  }
-`;
 
 const noteStyle = dedent`
   height: 30px;
@@ -167,7 +116,7 @@ const CoverOffsetModPanel: FunctionalComponent<{
         options={options}
         max={100}
         value={props.modValue.offset}
-        step={1}
+        step={5}
         id="cover-offset"
         onInput={input}
       />
@@ -284,10 +233,12 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
     e.stopPropagation();
   }
 
+  const coverImage = /(https:.*?\.(png|jpg))/.exec(props.currentCover?.code);
+
   return (
     <div onClick={stopPropagation} class="flex">
       <Col>
-        <h2 class="text-3xl">Options</h2>
+        <h2 class="text-3xl text-white mb-10">Options</h2>
         <SpeedModPanel
           onChangeMod={props.onChangeSpeedMod}
           modValue={props.currentSpeedMod}
@@ -311,46 +262,17 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
           covers={props.covers}
           onChangeMod={props.onChangeCoverMod}
         />
-      </Col>
-      <Col>
-        <div style="height: 85%">
-          <div ref={props.gameplayRoot} class="h-full" />
-        </div>
+        {coverImage?.[1] && (
+          <div
+            class="flex bg-cover h-[150px] w-full bg-center border-t-4 border-t-zinc-700 border-black border"
+            style={{ backgroundImage: `url("${coverImage[1]}")` }}
+            id="blah"
+          />
+        )}
       </Col>
     </div>
   );
 };
-
-export const OptionsModal = defineComponent({
-  setup() {
-    const gql = useQuery({ query: OptionsModalDocument });
-
-    const fileUrl = `${import.meta.env.VITE_CDN_URL}/empty.mp3`;
-    const { emitter, percent } = useAudioLoader(fileUrl);
-
-    let audioData = shallowRef<AudioData>();
-
-    emitter.on("song:loading:complete", (buffer) => {
-      audioData.value = buffer;
-    });
-
-    return () => (
-      <div
-        style={{ background: "#828282", height: "75vh", width: "75vw" }}
-        class="flex px-14 border border-white justify-center"
-      >
-        {gql.data.value && audioData.value ? (
-          <OptionsModalWrapper
-            gql={gql.data.value}
-            audioData={audioData.value}
-          />
-        ) : (
-          <div>Loading... {`${percent.value.toFixed(0)}%`}</div>
-        )}
-      </div>
-    );
-  },
-});
 
 export const OptionsModalWrapper = defineComponent({
   props: {
@@ -358,62 +280,11 @@ export const OptionsModalWrapper = defineComponent({
       type: Object as () => OptionsModalQuery,
       required: true,
     },
-    audioData: {
-      type: Object as () => AudioData,
-      required: true,
-    },
   },
 
   setup(props) {
     const modifiers = useGameplayOptions();
     const gameplayRoot = ref(undefined);
-    const { modifierManager } = useGameplayOptions();
-    let game: StartGame | void;
-
-    const cleanupInjectedStylesheet = injectStylesheet(
-      overrideStyles,
-      stylesheetInjectionKeys.modsPaneOverrides
-    );
-
-    onMounted(async () => {
-      // if unmounted before the promise resolves, this might be null
-      // so we return early.
-      if (!gameplayRoot.value) {
-        return;
-      }
-
-      const startGameArgs: StartGameArgs = {
-        noteCulling: true,
-        modifierManager,
-        songCompleted: () => {},
-        updateSummary: () => {},
-        songData: {
-          chart: {
-            offset: 0,
-            parsedTapNoteChart: {
-              tapNotes: Array(1000)
-                .fill(undefined)
-                .map((_x, idx) => ({
-                  id: idx.toString(),
-                  ms: 500 * idx,
-                  column: idx % 6,
-                  measureNumber: 0,
-                  char: "x",
-                })),
-            },
-          },
-        },
-      };
-
-      game = create(gameplayRoot.value!, startGameArgs, false, false, 0);
-      game!.start(props.audioData);
-    });
-
-    onBeforeUnmount(() => {
-      // This also cleans up any injected stylesheets.
-      cleanupInjectedStylesheet();
-      game?.stop();
-    });
 
     const onChangeNoteSkin = (noteSkin: NoteSkin) => {
       injectNoteSkin(noteSkin);
