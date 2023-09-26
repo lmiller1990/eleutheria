@@ -54,7 +54,7 @@
           </div>
 
           <div class="mt-8" id="levels">
-            <button
+            <Hoverable
               v-for="({ level, id }, idx) of levels"
               :key="id"
               class="bg-zinc-700 text-white h-10 w-10 tall:h-14 tall:w-14 mr-4 tall:text-xl border border-2"
@@ -64,7 +64,7 @@
               @click="handleSelectChart(idx)"
             >
               {{ level }}
-            </button>
+            </Hoverable>
           </div>
         </div>
 
@@ -139,6 +139,7 @@ import { useImageLoader } from "../../composables/imageLoader";
 import { useInitialLoad } from "../../composables/initialLoad";
 import ArtistInfo from "../../components/ArtistInfo.vue";
 import InfoIcon from "../../components/InfoIcon.vue";
+import Hoverable from "./Hoverable.vue";
 
 gql`
   query SongSelectScreen_Songs {

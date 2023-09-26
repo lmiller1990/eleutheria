@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { onMounted, ref } from "vue";
 import PlayIcon from "../screens/SongSelectScreen/PlayIcon.vue";
 import { useImageLoader, ImageLoader } from "../composables/imageLoader";
+import Hoverable from "../screens/SongSelectScreen/Hoverable.vue";
 
 const props = defineProps<{
   file: string;
@@ -27,7 +28,7 @@ const src = computed(() => `${import.meta.env.VITE_CDN_URL}/${props.file}.png`);
 </script>
 
 <template>
-  <button
+  <Hoverable
     :class="`w-full bg-zinc-700 ${className} border-2 h-20 flex items-center justify-between`"
   >
     <div class="h-full relative">
@@ -46,5 +47,5 @@ const src = computed(() => `${import.meta.env.VITE_CDN_URL}/${props.file}.png`);
       <div class="text-white text-2xl">{{ props.songTitle }}</div>
       <div class="text-gray-300 text-xl">{{ props.artist }}</div>
     </div>
-  </button>
+  </Hoverable>
 </template>
