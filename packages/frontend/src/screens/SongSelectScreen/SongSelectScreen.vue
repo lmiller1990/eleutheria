@@ -85,6 +85,7 @@
             <SongInfo
               v-if="showSongInfo"
               :best="tableData.best"
+              :worldRecord="tableData.worldRecord"
               :notes="tableData.notes"
               :duration="tableData.duration"
               :bpm="tableData.bpm"
@@ -184,6 +185,7 @@ gql`
       level
       tapNoteCount
       personalBest
+      worldRecord
       creator {
         id
         name
@@ -357,6 +359,9 @@ const tableData = computed(() => {
     notes: selectedChart?.value?.tapNoteCount ?? "-",
     duration: selectedSong?.value?.duration ?? "-",
     bpm: selectedSong?.value?.bpm ?? "-",
+    worldRecord: selectedChart.value?.worldRecord
+      ? `${selectedChart.value?.worldRecord?.toFixed(2)}%`
+      : "0.00%",
     best: selectedChart.value?.personalBest
       ? `${selectedChart.value?.personalBest?.toFixed(2)}%`
       : "0.00%",

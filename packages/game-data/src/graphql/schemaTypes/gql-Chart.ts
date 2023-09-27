@@ -15,6 +15,13 @@ export const Chart = objectType({
     t.nonNull.string("difficulty");
     t.nonNull.int("level");
     t.nonNull.int("tapNoteCount");
+    t.float("worldRecord", {
+      description: "World record for this chart",
+      resolve: async (source, _args, ctx) => {
+        const cds = await ctx.actions.db.queryForWorldRecord(source.data.id);
+        return cds?.percent ?? null;
+      },
+    });
     t.float("personalBest", {
       description: "Personal best score on this chart",
       resolve: async (source, _args, ctx) => {
