@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from "vue";
 import SongInfoCell from "./SongInfoCell.vue";
 
 const props = defineProps<{

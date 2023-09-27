@@ -141,6 +141,7 @@ import { useInitialLoad } from "../../composables/initialLoad";
 import ArtistInfo from "../../components/ArtistInfo.vue";
 import InfoIcon from "../../components/InfoIcon.vue";
 import Hoverable from "./Hoverable.vue";
+import { useAudioLoader } from "../../composables/audioLoader";
 
 gql`
   query SongSelectScreen_Songs {
@@ -378,6 +379,11 @@ const animationClass = `animate-[movedown_${animationMs}ms_linear_forwards]`; //
 const delay = () =>
   new Promise((resolve) => window.setTimeout(resolve, animationMs + 200));
 
+let previewAudio: {
+  source: AudioBufferSourceNode;
+  context: AudioContext;
+} | null;
+
 async function handleSelected(
   song: SongSelectScreen_SongsQuery["songs"][number]
 ) {
@@ -389,8 +395,36 @@ async function handleSelected(
     selectedSongId.value = song.id;
     selectedChartIdx.value =
       preferences.preferredSongChartIndex?.[song.id] ?? 0;
+
+    const url = `${import.meta.env.VITE_CDN_URL}/${song.file}_preview.wav`;
+    // play preview
+    const preview = useAudioLoader(url);
+    await previewAudio?.context.close();
+    previewAudio?.source.stop();
+    preview.emitter.on("song:loading:complete", (data) => {
+      // by the time the sample loaded, the user selected a different song
+      // just bail
+      if (selectedSongId.value !== song.id) {
+        return;
+      }
+      const source = data.audioContext.createBufferSource();
+      source.buffer = data.audioBuffer;
+      const gainNode = data.audioContext.createGain();
+      gainNode.gain.value = 1.0;
+      gainNode.connect(data.audioContext.destination);
+      source.connect(gainNode);
+      source.start(0);
+      previewAudio = {
+        context: data.audioContext,
+        source: source,
+      };
+    });
+
     return;
   }
+
+  previewAudio?.source?.stop();
+  previewAudio = null;
 
   if (!chartDifficulty.value) {
     throw Error(`No difficulty was selected. This should be impossible.`);
