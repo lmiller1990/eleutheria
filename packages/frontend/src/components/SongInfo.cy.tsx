@@ -5,7 +5,13 @@ describe("SongInfo", () => {
   it("playground", () => {
     mount(() => (
       <div style="margin: 80px 140px;">
-        <SongInfo best="99.50" notes="1040" duration="1:50" bpm="150" />
+        <SongInfo
+          best="99.50"
+          notes="1040"
+          duration="1:50"
+          bpm="150"
+          world="100%"
+        />
       </div>
     ));
   });
