@@ -36,6 +36,7 @@ type ModifierManagerEvents = {
   "set:noteSkin": (val: NoteSkin) => void;
   "set:multiplier": (val: number, oldVal: number) => void;
   "set:cover": (val: CoverParams, oldVal: CoverParams) => void;
+  "set:globalOffset": (val: number, oldVal: number) => void;
   "set:scrollDirection": (
     val: ScrollDirection,
     oldVal: ScrollDirection
@@ -45,6 +46,7 @@ type ModifierManagerEvents = {
 export class ModifierManager extends (EventEmitter as new () => TypedEmitter<ModifierManagerEvents>) {
   #multiplier = 200;
   #scrollDirection: ScrollDirection = "up";
+  #globalOffset = 0;
   #noteSkin: NoteSkin = {
     name: "default",
     css: defaultNoteSkinFallback,
@@ -62,6 +64,11 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
   setMultipler(val: number) {
     this.emit("set:multiplier", val, this.#multiplier);
     this.#multiplier = val;
+  }
+
+  setGlobalOffset(val: number) {
+    this.emit("set:globalOffset", val, this.#globalOffset);
+    this.#globalOffset = val;
   }
 
   setCover(val: Partial<CoverParams>) {
@@ -98,5 +105,9 @@ export class ModifierManager extends (EventEmitter as new () => TypedEmitter<Mod
 
   get scrollDirection() {
     return this.#scrollDirection;
+  }
+
+  get globalOffset() {
+    return this.#globalOffset;
   }
 }

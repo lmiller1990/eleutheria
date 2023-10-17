@@ -58,6 +58,8 @@ export interface GameConfig {
   };
   /** used for showing an inline game in the game options pane. Not very performance due to use of getBoundingClientRect(). */
   noteCulling?: boolean;
+  /** user defined offset */
+  userGlobalOffset?: number;
   preSongPadding?: number;
   postSongPadding?: number;
   engineConfiguration: EngineConfiguration;
@@ -137,6 +139,7 @@ export class Game implements GameAPI {
       ) +
       (this.#config.preSongPadding || 0) +
       this.#config.chart.offset +
+      (this.#config.userGlobalOffset ?? 0) +
       (this.#config.postSongPadding || 0);
   }
 
@@ -159,7 +162,10 @@ export class Game implements GameAPI {
           canHit: true,
         }));
       }),
-      offset: (this.#config.preSongPadding || 0) + this.#config.chart.offset,
+      offset:
+        (this.#config.preSongPadding || 0) +
+        this.#config.chart.offset +
+        (this.#config.userGlobalOffset ?? 0),
     });
 
     const gs = initGameState(chart);

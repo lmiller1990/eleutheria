@@ -365,6 +365,7 @@ export function create(
       offset: songData.chart.offset,
     },
     preSongPadding: PADDING_MS,
+    userGlobalOffset: modifierManager.globalOffset,
     noteCulling,
     postSongPadding: PADDING_MS,
     engineConfiguration,

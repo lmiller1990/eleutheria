@@ -8,6 +8,7 @@ export async function up(knex: Knex): Promise<any> {
   background: #f8f3d6; 
   display: flex; 
   align-items: center; 
+  justify-content: center;
 } 
 
 #cover-image-animals { 

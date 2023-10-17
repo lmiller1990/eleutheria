@@ -130,17 +130,18 @@ const Slider: FunctionalComponent<{
   options: JSX.Element[];
   step: number;
   max: number;
+  min?: number;
   value: number;
 }> = (props) => {
   return (
     <>
       <input
-        {...props}
         min={0}
         list={`${props.id}-tickmarks`}
         name={props.id}
         type="range"
         class="w-full"
+        {...props}
       />
       <datalist
         id={`${props.id}-tickmarks`}
@@ -155,7 +156,6 @@ const Slider: FunctionalComponent<{
 const SpeedModPanel: FunctionalComponent<{
   onChangeMod: OptionsModalProps["onChangeSpeedMod"];
   modValue: OptionsModalProps["currentSpeedMod"];
-  id: string;
 }> = (props) => {
   const options = Array(101)
     .fill(undefined)
@@ -188,6 +188,43 @@ const SpeedModPanel: FunctionalComponent<{
   );
 };
 
+const GlobalOffsetPanel: FunctionalComponent<{
+  onChangeMod: OptionsModalProps["onChangeGlobalOffset"];
+  modValue: OptionsModalProps["globalOffset"];
+  id: string;
+}> = (props) => {
+  const options = Array(2001)
+    .fill(undefined)
+    .reduce<JSX.Element[]>((acc, _curr, idx) => {
+      const value = idx - 1000;
+      if (value % 200 === 0) {
+        return acc.concat(
+          <option value={value} label={value.toString()} key={value} />
+        );
+      }
+      return acc;
+    }, []);
+
+  function input(event: Event) {
+    const value = parseInt((event.target as HTMLInputElement).value, 10);
+    props.onChangeMod(value);
+  }
+
+  return (
+    <OptionsPanel title="Global Offset" selected={`${props.modValue} ms`}>
+      <Slider
+        options={options}
+        value={props.modValue}
+        max={1000}
+        min={-1000}
+        step={1}
+        id="global-offset-mod"
+        onInput={input}
+      />
+    </OptionsPanel>
+  );
+};
+
 const OptionsPanel: FunctionalComponent<{
   title: string;
   selected: string | number;
@@ -211,6 +248,9 @@ interface OptionsModalProps {
 
   currentScrollMod: ScrollDirection;
   onChangeScrollMod: (val: ScrollDirection) => void;
+
+  globalOffset: number;
+  onChangeGlobalOffset: (val: number) => void;
 
   currentCover: CoverParams;
   onChangeCoverMod: (cover: Partial<CoverParams>) => void;
@@ -238,11 +278,15 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
   return (
     <div onClick={stopPropagation} class="flex">
       <Col>
-        <h2 class="text-3xl text-white mb-10">Options</h2>
+        <h2 class="text-2xl text-white mb-4">Options</h2>
         <SpeedModPanel
           onChangeMod={props.onChangeSpeedMod}
           modValue={props.currentSpeedMod}
-          id="speed-mod"
+        />
+        <GlobalOffsetPanel
+          onChangeMod={props.onChangeGlobalOffset}
+          modValue={props.globalOffset}
+          id="global-offset-mod"
         />
         <ScrollModPanel
           onChangeMod={props.onChangeScrollMod}
@@ -264,7 +308,7 @@ export const OptionsPane: FunctionalComponent<OptionsModalProps> = (props) => {
         />
         {coverImage?.[1] && (
           <div
-            class="flex bg-cover h-[150px] w-full bg-center border-t-4 border-t-zinc-700 border-black border"
+            class="flex bg-cover h-[150px] w-full bg-center border-t-4 border-t-zinc-700 border-black border mt-2"
             style={{ backgroundImage: `url("${coverImage[1]}")` }}
             id="blah"
           />
@@ -296,6 +340,11 @@ export const OptionsModalWrapper = defineComponent({
       scroll: modifiers.modifierManager.scrollDirection,
       cover: modifiers.modifierManager.cover,
       noteSkin: modifiers.modifierManager.noteSkin,
+      globalOffset: modifiers.modifierManager.globalOffset,
+    });
+
+    modifiers.modifierManager.on("set:globalOffset", (val) => {
+      localMods.globalOffset = val;
     });
 
     modifiers.modifierManager.on("set:multiplier", (val) => {
@@ -330,6 +379,8 @@ export const OptionsModalWrapper = defineComponent({
         currentCover={localMods.cover}
         currentSpeedMod={localMods.speed}
         currentScrollMod={localMods.scroll}
+        globalOffset={localMods.globalOffset}
+        onChangeGlobalOffset={modifiers.handleChangeGlobalOffset}
         onChangeSpeedMod={modifiers.handleChangeSpeedMod}
         onChangeScrollMod={modifiers.handleChangeScrollMod}
         onChangeCoverMod={modifiers.handleChangeCoverMod}

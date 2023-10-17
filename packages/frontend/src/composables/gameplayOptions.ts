@@ -10,6 +10,7 @@ import { ScrollDirection } from "../screens/gameplay/types";
 const preferences = preferencesManager.getPreferences();
 const modifierManager = new ModifierManager();
 modifierManager.setMultipler(preferences.speedModifier ?? 200);
+modifierManager.setGlobalOffset(preferences.globalOffset ?? 0);
 modifierManager.setScroll(preferences.scrollDirection ?? "down");
 modifierManager.setCover(preferences.cover ?? {});
 modifierManager.setNoteSkin(
@@ -30,6 +31,12 @@ function handleChangeScrollMod(val: ScrollDirection) {
   preferencesManager.updatePreferences({ scrollDirection: val });
 }
 
+function handleChangeGlobalOffset(val: number) {
+  console.log(val);
+  modifierManager.setGlobalOffset(val);
+  preferencesManager.updatePreferences({ globalOffset: val });
+}
+
 function handleChangeCoverMod({ style, ...params }: Partial<CoverParams>) {
   modifierManager.setCover(params);
   preferencesManager.updatePreferences({ cover: params });
@@ -44,6 +51,7 @@ export function useGameplayOptions() {
   return {
     modifierManager,
     handleChangeSpeedMod,
+    handleChangeGlobalOffset,
     handleChangeScrollMod,
     handleChangeCoverMod,
     handleChangeNoteSkin,

@@ -6,6 +6,7 @@ const validPreferences = [
   "speedModifier",
   "scrollDirection",
   "cover",
+  "globalOffset",
   "noteSkin",
   "selectedSongId",
   "selectedChartIdx",
@@ -16,6 +17,7 @@ export interface Preferences {
   scrollDirection: ScrollDirection;
   speedModifier: number;
   noteSkin: NoteSkin;
+  globalOffset: number;
   cover: Partial<CoverParams>;
   selectedSongId: number;
   selectedChartIdx: number;

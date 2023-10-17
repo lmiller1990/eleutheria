@@ -14,23 +14,15 @@
         @click="optionsModal.close"
       />
 
-      <!-- <Transition
-        name="slidein"
-        enter-active-class="duration-1000"
-        enter-from-class="right-[-500px]"
-        leave-active-class="duration-1000"
-        leave-to-class="right-[-400px]"
-      > -->
       <Transition name="slide-fade">
         <div
           v-if="optionsModal.visible.value"
           id="options-modal"
-          class="absolute z-20 inset-y-0 w-[400px] bg-zinc-700 pt-16 right-0"
+          class="absolute z-20 inset-y-0 w-[420px] bg-zinc-700 py-8 right-0"
         >
           <OptionsModal />
         </div>
       </Transition>
-      <!-- </Transition> -->
     </Teleport>
 
     <div
@@ -384,6 +376,33 @@ let previewAudio: {
   context: AudioContext;
 } | null;
 
+async function playPreview(song: SongSelectScreen_SongsQuery["songs"][number]) {
+  const url = `${import.meta.env.VITE_CDN_URL}/${song.file}_preview.wav`;
+
+  // play preview
+  const preview = useAudioLoader(url);
+  await previewAudio?.context.close();
+  previewAudio?.source.stop();
+  preview.emitter.on("song:loading:complete", (data) => {
+    // by the time the sample loaded, the user selected a different song
+    // just bail
+    if (selectedSongId.value !== song.id) {
+      return;
+    }
+    const source = data.audioContext.createBufferSource();
+    source.buffer = data.audioBuffer;
+    const gainNode = data.audioContext.createGain();
+    gainNode.gain.value = 1.0;
+    gainNode.connect(data.audioContext.destination);
+    source.connect(gainNode);
+    source.start(0);
+    previewAudio = {
+      context: data.audioContext,
+      source: source,
+    };
+  });
+}
+
 async function handleSelected(
   song: SongSelectScreen_SongsQuery["songs"][number]
 ) {
@@ -396,29 +415,8 @@ async function handleSelected(
     selectedChartIdx.value =
       preferences.preferredSongChartIndex?.[song.id] ?? 0;
 
-    const url = `${import.meta.env.VITE_CDN_URL}/${song.file}_preview.wav`;
-    // play preview
-    const preview = useAudioLoader(url);
-    await previewAudio?.context.close();
-    previewAudio?.source.stop();
-    preview.emitter.on("song:loading:complete", (data) => {
-      // by the time the sample loaded, the user selected a different song
-      // just bail
-      if (selectedSongId.value !== song.id) {
-        return;
-      }
-      const source = data.audioContext.createBufferSource();
-      source.buffer = data.audioBuffer;
-      const gainNode = data.audioContext.createGain();
-      gainNode.gain.value = 1.0;
-      gainNode.connect(data.audioContext.destination);
-      source.connect(gainNode);
-      source.start(0);
-      previewAudio = {
-        context: data.audioContext,
-        source: source,
-      };
-    });
+    // TODO: figure out preview music
+    // playPreview(song);
 
     return;
   }
